@@ -1,5 +1,0 @@
-(
-	\name: "TestQuark!",
-	\path: "test", // path relative to the root Quarks folder
-	\summary: "I am a simple quark"
-)
