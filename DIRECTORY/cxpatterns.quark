@@ -1,0 +1,6 @@
+(
+	\name: "cxpatterns",
+	\path: "cxpatterns", // path relative to the root Quarks folder
+	\summary: "Instr that create Patterns. Scale class, degree patterns and chord progressions.",
+	\author: "felix"
+)
