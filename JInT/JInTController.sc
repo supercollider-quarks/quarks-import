@@ -1,0 +1,250 @@
+/**
+2006  Till Bovermann (IEM)
+
+
+NOTES
+-----
+Imagine a Faderbox.
+In general there are a fixed number of controls which behave in different ways.
+there are e.g.
+	Fader				(1 DOF)
+	Knob					(1 DOF)
+	Pad					(1 DOF)
+	2D Fader (joystick)	(2 DOF)
+	tangible rigid object	(6 DOF)
+	pen on graphics-tablet	(5 DOF)
+	...
+this class is a general representation.
+Subclasses implement the dedicated semantics.
+*/
+JInTController {
+	var <numDOF;			/// number of available degrees of freedom
+
+	var <description;		/// a String describing the functionality
+
+	var <>short;			/// a shortcut, e.g. for a fader \f1
+	
+	var nodeProxy;
+	var server;
+	
+	/** array of arrays containing symbols for each DOF:
+	
+			[values]
+		\discrete		[discrete values]
+		\continuous	[contiuous values]
+
+			[what happens if user lets go controller?]
+		\snapBack		[snaps back into a predefined state]
+		\sticky		[remains in last state]
+		
+			[]
+		\range		[m .. n]
+		\ring		[modulo ring]
+			[active or passive?]
+		\passive
+		\settable
+	*/
+	var <semantics;	
+	var <specs;			/// for each dimension one ControlSpec. nil: [0,1,'linear'].asSpec
+	/**	
+	 * array of raw controller values. 
+	 * No specs assigned. 
+	 * One for each dimension.
+	 */
+	var <rawVals;
+	var <>changedFunc;
+
+	*new{|desc, server|
+		^super.new.initJInTC(desc, server);
+	}
+	initJInTC {|desc, argServer|
+		numDOF 		= 0;
+		description 	= desc;
+		semantics 	= [];
+		specs 		= [];
+		rawVals 		= [];
+		server 		= argServer ? Server.default;
+	}
+	/**
+	 * @ToDo support arrays of indices as args...
+	 */
+	value{|i|
+		i.notNil.if({
+			^specs[i].unmap(rawVals[i]);
+		}, {
+			^specs.collect{|spec, i| 
+				spec.unmap(rawVals[i])
+			};
+		})
+	}
+/* NOTES
+		// init NodeProxies
+		faderProxies = Array.fill(4, {
+			NodeProxy(server).set(0, 0).source_(\control -> 0);
+		});
+*/
+	set {|which = 0, val = 0|
+		rawVals[which] = val;
+		nodeProxy !? {nodeProxy.set(which, this.value(which));};
+	}
+	initNodeProxy {
+		var n;
+		nodeProxy = nodeProxy ?? {
+			n = NodeProxy.control(server, numDOF);
+			n.source_(\control -> (0!numDOF));
+		};
+	}
+	/**
+	 * 
+	 */
+	kr {|numChans|
+		^nodeProxy.kr(numChans);
+	}
+
+}
+
+JInTC_nState : JInTController{
+	*new {|desc, server, numStates = 2|
+		^super.new(desc ? format("simple one-DOF controller with % states", server, numStates)).initNState(numStates);
+	}
+	initNState{|numStates|
+		numDOF 		= 1;
+		semantics 	= [[\discrete]];
+		specs 		= [[0, numStates-1, \linear, 1].asSpec];
+		rawVals 		= [specs.first.default];
+	}
+}
+
+
+/// simple one-DOF controller with on/off
+JInTC_onoff : JInTC_nState{
+	*new {|desc, server|
+		^super.new(desc ? "simple one-DOF controller with on/off", 2);
+	}
+}
+
+/// Button (on/off) with snap back ("Taster")
+JInTC_Button : JInTC_onoff{
+	*new {|desc, server, spec|
+		^super.new(desc ? "Button (on/off)", server).initButton(spec);
+	}
+	initButton {|theSpec|
+		semantics[0] = semantics[0].add(\snapBack);
+		theSpec !? { specs = [theSpec];}
+	}
+}
+
+
+/// simple one-DOF contiuous controller
+JInTC_linear : JInTController{
+	*new {|desc, server, spec|
+		^super.new(desc ? "simple one-DOF contiuous controller", server).initLinear(spec);
+	}
+	initLinear{|spec|
+		numDOF = 1;
+		semantics = [[\contiuous]];
+		specs = spec.isNil.if({[[0, 1, \linear].asSpec]}, {[spec]});
+		rawVals 		= [specs.first.default];
+	}
+}
+
+/// simple one-DOF contiuous controller, snapping back into default position
+JInTC_linearSnapper : JInTC_linear{
+	*new {|desc, server, spec|
+		^super.new(desc ? "simple one-DOF contiuous controller, snapping back into default position", server).initLinearSnapper(spec);
+	}
+	initLinearSnapper{|spec|
+		semantics[0] = semantics[0] ++ [\snapBack];
+		specs = spec.isNil.if({[ControlSpec(0, 1, default: 0.5)]}, {[spec]});
+		rawVals 		= [specs.first.default];
+	}
+}
+
+
+/// simple one-DOF Fader
+JInTC_Fader : JInTC_linear{
+	*new {|desc, server, spec|
+		^super.new(desc ? "simple one-DOF Fader", server, spec);
+	}
+}
+
+/// simple knob to turn
+JInTC_Knob : JInTC_linear{
+	*new {|desc, server, spec| 
+		^super.new(desc ? "simple knob to turn", server, spec);
+	}
+}
+
+/// simple knob to turn
+JInTC_EndlessKnob : JInTC_Knob{
+	*new {|desc, server, spec| 
+		^super.new(desc ? "simple knob to turn", server, spec).initEndlessKnob;
+	}
+	initEndlessKnob {
+		semantics[0] = semantics[0].add(\ring);
+	}
+}
+
+//////////////// n-DOF
+/*
+	I decided to not build trees of 1-DOF JInTController, since the definition of a controller 
+	(see above) says, that a controller is something stick together, where it is near to 
+	impossible to change one dimension without changing the others.
+	Therefore it is not intendet to use one (of many) DOF for a single parameter.
+*/
+
+JInTC_composite : JInTController {
+	*new {|desc, server, bunchOfJiNTController|
+		^super.new(
+			desc ? 
+			"a composite of several controllers. should not be used (abstract class)",
+			server
+		).initComposite(bunchOfJiNTController);
+	}
+	initComposite {|conts, desc|
+		// join semantics, specs and compute numDOF
+		numDOF = 0;
+		semantics = [];
+		specs = [];
+		rawVals = [];
+		conts.do{|control, i|
+			numDOF 		= numDOF 		+   control.numDOF;
+			semantics 	= semantics 	++ control.semantics;
+			specs 		= specs 		++ control.specs;
+			rawVals 		= rawVals 		++ control.specs.collect(_.default);
+		}
+	}
+}
+
+
+/** as found on logitech dual action */
+JInTC_ThumbStick : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [ControlSpec(0, 1, default: 0.5), ControlSpec(0, 1, default: 0.5), ControlSpec(0, 1, default: 0)];
+		^super.new(desc ? 
+			"small two DOF analog joystick with an additional knob-functionality by pressing it. Normally actuated by thumb.",
+			server, 
+			[
+				JInTC_linearSnapper.new(spec: specs[0]), // x
+				JInTC_linearSnapper.new(spec: specs[1]), // y
+				JInTC_Button.new(spec: specs[2])         // button
+			]
+		);
+	}
+}
+
+/** a pressure sensitive touch-pad like it is found on sampling machines (MPC) */
+JInTC_PPad : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [ControlSpec(0, 1, default: 0), ControlSpec(0, 1, default: 0)];
+		^super.new(desc ? 
+			"a pressure sensitive touch-pad like it is found on sampling machines (MPC)",
+			server, 
+			[
+				JInTC_linearSnapper.new(spec: specs[0]), // trigger
+				JInTC_linearSnapper.new(spec: specs[1])  // aftertouch
+			]
+		);
+	}
+	
+}

@@ -1,0 +1,165 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fnil\fcharset77 Monaco;\f2\fswiss\fcharset77 Helvetica;
+\f3\fswiss\fcharset77 Helvetica-Oblique;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs54 \cf0 Just InTerface
+\fs32 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs36 \cf0 - Accessing Hardware Controller -\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\b0\fs18 \cf2 /**\
+	2006  Till Bovermann (IEM)\
+*/\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs24 \cf2 \
+/// semantic: continuous\cf0 \
+\cf2 /// semantic: controlability\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs32 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0\fs38 \cf0 SC3 provides several ways to connect existing h/w controllers. There are e.g.\
+\
+	OpenSoundControl\
+	MIDI\
+	HID-Controllers\
+\
+These are 
+\f0\b protocols
+\f2\b0 \
+\
+\
+\
+\
+\
+\
+More interesting\
+	controllers inherent 
+\f0\b natural behavior
+\f2\b0  and \
+	how they fit into the patch to be controlled.\
+\
+Most haptic controllers are assembled with subcontrollers, which are again each controllable by one finger.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs25\fsmilli12700 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
+
+\fs24 \cf0 {{\NeXTGraphic Pasted Graphic.pdf \width9000 \height5800
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs29\fsmilli14700 \cf0 		Description	dimensionality	# states		semantics\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0\fs28 \cf0 A,B,D	Button		1d				2			discrete, backsnapper
+\fs29\fsmilli14700 \
+C		Nav.Cross	1d				9			discrete, backsnapper\
+E		Joystick		2d				256**2		contiuous, backsnapper\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs24 \cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f3\i\fs38 \cf0 Just InTeraction
+\f2\i0  provides functionality to access controllers (not only) in JITLib.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs58 \cf0 [\ul JInTController\ulnone ] \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0\fs38 \cf0 	provides semantic access to different controller types.\
+	Examples (currently implemented):\
+
+\f0\b 		JInTC_onoff : JInTController\
+
+\f2\b0 		simple one-DOF controller with on/off\
+\
+
+\f0\b 		JInTC_Button : JInTC_onoff\
+
+\f2\b0 		Button (on/off) with snap back ("Taster")\
+		\
+
+\f0\b 		JInTC_linear : JInTController\
+
+\f2\b0 		simple one-DOF contiuous controller (abstract)\
+		\
+
+\f0\b 		JInTC_linearSnapper : JInTController\
+
+\f2\b0 		simple one-DOF contiuous controller, snapping back into default position\
+		\
+
+\f0\b 		JInTC_Fader : JInTC_linear\
+
+\f2\b0 		simple one-DOF Fader\
+		\
+
+\f0\b 		JInTC_Knob : JInTC_linear\
+
+\f2\b0 		simple knob to turn\
+		\
+
+\f0\b 		JInTC_composite : JInTController\
+
+\f2\b0 		A composite of several controllers. Should not be used (abstract class)\
+		\
+
+\f0\b 		JInTC_ThumbStick : JInTC_composite\
+
+\f2\b0 		small two DOF analog joystick with an additional knob-functionality by pressing it. \
+		Normally actuated by thumb.\
+\
+We may get information on a specific controller:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2 \cf0 E.g:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1 \cf0 \
+a = \cf3 JInTC_ThumbStick\cf0 .new\
+a.numDOF;				\cf2 // number of dimensions\cf0 \
+a.description;		\cf2 // a textual description\cf0 \
+a.semantics;			\cf2 // keywords on semantics\cf0 \
+\
+a.specs.do\{\cf3 |a|\cf0  a.asCompileString.postln\};\
+							\cf2 // spec of each dimension\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2 \cf0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs58 \cf0 [\ul JInT\ulnone ]\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0\fs38 \cf0 	is a container filled with JInTControllers.\
+	Examples (currently implemented):\
+
+\f0\b 		[\ul JInT_HIDlda\ulnone ]\
+
+\f2\b0 		implements JustInTerface for a Logitech Dual Action device.\
+	\
+
+\f0\b 		[\ul JInT_TriggerFinger\ulnone ]\
+
+\f2\b0 		implements JustInTerface for an M-Audio Trigger Finger.\
+\
+}
