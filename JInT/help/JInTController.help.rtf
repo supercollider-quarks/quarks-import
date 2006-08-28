@@ -1,0 +1,258 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 JInTController
+\f1\b0\fs24 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf0 Superclass: Object\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0\fs18 \cf2 /**\
+	2006  Till Bovermann (IEM)\
+*/\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 \
+Imagine a Faderbox or a GamePad, or \'c9\
+In general there are a fixed number of controls which behave in different ways.\
+there are e.g.\
+	Fader				(1 DOF)\
+	Knob				(1 DOF)\
+	Pad					(1 DOF)\
+	2D Fader (joystick)		(2 DOF)\
+	tangible rigid object		(6 DOF)\
+	pen on graphics-tablet	(5 DOF)\
+	...\
+This class is a general representation of one of these controllers.\
+Subclasses implement the dedicated semantics.\
+	JInTC_<lowercase> 	\'d0 abstract class\
+	JInTC_<Uppercase> 	\'d0 usable class\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 a = \cf3 JInTController\cf0 .new\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs28 \cf0 \ul \ulc0 Methods\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs24 \cf0 \ulnone \
+\
+rawVals\
+
+\f1\b0 	array of raw controller values. \
+	No specs assigned. \
+	One for each dimension.\
+
+\f0\b \
+value(i)\
+	
+\f1\b0 returns array of current normed values of controller.\
+	if 
+\f0\b i
+\f1\b0  is Integer:\
+
+\f0\b 		
+\f1\b0 returns current normed value 
+\f0\b i
+\f1\b0  of controller.\
+
+\f0\b \
+numDOF\
+
+\f1\b0 	number of available degrees of freedom\
+
+\f0\b \
+description\
+
+\f1\b0 	a String describing the functionality\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 semantics\
+
+\f1\b0 	array of arrays containing symbols for each DOF:\
+	\
+			[values]\
+		\\discrete		[discrete values]\
+		\\continuous	[contiuous values]\
+	\
+			[what happens if user lets go controller?]\
+		\\snapBack		[snaps back into a predefined state]\
+		\\sticky		[remains in last state]\
+		\
+			[]\
+		\\range		[m .. n]\
+		\\ring		[modulo ring]\
+			[active or passive?]\
+		\\passive\
+		\\settable\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 specs\
+
+\f1\b0 	for each dimension one ControlSpec. nil: [0,1,'linear'].asSpec\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs28 \cf0 \ul 1-DOF\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \ulnone JInTC_onoff : JInTController\ul \
+
+\f1\b0 \ulnone simple one-DOF controller with on/off\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_onoff\cf0 .new;\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_Button : JInTC_onoff\
+
+\f1\b0 Button (on/off) with snap back ("Taster")\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_Button\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_linear : JInTController\
+
+\f1\b0 simple one-DOF contiuous controller (abstract)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_linear\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_linearSnapper : JInTController\
+
+\f1\b0 simple one-DOF contiuous controller, snapping back into default position\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_linearSnapper\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_Fader : JInTC_linear\
+
+\f1\b0 simple one-DOF Fader\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_onoff\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_Knob : JInTC_linear\
+
+\f1\b0 simple knob to turn\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_onoff\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs28 \cf0 \ul n-DOF\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\b0\fs24 \cf0 \ulnone \
+I decided to not build trees of 1-DOF JInTController, since the definition of a controller \
+(see above) says, that a controller is something stick together, where it is near to \
+impossible to change one dimension without changing the others.\
+Therefore it is not intendet to use one (of many) DOF for a single parameter.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_composite : JInTController\
+
+\f1\b0 A composite of several controllers. Should not be used (abstract class)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+\
+a = \cf3 JInTC_composite\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 JInTC_ThumbStick : JInTC_composite\
+
+\f1\b0 small two DOF analog joystick with an additional knob-functionality by pressing it. Normally actuated by thumb.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 \
+a = \cf3 JInTC_ThumbStick\cf0 .new\
+a.numDOF;\
+a.description;\
+a.semantics;\
+a.specs.do\{|a| a.asCompileString.postln\};\
+a.inspect;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b \cf0 \ul Examples
+\f2\b0\fs18 \ulnone \
+}
