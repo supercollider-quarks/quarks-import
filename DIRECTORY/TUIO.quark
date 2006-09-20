@@ -1,0 +1,10 @@
+(
+	\name: 			"TUIO",
+	\path: 			"tuio", // path relative to the root Quarks folder
+	\summary:		"Tangible User Interface Object (TUIO) library.\nFor more information see http://tuio.lfsaw.de/",
+	\author: 		"Till Bovermann",
+	\organization: 	"Bielefeld University",
+	\country: 		"Germany",
+	\since: 		"2004",
+	\url:           "http://tuio.lfsaw.de/"
+)
