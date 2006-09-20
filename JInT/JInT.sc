@@ -17,14 +17,13 @@ JInT {
 	startCustom {"JInT-start: abstract method".warn}
 	stopCustom {"JInT-stop: abstract method".warn}
 	start {
-		// setup controller-map 
-		controllers.do{|cont, i| cMap[cont.short] = i};
-		// setup JIT control
-		controllers.do(_.initNodeProxy);
+		// setup controller-map and start controllers
+		controllers.do{|cont, i| cMap[cont.short] = i; cont.start};
 		// run subclass start method
 		this.startCustom;
 	}
 	stop {
+		controllers.do(_.stop);
 		// run subclass stop method
 		this.stopCustom;
 	}

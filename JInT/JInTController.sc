@@ -16,14 +16,17 @@ there are e.g.
 	...
 this class is a general representation.
 Subclasses implement the dedicated semantics.
+
+	@todo values on server are currently set to be in [-1, 1]
+
 */
 JInTController {
 	var <numDOF;			/// number of available degrees of freedom
-
 	var <description;		/// a String describing the functionality
-
 	var <>short;			/// a shortcut, e.g. for a fader \f1
+	var <>action;			/// a function which will be evaluated on a value change. param: this
 	
+	var isRunning;
 	var nodeProxy;
 	var server;
 	
@@ -52,7 +55,6 @@ JInTController {
 	 * One for each dimension.
 	 */
 	var <rawVals;
-	var <>changedFunc;
 
 	*new{|desc, server|
 		^super.new.initJInTC(desc, server);
@@ -62,8 +64,9 @@ JInTController {
 		description 	= desc;
 		semantics 	= [];
 		specs 		= [];
-		rawVals 		= [];
+		rawVals 		= [0];
 		server 		= argServer ? Server.default;
+		isRunning		= false;
 	}
 	/**
 	 * @ToDo support arrays of indices as args...
@@ -85,7 +88,16 @@ JInTController {
 */
 	set {|which = 0, val = 0|
 		rawVals[which] = val;
-		nodeProxy !? {nodeProxy.set(which, this.value(which));};
+		// set values to be in [-1, 1]
+		action.value(this);
+		nodeProxy !? {nodeProxy.set(which, this.value(which)*2-1);};
+	}
+	start {
+		this.initNodeProxy;
+		isRunning = true;
+	}
+	stop {
+		isRunning = false;
 	}
 	initNodeProxy {
 		var n;
