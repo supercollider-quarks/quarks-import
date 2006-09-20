@@ -1,0 +1,10 @@
+(
+	\name: 			"Orb",
+	\path: 			"orb", // path relative to the root Quarks folder
+	\summary:		"Interface to Ambient Lights",
+	\author: 		"Till Bovermann, Eckard Riedenklau",
+	\organization: 	"Bielefeld University",
+	\country: 		"Germany",
+	\since: 		"2005",
+	\url:           "http://www.lfsaw.de/hardware/ambient_lights.shtml"
+)

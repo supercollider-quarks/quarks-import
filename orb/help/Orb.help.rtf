@@ -1,0 +1,195 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+\red0\green115\blue0;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs32 \cf0 Orb\
+
+\f1\b0\fs24 A connection to SerialOrbs.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf2 // There are virtual Orbs in this help Directory listening to NetAddr.localAddr:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 (\cf3 Document\cf0 .current.path.dirname ++ \cf4 "/VirtualOrb.rtf"\cf0 ).load\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b \cf0 *new(netAddr)\
+\
+set(which, color, dt, action)\
+	
+\f1\b0 sets the 
+\f0\b color 
+\f1\b0 of orb number 
+\f0\b which
+\f1\b0  in time
+\f0\b  dt
+\f1\b0 .\
+
+\f0\b 	
+\f1\b0 After process is finished, 
+\f0\b action
+\f1\b0  is evaluated with 
+\f0\b this
+\f1\b0  as parameter.
+\f0\b \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\b0\fs18 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 setHSV(which, color, dt, action)\
+	
+\f1\b0 sets the 
+\f0\b color 
+\f1\b0 of orb number 
+\f0\b which
+\f1\b0  in time
+\f0\b  dt
+\f1\b0  according to HSV-space.\
+
+\f0\b 	
+\f1\b0 After process is finished, 
+\f0\b action
+\f1\b0  is evaluated with 
+\f0\b this
+\f1\b0  as parameter.
+\f0\b \
+\
+flash(which, startColor, flashColor, dt = 0.05, action)\
+	
+\f1\b0 flashes the Orb 
+\f0\b which
+\f1\b0  with color 
+\f0\b flashColor.\
+	
+\f1\b0 After process is finished, 
+\f0\b action
+\f1\b0  is evaluated with 
+\f0\b this
+\f1\b0  as parameter.
+\f0\b \
+\
+//leak(which, startColor, flashColor, dt = 0.05, action)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\b0 \cf0 //	sets the color as fast as possible and then leaks it to original one.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf2 \
+/*\
+	o = Orb(NetAddr("echnaton", 12000))\
+	o.set([0,1,2], Color(1, 0, 1), 1)\
+	o.set(1, Color.red(0.2), 1)
+\f0\b\fs24 \
+*/\cf0 	\
+
+\f2\b0\fs18 \cf2 // examples\cf0 \
+\
+o = \cf3 Orb\cf0 .new;\
+\
+o.set(0, \cf3 Color\cf0 .green)\
+o.set(1, \cf3 Color\cf0 .red)\
+o.set([0, 1, 2], \cf3 Color\cf0 .hsv(0.4, 1, 1), \{3.0.rand\}!3)\
+o.set(0, \cf3 Color\cf0 (1, 0.5, 0.5))\
+\
+\
+o.set(2, \cf3 Color\cf0 .blue, 20)\
+\
+o.set(0, \cf3 Color\cf0 .gray(0.1), 30)\
+o.set([0, 1, 2], \cf3 Color\cf0 .new255(*[1, 1, 1]*10))\
+\
+o.set((0..2), \cf3 Color\cf0 .black)\
+\
+o.set(2, \cf3 Color\cf0 .red, 0.5)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf0 o.flash(1, \cf3 Color\cf0 .yellow(0.3), 0.05)\
+\
+o.flash((0..2), \cf3 Color\cf0 .black, 1);\
+o.flash((0..2), \cf3 Color\cf0 .green, 1);\
+o.flash((0..2), \cf3 Color\cf0 (0.1, 0.4, 0.8), 0.1);\
+\
+o.set((0..2), \cf3 Color\cf0 .red)\
+(\
+o.setHSV(0, \cf3 Color\cf0 .green, 10, \{\cf4 "done"\cf0 .postln\});\
+o.set(1, \cf3 Color\cf0 .green, 10, \{\cf4 "done"\cf0 .postln\});\
+)\
+o.setHSV([0, 1, 2], \cf3 Color\cf0 .hsv(0, 1, 1), 10)\
+o.set(2, \cf3 Color\cf0 .green, 2)\
+\
+\
+o.setHSV(0, \cf3 Color\cf0 .red, 10, \{\
+	\cf4 "0 done"\cf0 .postln;\
+	o.setHSV(1, \cf3 Color\cf0 .green, 10, \{\
+	\cf4 "1 done"\cf0 .postln;\
+	o.setHSV(2, \cf3 Color\cf0 .blue, 10, \{\
+	\cf4 "2 done"\cf0 .postln;\
+	o.flash([0,1,2], \cf3 Color\cf0 .white, 0.1)\
+\})\})\})\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 // Multi Channel Expansion\cf0 \
+\
+o.set([0, 1, 2], \cf3 Color\cf0 (0, 0.4, 1), [2, 10, 2pi]);\
+o.set((0..2), \cf3 Color\cf0 (1, 0.5, 0.5), [2, 10, 2pi]);\
+\
+\
+o.set([0, 1, 2], [\cf3 Color\cf0 .new255(127, 255, 212), \cf3 Color\cf0 .new255(143, 188, 143).blend(\cf3 Color\cf0 .red, 0.7)], [1, 2, 3])\
+(\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 Tdef\cf0 (\cf5 \\lichtorgel\cf0 , \{loop\{\
+\
+	o.flash([0,1,2], \cf3 Color\cf0 .white, 0.05, action: \{\cf3 |this|\cf0  \
+		o.set(\
+			[0,1,2].choose, \
+			\cf3 Color\cf0 .rand(0.2, 0.9);\
+		)\
+	\});\
+	0.25.wait;\
+\
+\}\})\
+)\
+\cf3 Tdef\cf0 (\cf5 \\lichtorgel\cf0 ).play\
+\cf3 Tdef\cf0 (\cf5 \\lichtorgel\cf0 ).stop\
+\
+_____\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf0 SerialOrbs are proudly presented to you by vlispace inc.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf6 ///////// test virtual Orbs ///////\cf7 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f1\fs24 \cf7 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f2\fs18 \cf7 n = \cf8 NetAddr\cf7 .localAddr\
+o = \cf8 Orb\cf7 .new(n);\
+o.set(2, \cf8 Color\cf7 .white, 1)\
+o.set((0..2), \cf8 Color\cf7 .black, 1)\
+o.set((0..2), \{\cf8 Color\cf7 .red(1.0.rand)\}!3, 10)\
+o.set((0..2), \{\cf8 Color\cf7 .green(1.0.rand)\}!3, 1)\
+o.set((0..2), \{\cf8 Color\cf7 .blue(1.0.rand)\}!3, 0.1)\
+o.set((0..2), \{\cf8 Color\cf7 .yellow(1.0.rand)\}!3, 10)\
+o.set((0..2), \{\cf8 Color\cf7 .yellow(1)\}!3, 1)\
+o.setHSV((0..2), [\cf8 Color\cf7 .red, \cf8 Color\cf7 .green, \cf8 Color\cf7 .blue], 10)\
+o.setHSV((0..2), [\cf8 Color\cf7 .red, \cf8 Color\cf7 .green, \cf8 Color\cf7 .blue].scramble, 10)\
+o.setHSV((0..2), [\cf8 Color\cf7 (1,0,1), \cf8 Color\cf7 (0,1,1), \cf8 Color\cf7 (1,1, 0)].scramble, 10)\
+o.flash((0..2), [\cf8 Color\cf7 (1,0,1), \cf8 Color\cf7 (0,1,1), \cf8 Color\cf7 (1,1, 0)].scramble, 0.03)\
+\
+o.flash(0, \cf8 Color\cf7 .green, 0.1)\
+\
+o.set((0..2), \{\cf8 Color\cf7 .blue\}!3, 10)\
+\
+\
+}
