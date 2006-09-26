@@ -93,25 +93,24 @@ drawbacks:\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f2\b0\fs18 \cf0 \ulnone \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf3 TUIOmeta\cf0 .tuioClasses = [\cf3 Club\cf0 , \cf3 JugglersHead\cf0 ];\
 \
-t = \cf3 TUIOServer\cf0 (\cf4 "_ixyzuvw"\cf0 , \cf3 TUIOmeta\cf0 );\
-t.set(0, [0, 0.3, 0.7, 0.5, 0.2, 0.4, 0.1])\
+t = \cf3 TUIOServer\cf0 (\cf4 "_ixyzuvw"\cf0 , \cf3 TUIOdump\cf0 );\
+t.gui\
+\
+t.set(0, [3, 0.3, 0.7, 0.5, 0.2, 0.4, 0.1])\
 t.alive([0])\
+\
+t.set(1, [1, 0.41, 0.72, 0.5, 0.2, 0.4, 0.1])\
+t.alive([0,1])\
 t.visibleObjs\
 \
-t.set(0, [1, 0.3, 0.7, 0.5, 0.2, 0.4, 0.1])\
-t.alive([0])\
-t.visibleObjs\
-\
-t.set(1, [0, 0.3, 0.7, 0.5, 0.2, 0.4, 0.1]);\
-t.alive([0, 1]);\
+t.set(1, [0, 0.35, 0.17, 0.5, 0.2, 0.4, 0.1]);\
+t.set(2, [1, 0.15, 0.19, 0.5, 0.2, 0.4, 0.1]);\
+t.alive([0, 1, 2]);\
 t.visibleObjs;\
 \
 t.alive([]);\
 t.visibleObjs;\
 \
-t.gui\
 \
 t.visibleObjs}

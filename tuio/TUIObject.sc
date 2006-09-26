@@ -60,15 +60,16 @@ TUIObject { 	// abstract class
 	 */
 	var <>visible;
 	
-	var rotMat;			/// rotation matrix
+	var rotMat, homogeneMat;			/// rotation matrix
 	
 	/**
 	 * defines if tuio uses euler- or axis-notation for rotation. 
 	 * if format contains at least one of "u, v, w" -> axis-notation is used.
 	 */
 	var <>isEuler;
-				
-	var <>lastUpdated;
+
+//	var <>lastUpdated;
+	var <>isUpdated = true;
 	
 	classvar <formatDict;	// the dictionary containing the predefined formats
 	classvar <keyDict;		// dictionary mapping the keys to elements in the object
@@ -139,7 +140,7 @@ TUIObject { 	// abstract class
 			out.freeSpace	= aTUIO.freeSpace;
 			out.visible 	= aTUIO.visible;
 			out.isEuler 	= aTUIO.isEuler;
-			out.lastUpdated = aTUIO.lastUpdated;
+			out.isUpdated = aTUIO.isUpdated;
 			out;
 		})
 	}
@@ -148,6 +149,7 @@ TUIObject { 	// abstract class
 	 */
 	dirty {
 		rotMat = nil;
+		homogeneMat = nil;
 	}
 	free {
 		"TUIObject-free called".postln;
@@ -225,8 +227,45 @@ TUIObject { 	// abstract class
 		});		// fi notNil
 		^(rotMat ?? {[[1,0,0], [0,1,0], [0,0,1]]})
 	}
+	/// returns the homogene transformation martrix
+	homogeneMat {
+		var rotMat;
+		rotMat = this.rotMat;
+		homogeneMat.notNil.if({
+			homogeneMat
+		}, {
+			^homogeneMat = [
+				rotMat[0] ++ pos[0],
+				rotMat[1] ++ pos[1],
+				rotMat[2] ++ pos[2],
+				[0,0,0, 1]
+			];
+		});
+	}
+	transformPoint {|point|
+		point = point ++ 1;
+		
+		// make sure homogeneMat contains a valid transformation matrix
+		this.homogeneMat;
+		
+		^[
+			(point[0] *	homogeneMat[0][0]) + 
+			(point[1] *	homogeneMat[1][0]) + 
+			(point[2] *	homogeneMat[2][0]) + 
+			(			homogeneMat[3][0]),
+			
+			(point[0] * 	homogeneMat[0][1]) + 
+			(point[1] * 	homogeneMat[1][1]) + 
+			(point[2] * 	homogeneMat[2][1]) +
+			(		   	homogeneMat[3][1]),
+			
+			(point[0] * 	homogeneMat[0][2]) + 
+			(point[1] * 	homogeneMat[1][2]) + 
+			(point[2] * 	homogeneMat[2][2]) +
+			(		   	homogeneMat[3][2])
+		];
+	}
 }
-
 JITuio : TUIObject {
 	classvar <>action;
 	update {
@@ -267,7 +306,7 @@ TUIOdump : TUIObject {
 			"\tID :\t%\n" ++
 			"\tCls:\t%\n" ++
 			"\tPos:\t%\n" ++
-			"\tRos:\t%\n" ++			
+			"\tRot:\t%\n" ++			
 			"\tVel:\t%\n" ++
 			"\tAcc:\t%\n", id, classID, pos, this.rotMat, velocity, acceleration);
 	}	
