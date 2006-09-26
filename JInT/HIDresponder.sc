@@ -1,5 +1,6 @@
 /**
-	2006  Till Bovermann (IEM)
+	2006  Till Bovermann, AdC 
+	(IEM)
 */
 
 HIDnode {
