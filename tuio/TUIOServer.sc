@@ -14,6 +14,8 @@ Author:
 
 /*
 	Change
+		2006-09-25	moved tuio update after interaction update (now both in alive) to support
+					relative coordinate computation in one timestep. 
 		2006-09-15	added tStamp support; currently only set from within the language
 		2006-08-25	added interactive gui support
 		2006-08-21	added general methods for alive/set messages
@@ -103,6 +105,9 @@ TUIOServer {
  			aBox  = 
  				SCNumberBox(window, Rect(415, 110, 60, 20)).value_(0).step_(0.01).resize_(3);
  			
+ 			SCStaticText(window, Rect(400, 180, 10, 20)).string_("ext").resize_(3);
+ 			aBox  = 
+ 				SCNumberBox(window, Rect(415, 180, 60, 20)).value_(TUIO_GUIObj.oExtent).step_(1).resize_(3).action_{|me| TUIO_GUIObj.oExtent = me.value};
 			hasGUI = true;
 			^window.front;
 		}, {
@@ -174,7 +179,7 @@ TUIOServer {
 		this.alive(objectIDs -- ids.asSet);		
 	}
 	alive {|argObjectIDs|
-		var deadTuioIDs;
+		var deadTuioIDs, tuio;
 		
 		hasGUI.if{{
 			view.alive(argObjectIDs);
@@ -188,12 +193,23 @@ TUIOServer {
 		
 		// interaction support
 		interactions.do{|int| int.update};
+
+		// update tuio representations.
+		objectIDs.do{|id|
+			tuio = knownObjs[id];
+			tuio.isUpdated.if({
+				tuio.update; 
+				tuio.isUpdated = false
+			});
+		};
 	}
 	set {|id, args|
 		this.setWithFormat(realFormat, id, args)
 	}
 	setWithFormat {|actFormat, id, args|
-		var tuio;	
+		var tuio, now;	
+		
+		now = SystemClock.seconds;
 		
 		// get related object; add it, if it is not in the list
 		//tuio = knownObjs.at(this.class.pr_hashValue(id, format));
@@ -212,14 +228,14 @@ TUIOServer {
 		objectIDs.add(tuio.id);
 
 		tuio.visible = true;
-		tuio.tStamp = SystemClock.seconds;
-
+		tuio.tStamp = now;
+		tuio.isUpdated = true;
+		
 		knownObjs[id] = tuio;
-		tuio.update; // update tuio representation.
 		
 		// GUI Support
 		hasGUI.if{
-			{view.setObj(tuio);}.defer;
+			{view.setObj(tuio)}.defer;
 		};
 	}
 	

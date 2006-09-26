@@ -30,11 +30,12 @@ TUIOInteraction {
 TUIOIDistance : TUIOInteraction {
 	classvar <>distFunc;
 	interaction {|isValid|
-		var posA, posB;
+		var posA, posB, distance;
 		
 		posA = parts[0].pos[0..2].reject(_.isNil);
 		posB = parts[1].pos[0..2].reject(_.isNil);
 		
-		this.class.distFunc.value(posA.collect{|val, i| (val - posB[i]).squared}.sum.sqrt, isValid, parts);
+		distance = posA.collect{|val, i| (val - posB[i]).squared}.sum.sqrt;
+		this.class.distFunc.value(distance, isValid, parts);
 	}
 }

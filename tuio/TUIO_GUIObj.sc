@@ -13,7 +13,8 @@ Author:
 */
 
 TUIO_GUIObj{
-	var <obj, tuio, tServer, <>oExtent = 40, <>isEditable = true;
+	var <obj, tuio, tServer, <>isEditable = true;
+	classvar <>oExtent = 40;
 
 	*new {|parent, tuio, tuioServer|
 		^super.new.initGUIObj(parent, tuio, tuioServer)
