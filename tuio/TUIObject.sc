@@ -35,7 +35,7 @@ TUIObject { 	// abstract class
 	var <>classID;		/// object's class ID
 	var <>pos;   			/// position  
 	var <>tStamp;			/// time, object where last updated
-
+	var <>tServer;
 	/**
 	 * rotation if Axis notation is used
 	 * !!Attention: might be empty and defined in rotEuler !! 
@@ -141,6 +141,7 @@ TUIObject { 	// abstract class
 			out.visible 	= aTUIO.visible;
 			out.isEuler 	= aTUIO.isEuler;
 			out.isUpdated = aTUIO.isUpdated;
+			out.tServer = aTUIO.tServer;
 			out;
 		})
 	}
@@ -270,7 +271,7 @@ JITuio : TUIObject {
 	classvar <>action;
 	update {
 		this.process;
-		action.value(this);
+		this.class.action.value(this);
 	}
 	/** reimplement this when subclassing */
 	process {
@@ -290,6 +291,8 @@ TUIOmeta : JITuio {
 		keyDict[\i] = {|aTUIO, val| 
 			aTUIO = aTUIO.as(tuioClasses.wrapAt(val));
 			aTUIO.classID     = val;
+			aTUIO.tServer.replaceInteractionFor(aTUIO);
+			aTUIO
 		};
 		tuioClasses = [this];
 	}
