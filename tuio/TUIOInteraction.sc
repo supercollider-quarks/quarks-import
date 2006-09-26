@@ -13,7 +13,7 @@ Author:
 */
 
 TUIOInteraction {
-	var parts;
+	var <parts;
 	// abstract class
 	*new{|... parts| ^super.new.initInt(parts)}
 	initInt{|argParts| parts = argParts}

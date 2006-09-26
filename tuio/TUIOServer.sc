@@ -65,6 +65,22 @@ TUIOServer {
 			};
 		}
 	}
+	replaceInteractionFor {|anObj|
+		var id;
+		iClass !? {
+			// remove all ints containing objs with this id
+			interactions = interactions.select{|int|
+				int.parts.detect{|obj|
+					anObj.id == obj.id
+				}.isNil
+			};
+			knownObjs.do {|obj|
+				(obj === anObj).not.if{
+					interactions = interactions.add(iClass.new(anObj, obj));
+				}
+			};
+		}
+	}
 	start{
 		"TUIOServer-start: abstract method - no effect".warn
 	}
@@ -216,8 +232,9 @@ TUIOServer {
 		tuio = knownObjs.at(id);
 		tuio ?? {
 			tuio = tuioClass.new(format, id);
+			tuio.tServer = this;
 			this.add(tuio);
-//				"func in TUIO_OSCServer-pr_initTUIO_OSCServer: added an object".postln;
+//				"func in TUIO_OSCServer-pr_initTUIO_OSCServer: added an object". ;
 			tuio.isEuler = isEuler;				// set euler flag
 		};
 		
