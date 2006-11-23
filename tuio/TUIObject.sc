@@ -240,7 +240,7 @@ TUIObject { 	// abstract class
 			invRot = this.rotMat.flop;
 			invTrans = invRot.collect{|row|
 				(row * pos).sum
-			}
+			};
 			^homogeneMat = [
 				invRot[0] ++ invTrans[0].neg,
 				invRot[1] ++ invTrans[1].neg,
