@@ -1,0 +1,8 @@
+(
+	\name: "KrToggleEditor",
+	\path: "KrToggleEditor", // path relative to the root Quarks folder
+	\summary: "control rate editor with a 1.0 or 0.0 float value",
+	\author: "blackrain",
+	\organization: 	"realizedsound",
+	\url:           "http://www. realizedsound.net/"
+)

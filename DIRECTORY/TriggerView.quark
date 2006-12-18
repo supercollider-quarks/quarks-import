@@ -1,0 +1,8 @@
+(
+	\name: "TriggerView",
+	\path: "TriggerView", // path relative to the root Quarks folder
+	\summary: "a gui button/toggle",
+	\author: "blackrain",
+	\organization: 	"realizedsound",
+	\url:           "http://www. realizedsound.net/"
+)
