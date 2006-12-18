@@ -1,0 +1,8 @@
+(
+	\name: "SNBox",
+	\path: "SNBox", // path relative to the root Quarks folder
+	\summary: "mouse scrollable Number Box",
+	\author: "blackrain",
+	\organization: 	"realizedsound",
+	\url:           "http://www. realizedsound.net/"
+)
