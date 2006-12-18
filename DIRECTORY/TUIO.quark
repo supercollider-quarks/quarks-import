@@ -1,10 +1,11 @@
 (
 	\name: 			"TUIO",
-	\path: 			"tuio", // path relative to the root Quarks folder
+	\path: 			"tuio",
 	\summary:		"Tangible User Interface Object (TUIO) library.\nFor more information see http://tuio.lfsaw.de/",
 	\author: 		"Till Bovermann",
 	\organization: 	"Bielefeld University",
 	\country: 		"Germany",
 	\since: 		"2004",
+	\dependencies: [("lfsaw.de" -> 1.0)],
 	\url:           "http://tuio.lfsaw.de/"
 )
