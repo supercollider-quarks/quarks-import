@@ -1,0 +1,59 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red96\green96\blue96;
+\red0\green0\blue191;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf0 GD_ToolboxWindow a GUI Designer Tool\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\b0\fs24 \cf0 by scott micheli-smith.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs18 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs24 \cf0 GD_ToolboxWindow()\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\b0\fs18 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 GD_ToolboxWindow is a GUI designer tool that lets you draw objects in a window then generates the code from your design.\
+\
+keys:\
+	c		- clones an object or section of objects.\
+	delete	- deletes an object or section of objects.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs18 \cf2 	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 You can add/remove GUI Classes in 
+\f0\b GD_ToolboxWindow.sc
+\f1\b0  @ line 399 and recompile.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs18 \cf2 \
+\cf3 // example:\cf2 \
+\cf3 // we first install Knob, SNBox and VuView Objects from Quarks\cf2 \
+\
+[\cf4 "Knob"\cf2 , \cf4 "SNBox"\cf2 , \cf4 "VuView"\cf2 ].do(\{ \cf5 arg\cf2  quark; \cf5 Quarks\cf2 .install(quark) \})\
+\
+\cf5 Quarks\cf2 .listInstalled\
+\
+\cf3 // add these Objects to GD_ToolboxWindow's to palette.\cf2 \
+\cf3 // GD_ToolboxWindow.sc @ line 398:\cf2 \
+			  \cf5 SCDragSource\cf2 ,\
+			  \cf5 Knob\cf2 ,\
+			  \cf5 SNBox\cf2 ,\
+			  \cf5 VuView\cf2 \
+			  \cf3 //SCTextView,\cf2 \
+			  \cf3 //SCMovieView\cf2 \
+		 ];\
+	\}\
+\}\
+\
+\cf3 // recompile your library.\
+}
