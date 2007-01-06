@@ -10,6 +10,13 @@ Knob : SCUserView {
 	*paletteExample { arg parent, bounds;
 		^Knob(parent,bounds)
 	}
+	
+	*initClass {
+		GUI.cocoa.knob = Knob;
+		if (\JSCWindow.asClass.notNil) {
+			GUI.swing.knob = JKnob; 
+		}
+	}
 
 	init { arg parent, bounds;
 		super.init(parent, bounds);
