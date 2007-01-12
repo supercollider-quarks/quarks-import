@@ -1,0 +1,141 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green0\blue0;\red179\green179\blue255;
+\red191\green0\blue0;\red96\green96\blue96;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs36 \cf2 RedFingerprint\cf3 	
+\fs24 		a different plot
+\f1\b0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\fs36 \cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf3 \
+
+\f1\b0\fs24 a class that works with objects like arrays, envelopes and wavetables.  it translates them to length/angle pairs and can then plot these in a separate window.\
+\
+	
+\f0\b *new(array, normalize= \cf2 true\cf3 )
+\f1\b0 \
+		do the translation and create a new fingerprint object\
+	
+\f0\b <>points
+\f1\b0 \
+		coordinates as points\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b \cf3 	gui(name, bounds, scale= 1)
+\f1\b0 \
+		create a new window and plot the points
+\f2\fs18 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 \
+l= \{1.0.rand\}.dup(100)				\cf5 //an array with random values\cf3 \
+a= \cf2 RedFingerprint\cf3 (l)				\cf5 //a fingerprint object\cf3 \
+a.points							\cf5 //coordinates\cf3 \
+a.gui							\cf5 //plot\cf3 \
+a.gui(scale:0.33)\
+\
+l= \cf2 Env\cf3 .perc.asSignal\
+a= \cf2 RedFingerprint\cf3 (l)\
+a.gui\
+l= \cf2 Env\cf3 .sine.asSignal\
+a= \cf2 RedFingerprint\cf3 (l)\
+a.gui\
+\
+l= \cf2 Array\cf3 .series(90, 0.1, 0.1)		\cf5 //90 values between 0.1 and 9\cf3 \
+a= \cf2 RedFingerprint\cf3 (l, \cf2 true\cf3 )			\cf5 //normalize\cf3 \
+a.gui\
+l= l.normalize\
+a= \cf2 RedFingerprint\cf3 (l, \cf2 true\cf3 )\
+a.gui\
+\
+\
+\cf5 //--shortcuts\cf3 \
+\{1.0.rand\}.dup(100).fingerprint.gui\
+\cf2 Array\cf3 .series(90, 0.1, 0.1).fingerprint.gui\
+\cf2 Array\cf3 .series(90, 0.1, 0.1).normalize.fingerprint.gui\
+\cf2 Array\cf3 .series(300, 0.1, 0.1).fingerprint.gui\
+\cf2 Pseq\cf3 ([13, 0, 3, 3.44], 2).fingerprint.gui\
+\
+\cf2 Env\cf3 .perc.fingerprint(\cf2 true\cf3 , 200).gui\
+\cf2 Env\cf3 .perc(0.4).fingerprint.gui\
+\cf2 Env\cf3 .perc(0.4, curve:2).fingerprint.gui\
+\cf2 Env\cf3 .perc(0.4, curve:-2).fingerprint.gui\
+\cf2 Env\cf3 .sine.fingerprint.gui\
+\cf2 Env\cf3 .adsr.fingerprint.gui\
+\cf2 Wavetable\cf3 .sineFill(128, 1/[1, 2, 3, 4]).fingerprint.gui\
+\cf2 Wavetable\cf3 .chebyFill(128, [0.3, -0.8, 1.1]).fingerprint.gui\
+\cf2 Wavetable\cf3 .chebyFill(1024, \{2.0.rand2\}.dup(3)).fingerprint.gui(\cf6 "wavetable"\cf3 , \cf2 Rect\cf3 (50, 50, 450, 450))\
+\
+a= \cf2 Env\cf3 .adsr(0.2, 0.02).fingerprint\
+a.gui(background: \cf2 Color\cf3 .red(0.5, 0.5), width: 5)\
+a.gui(scale: 0.75, background: \cf2 Color\cf3 .white, color: \cf2 Color\cf3 .red, width: 5)\
+\
+\
+\cf5 //--animation\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 (\
+\cf2 var\cf3  win, scale, points, cnt= 0, width= 400, height= 400;\
+win= \cf2 GUI\cf3 .window.new(\cf6 "fingerprint"\cf3 , \cf2 Rect\cf3 (100, 100, width, height), \cf2 false\cf3 ).front;\
+win.view.background= \cf2 Color\cf3 .black;\
+scale= width/4;\
+win.drawHook= \{\
+	\cf2 var\cf3  a= sin(cnt.fold(0, 100)/2pi).linlin(-1, 1, 0.01, 1);\
+	\cf2 var\cf3  b= sin(cnt.fold(0, 90)/2pi).linlin(-1, 1, 0.1, cnt.fold(0, 50)/25);\
+	points= \cf2 Wavetable\cf3 .sineFill(256, 1/[1, 2, a, b]).fingerprint.points;\
+	\cf2 GUI\cf3 .pen.translate(win.bounds.width/2, win.bounds.height/2);\
+	\cf2 GUI\cf3 .pen.strokeColor_(\cf2 Color\cf3 .white);\
+	\cf2 GUI\cf3 .pen.moveTo(points[0]*scale);\
+	points.do\{\cf2 |x|\cf3  \cf2 GUI\cf3 .pen.lineTo(x*scale)\};\
+	\cf2 GUI\cf3 .pen.stroke;\
+	cnt= cnt+0.5;\
+\};\
+\{while\{win.isClosed.not\} \{win.refresh; (1/25).wait\}\}.fork(\cf2 AppClock\cf3 );\
+)\
+\
+\
+\cf5 //--sound\cf3 \
+(\
+s.waitForBoot\{\
+	b= \cf2 Buffer\cf3 .alloc(s, 256, 1);\
+	\cf2 SynthDef\cf3 (\cf7 \\wormsnd\cf3 , \{\cf2 |out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|\cf3 \
+		\cf2 Out\cf3 .ar(out, \cf2 Pan2\cf3 .ar(\cf2 OscN\cf3 .ar(bufnum, freq, 0, amp), pan));\
+	\}).send(s);\
+\};\
+)\
+\
+(\
+\cf2 var\cf3  n= 5, method= \cf7 \\chebyFill\cf3 , scale= 190,\
+	win, points, cnt= 100, wt0, wt1, syn;\
+syn= \cf2 Synth\cf3 (\cf7 \\wormsnd\cf3 , [\cf7 \\bufnum\cf3 , b.bufnum, \cf7 \\amp\cf3 , 1]);\
+win= \cf2 GUI\cf3 .window.new(\cf6 "fingerprint"\cf3 , \cf2 Rect\cf3 (100, 100, 400, 400), \cf2 false\cf3 );\
+win.view.background= \cf2 Color\cf3 .white;\
+wt1= \cf2 Wavetable\cf3 .perform(method, b.numFrames, \{1.0.rand2\}.dup(n));\
+win.drawHook= \{\
+	if(cnt==100, \{\
+		wt0= wt1;\
+		n= 2.rrand(20);\
+		wt1= \cf2 Wavetable\cf3 .perform(method, b.numFrames, \{1.0.rand2\}.dup(n));\
+		cnt= 0;\
+	\});\
+	wt0= wt0.blend(wt1, cnt/1000);\
+	b.sine1(wt0, \cf2 false\cf3 , \cf2 false\cf3 , \cf2 false\cf3 );\
+	syn.set(\cf7 \\freq\cf3 , wt0.mean*100+100);\
+	points= wt0.fingerprint.points;\
+	\cf2 GUI\cf3 .pen.width_(2);\
+	\cf2 GUI\cf3 .pen.translate(win.bounds.width/2, win.bounds.height/2);\
+	\cf2 GUI\cf3 .pen.strokeColor_(\cf2 Color\cf3 .blue(0.5, 0.5));\
+	\cf2 GUI\cf3 .pen.moveTo(points[0]*scale);\
+	points.do\{\cf2 |x|\cf3  \cf2 GUI\cf3 .pen.lineTo(x*scale)\};\
+	\cf2 GUI\cf3 .pen.stroke;\
+	cnt= cnt+1;\
+\};\
+win.front;\
+\{while\{win.isClosed.not\} \{win.refresh; (1/25).wait\}\}.fork(\cf2 AppClock\cf3 );\
+)\
+}
