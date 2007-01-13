@@ -1,0 +1,65 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //particlesystem.\cf3 \
+\cf2 //with mouse controlling world gravity and system position\cf3 \
+\cf2 //with simple grain sounds mapped to each particle.\cf3 \
+\
+(\
+s.waitForBoot\{\
+\
+	\cf4 var\cf3  width= 300, height= 300, w, world,\
+		sys, synths;\
+	\
+	\cf2 //--synthesis\cf3 \
+	\cf4 SynthDef\cf3 (\cf5 \\sine\cf3 , \{\cf4 |out= 0, freq= 400, fm= 1, beat= 1, amp= 0, pan= 0, gate= 1|\cf3 \
+		\cf4 var\cf3  z, e;\
+		e= \cf4 EnvGen\cf3 .ar(\cf4 Env\cf3 .asr(0.01, 1, 0.02), gate, doneAction:2);\
+		z= \cf4 SinOsc\cf3 .ar(freq+\cf4 SinOsc\cf3 .ar(fm, 0, beat), 0, \cf4 Lag\cf3 .kr(amp, 0.1));\
+		\cf4 Out\cf3 .ar(out, \cf4 Pan2\cf3 .ar(z*e, pan));\
+	\}).send(s);\
+	synths= ();									\cf2 //keep track of synths with this dictionary\cf3 \
+	\
+	\cf2 //--world\cf3 \
+	w= \cf4 GUI\cf3 .redWindow.new(\cf6 "particlesystem test2"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	world= \cf4 RedWorld3\cf3 (\cf4 RedVector2D\cf3 [width, height], 0, 20, 1.25); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--system\cf3 \
+	sys= \cf4 RedParticleSystem\cf3 .new;\
+	sys.removeAction_\{\cf4 |o|\cf3  synths.at(o.hash).release\};	\cf2 //free synth when particle dies\cf3 \
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		\
+		\cf2 //--create a new particle and update the old ones\cf3 \
+		\cf4 var\cf3  newPart= \cf4 RedParticle\cf3 (world, w.mouse+5.rand2, 0, \cf4 RedVector2D\cf3 [2.rand2, -10.rand], 1.5, 5.rand).age_(40.rrand(50));\
+		sys.add(newPart);							\cf2 //add it to the system\cf3 \
+		synths.put(newPart.hash, \cf4 Synth\cf3 (\cf5 \\sine\cf3 ));		\cf2 //create a corresponding synth\cf3 \
+		sys.addForce(world.gravity);				\cf2 //world gravity for all particles\cf3 \
+		sys.update;								\cf2 //update the system and thereby all objects\cf3 \
+		\
+		sys.do\{\cf4 |o|\cf3 								\cf2 //iterate all particles\cf3 \
+			synths.at(o.hash).set(					\cf2 //find corresponding synth and set params\cf3 \
+				\cf5 \\freq\cf3 , 200.rrand(o.loc[1]+200),\
+				\cf5 \\pan\cf3 , o.loc[0]/width*2-1,\
+				\cf5 \\beat\cf3 , o.mass*(o.vel.mag*10),\
+				\cf5 \\fm\cf3 , o.mass*1000,\
+				\cf5 \\amp\cf3 , (1/40)*(o.age/50)*(o.vel.mag/10)\
+			)\
+		\};\
+		\
+		\cf2 //--mouse\cf3 \
+		world.gravity_(\cf4 RedVector2D\cf3 .newFrom(w.mouse/([width, height])-0.5));\
+		\
+		\cf2 //--render\cf3 \
+		sys.do\{\cf4 |o|\cf3 								\cf2 //iterate all particles\cf3 \
+			\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .grey(o.age/50, 1));\
+			\cf4 GUI\cf3 .pen.fillOval(\cf4 Rect\cf3 .aboutRedObject2D(o));\
+		\};\
+	\}.play;\
+\}\
+)\
+}

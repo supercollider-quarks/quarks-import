@@ -1,0 +1,109 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //if preferred freq match with the human +-100 then play sound and move towards target\cf3 \
+\cf2 //sound: audio input, matching agent's sounds\cf3 \
+\
+(\
+s.waitForBoot\{\
+	\cf4 var\cf3  width= 640, height= 480, w, world, n= 20,\
+		synths, buf, bus, human;\
+	\
+	\cf2 //--world\cf3 \
+	\cf4 Routine\cf3 \{\
+	w= \cf4 GUI\cf3 .redWindow.new(\cf5 "track test1"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	world= \cf4 RedWorld3\cf3 (\cf4 RedVector2D\cf3 [width, height], damping:0.5); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--synthesis\cf3 \
+	\cf4 SynthDef\cf3 (\cf6 \\beating\cf3 , \{\cf4 |out= 0, freq= 400, beat= 1, lp= 800, amp= 0, pan= 0|\cf3 \
+		\cf4 var\cf3  z;\
+		z= \cf4 RLPF\cf3 .ar(\cf4 Mix\cf3 (\cf4 LFSaw\cf3 .ar(freq+[0, beat], 0, amp)), lp);\
+		\cf4 Out\cf3 .ar(out, \cf4 Pan2\cf3 .ar(z, pan));\
+	\}).send(s);\
+	buf= \cf4 Buffer\cf3 .alloc(s, 2048, 1);\
+	\cf4 SynthDef\cf3 (\cf6 \\human\cf3 , \{\cf4 |out, bufnum|\cf3  \cf4 Out\cf3 .kr(out, \cf4 RedTrack\cf3 .kr(\cf4 AudioIn\cf3 .ar, bufnum))\}).send(s);\
+	1.wait;\
+	\cf4 Synth\cf3 (\cf6 \\human\cf3 , [\cf6 \\out\cf3 , 10, \cf6 \\bufnum\cf3 , buf.bufnum]);	\cf2 //output 6 ch control data from tracker\cf3 \
+	bus= \cf4 Bus\cf3 (\cf6 \\control\cf3 , 10, 6);						\cf2 //access control data at ch 10-15\cf3 \
+	\
+	\cf2 //--objects\cf3 \
+	\{\cf4 |i|\cf3 \
+		\cf4 var\cf3  loc= \cf4 RedVector2D\cf3 [width, height].rand;		\cf2 //initial xy location\cf3 \
+		\cf4 var\cf3  mass= 2.rrand(20);\
+		\cf4 var\cf3  a= \cf4 RedAgent\cf3 (world, loc, \cf4 RedVector2D\cf3 [0.001, 0.001].rand2, \cf4 nil\cf3 , mass, mass); \cf2 //world,loc,vel,acc,mass,size\cf3 \
+		a.maxForce_(1);\
+		a.wdistance_(2);\
+		a.wchange_(0.9);\
+		a.state_((\
+			\cf6 \\synth\cf3 : \cf4 Synth\cf3 (\cf6 \\beating\cf3 ),\
+			\cf6 \\prefFreq\cf3 : mass.linexp(2, 20, 2000, 200),	\cf2 //a favourite pitch depends on mass\cf3 \
+			\cf6 \\target\cf3 : \cf4 nil\cf3 							\cf2 //location for that pitch if found\cf3 \
+		));\
+		a.sense_\{\
+			\cf4 var\cf3  listen= human.state.freq;\
+			if(listen>0 and:\{(a.state.prefFreq-listen).abs<100\}, \{\
+				a.state.target= human.loc;\
+				a.state[\cf6 \\synth\cf3 ].set(\
+					\cf6 \\freq\cf3 , a.state.prefFreq,\
+					\cf6 \\amp\cf3 , 1/n*(width-a.loc.distance(human.loc)/width).pow(2)\
+				);\
+			\}, \{\
+				a.state[\cf6 \\synth\cf3 ].set(\cf6 \\amp\cf3 , 0);\
+				a.state.target= \cf4 nil\cf3 ;\
+				a.addForceWander2D;\
+			\});\
+		\};\
+		a.act_\{\
+			if(a.state.target.notNil, \{\
+				a.addForceArrive(a.state.target);\
+			\});\
+		\}\
+		\
+	\}.dup(n);\
+	human= \cf4 RedAgent\cf3 (world, \cf4 RedVector2D\cf3 [100, 100]);\
+	human.state_((\
+		\cf6 \\event\cf3 : 0,\
+		\cf6 \\delta\cf3 : 0,\
+		\cf6 \\freq\cf3 : 0,\
+		\cf6 \\amp\cf3 : 0,\
+		\cf6 \\timbre\cf3 : 0,\
+		\cf6 \\centroid\cf3 : 0\
+	));\
+	human.sense_\{									\cf2 //listen and update state\cf3 \
+		bus.getn(6, \{\cf4 |arr|\cf3 \
+			human.state.event= arr[0];\
+			human.state.delta= arr[1];\
+			human.state.freq= arr[2];\
+			human.state.amp= arr[3];\
+			human.state.timbre= arr[4];\
+			human.state.centroid= arr[5];\
+		\})\
+	\};\
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		world.objects.do\{\cf4 |o, i|\cf3 						\cf2 //iterate all objects in this world\cf3 \
+			human.loc= w.mouse;\
+			o.update;								\cf2 //object update\cf3 \
+			world.contain(o);						\cf2 //keep within world borders\cf3 \
+			\
+			\cf2 //--render\cf3 \
+			if(o.state.event.notNil, \{\
+				\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .blue(0.7, 0.5));\
+			\}, \{\
+				if(o.state.target.notNil, \{\
+					\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .yellow);\
+				\}, \{\
+					\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .grey(0.7, 0.5));\
+				\});\
+			\});\
+			\cf4 GUI\cf3 .pen.fillOval(\cf4 Rect\cf3 .aboutRedObject2D(o));\
+		\};\
+		\cf2 //human.state.freq.postln;\cf3 \
+	\}.play;\
+	\}.play(\cf4 AppClock\cf3 );\
+\})\
+}

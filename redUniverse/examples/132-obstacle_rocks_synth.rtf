@@ -1,0 +1,71 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //test of many obstacles.\cf3 \
+\cf2 //with sound as they hit rocks\cf3 \
+\
+(\
+s.waitForBoot\{\
+	\cf4 var\cf3  width= 300, height= 300, w, wgrav, world, n= 6,\
+		rocks= 10;\
+	\
+	\cf2 //--synthesis\cf3 \
+	\cf4 SynthDef\cf3 (\cf5 \\pmdrim\cf3 , \{\cf4 |out= 0, freq= 400, freq2= 200, dur= 0.1, amp= 1, pan= 0|\cf3 \
+		\cf4 var\cf3  z, e;\
+		e= \cf4 EnvGen\cf3 .ar(\cf4 Env\cf3 .perc(0.01, dur), doneAction:2);\
+		z= \cf4 SinOsc\cf3 .ar(freq, \cf4 SinOsc\cf3 .ar(\cf4 XLine\cf3 .ar(freq2, 1, dur), 0, pi), amp)+\cf4 ClipNoise\cf3 .ar(e*0.001);\
+		\cf4 Out\cf3 .ar(out, \cf4 Pan2\cf3 .ar(z*e, pan));\
+	\}).send(s);\
+	\
+	\cf2 //--world\cf3 \
+	w= \cf4 GUI\cf3 .redWindow.new(\cf6 "rocks pinball test"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	wgrav= \cf4 RedVector2D\cf3 [0, 0.98];					\cf2 //world xy gravity\cf3 \
+	world= \cf4 RedWorld3\cf3 (\cf4 RedVector2D\cf3 [width, height], wgrav, 15, 0.5); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--objects\cf3 \
+	\{\
+		\cf4 var\cf3  loc= \cf4 RedVector2D\cf3 [250, 10].rand;			\cf2 //initial xy location\cf3 \
+		\cf4 var\cf3  vel= \cf4 RedVector2D\cf3 [3.5, 0].rand;			\cf2 //initial velocity\cf3 \
+		\cf4 var\cf3  acc= \cf4 RedVector2D\cf3 [0, 0];					\cf2 //initial acceleration\cf3 \
+		\cf4 RedObject\cf3 (world, loc, vel, acc, 1.5, 10); \cf2 //world,loc,vel,acc,mass,size\cf3 \
+	\}.dup(n);\
+	\{\cf4 RedRock\cf3 (world, \cf4 RedVector2D\cf3 [width.rand, height].rand)\}.dup(rocks);\
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		world.objects.do\{\cf4 |o, i|\cf3 						\cf2 //iterate all objects in this world\cf3 \
+			o.addForce(o.world.gravity);			\cf2 //add gravity\cf3 \
+			world.objects.do\{\cf4 |oo, j|\cf3 \
+				if(i!=j, \{						\cf2 //do not collide with yourself\cf3 \
+					if(o.collide(oo), \{\
+						if(oo.species!=o.species, \{\
+							\cf4 Synth\cf3 (\cf5 \\pmdrim\cf3 , [\
+								\cf5 \\freq\cf3 , (height-o.loc[1]/height).linexp(0, 1, 100, 400),\
+								\cf5 \\freq2\cf3 , (i/n).linexp(200, 300),\
+								\cf5 \\amp\cf3 , 0.1,\
+								\cf5 \\pan\cf3 , o.loc[0]/width*2-1\
+							]);\
+						\});\
+					\});\
+				\})\
+			\};\
+			o.update;								\cf2 //object update\cf3 \
+			world.contain(o);						\cf2 //keep within world borders\cf3 \
+			\
+			\cf2 //--render\cf3 \
+			if(o.isKindOf(\cf4 RedRock\cf3 ), \{\
+				\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .blue(1, 0.5));\
+				\cf4 GUI\cf3 .pen.fillOval(\cf4 Rect\cf3 .aboutRedObject2D(o));\
+			\}, \{\
+				\cf4 GUI\cf3 .pen.strokeColor_(\cf4 Color\cf3 .grey(0.7, 0.5));\
+				\cf4 GUI\cf3 .pen.strokeOval(\cf4 Rect\cf3 .aboutRedObject2D(o));\
+			\});\
+		\}\
+	\}.play;\
+\}\
+)\
+\
+}

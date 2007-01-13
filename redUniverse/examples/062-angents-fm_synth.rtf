@@ -1,0 +1,164 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //agents.  swap in new agents now and then\cf3 \
+\cf2 //with mouse controlling world gravity\cf3 \
+\cf2 //with sound where fmamount and rmamount depends on the distance to other agents\cf3 \
+\
+(\
+s.waitForBoot\{\
+	\cf4 var\cf3  width= 300, height= 300, w, wgrav, world, n= 4,\
+		objsFunc, fmbusses, rmbusses, delay, dist, drums;\
+	\
+	\cf2 //--synthesis\cf3 \
+	\cf4 Routine\cf3 \{\
+	\cf4 SynthDef\cf3 (\cf5 \\teknoDrum\cf3 , \{\cf4 |out= 0, t_trig= 0, fmbusin= 50, fmbusout= 60, rmbusin= 70, rmbusout= 80, fmsend= 0, fmamount= 0, rmsend= 0, rmamount= 0, freq= 60, atk= 0.01, dec= 0.2, pitchatk= 0.01, pitchdec= 0.2, env= 0, pol= 1, amp= 1, pan= 0|\cf3 \
+		\cf4 var\cf3  dry, wet, src, fmod, rmod, freq2, aenv, penv;\
+		fmod= \cf4 InFeedback\cf3 .ar(fmbusin, 1)*(fmamount*5000);\
+		rmod= \cf4 InFeedback\cf3 .ar(rmbusin, 1);\
+		penv= \cf4 EnvGen\cf3 .kr(\cf4 Env\cf3 .perc(pitchatk, pitchdec), t_trig, env*pol);\
+		freq2= freq+penv;\
+		aenv= \cf4 EnvGen\cf3 .kr(\cf4 Env\cf3 .perc(atk, dec), t_trig, t_trig);\
+		dry= \cf4 SinOsc\cf3 .ar(freq2+fmod, 0, aenv);\
+		wet= dry*rmod;\
+		src= \cf4 XFade2\cf3 .ar(dry, wet, rmamount*2-1);\
+		\cf4 Out\cf3 .ar(fmbusout, src*fmsend);\
+		\cf4 Out\cf3 .ar(rmbusout, src*rmsend);\
+		\cf4 Out\cf3 .ar(out, \cf4 Pan2\cf3 .ar(src, pan, amp));\
+	\}).store;\
+	\
+	\cf4 SynthDef\cf3 (\cf5 \\teknoDist\cf3 , \{\cf4 |in= 0, out= 0, lp= 127, hp= 0, res= 0.3, lfo= 0.1, dp= 0, env= 0.01, spd= 3, dis= 0, mix= 0|\cf3 \
+		\cf4 var\cf3  dry, wet, lfosc, envfollow;\
+		dry= \cf4 Limiter\cf3 .ar(\cf4 In\cf3 .ar(in, 2));\
+		envfollow= dry.mean;\
+		envfollow= ((envfollow<0)*(envfollow* -1))+((envfollow>0)*(envfollow));\
+		envfollow= \cf4 Clip\cf3 .ar(\cf4 LPF\cf3 .ar(envfollow, spd, 2), 0, 1);\
+		envfollow= envfollow*env;\
+		lfosc= \cf4 SinOsc\cf3 .ar(lfo, 0, dp)+envfollow;\
+		wet= \cf4 RHPF\cf3 .ar(\cf4 RLPF\cf3 .ar(dry, (lp+lfosc).midicps, res), hp.midicps, 2);\
+		wet= (wet*(dis+1)).softclip;\
+		\cf4 Out\cf3 .ar(out, \cf4 XFade2\cf3 .ar(dry, wet, mix*2-1));\
+	\}, #[0, 0, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0]).store;\
+	\
+	\cf4 SynthDef\cf3 (\cf5 \\teknoDelay\cf3 , \{\cf4 |in= 0, out= 0, lp= 127, hp= 0, lfo= 0.1, dp= 0, bpm= 120, sub= 2, fn= 0, fb= 0.1, mix= 0|\cf3 \
+		\cf4 var\cf3  dry, wet, lfosc, ms, feedback, del;\
+		feedback= \cf4 LocalIn\cf3 .ar(2);\
+		ms= bpm.pow(-1)/4*sub*60000;\
+		lfosc= \cf4 SinOsc\cf3 .ar(lfo, 0, dp);\
+		del= \cf4 DelayC\cf3 .ar(feedback, 2, ((lfosc+ms)-(ms/sub*fn)/1000).clip(0, 2), fb);\
+		dry= \cf4 Limiter\cf3 .ar(\cf4 In\cf3 .ar(in, 2));\
+		wet= \cf4 RHPF\cf3 .ar(\cf4 RLPF\cf3 .ar(dry, lp.midicps, 1), hp.midicps, 1);\
+		wet= wet+del;\
+		\cf4 LocalOut\cf3 .ar(wet);\
+		\cf4 Out\cf3 .ar(out, \cf4 XFade2\cf3 .ar(dry, wet, mix*2-1));\
+	\}, #[0, 0, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0]).store;\
+\
+	\cf4 SynthDef\cf3 (\cf5 \\teknoBusses\cf3 , \{\cf4 |in= 80, out= 70|\cf3 \
+		\cf4 var\cf3  input, mix0, mix1, mix2, mix3;\
+		input= \cf4 In\cf3 .ar(in, 4);\
+		mix0= input[1]+input[2]+input[3];\
+		mix1= input[0]+input[2]+input[3];\
+		mix2= input[0]+input[1]+input[3];\
+		mix3= input[0]+input[1]+input[2];\
+		\cf4 Out\cf3 .ar(out, [mix0, mix1, mix2, mix3]);\
+	\}).store;\
+	0.5.wait;\
+	\
+	fmbusses= \cf4 Synth\cf3 (\cf5 \\teknoBusses\cf3 , [\cf5 \\out\cf3 , 50, \cf5 \\in\cf3 , 60]);\
+	rmbusses= \cf4 Synth\cf3 (\cf5 \\teknoBusses\cf3 , [\cf5 \\out\cf3 , 70, \cf5 \\in\cf3 , 80]);\
+	delay= \cf4 Synth\cf3 (\cf5 \\teknoDelay\cf3 , [\cf5 \\out\cf3 , 0, \cf5 \\in\cf3 , 12, \cf5 \\mix\cf3 , 0.3]);\
+	dist= \cf4 Synth\cf3 (\cf5 \\teknoDist\cf3 , [\cf5 \\out\cf3 , 12, \cf5 \\in\cf3 , 10]);\
+	drums= [\
+		\cf4 Synth\cf3 (\cf5 \\teknoDrum\cf3 , [\cf5 \\out\cf3 , 10, \cf5 \\fmbusin\cf3 , 50, \cf5 \\fmbusout\cf3 , 60, \cf5 \\rmbusin\cf3 , 70, \cf5 \\rmbusout\cf3 , 80]),\
+		\cf4 Synth\cf3 (\cf5 \\teknoDrum\cf3 , [\cf5 \\out\cf3 , 10, \cf5 \\fmbusin\cf3 , 51, \cf5 \\fmbusout\cf3 , 61, \cf5 \\rmbusin\cf3 , 71, \cf5 \\rmbusout\cf3 , 81]),\
+		\cf4 Synth\cf3 (\cf5 \\teknoDrum\cf3 , [\cf5 \\out\cf3 , 10, \cf5 \\fmbusin\cf3 , 52, \cf5 \\fmbusout\cf3 , 62, \cf5 \\rmbusin\cf3 , 72, \cf5 \\rmbusout\cf3 , 82]),\
+		\cf4 Synth\cf3 (\cf5 \\teknoDrum\cf3 , [\cf5 \\out\cf3 , 10, \cf5 \\fmbusin\cf3 , 53, \cf5 \\fmbusout\cf3 , 63, \cf5 \\rmbusin\cf3 , 73, \cf5 \\rmbusout\cf3 , 83]),\
+	];\
+	\
+	\cf2 //--world\cf3 \
+	w= \cf4 GUI\cf3 .redWindow.new(\cf6 "agents test tekno"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	wgrav= \cf4 RedVector2D\cf3 [0, 0.98];\
+	world= \cf4 RedWorld\cf3 (\cf4 RedVector2D\cf3 [width, height], wgrav, 8, 0.1); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--objects\cf3 \
+	objsFunc= \{									\cf2 //for creating new agents\cf3 \
+		\cf4 var\cf3  loc= \cf4 RedVector2D\cf3 [width, height].rand;\
+		\cf4 var\cf3  obj= \cf4 RedAgent\cf3 (world, loc, \cf4 RedVector2D\cf3 [0.5, 0.5].rand2, \cf4 nil\cf3 , 1, 10)\
+			.maxForce_(1.2).wchange_(0.9).wdistance_(5).wradius_(10);\
+		obj.state_((								\cf2 //init state with random values\cf3 \
+			\cf5 \\fmamount\cf3 : 0,\
+			\cf5 \\fmsend\cf3 : 1,\
+			\cf5 \\rmamount\cf3 : 0,\
+			\cf5 \\rmsend\cf3 : 1,\
+			\cf5 \\freq\cf3 : 128.rand.midicps,\
+			\cf5 \\atk\cf3 : 0.1.rand,\
+			\cf5 \\dec\cf3 : 0.4.rand,\
+			\cf5 \\pitchatk\cf3 : 0.1.rand,\
+			\cf5 \\pitchdec\cf3 : 0.3.rand,\
+			\cf5 \\env\cf3 : 128.rand.midicps,\
+			\cf5 \\pol\cf3 : [-1, 1].choose,\
+			\cf5 \\amp\cf3 : \cf4 Pseq\cf3 (\{1.0.rand2.round(0.25).clip(0, 1)\}.dup(16), \cf4 inf\cf3 ).asStream,\
+			\cf5 \\level\cf3 : 0\
+		));\
+	\};\
+	objsFunc.dup(n);								\cf2 //create n agents for startup\cf3 \
+	\
+	\cf2 //--sequence\cf3 \
+	\cf4 Tdef\cf3 (\cf5 \\seq\cf3 , \{									\cf2 //play the state of the agents\cf3 \
+		loop\{\
+			drums.do\{\cf4 |d, i|\cf3 						\cf2 //all 4 instruments\cf3 \
+				\cf4 var\cf3  amp= world.objects[i].state[\cf5 \\amp\cf3 ].next;\
+				world.objects[i].state[\cf5 \\level\cf3 ]= amp;\
+				if(amp>0, \{d.set(\cf5 \\t_trig\cf3 , 1, \cf5 \\amp\cf3 , amp)\});\
+			\};\
+			(1/(120/60)/4).wait					\cf2 //tempo\cf3 \
+		\}\
+	\}).play;\
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		\cf4 var\cf3  replace= world.objects.choose;			\cf2 //pick an agent at random for possible replace\cf3 \
+		if(0.005.coin, \{							\cf2 //to replace or not to replace...\cf3 \
+			replace.postln;\
+			world.remove(replace);\
+			objsFunc.value;						\cf2 //die and replace with new one\cf3 \
+		\});\
+		world.gravity_(w.mouse/\cf4 RedVector2D\cf3 [width, height]-0.5);\
+		world.objects.do\{\cf4 |o, i|\cf3 \
+			o.addForceWander2D;\
+			o.addForceSeek(world.objects.wrapAt(i-1).loc);\
+			world.objects.do\{\cf4 |oo, j|\cf3 \
+				if(i!=j, \{\
+					o.state[\cf5 \\fmamount\cf3 ]= (width-o.loc.distance(oo.loc)/width).clip(0, 1);\
+					o.state[\cf5 \\rmamount\cf3 ]= (width-o.loc.distance(oo.loc)/width).clip(0, 0.6);\
+				\});\
+			\};\
+			\
+			o.addForce(world.gravity);\
+			o.update;\
+			world.contain(o);\
+			drums[i].set(\
+				\cf5 \\fmamount\cf3 , o.state[\cf5 \\fmamount\cf3 ],\
+				\cf5 \\fmsend\cf3 , o.state[\cf5 \\fmsend\cf3 ],\
+				\cf5 \\rmamount\cf3 , o.state[\cf5 \\rmamount\cf3 ],\
+				\cf5 \\rmsend\cf3 , o.state[\cf5 \\rmsend\cf3 ],\
+				\cf5 \\freq\cf3 , o.state[\cf5 \\freq\cf3 ],\
+				\cf5 \\atk\cf3 , o.state[\cf5 \\atk\cf3 ]*(3-o.vel.mag).clip(0, 1),\
+				\cf5 \\dec\cf3 , o.state[\cf5 \\dec\cf3 ]*(1000-o.age/1000).clip(0, 1),\
+				\cf5 \\pitchatk\cf3 , o.state[\cf5 \\pitchatk\cf3 ]*(o.wtheta/2pi),\
+				\cf5 \\pitchdec\cf3 , o.state[\cf5 \\pitchdec\cf3 ],\
+				\cf5 \\env\cf3 , height-o.loc[1],	\cf2 //\\env, o.state[\\env],\cf3 \
+				\cf5 \\pol\cf3 , o.state[\cf5 \\pol\cf3 ],\
+				\cf5 \\pan\cf3 , o.loc[0]/width*2-1\
+			);\
+			\
+			\cf2 //--render\cf3 \
+			\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .yellow(o.state[\cf5 \\level\cf3 ]*0.85+0.15, 0.5));\
+			\cf4 GUI\cf3 .pen.fillOval(\cf4 Rect\cf3 .aboutRedObject2D(o));\
+		\};\
+	\}.play;\
+	\}.play(\cf4 AppClock\cf3 );\
+\})}

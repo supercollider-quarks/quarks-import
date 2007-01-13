@@ -1,0 +1,97 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //2 parents mate and have n children. each child as a boid.  always the same 2 parents.\cf3 \
+\cf2 //first breed children - genomes are translated to synthesis networks\cf3 \
+\cf2 //children are kept in global variable c\cf3 \
+\cf2 //with mouse control over first child's target\cf3 \
+\cf2 //req. the classes in redGA060517 from fredrikolofsson.com\cf3 \
+\
+\cf2 //--\cf3 \
+\cf2 //breed children\cf3 \
+(\
+n= 6;											\cf2 //number of children\cf3 \
+s.waitForBoot\{\
+	\cf4 var\cf3  parent0, parent1;\
+	g= \cf4 RedGAGenome\cf3 ([\
+		0.9.rrand(1), 0, 0, 1,\
+		[0.679.rrand(0.74), 0.99, 1, 0.679].wchoose([0.7, 0.1, 0.1, 0.1]),\
+		0.1.linrand,\
+		0.5.rand\
+	]++\{1.0.rand\}.dup(6.rrand(20)));\
+	g.chromosome.postln;\
+	\
+	\cf2 //--genome for the two parents\cf3 \
+	parent0= \cf4 RedGAGenome\cf3 (#[0.97482731342316, 0, 0, 1, 0.99, 0.062391279963776, 0.09280002117157, 0.60202777385712, 0.71044504642487, 0.20561838150024, 0.67790448665619, 0.56602108478546, 0.47632050514221]);\
+	parent1= \cf4 RedGAGenome\cf3 (#[0.91047233343124, 0, 0, 1, 0.73857934403419, 0.01410934634041, 0.48293763399124, 0.018214225769043, 0.91825485229492, 0.70207643508911, 0.13825953006744, 0.83445274829865, 0.50881242752075, 0.4990097284317, 0.55754148960114, 0.8451384305954, 0.33422267436981, 0.43586611747742, 0.90562689304352]);\
+	\cf2 //hardcoded parents.  randomize parent genomes above for quite different results\cf3 \
+	\
+	\cf4 RedGA\cf3 .crossOverRate= 0.5;\
+	c= \{\cf4 RedGA\cf3 .breedMultiPoint(parent0, parent1).choose\}.dup(n);\
+\})\
+\
+\
+\cf2 //--\cf3 \
+\cf2 //testing\cf3 \
+\cf2 /*\
+c[0].chromosome\
+RedGAPhenome(c[0]).asDefString2\
+RedGAPhenome(c[0]).asSynthDef2.play(s, [\\amp, 0.1])\
+*/\cf3 \
+\
+\
+\cf2 //--\cf3 \
+\cf2 //run simulation.\cf3 \
+(\
+	\cf4 var\cf3  width= 300, height= 300, w, wgrav, world,\
+		synths;\
+	\
+	\cf2 //--world\cf3 \
+	w= \cf4 GUI\cf3 .redWindow.new(\cf5 "boids test ga-synths"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	wgrav= \cf4 RedVector2D\cf3 [0, 0.98];\
+	world= \cf4 RedWorld3\cf3 (\cf4 RedVector2D\cf3 [width, height], wgrav, 10, 0.1); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--objects\cf3 \
+	\{\
+		\cf4 var\cf3  loc= \cf4 RedVector2D\cf3 [width, height].rand;\
+		\cf4 var\cf3  vel= \cf4 RedVector2D\cf3 [0.5, 0.5].rand2;\
+		\cf4 var\cf3  mass= 1.rrand(3);\
+		\cf4 RedBoid\cf3 (world, loc, vel, \cf4 RedVector2D\cf3 [0, 0], mass, mass*5) \cf2 //world,loc,vel,acc,mass,size\cf3 \
+			.maxForce_(1.rrand(6)).wdistance_(50).wchange_(0.5);\
+	\}.dup(n);\
+	\cf4 Routine\cf3 \{\
+	synths= c.collect\{\cf4 |x|\cf3  \cf4 RedGAPhenome\cf3 (x).asSynthDef2.play(s, [\cf6 \\amp\cf3 , 0])\};\
+	0.5.wait;\
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		4.do\{\cf4 |i|\cf3 \
+			\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .red(0.5, i+1/4));\
+			\cf4 GUI\cf3 .pen.fillOval(\cf4 Rect\cf3 .aboutRedVector2D(w.mouse, 4-i/3*25));\
+		\};\
+		world.objects.do\{\cf4 |o, i|\cf3 \
+			\cf4 var\cf3  amp= 0;\
+			o.addForceWander2D;\
+			if(i==0, \{\
+				o.addForceArrive(w.mouse);			\cf2 //first child chases the mouse\cf3 \
+			\}, \{									\cf2 //the rest chases the first child\cf3 \
+				o.addForceArrive(world.objects.wrapAt(i-1).loc);\
+			\});\
+			o.addForce(world.gravity);\
+			world.objects.do\{\cf4 |oo, j|\cf3  if(i!=j, \{o.collide(oo)\})\};\
+			o.update;\
+			world.contain(o);\
+			amp= (width-o.loc.distance(w.mouse)/width).pow(8);\
+			synths[i].set(\cf6 \\amp\cf3 , amp);\
+			\
+			\cf2 //--render\cf3 \
+			\cf4 GUI\cf3 .pen.fillColor_(\cf4 Color\cf3 .grey(amp.max(0.1), 0.5));\
+			\cf4 GUI\cf3 .pen.fillOval(\cf4 Rect\cf3 .aboutRedObject2D(o));\
+		\};\
+		\
+	\}.play;\
+	\}.play(\cf4 AppClock\cf3 );\
+)}
