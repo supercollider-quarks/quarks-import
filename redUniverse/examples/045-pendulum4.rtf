@@ -1,0 +1,44 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //a few pendulums that attract eachother\cf3 \
+\
+(\
+	\cf4 var\cf3  width= 300, height= 300, w, wgrav, world, n= 18,\
+		ploc;\
+	\
+	\cf2 //--world\cf3 \
+	w= \cf4 GUI\cf3 .redWindow.new(\cf5 "pendulum test3"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	wgrav= \cf4 RedVector2D\cf3 [0, 0.98];\
+	world= \cf4 RedWorld\cf3 (\cf4 RedVector2D\cf3 [width, height], wgrav, 20, 0.01); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--objects\cf3 \
+	\{\
+		\cf4 var\cf3  loc= \cf4 RedVector2D\cf3 [30.rrand(width-30), 30.rrand(height-30)];\
+		\cf4 var\cf3  mass= 8.rrand(30);\
+		\cf4 RedPendulum\cf3 (world, loc, \cf4 nil\cf3 , \cf4 nil\cf3 , mass, mass*3) \cf2 //world,loc,vel,acc,mass,size\cf3 \
+			.theta_(2pi.rand).angularVel_(1.5.rand2);\
+	\}.dup(n);\
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		\cf4 GUI\cf3 .pen.strokeColor_(\cf4 Color\cf3 .white);\
+		world.objects.do\{\cf4 |o, i|\cf3 \
+			world.objects.do\{\cf4 |oo, j|\cf3 \
+				if(i!=j, \{\
+					o.addForceAngular2D(o.gravityForce(oo));\
+				\});\
+			\};\
+			o.addForceAngular2D(world.gravity);\
+			o.update;\
+			\
+			\cf2 //--render\cf3 \
+			ploc= o.pendulumLoc2D.asPoint;\
+			\cf4 GUI\cf3 .pen.line(o.loc.asPoint, ploc);\
+			\cf4 GUI\cf3 .pen.strokeOval(\cf4 Rect\cf3 .aboutPoint(ploc, o.size/5, o.size/5));\
+		\};\
+	\}.play;\
+)}

@@ -1,0 +1,42 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //wave system with in a world with gravity changing over time\cf0 \
+\
+(\
+	\cf3 var\cf0  width= 300, height= 300, w, wgrav, world, n= 80,\
+		sys;\
+	\
+	\cf2 //--world\cf0 \
+	w= \cf3 GUI\cf0 .redWindow.new(\cf4 "wave test1"\cf0 , \cf3 Rect\cf0 (128, 64, width, height)).front;\
+	wgrav= \cf3 RedVector2D\cf0 [0, 0.4];\
+	world= \cf3 RedWorld3\cf0 (\cf3 RedVector2D\cf0 [width, height], wgrav, 20, 0.01); \cf2 //dim,grav,maxvel,damp\cf0 \
+	\
+	\cf2 //--objects\cf0 \
+	\cf2 //\cf0 \
+	sys= \cf3 RedWaveSystem\cf0 (n, \{pi.rand\}, \{\cf3 |i|\cf0  i/n*2pi\}, \{0.75.rand\}, 0.1);\
+	\{\cf3 |i|\cf0 \
+		\cf3 var\cf0  loc= \cf3 RedVector2D\cf0 [width/n*i, height/2];\
+		sys.add(\cf3 RedObject\cf0 (world, loc, \cf3 nil\cf0 , 0, 1.5, 10)); \cf2 //world,loc,vel,acc,mass,size\cf0 \
+	\}.dup(n);\
+	\
+	\cf2 //--loop\cf0 \
+	w.draw\{\
+		if(0.005.coin, \{world.gravity= \cf3 RedVector2D\cf0 [0, -0.7.rrand(0.7)]; world.gravity.postln\});\
+		sys.do\{\cf3 |o, i|\cf0 \
+			o.loc= o.loc+\cf3 RedVector2D\cf0 [0, sys.wave.wrapAt(i)];\
+			o.addForce(world.gravity);\
+		\};\
+		sys.update;\
+		\
+		\cf2 //--render\cf0 \
+		\cf3 GUI\cf0 .pen.fillColor_(\cf3 Color\cf0 .grey(1, 0.4));\
+		sys.do\{\cf3 |o, i|\cf0 \
+			\cf3 GUI\cf0 .pen.fillOval(\cf3 Rect\cf0 .aboutRedObject2D(o));\
+		\};\
+	\}.play;\
+)\
+}

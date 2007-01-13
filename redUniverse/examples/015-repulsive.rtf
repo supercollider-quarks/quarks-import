@@ -1,0 +1,34 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs18 \cf2 //one object pushes away the other in a world without bounds\cf3 \
+\
+(\
+	\cf4 var\cf3  width= 300, height= 300, w, wgrav, world, rep, obj;\
+	\
+	\cf2 //--world\cf3 \
+	w= \cf4 GUI\cf3 .redWindow.new(\cf5 "repulsive test1"\cf3 , \cf4 Rect\cf3 (128, 64, width, height)).front;\
+	wgrav= \cf4 RedVector2D\cf3 [0, 0.98];\
+	world= \cf4 RedWorld2\cf3 (\cf4 RedVector2D\cf3 [width, height], wgrav, 10); \cf2 //dim,grav,maxvel,damp\cf3 \
+	\
+	\cf2 //--objects\cf3 \
+	rep= \cf4 RedObject\cf3 (world, \cf4 RedVector2D\cf3 [100, 100], \cf4 RedVector2D\cf3 [0, 0], \cf4 RedVector2D\cf3 [0, 0], 105, 5);\
+	obj= \cf4 RedObject\cf3 (world, \cf4 RedVector2D\cf3 [130, 30], \cf4 RedVector2D\cf3 [1.5, 1], \cf4 RedVector2D\cf3 [0, 0], 1.5, 10);\
+	\
+	\cf2 //--loop\cf3 \
+	w.draw\{\
+		obj.addForce(obj.gravityForce(rep).neg);\
+		obj.addForce(world.gravity);\
+		obj.update;\
+		world.contain(obj);\
+		\
+		\cf2 //--render\cf3 \
+		\cf4 GUI\cf3 .pen.strokeColor_(\cf4 Color\cf3 .green);\
+		\cf4 GUI\cf3 .pen.strokeRect(\cf4 Rect\cf3 .aboutRedObject2D(rep));\
+		\cf4 GUI\cf3 .pen.strokeColor_(\cf4 Color\cf3 .white);\
+		\cf4 GUI\cf3 .pen.strokeRect(\cf4 Rect\cf3 .aboutRedObject2D(obj));\
+	\}.play;\
+)}
