@@ -1,28 +1,28 @@
 {\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
 }
-{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green0\blue0;\red179\green179\blue255;
-\red0\green115\blue0;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red179\green179\blue255;\red0\green115\blue0;
+}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\b\fs36 \cf2 RedWorld
-\fs24 \cf3 			fundamental object in the \cf2 RedUniverse\cf3  toolkit
+\fs24 \cf0 			fundamental object in the \cf2 RedUniverse\cf0  toolkit
 \f1\b0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\fs36 \cf3 \
+\fs36 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\fs24 \cf3 \
-base for all other worlds like \cf2 RedWorld2\cf3 , \cf2 RedWorld3\cf3 .  implements simplified physical laws.\
+\fs24 \cf0 \
+base for all other worlds like \cf2 RedWorld2\cf0 , \cf2 RedWorld3\cf0 .  implements simplified physical laws.\
 \
-see also [\cf2 \ul \ulc4 RedObject\cf3 \ulc1 ]\ulnone , [\cf2 \ul \ulc4 RedUniverse\cf3 \ulc1 ]\ulnone \
+see also [\cf2 \ul \ulc3 RedObject\cf0 \ulnone ], [\cf2 \ul \ulc3 RedUniverse\cf0 \ulnone ]\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b \cf3 \
+\f0\b \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f1\b0 \cf3 \ul class methods:
+\f1\b0 \cf0 \ul class methods:
 \f0\b \ulnone \
 	*new(dim, gravity, maxVel, damping)
 \f1\b0 \
@@ -32,11 +32,11 @@ see also [\cf2 \ul \ulc4 RedObject\cf3 \ulc1 ]\ulnone , [\cf2 \ul \ulc4 RedUnive
 	
 \f0\b add(redObj)
 \f1\b0 \
-		manually add an object to \cf2 this\cf3  world.  usually never needed.\
+		manually add an object to \cf2 this\cf0  world.  usually never needed.\
 	
 \f0\b remove(redObj)
 \f1\b0 \
-		manually remove an object from \cf2 this\cf3  world.\
+		manually remove an object from \cf2 this\cf0  world.\
 	
 \f0\b contain(redObj)
 \f1\b0 \
@@ -51,15 +51,15 @@ see also [\cf2 \ul \ulc4 RedObject\cf3 \ulc1 ]\ulnone , [\cf2 \ul \ulc4 RedUnive
 \f0\b \ulnone \
 	<>dim
 \f1\b0 \
-		size of \cf2 this\cf3  world (\cf2 RedVector\cf3  of any dimension).  ie the world can have any number of dimensions.\
+		size of \cf2 this\cf0  world (\cf2 RedVector\cf0  of any dimension).  ie the world can have any number of dimensions.\
 	
 \f0\b <>gravity
 \f1\b0 \
-		world gravity (\cf2 RedVector\cf3  of any dimension) for each dimension.\
+		world gravity (\cf2 RedVector\cf0  of any dimension) for each dimension.\
 	
 \f0\b <>maxVel
 \f1\b0 \
-		scalar with maximum velocity.  ie \cf5 'speed of light'\cf3  for \cf2 this\cf3  world.\
+		scalar with maximum velocity.  ie \cf4 'speed of light'\cf0  for \cf2 this\cf0  world.\
 	
 \f0\b <>damping
 \f1\b0 \
@@ -67,18 +67,17 @@ see also [\cf2 \ul \ulc4 RedObject\cf3 \ulc1 ]\ulnone , [\cf2 \ul \ulc4 RedUnive
 	
 \f0\b <>objects
 \f1\b0 \
-		array of all objects currently in \cf2 this\cf3  world.\
+		array of all objects currently in \cf2 this\cf0  world.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f2\fs18 \cf3 \
+\f2\fs18 \cf0 \
 \
-a= \cf2 RedWorld\cf3 .new\
-b= \cf2 RedObject\cf3 (a)\
+a= \cf2 RedWorld\cf0 .new\
+b= \cf2 RedObject\cf0 (a)\
 \
 a.dump\
 \
-\cf2 RedUniverse\cf3 .worlds\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf2 RedUniverse\cf3 .remove(a)\
-\cf2 RedUniverse\cf3 .worlds\
+\cf2 RedUniverse\cf0 .worlds\
+\cf2 RedUniverse\cf0 .remove(a)\
+\cf2 RedUniverse\cf0 .worlds\
 }
