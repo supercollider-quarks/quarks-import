@@ -143,4 +143,41 @@ win.drawHook= \{\
 win.front;\
 \{while\{win.isClosed.not\} \{win.refresh; (1/25).wait\}\}.fork(\cf2 AppClock\cf3 );\
 )\
+\
+(\
+\cf2 var\cf3  n= 60, method= \cf6 \\chebyFill\cf3 , scale= 120,\
+	win, points, cnt= 5, wt0, wt1, syn, pat= 0;\
+syn= \cf2 Synth\cf3 (\cf6 \\wormsnd\cf3 , [\cf6 \\bufnum\cf3 , b.bufnum]);\
+win= \cf2 GUI\cf3 .window.new(\cf5 "fingerprint"\cf3 , \cf2 Rect\cf3 (100, 100, 320, 240), \cf2 false\cf3 );\
+win.view.background= \cf2 Color\cf3 .black;\
+wt1= \cf2 Wavetable\cf3 .perform(method, b.numFrames, \{1.0.rand2.round(0.1)\}.dup(n));\
+win.drawHook= \{\
+	if(cnt%4!=0, \{\
+		syn.set(\cf6 \\amp\cf3 , 1);\
+		if(cnt%5==(0), \{\
+			wt0= wt1;\
+			n= 1.rrand(10);\
+			wt1= \cf2 Wavetable\cf3 .perform(method, b.numFrames, \{1.0.rand2.round(0.1)\}.dup(n));\
+			cnt= 0;\
+			pat= pat+1;\
+		\});\
+		wt0= wt0.blend(wt1, cnt/(wt1[0]*3000+30));\
+		b.sine1(wt0, \cf2 false\cf3 , \cf2 false\cf3 , \cf2 false\cf3 );\
+		syn.set(\cf6 \\freq\cf3 , wt0.mean*(wt0[0]*500)+80);\
+		points= wt0.fingerprint.points;\
+		\cf2 GUI\cf3 .pen.width_(2);\
+		\cf2 GUI\cf3 .pen.translate(win.bounds.width/2, win.bounds.height/2);\
+		\cf2 GUI\cf3 .pen.strokeColor_(\cf2 Color\cf3 .white);\
+		\cf2 GUI\cf3 .pen.moveTo(points[0]*scale);\
+		points.do\{\cf2 |x|\cf3  \cf2 GUI\cf3 .pen.lineTo(x*scale)\};\
+		\cf2 GUI\cf3 .pen.stroke;\
+	\}, \{\
+		syn.set(\cf6 \\amp\cf3 , 0);\
+		if(0.2.coin, \{cnt= cnt-1\});\
+	\});\
+	cnt= cnt+1;\
+\};\
+win.front;\
+\{while\{win.isClosed.not\} \{win.refresh; (1/25).wait\}\}.fork(\cf2 AppClock\cf3 );\
+)\
 }
