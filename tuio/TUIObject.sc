@@ -155,6 +155,14 @@ TUIObject { 	// abstract class
 	free {
 		"TUIObject-free called".postln;
 	}
+	/**
+	 * an object is identical to another one if their ids are identical.
+	 */
+	== { arg that; 
+		^that respondsTo: #[\id, \classID] 
+			and: { id == that.id
+		}
+	}
 /*
 	hash {
 		^hash(id@format)
@@ -270,28 +278,36 @@ JITuio : TUIObject {
 	}
 }
 /**
-	An TUIObject factory which builds TUIOs according to their classID.
+	A TUIObject factory which builds TUIOs according to their classID.
 	only works for formats including classID.
 */
 TUIOmeta : JITuio {
+
 	classvar <keyDict;
-	classvar <>tuioClasses;
-	
+	classvar <>tuioClasses;	
+	classvar <fid2oscClassIDs;
+		
 	*initClass {
+		// when assigning a classID, keyDict[\i] is evaluated; 
+		// this replaces actual object with new one and returns it.
 		keyDict = super.keyDict.deepCopy;
 		keyDict[\i] = {|aTUIO, val| 
 			aTUIO = aTUIO.as(tuioClasses.wrapAt(val));
 			aTUIO.classID     = val;
 			aTUIO.tServer.replaceInteractionFor(aTUIO);
+			
 			aTUIO
 		};
 		tuioClasses = [this];
+		
+		fid2oscClassIDs = (
+			green: 		(ids:[44], 		classId:1),
+			greenFlip: 	(ids:[29, 30], 	classId:2),
+			roundRed: 	(ids:[32], 		classId:3),
+			powerMate: 	(ids:[4], 		classId:4),
+			default:		(ids:(10..30),	classId:0)
+		)
 	}
-/*
-	*new {|format = "2Dobj", id = 0|
-		^tuioClasses.wrapAt(id).new(format, id);
-	}
-*/
 }
 
 TUIOdump : TUIObject {

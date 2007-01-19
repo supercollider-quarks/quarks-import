@@ -59,7 +59,7 @@ TUIOServer {
 		/// check if we need a new interaction and create one 
 		iClass !? {
 			knownObjs.do {|obj|
-				(obj === anObject).not.if{
+				(obj == anObject).not.if{
 					interactions = interactions.add(iClass.new(anObject, obj));
 				}
 			};
@@ -67,15 +67,18 @@ TUIOServer {
 	}
 	replaceInteractionFor {|anObj|
 		var id;
+		var count = 0;
 		iClass !? {
-			// remove all ints containing objs with this id
+			count = interactions.size;
+			// remove all interactions containing objs with this id
 			interactions = interactions.select{|int|
 				int.parts.detect{|obj|
 					anObj.id == obj.id
 				}.isNil
 			};
+			// create new interactions
 			knownObjs.do {|obj|
-				(obj === anObj).not.if{
+				(obj == anObj).not.if{
 					interactions = interactions.add(iClass.new(anObj, obj));
 				}
 			};

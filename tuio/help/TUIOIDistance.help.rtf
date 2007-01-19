@@ -1,8 +1,8 @@
 {\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
 }
-{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
-}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green0\blue0;
+\red191\green0\blue0;\red0\green0\blue191;\red96\green96\blue96;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\b\fs36 \cf0 TUIOIDistance\
@@ -27,10 +27,12 @@ Author: \
 \f1\fs24 \cf0 \
 computes the distance between the interactands and evaluates a class-wide user-definable function.\
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\b *distfunc_(function)\
+\f0\b \cf0 *distfunc_(function)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f1\b0 	function might have \
+\f1\b0 \cf0 	function might have \
 \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
@@ -41,12 +43,13 @@ computes the distance between the interactands and evaluates a class-wide user-d
 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f2\fs18 \cf0 (\
+\f2\fs18 \cf0 (\cf4 \
 e = e ? ();\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 e.t = \cf3 TUIO_OSCServer\cf0 (\cf4 "_ixya"\cf0 , \cf3 nil\cf0 , \cf3 TUIObject, TUIOIDistance\cf0 ); \cf2 // listen to all messages from anywhere\cf0 \
+\cf5 //e.t = TUIO_OSCServer("_ixya", nil, TUIObject, TUIOIDistance);\cf4 \
+e.t = \cf6 TUIOServer\cf4 (\cf7 "_ixya"\cf4 , \cf6 TUIObject\cf4 , \cf6 TUIOIDistance\cf4 );\
 e.t.start;\
-e.t.inspect\
-)\
+e.t.gui\
+\cf0 )\
 e.t.stop}
