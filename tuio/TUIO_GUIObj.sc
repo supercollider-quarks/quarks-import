@@ -34,7 +34,8 @@ TUIO_GUIObj{
 					Pen.translate(x+(0.5*oExtent), y+(0.5*oExtent));
 					
 					tuio.isEuler.if({
-						Color.hsv(tuio.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87).set;
+//						Color.hsv(tuio.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87).set;
+						Color.hsv(tuio.classID+1 * 0.2, 1, 1, alpha: 0.5).set;
 						Pen.rotate(
 							tuio.rotEuler[0], 
 							0,
