@@ -93,11 +93,15 @@ TUIOServer {
 	gui {|editable = true|
 		var addButton, idBox, classIdBox, xBox, yBox, aBox;
 		hasGUI.not.if({
-			window = SCWindow.new("TUIOs", Rect(800, 0, 480, 400)).front.onClose_{
-				hasGUI = false;
-			};
+			window = SCWindow.new("TUIOs", Rect(800, 0, 480, 400))
+				.front
+				.onClose_{
+					hasGUI = false;
+				};
+			window.view.background = Color(0.918, 0.902, 0.886);
 			view = TUIOServerView(window,  Rect(5,5,390,370), this);
-			view.background =  Color(0.81960784313725, 0.82352941176471, 0.87450980392157, 0.6);
+//			view.background =  Color(0.81960784313725, 0.82352941176471, 0.87450980392157, 0.6);
+			view.background = Color.fromArray([0.918, 0.902, 0.886] * 0.5 ++ [0.8]);
 			view.resize_(5);
 			addButton = SCButton(window, Rect(400, 5, 75, 20))
 				.states_(	[["add TUIO", Color.black, Color.gray(0.5)]])
