@@ -4,7 +4,12 @@
 	species {^this.class}
 }
 
-//ugly but needed for JPen: bndl.add([ '/method', penID, \add ])...  i should tell sciss
+//ugly but needed for JPen: bndl.add([ '/method', penID, \add ])...
 +List {
+	species {^Array}
+}
+
+//also ugly but needed for pauls f.def.argNames.collect...
++SymbolArray {
 	species {^Array}
 }
