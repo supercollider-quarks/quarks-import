@@ -1,7 +1,7 @@
 (
 	\name: "MP3",
 	\path: "MP3", // path relative to the root Quarks folder
-	\summary: "Read an MP3 file or stream, or write an MP3 file (***)",
+	\summary: "Read an MP3 file or stream, or write an MP3 file",
 	\author: "Dan Stowell",
 	\url:           "http://www.mcld.co.uk/"
 )
