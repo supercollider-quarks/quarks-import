@@ -301,7 +301,7 @@ TUIOmeta : JITuio {
 		tuioClasses = [this];
 		
 		fid2oscClassIDs = (
-			green: 		(ids:[44], 		classId:1),
+			green: 		(ids:[43], 		classId:1),
 			greenFlip: 	(ids:[29, 30], 	classId:2),
 			roundRed: 	(ids:[32], 		classId:3),
 			powerMate: 	(ids:[4], 		classId:4),
