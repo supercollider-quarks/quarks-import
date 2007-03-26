@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {color: #0000bf}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>TUIO_GUIObj</b></p>
+<p class="p2">/*</p>
+<p class="p2">Author:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span>2004, 2005, 2006</p>
+<p class="p2"><span class="Apple-tab-span">	</span>Till Bovermann<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span>Neuroinformatics Group<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span>Faculty of Technology<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span>Bielefeld University</p>
+<p class="p2"><span class="Apple-tab-span">	</span>Germany</p>
+<p class="p2">*/</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">A graphical representation of a tui-object.</p>
+<p class="p3"><br></p>
+<p class="p4">e = ();</p>
+<p class="p4">e.w = SCWindow.new.front;</p>
+<p class="p4">e.view = <span class="s1">SCCompositeView</span>(e.w, <span class="s1">Rect</span>(5,5,390,370));</p>
+<p class="p4">e.view.background = <span class="s1">Color</span>(0.81960784313725, 0.82352941176471, 0.87450980392157, 0.6);</p>
+<p class="p4">e.view.resize_(5);</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">e.tuio = TUIObject("_ixya", 10);</p>
+<p class="p4">e.tuio.pos = [0.5, 0.5, nil, 1, nil, nil];</p>
+<p class="p3"><br></p>
+<p class="p4">e.gObj = TUIO_GUIObj(e.view, e.tuio);</p>
+<p class="p4">e.gObj.obj.focus(true)</p>
+<p class="p3"><br></p>
+<p class="p4">e.gObj.oExtent = 20</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">e.gObj.inspect</p>
+<p class="p3"><br></p>
+<p class="p4">i = 0;</p>
+<p class="p4">e.tuio.pos = [i, sin(i*pi), nil, 5*i, nil, nil]; i = (i+0.02)%1; e.w.refresh; i</p>
+<p class="p4">e.tuio.pos = [0.5, 1, nil, i, nil, nil]; i = (i+0.2)%2pi; e.w.refresh; i</p>
+<p class="p3"><br></p>
+<p class="p4">e.tuio.pos = [0.5, 0.6, nil, 3, nil, nil];e.w.refresh</p>
+<p class="p3"><br></p>
+<p class="p4">e.tuio.pos</p>
+</body>
+</html>
