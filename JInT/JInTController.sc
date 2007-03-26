@@ -25,6 +25,8 @@ JInTController {
 	var <description;		/// a String describing the functionality
 	var <>short;			/// a shortcut, e.g. for a fader \f1
 	var <>action;			/// a function which will be evaluated on a value change. param: this
+	var <>beginAction;		/// a function evaluated on start of a contiuous action. param: this
+	var <>endAction;		/// a function evaluated on stop  of a contiuous action. param: this
 	
 	var isRunning;
 	var nodeProxy;
@@ -91,6 +93,14 @@ JInTController {
 		// set values to be in [-1, 1]
 		action.value(this);
 		nodeProxy !? {nodeProxy.set(which, this.value(which)*2-1);};
+	}
+	beginCont {|which = 0, val = 0|
+		beginAction.value(this);
+		this.set(which, val);		
+	}
+	endCont {|which = 0, val = 0|
+		endAction.value(this);
+		this.set(which, val);		
 	}
 	start {
 		this.initNodeProxy;

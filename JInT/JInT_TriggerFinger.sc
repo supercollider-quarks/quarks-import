@@ -83,7 +83,7 @@ JInT_TriggerFinger : JInT {
 		padNoteOnResponder = NoteOnResponder(
 			{ |src, chan, num, vel| 
 				(midiSrc == src).if {
-					controllers[num+11].set(0, vel);
+					controllers[num+11].beginCont(0, vel);
 //					{gui.padNoteOnValue_(num, vel)}.defer;
 				}
 			}, 
@@ -94,7 +94,7 @@ JInT_TriggerFinger : JInT {
 		padNoteOffResponder = NoteOffResponder(
 			{ |src, chan, num, vel| 
 				(midiSrc == src).if {
-					controllers[num+11].set(0, 0);
+					controllers[num+11].endCont(0, 0);
 //					{gui.padNoteOnValue_(num, 0)}.defer;
 				}
 			}, 
