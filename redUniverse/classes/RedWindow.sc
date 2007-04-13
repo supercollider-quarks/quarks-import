@@ -1,17 +1,11 @@
 // this file is part of redUniverse toolkit /redFrik
 
-
 RedWindow : SCWindow {
 	var <mouse, <isPlaying= false;
 	*new {|name= "redWindow", bounds, resizable= false, border= true|
 		^super.new.initSCWindow(name, bounds, resizable, border)
 	}
 	*initClass {
-		StartUp.add{
-			var current= GUI.current.id;
-			GUI.cocoa.put(\redWindow, RedWindow);
-			GUI.fromID(current);
-		};
 		UI.registerForShutdown({ this.closeAll });
 	}
 	initSCWindow {|argName, argBounds, resizable, border|
