@@ -8,9 +8,7 @@ RedJWindow : JSCWindow {
 	}
 	*initClass {
 		StartUp.add{
-			var current= GUI.current.id;
-			GUI.swing.put(\redWindow, RedJWindow);
-			GUI.fromID(current);
+			GUI.get(\swing).put(\redWindow, RedJWindow);
 		};
 		UI.registerForShutdown({ this.closeAll });
 	}
