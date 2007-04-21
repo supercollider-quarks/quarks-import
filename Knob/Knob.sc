@@ -1,12 +1,13 @@
 // blackrain@realizedsound.net - 05/2006
 //	fix key modidiers bug by Stephan Wittwer 08/2006 - thanks!
 //	Knob updates only on value changes - 10/2006
+//	GUI.cocoa changes - 04/2007
 
 Knob : SCUserView {
 	var <>color, <value, last, <>step, hit, <>keystep, <>mode, isCentered = false;
 	
-	*viewClass { ^SCUserView }
-	
+	*viewClass { ^GUI.userView }
+
 	*paletteExample { arg parent, bounds;
 		^Knob(parent,bounds)
 	}
