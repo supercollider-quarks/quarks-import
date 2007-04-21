@@ -12,12 +12,6 @@ Knob : SCUserView {
 		^Knob(parent,bounds)
 	}
 	
-	*initClass {
-		if (\JSCWindow.asClass.notNil) {
-			GUI.swing.knob = JKnob; 
-		}
-	}
-
 	init { arg parent, bounds;
 		super.init(parent, bounds);
 		mode = \round;
