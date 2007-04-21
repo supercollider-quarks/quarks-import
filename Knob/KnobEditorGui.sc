@@ -1,4 +1,5 @@
-// blackrain@realizedsound.net - 0106
+
+// blackrain at realizedsound dot net - 0106
 
 KnobEditorGui : EditorGui {
 	var <>knob, <>numv, <>roundVal = 0.001, size, <enabled=true;
@@ -12,7 +13,7 @@ KnobEditorGui : EditorGui {
 	}
 	
 	kn { arg layout, size, centered=false;
-		knob = Knob.new(layout, size @ size);
+		knob = GUI.knob.new(layout, size @ size);
 		knob.centered = centered;
 		knob.color[0] = this.knobColor;
 		knob.action_({arg v; 
@@ -25,7 +26,7 @@ KnobEditorGui : EditorGui {
 	box { arg layout, x, y=17;
 		var r;
 		x = x ? 40;
-		numv = SCNumberBox(layout, x.max(40) @ y)
+		numv = GUI.numberBox.new(layout, x.max(40) @ y)
 			.object_(model.poll)
 			.action_({ arg nb;
 				model.activeValue_(nb.value).changed(numv);

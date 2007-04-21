@@ -12,7 +12,6 @@ Knob : SCUserView {
 	}
 	
 	*initClass {
-		GUI.cocoa.knob = Knob;
 		if (\JSCWindow.asClass.notNil) {
 			GUI.swing.knob = JKnob; 
 		}
