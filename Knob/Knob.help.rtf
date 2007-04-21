@@ -7,8 +7,9 @@
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\b\fs36 \cf0 Knob	a gui control with round, horizontal or vertical action\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f1\b0\fs18 \
+\f1\b0\fs18 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\b\fs24 \cf0 Knob.new
@@ -172,14 +173,14 @@ window = \cf4 SCWindow\cf0 .new(\cf5 "Pan Knob"\cf0 , \cf4 Rect\cf0 (350,400,270
 k = \cf4 Knob\cf0 .new(window, \cf4 Rect\cf0 (20,10,36,36));\
 k.action_(\{\cf4 |v,x,y,m|\cf0  \cf2 \\pan\cf0 .asSpec.map(v.value).postln; \})\
 //	.mode_(\cf2 \\horiz)\cf0 \
-	.centered_(\cf4 true\cf0 )\
+	.centered_(\cf4 false\cf0 )\
 	.value_(\cf2 \\pan\cf0 .asSpec.unmap(0)); \cf3 // 0.5\cf0 \
 //k.color[1] = Color.gray(alpha:0);\
 )\
 \
 k.centered\
-k.centered = \cf4 false\cf0 \
 k.centered = \cf4 true\cf0 \
+k.centered = \cf4 false\cf0 \
 \
 k.refresh\
 \
@@ -199,17 +200,25 @@ k.mode = \cf2 \\horiz\cf0 ;\
 k.mode = \cf2 \\round\cf0 ;\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf6 // GUI.knob creation \cf7 \
+\cf6 // GUI Kit selection\cf7 \
 (\
-	\cf8 var\cf7  size = 32;\
-	w = \cf8 GUI\cf7 .window.new(\cf9 "GUI.knob Test"\cf7 , \cf8 Rect\cf7 (580,590,300,80));\
+	f = \{\
+		\cf8 var\cf7  size = 32;\
+		w = \cf8 GUI\cf7 .window.new(\cf9 "GUI.knob Test"\cf7 , \cf8 Rect\cf7 (580,590,300,80));\
+	\
+		k = \cf8 GUI\cf7 .knob.new(w, \cf8 Rect\cf7 (20, 10, size, size));\
+		k.action_(\{\cf8 |v|\cf7  v.value.postln; \});\
+	\
+		w.front;\
+	\};\
+)\
 \
-	k = \cf8 GUI\cf7 .knob.new(w, \cf8 Rect\cf7 (20, 10, size, size));\
-	k.action_(\{\cf8 |v|\cf7  v.value.postln; \});\
+\cf8 GUI\cf7 .cocoa; \cf6 // select cocoa gui\cf7 \
+f.value;\
 \
-	w.front;\
-)\cf3 \
-\cf0 \
+\cf8 GUI\cf7 .swing; \cf6 // select swing gui\cf7 \
+f.value;\
+\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf3 // mouseOverAction\cf0 \
 (\
