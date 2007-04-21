@@ -9,7 +9,7 @@ Knob : SCUserView {
 	*viewClass { ^GUI.userView }
 
 	*paletteExample { arg parent, bounds;
-		^Knob(parent,bounds)
+		^GUI.knob.new(parent,bounds)
 	}
 	
 	init { arg parent, bounds;
