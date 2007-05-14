@@ -9,16 +9,18 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #811e18; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #811e18}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {text-decoration: underline}
-span.s2 {color: #000000}
-span.s3 {color: #007300}
+span.s2 {color: #0000bf}
+span.s3 {color: #000000}
+span.s4 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -36,7 +38,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span>Austria</p>
 <p class="p4">*/</p>
 <p class="p5"><br></p>
-<p class="p2">a server fullfilling the TUIO-Specs.</p>
+<p class="p2">a server fulfilling the TUIO-Specs.</p>
 <p class="p2">drawbacks:</p>
 <p class="p2"><span class="Apple-tab-span">	</span>no 'P' symbols are yet handled...</p>
 <p class="p6"><br></p>
@@ -65,26 +67,28 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p7"><b><span class="s1">Examples</span></b></p>
 <p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p8"><span class="s2">t = </span>TUIOServer<span class="s2">(</span><span class="s3">"_ixyzuvw"</span><span class="s2">, </span>TUIOdump<span class="s2">);</span></p>
-<p class="p9">t.gui</p>
-<p class="p5"><br></p>
-<p class="p9">t.set(0, [3, 0.3, 0.7, 0.5, 0.2, 0.4, 0.1])</p>
-<p class="p9">t.alive([0])</p>
-<p class="p5"><br></p>
-<p class="p9">t.set(1, [1, 0.41, 0.72, 0.5, 0.2, 0.4, 0.1])</p>
-<p class="p9">t.alive([0,1])</p>
-<p class="p9">t.visibleObjs</p>
-<p class="p5"><br></p>
-<p class="p9">t.set(1, [0, 0.35, 0.17, 0.5, 0.2, 0.4, 0.1]);</p>
-<p class="p9">t.set(2, [1, 0.15, 0.19, 0.5, 0.2, 0.4, 0.1]);</p>
-<p class="p9">t.alive([0, 1, 2]);</p>
-<p class="p9">t.visibleObjs;</p>
-<p class="p5"><br></p>
-<p class="p9">t.alive([]);</p>
-<p class="p9">t.visibleObjs;</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p9">t.visibleObjs</p>
+<p class="p8"><span class="s2">GUI</span>.swing;</p>
+<p class="p8"><span class="s2">GUI</span>.cocoa;</p>
+<p class="p8"><span class="s2">SwingOSC</span>.default.boot;</p>
+<p class="p9"><br></p>
+<p class="p10"><span class="s3">t = </span>TUIOServer<span class="s3">(</span><span class="s4">"_ixyzuvw"</span><span class="s3">, </span>TUIOdump<span class="s3">);</span></p>
+<p class="p8">t.gui</p>
+<p class="p9"><br></p>
+<p class="p8">t.set(0, [3, 0.3, 0.7, 0.5, 0.2, 0.4, 0.1])</p>
+<p class="p8">t.alive([0])</p>
+<p class="p8">t.set(1, [1, 0.41, 0.72, 0.5, 0.2, 0.4, 0.1])</p>
+<p class="p8">t.alive([0,1])</p>
+<p class="p8">t.visibleObjs</p>
+<p class="p9"><br></p>
+<p class="p8">t.set(1, [0, 0.35, 0.17, 0.5, 0.2, 0.4, 0.1]);</p>
+<p class="p8">t.set(2, [1, 0.15, 0.19, 0.5, 0.2, 0.4, 0.1]);</p>
+<p class="p8">t.alive([0, 1, 2]);</p>
+<p class="p8">t.visibleObjs;</p>
+<p class="p9"><br></p>
+<p class="p8">t.alive([]);</p>
+<p class="p8">t.visibleObjs;</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p8">t.visibleObjs</p>
 </body>
 </html>
