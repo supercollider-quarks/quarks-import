@@ -303,7 +303,7 @@ TUIOmeta : JITuio {
 		fid2oscClassIDs = (
 			green: 		(ids:[43], 		classId:1),
 			greenFlip: 	(ids:[29, 30], 	classId:2),
-			roundRed: 	(ids:[32], 		classId:3),
+			roundRed: 	(ids:[32],		classId:3),
 			powerMate: 	(ids:[4], 		classId:4),
 			default:		(ids:(10..30),	classId:0)
 		)
@@ -333,16 +333,16 @@ TUIOdumpWin : TUIObject {
 	initDumpWin {
 		counter = 0;
 		{
-		window = SCWindow.new(format("TUIO %(%)", id, classID));
+		window = GUI.window.new(format("TUIO %(%)", id, classID));
 
 		posViews = (0..2).collect{|i| 
-			SCTextView(window, Rect(10,i*30 + 10,300, 20))
+			GUI.textView.new(window, Rect(10,i*30 + 10,300, 20))
 				.background_(Color.white)
 				.font_(Font("Helvetica", 18))
 				.stringColor_(Color.blue)
 		};
 		rotViews = (0..2).collect{|i| 
-			SCTextView(window, Rect(10,i*30 + 110,300, 20))
+			GUI.textView.new(window, Rect(10,i*30 + 110,300, 20))
 				.background_(Color.white)
 				.font_(Font("Helvetica", 18))
 				.stringColor_(Color.red)

@@ -25,29 +25,34 @@ TUIO_GUIObj{
 		tuio = argtuio;
 		tServer = tuioServer;
 
-		obj = SCUserView.new(parent, bounds)
-			.drawFunc_({|me|
+		obj = GUI.userView.new(parent, bounds);
+		obj.drawFunc_({|me|
 				var x, y;
 				
-				#x, y = (tuio.pos[0..1]*parent.bounds.asArray[2..3]);
-				Pen.use{
-					Pen.translate(x+(0.5*oExtent), y+(0.5*oExtent));
+				#x, y = (tuio.pos[0..1] * parent.bounds.asArray[2..3]);
+				GUI.pen.use{
+					GUI.pen.translate(x+(0.5*oExtent), y+(0.5*oExtent));
 					
 					tuio.isEuler.if({
-//						Color.hsv(tuio.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87).set;
-						Color.hsv(tuio.classID+1 * 0.2, 1, 1, alpha: 0.5).set;
-						Pen.rotate(
-							tuio.rotEuler[0], 
-							0,
-							0
-						);
+//						GUI.pen.color = Color.hsv(tuio.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87);
+						GUI.pen.color = Color.hsv(tuio.classID+1 * 0.2, 1, 1, alpha: 0.5);
+						tuio.rotEuler[0].notNil.if({
+							GUI.pen.rotate(
+								tuio.rotEuler[0], 
+								0,
+								0
+							);
+						})
 					},{
-						Color.hsv(tuio.classID+1 * 0.2, 1, 1, alpha: 0.5).set;
+						GUI.pen.color = Color.hsv(tuio.classID+1 * 0.2, 1, 1, alpha: 0.5);
 					});
-					Pen.translate(-0.5*oExtent, -0.5*oExtent);
-					Pen.addRect(Rect(0,0, oExtent, oExtent));
-					Pen.fill;
-					tuio.id.asString.draw(me.bounds);
+					GUI.pen.translate(-0.5*oExtent, -0.5*oExtent);
+					GUI.pen.addRect(Rect(0,0, oExtent, oExtent));
+					GUI.pen.fill;
+					GUI.pen.use{
+						GUI.pen.color = Color.black;
+						GUI.pen.string(tuio.id.asString);//(me.bounds);
+					};
 					this.pr_updateBoundsFromTUIO;
 				};
 		});
@@ -82,7 +87,7 @@ TUIO_GUIObj{
 		^obj.visible
 	}
 	resize_ { arg val;
-		obj.resize_(val)
+		obj.resize_(val) // TODO!!!!
 	}
 /////////// private
 	pr_updateBoundsFromTUIO {
