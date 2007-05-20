@@ -7,13 +7,13 @@ Knob : SCUserView {
 	var <>color, <value, last, <>step, hit, <>keystep, <>mode, isCentered = false;
 	
 	*viewClass { ^GUI.userView }
-
+/*
 	*initClass {
 		if (\JSCWindow.asClass.notNil) {
 			GUI.schemes.at(\swing).put(\knob, JKnob)
 		}
 	}
-
+*/
 	*paletteExample { arg parent, bounds;
 		^GUI.knob.new(parent,bounds)
 	}
@@ -32,13 +32,13 @@ Knob : SCUserView {
 	draw {
 		var startAngle, arcAngle, size, widthDiv2, aw;
 		size = this.bounds.width;
-		widthDiv2 = this.bounds.width * 0.5;
+		widthDiv2 = size * 0.5;
 		
 		color[2].set;
 		Pen.addAnnularWedge(
 			this.bounds.center, 
 			widthDiv2 - (0.08 * size), 
-			this.bounds.width * 0.5, 	
+			widthDiv2, 	
 			0.25pi, 
 			-1.5pi
 		);
