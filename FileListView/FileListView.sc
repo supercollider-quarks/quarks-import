@@ -58,7 +58,7 @@ FileListView {
 			.action_({ arg v; filename = v.items[v.value]; this.action.value(this); })
 			.enterKeyAction_({ arg v; f.value; })
 			.mouseDownAction_({ arg v, x, y, modifiers, buttonNumber, clickCount;
-				if (clickCount == 2, { f.value; })
+				if (clickCount == 2, { f.value; });
 			})
 			.beginDragAction_({ arg view; this.fullname });
 
