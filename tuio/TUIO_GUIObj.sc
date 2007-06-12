@@ -99,4 +99,7 @@ TUIO_GUIObj{
 
 		obj.bounds = Rect(x, y, oExtent, oExtent);
 	}
+	refresh {
+		obj.refresh
+	}
 }
