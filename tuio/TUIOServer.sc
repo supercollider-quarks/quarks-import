@@ -204,8 +204,10 @@ TUIOServer {
 	alive {|argObjectIDs|
 		var deadTuioIDs, tuio;
 		
+		argObjectIDs = argObjectIDs ? #[];
 		hasGUI.if{{
 			view.alive(argObjectIDs);
+			view.refresh;
 			window.refresh;
 		}.defer};
 		deadTuioIDs = argObjectIDs.asSet -- objectIDs;
@@ -308,5 +310,8 @@ TUIOServerView {
 	}
 	resize_{|val|
 		view.resize_(val)
+	}
+	refresh {
+		objects.do(_.refresh)
 	}
 }
