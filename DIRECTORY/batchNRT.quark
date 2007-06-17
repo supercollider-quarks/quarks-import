@@ -4,5 +4,5 @@
 	\summary: "A method for batch-processing audio files in NRT mode",
 	\author: "Dan Stowell",
 	\url:           "http://www.mcld.co.uk/",
-	\helpdoc: "NonRT/batchNRT/batchNRT.html"
+	\helpdoc: "batchNRT.html"
 )
