@@ -1,28 +1,25 @@
-// blackrain@realizedsound.net - 0106
+// blackrain at realizedsound dot net - 0106
+
 EZKnob	{
 	var <>labelView, <>knobView, <>numberView, <value, <>round = 0.0001, <>action, <>controlSpec;
 	var layout, <enabled;
 
 	*new { arg window, dimensions, label, controlSpec, action, initVal, 
-			initAction=false, labelWidth=40, numberWidth = 40, centered=false;
+			initAction=false, labelWidth=40, numberWidth = 40, centered=false, back;
 			
 		^super.new.init(window, dimensions, label, controlSpec, action, initVal, 
-			initAction, labelWidth, numberWidth, centered);
+			initAction, labelWidth, numberWidth, centered, back);
 	}
 
 	init { arg window, dimensions, label, argControlSpec, argAction, initVal, 
-			initAction, labelWidth, numberWidth, centered;
+			initAction, labelWidth, numberWidth, centered, b;
 		var width;
 		var decorator = window.tryPerform(\decorator), gap = decorator.tryPerform(\gap);
 
 		dimensions = dimensions ?? ( 32 @ 16 );
-	/*
-		gap.notNil.if({
-			labelWidth = labelWidth - gap.x;
-			numberWidth = numberWidth - gap.x;
-			(dimensions = dimensions.copy).x_(dimensions.x - (2*gap.x));
-		});
-	*/
+	
+		b = b ? Color.blue(0.2, alpha:0.1);
+	
 		enabled = true;
 		controlSpec = argControlSpec.asSpec;
 		initVal = initVal ? controlSpec.default;
@@ -47,6 +44,14 @@ EZKnob	{
 			};
 			
 			knobView.centered = centered;
+			
+			knobView.receiveDragHandler = { arg kn;
+				kn.valueAction = controlSpec.unmap(SCView.currentDrag);
+			};
+			
+			knobView.beginDragAction = { arg kn;
+				controlSpec.map(kn.value)
+			};
 
 			numberView = SCNumberBox(lay, numberWidth @ dimensions.y);
 			numberView.action = {
@@ -62,7 +67,7 @@ EZKnob	{
 				knobView.value = controlSpec.unmap(value);
 				numberView.value = value.round(round);
 			});
-		}).background_(Color.blue(0.2, alpha:0.1));
+		}).background_(b);
 
 	}
 	value_ { arg value; if( knobView.enabled, { numberView.valueAction = value }) }

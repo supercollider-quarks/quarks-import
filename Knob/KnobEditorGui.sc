@@ -19,6 +19,12 @@ KnobEditorGui : EditorGui {
 		knob.action_({arg v; 
 			model.activeValue_(model.spec.map(v.value)).changed(this);
 		});
+		knob.receiveDragHandler = { arg kn;
+			kn.valueAction = model.spec.unmap(SCView.currentDrag);
+		};
+		knob.beginDragAction = { arg kn;
+			model.spec.map(kn.value)
+		};
 		knob.value = model.spec.unmap(model.poll);
 		if(consumeKeyDowns,{ knob.keyDownAction = {nil}; });
 	}
