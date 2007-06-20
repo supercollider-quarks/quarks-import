@@ -1,4 +1,4 @@
-// blackrain@realizedsound.net - 0106
+// blackrain at realizedsound dot net - 0106
 
 KnobEditor : NumberEditor {
 
