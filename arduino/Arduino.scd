@@ -15,7 +15,7 @@
 // SimpleMessageSystem_example_1 (from the SMS distribution)
 // see http://www.arduino.cc/playground/Code/SimpleMessageSystem
 
-p = ArduinoSMS("/dev/tty.usbserial-181", 9600);
+p = ArduinoSMS("/dev/tty.usbserial-A1000ecP", 115200); // was 9600 (changed by thor)
 p.action = { |... msg| msg.postln };
 
 // read digital inputs
@@ -33,7 +33,7 @@ p.send($w, $d, 13, 0);
 fork {
 	8.do {
 		p.send($w, $d, 13, 1);
-		0.25.wait;
+		1.25.wait;
 		p.send($w, $d, 13, 0);
 		0.25.wait;
 	}
@@ -49,8 +49,19 @@ p.close;
 // =====================================================================
 // SimpleMessageSystem_analog_read
 
-p = ArduinoSMS("/dev/tty.usbserial-181", 115200);
+p = ArduinoSMS("/dev/tty.usbserial-A1000ecP", 115200);
 p.action = { |... msg| msg.postln };
+
+// thor reading loop
+(
+fork {
+	100.do {
+		p.send($r, $a);
+		0.1.wait;
+	}
+}
+)
+
 p.close;
 
 // EOF
