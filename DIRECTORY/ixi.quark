@@ -1,12 +1,11 @@
 (
-// a must:
-	\name: 		"ixi quarks",
+	\name: 		"ixi",
 	\path: 		"ixi/",
-	\summary:		"An envioronment of instruments made for live improvisation.\nAt the moment this is only working on OS X. Please feel free to port if you have time!",
+	\summary:		"An envioronment of instruments made for live improvisation.\n
+					At the moment this is only working on OS X. 
+					Please feel free to port if you have time!",
 	\author: 		"Thor Magnusson",
-
-// optional:
-	\version:		1.0, // must be a float
+	\version:		1.0,
 	\organization: 	"ixi audio",
 	\country: 		"uk/es/is",
 	\since: 		"2000",
