@@ -4,10 +4,13 @@
 	synthparams=nil, maxtimeperfile=0, outputlengthfunc=nil, synthdurfunc=nil,
 	plot=false, inchannels=1, outchannels=1, 
 	outputnameadd="",
-	extrainitcommands=nil|
+	extrainitcommands=nil,
+	headerFormat="WAV", sampleFormat="int16",
+	action=nil|
 	
 	
-	var files, infilelength, outfilelength, sfreader, outfilepath, commands, opts, limit, check, synthdur;
+	var files, infilelength, outfilelength, sfreader, outfilepath, commands, opts, 
+		limit, check, synthdur, filesproduced;
 	
 	
 	// Grab a list of files matching the pattern
@@ -20,6 +23,8 @@
 	sfreader = SoundFile.new;
 	
 	outputpath = outputpath.standardizePath;
+	
+	filesproduced = Array.new(files.size);
 	
 	Routine({
 	
@@ -51,7 +56,8 @@
 				//  - Create the output buffer
 				[0.0, [\b_alloc, 1, outfilelength, outchannels]],
 				//  - Create the synth
-				[0.0, [ \s_new, synthdefname, 1000, 0, 0,\inbufnum,0, \outbufnum, 1, \length, infilelength] ++ synthparams],
+				[0.0, [ \s_new, synthdefname, 1000, 0, 0,
+							\inbufnum,0, \outbufnum, 1, \length, infilelength] ++ synthparams],
 				// [...later...]
 				//  - Write the output data to disk
 				[synthdur,[\b_write, 1, outfilepath,"WAV", "float"]],
@@ -65,7 +71,8 @@
 			
 			// RUN THE NRT PROCESS
 			("Launching NRT for file "++filepath.fileName).postln;
-			Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, "WAV", "int16", opts); // synthesize
+			//Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, "WAV", "int16", opts); // synthesize
+			Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, headerFormat, sampleFormat, opts); // synthesize
 
 			// Now wait for it to terminate
 			limit = maxtimeperfile / 0.2;
@@ -79,14 +86,20 @@
 			});
 			//"DEBUG: an NRT has finished".postln;
 			
-			// Plot the output buffer if requested (would need to load from output sound file)
-			if(plot, {
-				var psfr; // Please ignore SC's warning about not inlining this function.
-				psfr = SoundFile.new;
-				psfr.openRead(outfilepath);
-				{
-					psfr.plot;
-				}.defer;
+			if(File.exists(outfilepath), {
+				
+				// List of actually-created files
+				filesproduced = filesproduced.add(outfilepath);
+				
+				// Plot the output buffer if requested (would need to load from output sound file)
+				if(plot, {
+					var psfr; // Please ignore SC's warning about not inlining this function.
+					psfr = SoundFile.new;
+					psfr.openRead(outfilepath);
+					{
+						psfr.plot;
+					}.defer;
+				});
 			});
 		});
 	};
@@ -95,6 +108,8 @@
 	"-----------------------------------".postln;
 	"Score.batchNRT process has finished".postln;
 	"-----------------------------------".postln;
+	
+	action.value(filesproduced);
 	
 	}).play(SystemClock);
 
