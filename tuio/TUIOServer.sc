@@ -37,7 +37,7 @@ TUIOServer {
 	var >aliveFunc;
 	var iClass;	/// interaction class
 	var isEuler;	/// determines if using Euler or Axis Notation. standard is true.
-	var interactions;
+	var <interactions;
 	
 	
 	// gui support
