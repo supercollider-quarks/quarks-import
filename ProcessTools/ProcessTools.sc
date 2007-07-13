@@ -1,5 +1,6 @@
 /*
-See the Help file for [UnixTools]
+(c) 2007 Dan Stowell
+See the Help file for [ProcessTools] to see what these do...
 */
 
 + String {
@@ -14,7 +15,7 @@ unixCmdInferPID { |action|
 	Task({
 		
 		// cmdname is the command name we'll be monitoring
-		cmdname = this.split($ ).first;
+		cmdname = this.split($ ).first.basename;
 		
 		// List processes before we launch
 		pipe = Pipe.new("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'", "r");
