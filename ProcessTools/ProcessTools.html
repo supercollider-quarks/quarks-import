@@ -29,7 +29,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p5">"sleep 3"<span class="s2">.unixCmd</span></p>
 <p class="p6"><span class="s3">"sleep 3"</span>.unixCmdInferPID({<span class="s4">|pid|</span> (<span class="s3">"The PID is"</span> + pid).postln})</p>
-<p class="p5">"sleep 3"<span class="s2">.unixCmdWaitUntilDone({</span><span class="s4">|pid|</span><span class="s2"> (</span>"The PID was"<span class="s2"> + pid ++ </span>"; the program has completed"<span class="s2">).postln})</span></p>
+<p class="p5">"sleep 3"<span class="s2">.unixCmdThen({</span><span class="s4">|pid|</span><span class="s2"> (</span>"The PID was"<span class="s2"> + pid ++ </span>"; the program has completed"<span class="s2">).postln})</span></p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p3">This toolbox contains the following:</p>
@@ -38,7 +38,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">This is like unixCmd except that it also infers the PID that the launched process takes on. This is useful for monitoring long-running processes. The "action" argument is launched once the PID is known.</p>
 <p class="p2"><br></p>
-<p class="p3"><b>String:unixCmdWaitUntilDone(action, checkevery)</b></p>
+<p class="p3"><b>String:unixCmdThen(action, checkevery)</b></p>
 <p class="p2"><br></p>
 <p class="p3">Runs unixCmd then monitors the process, waiting until it completes.</p>
 <p class="p7"><br></p>
@@ -46,8 +46,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">Checks to see if a UNIX process with PID matching the integer is running.</p>
 <p class="p2"><br></p>
-<p class="p3"><b>Score:recordNRTWaitUntilDone</b></p>
+<p class="p3"><b>Score:recordNRTThen</b></p>
 <p class="p2"><br></p>
-<p class="p3">Just like Score's recordNRT methods except wrapped up in the unixCmdWaitUntilDone method described above. This is particularly helpful for running [<span class="s5">Non-Realtime-Synthesis</span>] processes and then automatically doing something else once the rendering is complete.</p>
+<p class="p3">Just like Score's recordNRT methods except wrapped up in the unixCmdThen method described above. This is particularly helpful for running [<span class="s5">Non-Realtime-Synthesis</span>] processes and then automatically doing something else once the rendering is complete.</p>
 </body>
 </html>

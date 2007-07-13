@@ -53,10 +53,10 @@ unixCmdInferPID { |action|
 	}).play(AppClock);
 } // End .unixCmdInferPID
 
-unixCmdWaitUntilDone { |action, checkevery=0.3|
+unixCmdThen { |action, checkevery=0.3|
 	this.unixCmdInferPID({|pid|
 		if(pid.isNil, {
-			("String:unixCmdWaitUntilDone - could not infer PID, therefore couldn't wait until done!").error;
+			("String:unixCmdThen - could not infer PID, therefore couldn't wait until done!").error;
 		}, {
 			Task({
 				checkevery.wait;
@@ -65,7 +65,7 @@ unixCmdWaitUntilDone { |action, checkevery=0.3|
 			}).play(AppClock);
 		});
 	});
-} // End .unixCmdWaitUntilDone
+} // End .unixCmdThen
 
 
 } // End String
