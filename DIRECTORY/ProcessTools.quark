@@ -1,0 +1,8 @@
+(
+	\name: "ProcessTools",
+	\path: "ProcessTools", // path relative to the root Quarks folder
+	\summary: "A collection of tools to interact with unix/linux processes, such as finding their PID or monitoring them and waiting until they complete.",
+	\author: "Dan Stowell. Feel free to contribute to this thematic library",
+	\since:	"2006",
+	\helpdoc: "ProcessTools.html"
+)
