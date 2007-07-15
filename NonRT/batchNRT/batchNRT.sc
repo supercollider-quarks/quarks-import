@@ -6,11 +6,12 @@
 	outputnameadd="",
 	extrainitcommands=nil,
 	headerFormat="WAV", sampleFormat="int16",
-	action=nil|
+	action=nil,
+	opts=nil|
 	
 	
-	var files, infilelength, outfilelength, sfreader, outfilepath, commands, opts, 
-		limit, check, synthdur, filesproduced;
+	var files, infilelength, outfilelength, sfreader, outfilepath, commands, 
+		limit, check, synthdur, filesproduced, nrtrunning;
 	
 	
 	// Grab a list of files matching the pattern
@@ -67,10 +68,12 @@
 			
 			commands.postcs;
 			
-			opts = ServerOptions.new.numOutputBusChannels_(outchannels);
-			
+			opts = (opts ?? {ServerOptions.new}).numOutputBusChannels_(outchannels);
+
 			// RUN THE NRT PROCESS
 			("Launching NRT for file "++filepath.fileName).postln;
+/*
+// REPLACE WITH ProcessTools call
 			//Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, "WAV", "int16", opts); // synthesize
 			Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, headerFormat, sampleFormat, opts); // synthesize
 
@@ -85,7 +88,14 @@
 				0.2.wait;
 			});
 			//"DEBUG: an NRT has finished".postln;
+// REPLACE WITH ProcessTools call
+*/			
+			nrtrunning = true;
+			Score.recordNRTThen(commands, "NRTanalysis", nil, nil,44100, headerFormat, sampleFormat, opts,
+				action: {|pid| nrtrunning = false}); // synthesize
+			while({nrtrunning}, {0.2.wait});
 			
+
 			if(File.exists(outfilepath), {
 				
 				// List of actually-created files

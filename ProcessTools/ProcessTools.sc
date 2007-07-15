@@ -1,27 +1,17 @@
-/*
-(c) 2007 Dan Stowell
-See the Help file for [ProcessTools] to see what these do...
-*/
+// (c) 2007 Dan Stowell
+// Free to use under the GPL.
+// See the Help file for [ProcessTools] to see what these do...
 
 + String {
-
-/*
-"sleep 10".unixCmd
-"sleep 10".unixCmdInferPID({|pid| ("The PID is" + pid).postln})
-*/
 
 unixCmdInferPID { |action|
 	var cmdname, pipe, line, lines, prepids, postpids, diff, pid;
 	Task({
-		
 		// cmdname is the command name we'll be monitoring
 		cmdname = this.split($ ).first.basename;
 		
 		// List processes before we launch
-		pipe = Pipe.new("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'", "r");
-		line = pipe.getLine;
-		while({line.notNil}, {lines = lines ++ line ++ "\n"; line = pipe.getLine; });
-		pipe.close;
+		lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
 		prepids = if(lines.isNil, [], {lines.split($\n).collect(_.asInteger)});
 		//("PIDS pre:  " + prepids).postln;
 		
@@ -31,14 +21,9 @@ unixCmdInferPID { |action|
 		0.1.wait;
 		
 		// List processes after we launch
-		lines = "";
-		pipe = Pipe.new("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'", "r");
-		line = pipe.getLine;
-		while({line.notNil}, {lines = lines ++ line ++ "\n"; line = pipe.getLine; });
-		pipe.close;
+		lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
 		postpids = if(lines.isNil, [], {lines.split($\n).collect(_.asInteger)});
 		//("PIDS post: " + postpids).postln;
-		
 		
 		// Can we spot a single addition?
 		diff = difference(postpids, prepids).select(_ > 0);
@@ -68,6 +53,17 @@ unixCmdThen { |action, checkevery=0.3|
 	});
 } // End .unixCmdThen
 
+unixCmdGetStdOut {
+	var pipe, lines, line;
+
+	pipe = Pipe.new(this, "r");
+	lines = "";
+	line = pipe.getLine;
+	while({line.notNil}, {lines = lines ++ line ++ "\n"; line = pipe.getLine; });
+	pipe.close;
+	
+	^lines;
+}
 
 } // End String
 
@@ -77,19 +73,7 @@ unixCmdThen { |action, checkevery=0.3|
 + Integer {
 
 isPIDRunning {
-	var pipe, lines, line;
-
-	pipe = Pipe.new("ps -p" ++ this, "r");
-	lines = "";
-	line = pipe.getLine;
-	while({line.notNil}, {lines = lines ++ line ++ "\n"; line = pipe.getLine; });
-	pipe.close;
-	
-	//"ps fetched the following:".postln;
-	//lines.postln;
-	
-	^lines.contains(this.asString);
+	^("ps -p" ++ this).unixCmdGetStdOut.contains(this.asString);
 } // End isPIDRunning
 
 } // End Integer
-
