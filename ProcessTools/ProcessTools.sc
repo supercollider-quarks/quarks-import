@@ -8,7 +8,7 @@ unixCmdInferPID { |action|
 	var cmdname, pipe, line, lines, prepids, postpids, diff, pid;
 	Task({
 		// cmdname is the command name we'll be monitoring
-		cmdname = this.split($ ).first.basename;
+		cmdname = this.replace("\\ ", "").split($ ).first.basename;
 		
 		// List processes before we launch
 		lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
@@ -28,7 +28,8 @@ unixCmdInferPID { |action|
 		// Can we spot a single addition?
 		diff = difference(postpids, prepids).select(_ > 0);
 		if(diff.size != 1, {
-			("String.unixCmdInferPID - unable to be sure of the " ++ cmdname ++ " PID").warn;
+			("String.unixCmdInferPID - unable to be sure of the " ++ cmdname ++ " PID.").warn;
+			("Compared:" + prepids.asCompileString + "against" + postpids.asCompileString + "with result" + diff.asCompileString).postln;
 			pid = nil;
 		}, {
 			pid = diff[0];
