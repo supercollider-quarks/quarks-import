@@ -34,7 +34,7 @@
 \f1\b0 (\{ arg this; actionFunc \})
 \f2\b \
 KnobEditor:changed - 
-\f1\b0 notify dependants from a value change in the object
+\f1\b0 notify dependants from a value change in the object. ie, the gui.
 \f4 \
 
 \f2\b \
@@ -142,7 +142,7 @@ z = \{ \cf3 arg\cf0  amp=0.25; \cf3 AudioIn\cf0 .ar([1,2], amp) \}.play\
 \
 k = \cf3 KnobEditor\cf0 (0.25, \cf2 \\amp\cf0 );\
 k.action = \{ \cf3 arg\cf0  v; z.set(\cf2 \\amp\cf0 , v.value) \};\
-g = k.gui(\cf3 nil\cf0 , \cf3 nil\cf0 , 100).roundVal_(0.00000001)\
+g = k.gui(\cf3 nil\cf0 , \cf3 nil\cf0 , 100).roundVal_(1e-8)\
 \
 z.release\
 \
@@ -155,7 +155,7 @@ k.gui\
 p = \cf3 Pbind\cf0 (\cf2 \\amp\cf0 , k, \cf2 \\dur\cf0 , 0.25).play\
 p.stop\
 \
-\cf4 // KrKnobEditor in the crucial library\cf0 \
+\cf4 // KrKnobEditor in a crucial library patch gui\cf0 \
 (\
 \cf3 Patch\cf0 (\{ \cf3 arg\cf0  freq=110.0, amp=0.1;\
 \
