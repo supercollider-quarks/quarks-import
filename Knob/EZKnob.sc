@@ -18,15 +18,15 @@ EZKnob	{
 		dimensions = dimensions ?? ( 32 @ 16 );
 	
 		b = b ? Color.blue(0.2, alpha:0.1);
-		width = max(numberWidth, labelWidth) + 8;
-		height = (dimensions.y * 2 + 8) + dimensions.x + 8;
+		width = max(numberWidth, labelWidth) + 4;
+		height = (dimensions.y * 2 + 4) + dimensions.x + 8;
 
 		bounds = Point.new(width, height);
 		
 		cv = SCCompositeView.new(window, bounds)
 			.background_(b);
 			
-		cv.decorator = FlowLayout.new(cv.bounds);
+		cv.decorator = FlowLayout.new(cv.bounds, 2@2, 4@4);
 	
 		enabled = true;
 		controlSpec = argControlSpec.asSpec;
