@@ -20,16 +20,27 @@ unixCmdInferPID { |action|
 
 		0.1.wait;
 		
+		/* Sometimes useful for debug:
+		lines = ("ps -x | grep" + cmdname + "").unixCmdGetStdOut;
+		"------------------------".postln;
+		"unixCmdGetStdOut RESULT:".postln;
+		lines.postln;
+		"------------------------".postln;
+		*/
+	
 		// List processes after we launch
 		lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
+		//lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| grep -v grep\ " + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
 		postpids = if(lines.isNil, [], {lines.split($\n).collect(_.asInteger)});
 		//("PIDS post: " + postpids).postln;
 		
 		// Can we spot a single addition?
-		diff = difference(postpids, prepids).select(_ > 0);
+		//diff = difference(postpids, prepids).select(_ > 0);
+		diff = postpids.reject({|val| (val==0) or: prepids.indexOfEqual(val).isNil.not });
 		if(diff.size != 1, {
 			("String.unixCmdInferPID - unable to be sure of the " ++ cmdname ++ " PID.").warn;
 			("Compared:" + prepids.asCompileString + "against" + postpids.asCompileString + "with result" + diff.asCompileString).postln;
+			("Difference function returns" + difference(postpids, prepids).asCompileString).postln;
 			pid = nil;
 		}, {
 			pid = diff[0];
