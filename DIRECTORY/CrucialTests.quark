@@ -1,0 +1,6 @@
+(
+	\name: "CrucialTests",
+	\path: "CrucialTests", // path relative to the root Quarks folder
+	\summary: "UnitTests for crucial library",
+	\author: "felix"
+)
