@@ -39,6 +39,21 @@ TestAbstractPlayerProxy : UnitTest {
 		a.free;
 
 	}
+	test_prepare {
+		var a;
+	
+		this.bootServer;
+	
+		a = AbstractPlayerProxy.new;
+		a.source = Patch({ Saw.ar });
+
+		a.prepareForPlay;
+		this.wait({a.readyForPlay},"wait for a to be ready for play");
+		
+
+		a.free;
+		this.wait({a.readyForPlay.not},"wait for a to be un-ready");
+	}
 
 
 }
