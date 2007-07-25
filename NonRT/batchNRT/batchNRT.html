@@ -5,26 +5,30 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.41">
+<meta name="CocoaVersion" content="824.42">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #ad140d}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bb9}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #aa190e}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fb8}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #606060}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #2c7014}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #316f16}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bb0e03}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #007300}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 9.0px Monaco}
-span.s3 {color: #001bb9}
+span.s3 {color: #001fb8}
 span.s4 {text-decoration: underline}
 span.s5 {color: #000000}
-span.s6 {color: #2c7014}
+span.s6 {color: #316f16}
 span.s7 {color: #606060}
-span.s8 {color: #ad140d}
-span.s9 {color: #007300}
-span.s10 {color: #0000bf}
+span.s8 {color: #aa190e}
+span.s9 {color: #167209}
+span.s10 {color: #000ebe}
+span.s11 {color: #0000bf}
+span.s12 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -56,6 +60,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><b>extrainitcommands</b> - an array of extra commands you'd like prepending to the list</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>action</b> - a function to be evaluated once all the processing is complete. It will be passed a list of paths for the files created.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>opts</b> - a ServerOptions object (NB options for number of output busses will be overwritten).</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>really</b> - set this to false to skip the NRT part of the process (in other words, just perform the plotting/action). Useful for debug or rerunning actions.</p>
 <p class="p2"><br></p>
 <p class="p1"><i>See also:</i> [<span class="s4">Score</span>], [<span class="s4">Non-Realtime-Synthesis</span>].</p>
 <p class="p2"><br></p>
@@ -85,9 +90,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="s5"><span class="Apple-tab-span">	</span></span>\help_addalittlereverb<span class="s5">,</span></p>
 <p class="p1"><span class="Apple-tab-span">	</span>outputnameadd: <span class="s7">"-verbed"</span>,</p>
 <p class="p3"><span class="s5"><span class="Apple-tab-span">	</span>outputlengthfunc: {</span><span class="s3">|indur|</span><span class="s5"> (indur + 2) * 44100}, </span>// Allow 2 seconds at end of file for reverberations</p>
-<p class="p7"><span class="Apple-tab-span">	</span>synthparams: [<span class="s9">\gain</span>, 0.9],</p>
-<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span></span>// opts: ServerOptions.new.verbosity_(-1), // Reduces amount of info the server posts</p>
-<p class="p8"><span class="s5"><span class="Apple-tab-span">	</span>synthdurfunc: {</span><span class="s10">|indur|</span><span class="s5"> indur + 2} </span>// Allow 2 seconds at end of file for reverberations</p>
+<p class="p1"><span class="Apple-tab-span">	</span>synthparams: [<span class="s9">\gain</span>, 0.9],</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span></span>// opts: ServerOptions.new.verbosity_(-1), // Reduces amount of info the server posts</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span>synthdurfunc: {</span><span class="s10">|indur|</span><span class="s5"> indur + 2} </span>// Allow 2 seconds at end of file for reverberations</p>
 <p class="p1"><span class="Apple-tab-span">	</span>);</p>
 <p class="p1">)</p>
 <p class="p2"><br></p>
@@ -106,14 +111,14 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1">)</p>
 <p class="p3">// Then we process the files</p>
 <p class="p1">(</p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="s3">Score</span>.batchNRT(</p>
-<p class="p3"><span class="s5"><span class="Apple-tab-span">	</span></span><span class="s7">"~/svn/soundsamples/beatboxes/*.wav"</span><span class="s5">,<span class="Apple-tab-span">	</span></span>// Input path pattern - note the asterisk wildcard</p>
-<p class="p5"><span class="s5"><span class="Apple-tab-span">	</span></span>"~/dataoutput/parameters"<span class="s5">,<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s8">// Output path</span></p>
-<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span></span>\help_param<span class="s5">,</span></p>
-<p class="p1"><span class="Apple-tab-span">	</span>outputnameadd: <span class="s7">"-parameters"</span>,</p>
-<p class="p3"><span class="s5"><span class="Apple-tab-span">	</span>outputlengthfunc: {</span><span class="s3">|indur|</span><span class="s5"> ((indur) * 44100 / 64).postln}, </span>// Note the way the durations are scaled to the (standard) control rate</p>
-<p class="p1"><span class="Apple-tab-span">	</span>plot:<span class="s3">true</span></p>
-<p class="p1"><span class="Apple-tab-span">	</span>);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s11">Score</span>.batchNRT(</p>
+<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span><span class="s7">"~/svn/soundsamples/beatboxes/*.wav"</span><span class="s5">,<span class="Apple-tab-span">	</span></span>// Input path pattern - note the asterisk wildcard</p>
+<p class="p5"><span class="s5"><span class="Apple-tab-span">	</span></span>"~/dataoutput/parameters"<span class="s5">,<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s12">// Output path</span></p>
+<p class="p10"><span class="s5"><span class="Apple-tab-span">	</span></span>\help_param<span class="s5">,</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>outputnameadd: <span class="s7">"-parameters"</span>,</p>
+<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span>outputlengthfunc: {</span><span class="s11">|indur|</span><span class="s5"> ((indur) * 44100 / 64).postln}, </span>// Note the way the durations are scaled to the (standard) control rate</p>
+<p class="p8"><span class="Apple-tab-span">	</span>plot:<span class="s11">true</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>);</p>
 <p class="p1">)</p>
 </body>
 </html>

@@ -7,6 +7,7 @@
 	extrainitcommands=nil,
 	headerFormat="WAV", sampleFormat="int16",
 	action=nil,
+	really=true,
 	opts=nil|
 	
 	
@@ -49,52 +50,38 @@
 				filepath.fileNameWithoutExtension ++ outputnameadd 
 				++ "." ++ filepath.extension;
 			
-			// Create the list of commands, which must:
-			commands = extrainitcommands ++
-			     [
-				//  - Load the input buffer
-				[0.0, [\b_allocRead, 0, filepath.fullPath]],
-				//  - Create the output buffer
-				[0.0, [\b_alloc, 1, outfilelength, outchannels]],
-				//  - Create the synth
-				[0.0, [ \s_new, synthdefname, 1000, 0, 0,
-							\inbufnum,0, \outbufnum, 1, \length, infilelength] ++ synthparams],
-				// [...later...]
-				//  - Write the output data to disk
-				[synthdur,[\b_write, 1, outfilepath,"WAV", "float"]],
-				// Kill the synth
-				[synthdur, [\n_free, 1000]]
-			];
-			
-			commands.postcs;
-			
-			opts = (opts ?? {ServerOptions.new}).numOutputBusChannels_(outchannels);
+			if(really, {	
+				
+				// Create the list of commands, which must:
+				commands = extrainitcommands ++
+				     [
+					//  - Load the input buffer
+					[0.0, [\b_allocRead, 0, filepath.fullPath]],
+					//  - Create the output buffer
+					[0.0, [\b_alloc, 1, outfilelength, outchannels]],
+					//  - Create the synth
+					[0.0, [ \s_new, synthdefname, 1000, 0, 0,
+								\inbufnum,0, \outbufnum, 1, \length, infilelength] ++ synthparams],
+					// [...later...]
+					//  - Write the output data to disk
+					[synthdur,[\b_write, 1, outfilepath,"WAV", "float"]],
+					// Kill the synth
+					[synthdur, [\n_free, 1000]]
+				];
+				
+				commands.postcs;
+				
+				opts = (opts ?? {ServerOptions.new}).numOutputBusChannels_(outchannels);
+	
+				// RUN THE NRT PROCESS
+				("Launching NRT for file "++filepath.fileName).postln;
 
-			// RUN THE NRT PROCESS
-			("Launching NRT for file "++filepath.fileName).postln;
-/*
-// REPLACE WITH ProcessTools call
-			//Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, "WAV", "int16", opts); // synthesize
-			Score.recordNRT(commands, "NRTanalysis", nil, nil,44100, headerFormat, sampleFormat, opts); // synthesize
-
-			// Now wait for it to terminate
-			limit = maxtimeperfile / 0.2;
-			0.2.wait;
-			while({
-				check="ps -xc | grep 'scsynth'".systemCmd; //256 if not running, 0 if running
-				//["DEBUG: waiting for NRT", check, limit].postln;
-				(check==0) and: {(limit = limit - 1) != 0} // "!=" caters for both limit and no limit
-			},{
-				0.2.wait;
-			});
-			//"DEBUG: an NRT has finished".postln;
-// REPLACE WITH ProcessTools call
-*/			
-			nrtrunning = true;
-			Score.recordNRTThen(commands, "NRTanalysis", nil, nil,44100, headerFormat, sampleFormat, opts,
-				action: {|pid| nrtrunning = false}); // synthesize
-			while({nrtrunning}, {0.2.wait});
-			
+				nrtrunning = true;
+				Score.recordNRTThen(commands, "NRTanalysis", nil, nil,44100, headerFormat, sampleFormat, opts,
+					action: {|pid| nrtrunning = false}); // synthesize
+				while({nrtrunning}, {0.2.wait});
+				
+			}); // End of "really?"
 
 			if(File.exists(outfilepath), {
 				
