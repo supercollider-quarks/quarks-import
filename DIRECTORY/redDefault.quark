@@ -1,7 +1,10 @@
 (
 	\name: "redDefault",
 	\path: "redDefault",
-	\summary: "a hacked default synth",
+	\summary: "a hacked default synth\n
+		note: this class will overwrite your default synth at recompile.
+		though it is easy to undo and get back to normal.
+		see RedDefault.help",
 	\author: "redFrik",
 	\url: "http://www.fredrikolofsson.com/"
 )
