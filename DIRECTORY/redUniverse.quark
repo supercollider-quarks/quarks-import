@@ -1,7 +1,10 @@
 (
 	\name: "redUniverse",
 	\path: "redUniverse",
-	\summary: "a simple toolkit",
+	\summary: "a simple toolkit\n
+		note: if you don't have SwingOSC installed you'll need to
+		remove the file RedJWindow.sc from the classes folder.
+		and read the readme.rtf",
 	\author: "redFrik",
 	\url: "http://www.fredrikolofsson.com/"
 )
