@@ -1,7 +1,8 @@
 (
 	\name: "redFingerprint",
 	\path: "redFingerprint",
-	\summary: "a different plot",
+	\summary: "a different plot\n
+		see RedFingerprint.help",
 	\author: "redFrik",
 	\url: "http://www.fredrikolofsson.com/"
 )
