@@ -23,7 +23,7 @@ EZKnob	{
 
 		bounds = Point.new(width, height);
 		
-		cv = SCCompositeView.new(window, bounds)
+		cv = GUI.compositeView.new(window, bounds)
 			.background_(b);
 			
 		cv.decorator = FlowLayout.new(cv.bounds, 2@2, 4@4);
@@ -33,11 +33,11 @@ EZKnob	{
 		initVal = initVal ? controlSpec.default;
 		action = argAction;
 
-		labelView = SCStaticText(cv, labelWidth @ dimensions.y);
+		labelView = GUI.staticText.new(cv, labelWidth @ dimensions.y);
 		labelView.string = label;
 		labelView.align = \center;
 
-		knobView = Knob(cv, dimensions.x @ dimensions.x);
+		knobView = GUI.knob.new(cv, dimensions.x @ dimensions.x);
 		knobView.action = {
 			value = controlSpec.map(knobView.value);
 			numberView.value = value.round(round);
@@ -57,7 +57,7 @@ EZKnob	{
 			controlSpec.map(kn.value)
 		};
 
-		numberView = SCNumberBox(cv, numberWidth @ dimensions.y);
+		numberView = GUI.numberBox.new(cv, numberWidth @ dimensions.y);
 		numberView.action = {
 			numberView.value = value = controlSpec.constrain(numberView.value);
 			knobView.value = controlSpec.unmap(value);

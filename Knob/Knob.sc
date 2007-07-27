@@ -1,26 +1,31 @@
 // blackrain at realizedsound dot net - 05/2006
 //	fix key modidiers bug by Stephan Wittwer 08/2006 - thanks!
 //	Knob updates only on value changes - 10/2006
-//	GUI.cocoa changes - 04/2007
+//	GUI.cocoa changes by Sciss - 07/2007
 
 Knob : SCUserView {
+	classvar <>defaultMode;
 	var <>color, <value, last, <>step, hit, <>keystep, <>mode, isCentered = false;
 	
 	*viewClass { ^GUI.userView }
-/*
+
 	*initClass {
-		if (\JSCWindow.asClass.notNil) {
-			GUI.schemes.at(\swing).put(\knob, JKnob)
-		}
+		defaultMode='round'; // early so this can be changed in startup
+		StartUp.add({ var kit;
+			kit = GUI.schemes[ \cocoa ];
+			if( kit.notNil, { kit.knob = Knob });
+			kit = GUI.schemes[ \swing ];
+			if( kit.notNil, { kit.knob = JKnob });
+		});
 	}
-*/
+
 	*paletteExample { arg parent, bounds;
 		^GUI.knob.new(parent,bounds)
 	}
 	
 	init { arg parent, bounds;
 		super.init(parent, bounds);
-		mode = \round;
+		mode = defaultMode;
 		keystep = 0.01;
 		step = 0.01;
 		value = 0.0;
