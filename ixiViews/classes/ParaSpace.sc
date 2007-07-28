@@ -1,7 +1,6 @@
 // (c) 2006, Thor Magnusson - www.ixi-software.net
 // GNU licence - google it.
 
-// (coverted to GUI.sc usage by sciss dec-2006)
 
 ParaSpace {
 
@@ -14,7 +13,7 @@ ParaSpace {
 	var nodeCount, shape;
 	var startSelPoint, endSelPoint, refPoint;
 	var selNodes, outlinecolor, selectFillColor, selectStrokeColor;
-	var keytracker, conFlag;
+	var keytracker, conFlag; // experimental
 	var nodeSize, swapNode;
 	var font, fontColor;
 	
@@ -28,20 +27,14 @@ ParaSpace {
 	
 	initParaSpace { arg w, argbounds;
 		var a, b, rect, relX, relY, pen;
-
-		lazyRefreshFunc = { this.refresh; refreshDeferred = false; };
-
 		bounds = argbounds ? Rect(20, 20, 400, 200);
 		bounds = Rect(bounds.left + 0.5, bounds.top + 0.5, bounds.width, bounds.height);
 
-		pen	= GUI.pen;
-		
 		if((win= w).isNil, {
 			win = GUI.window.new("ParaSpace",
 				Rect(10, 250, bounds.left + bounds.width + 40, bounds.top + bounds.height+30));
 			win.front
 		});
-
 		win.acceptsMouseOver = false;
 
 		background = Color.white;
@@ -49,8 +42,8 @@ ParaSpace {
 		outlinecolor = Color.red;
 		selectFillColor = Color.green(alpha:0.2);
 		selectStrokeColor = Color.black;
-		paraNodes = List.new;
-		connections = List.new;
+		paraNodes = List.new; // list of ParaNode objects
+		connections = List.new; // list of arrays with connections eg. [2,3]
 		nodeCount = 0;
 		startSelPoint = 0@0;
 		endSelPoint = 0@0;
@@ -58,14 +51,14 @@ ParaSpace {
 		shape = "rect";
 		conFlag = false;
 		nodeSize = 8;
-		font = GUI.font.new("Arial", 9);
+		font = Font("Arial", 9);
 		fontColor = Color.black;
-		
-		
-		keytracker = GUI.userView.new(win, if(GUI.current.id == \swing, 
-							{Rect(-10, -10, 10, 10)}, {Rect(-10, -10, 2000, 2000)}))
+		pen	= GUI.pen;
+
+		// tracking the delete button
+		keytracker = GUI.userView.new(win, Rect(-10, -10, 10, 10))
 			.canFocus_(true)
-			.keyDownAction_({ |me, key, modifiers, unicode |
+			.keyDownFunc_({ |me, key, modifiers, unicode | // not = keyDownAction_ (as sciss says)
 				if(unicode == 127, {
 					selNodes.do({arg box; 
 						paraNodes.copy.do({arg node, i; 
@@ -79,16 +72,17 @@ ParaSpace {
 			})
 			.keyUpAction_({ |me, key, modifiers, unicode |
 				if(unicode == 99, {conFlag = false;}); // c is for connecting
+
 			});
-			
-		mouseTracker = GUI.userView.new(win, Rect(bounds.left, bounds.top, bounds.width + 1, bounds.height + 1))
+
+		mouseTracker = GUI.userView.new(win, Rect(bounds.left, bounds.top, bounds.width, bounds.height))
 			.canFocus_(false)
 			.mouseDownAction_({|me, x, y, mod|
 				chosennode = this.findNode(x, y);
 				if( (mod & 0x00040000) != 0, {	// == 262401
 					paraNodes.add(ParaNode.new(x,y, fillcolor, bounds, nodeCount, nodeSize));
 					nodeCount = nodeCount + 1;
-					paraNodes.do({arg node;
+					paraNodes.do({arg node; // deselect all nodes
 					 		node.outlinecolor = Color.black; 
 							node.refloc = node.nodeloc;
 					});
@@ -120,7 +114,7 @@ ParaSpace {
 					 	});
 						startSelPoint = x@y;
 						endSelPoint = x@y;
-						this.lazyRefresh;
+						this.refresh;
 					});
 				});
 			})
@@ -144,10 +138,10 @@ ParaSpace {
 						});
 					};
 					trackAction.value(chosennode);
-					this.lazyRefresh;
-				}, {
+					this.refresh;
+				}, { // no node is selected
 					endSelPoint = x@y;
-					this.lazyRefresh;
+					this.refresh;
 				});
 			})
 			.mouseOverAction_({arg me, x, y;
@@ -166,8 +160,9 @@ ParaSpace {
 					paraNodes.do({arg node; 
 						node.refloc = node.nodeloc;
 					});
-					this.lazyRefresh;
-				},{ 
+					this.refresh;
+				},{ // no node is selected
+					// find which nodees are selected
 					selNodes = List.new;
 					paraNodes.do({arg node;
 						if(Rect(	startSelPoint.x, // + rect
@@ -201,79 +196,80 @@ ParaSpace {
 					});
 					startSelPoint = 0@0;
 					endSelPoint = 0@0;
-					this.lazyRefresh;
+					this.refresh;
 				});
 			})
 			.drawFunc_({		
-					pen.font = font;
-					pen.width = 1;
-//				background.set; // background color
-				pen.color = background;
+	
+				pen.width = 1;
+				pen.color = background; // background color
 				pen.fillRect(bounds); // background fill
 				backgrDrawFunc.value; // background draw function
-//				Color.black.set;
-				pen.strokeColor = Color.black;
+				
+				// the lines
+				pen.color = Color.black;
 				connections.do({arg conn;
 					pen.line(paraNodes[conn[0]].nodeloc+0.5, paraNodes[conn[1]].nodeloc+0.5);
 				});
 				pen.stroke;
+				
 				// the nodes or circles
 				paraNodes.do({arg node;
 					if(shape == "rect", {
-//						node.color.set;
-						pen.fillColor = node.color;
+						pen.color = node.color;
 						pen.fillRect(node.rect);
-//						node.outlinecolor.set;
-						pen.strokeColor = node.outlinecolor;
+						pen.color = node.outlinecolor;
 						pen.strokeRect(node.rect);
 					}, {
-//						node.color.set;
-						pen.fillColor = node.color;
+						pen.color = node.color;
 						pen.fillOval(node.rect);
-//						node.outlinecolor.set;
-						pen.strokeColor = node.outlinecolor;
+						pen.color = node.outlinecolor;
 						pen.strokeOval(node.rect);
 					});
-//				    	node.string.drawInRect(Rect(node.rect.left+node.size+5,
-//				    								node.rect.top-3, 80, 16),   
-//				    								font, fontColor);
-				    	if( node.string.size > 0, {
-					    	pen.fillColor = fontColor;
-				    		pen.stringInRect( node.string, Rect(node.rect.left+node.size+5, node.rect.top-3, 80, 16));
+					if(GUI.current.id == \swing, {
+					    	if( node.string.size > 0, {
+						    	pen.fillColor = fontColor;
+					    		pen.stringInRect( node.string, 
+					    			Rect(node.rect.left+node.size+5, node.rect.top-3, 80, 16));
+					    	});
+				    	},{
+					    	node.string.drawInRect(Rect(node.rect.left+node.size+5,
+				    								node.rect.top-3, 80, 16),   
+				    								font, fontColor);
 				    	});
+
 				});
-// superfluous!
-//				pen.stroke;		
-//				selectFillColor.set;
-				pen.fillColor = selectFillColor;
+				pen.stroke;		
+				
+				pen.color = selectFillColor;
 				// the selection node
 				pen.fillRect(Rect(	startSelPoint.x + 0.5, 
 									startSelPoint.y + 0.5,
 									endSelPoint.x - startSelPoint.x,
 									endSelPoint.y - startSelPoint.y
 									));
-//				selectStrokeColor.set;
-				pen.strokeColor = selectStrokeColor;
+				pen.color = selectStrokeColor;
 				pen.strokeRect(Rect(	startSelPoint.x + 0.5, 
 									startSelPoint.y + 0.5,
 									endSelPoint.x - startSelPoint.x,
 									endSelPoint.y - startSelPoint.y
 									));
-//				Color.black.set;
-				pen.strokeColor = Color.black;
+
+				pen.color = Color.black;
+
 				pen.strokeRect(bounds); // background frame
 			});
 	keytracker.focus(true);
 	}
 	
-	clearSpace { arg refresh = true;
+	clearSpace {
 		paraNodes = List.new;
 		connections = List.new;
-		if(refresh == true, {this.refresh});
 		nodeCount = 0;
+		this.refresh;
 	}
 		
-	createConnection {arg node1, node2, refresh = true;
+	createConnection {arg node1, node2, refresh=true;
 		if((nodeCount < node1) || (nodeCount < node2), {
 			"Can't connect - there aren't that many nodes".postln;
 		}, {
@@ -283,6 +279,7 @@ ParaSpace {
 						break.value;
 					});	
 				});
+				// if not broken out of the block, then add the connection
 				connections.add([node1, node2]);
 				connAction.value(paraNodes[node1], paraNodes[node2]);
 				if(refresh == true, {this.refresh});
@@ -290,25 +287,25 @@ ParaSpace {
 		});
 	}
 
-	deleteConnection {arg node1, node2, refresh = true;
+	deleteConnection {arg node1, node2, refresh=true;
 		connections.do({arg conn, i; if((conn == [node1, node2]) || (conn == [node2, node1]),
 			 { connections.removeAt(i)})});
 		if(refresh == true, {this.refresh});
 	}
 
-	deleteConnections { // delete all connections
+	deleteConnections { arg refresh=true; // delete all connections
 		connections = List.new; // list of arrays with connections eg. [2,3]
-		this.refresh;	
+		if(refresh == true, {this.refresh});
 	}
 
-	createNode {arg x, y, color, refresh = true;
+	createNode {arg x, y, color, refresh=true;
 		fillcolor = color ? fillcolor;
 		paraNodes.add(ParaNode.new(bounds.left+x+0.5, bounds.top+y+0.5, fillcolor, bounds, nodeCount, nodeSize));
 		nodeCount = nodeCount + 1;
 		if(refresh == true, {this.refresh});
 	}
 	
-	createNode1 {arg argX, argY, color, refresh = true;
+	createNode1 {arg argX, argY, color, refresh=true;
 		var x, y;
 		x = (argX * bounds.width).round(1);
 		y = (argY * bounds.height).round(1);
@@ -318,7 +315,7 @@ ParaSpace {
 		if(refresh == true, {this.refresh});
 	}
 	
-	deleteNode {arg nodenr; var del;
+	deleteNode {arg nodenr, refresh=true; var del;
 		del = 0;
 		connections.copy.do({arg conn, i; 
 			if(conn.includes(nodenr), { connections.removeAt((i-del)); del=del+1;})
@@ -327,10 +324,10 @@ ParaSpace {
 			if(conn[0]>nodenr,{conn[0]=conn[0]-1});if(conn[1]>nodenr,{conn[1]= conn[1]-1});
 		});
 		if(paraNodes.size > 0, {paraNodes.removeAt(nodenr)});
-		this.refresh;		
+		if(refresh == true, {this.refresh});
 	}
 	
-	setNodeLoc_ {arg index, argX, argY, refresh = true;
+	setNodeLoc_ {arg index, argX, argY, refresh=true;
 		var x, y;
 		x = argX+bounds.left + 0.5;
 		y = argY+bounds.top + 0.5;
@@ -349,8 +346,7 @@ ParaSpace {
 			{\track} 	{trackAction.value(paraNodes[index])};
 		if(refresh == true, {this.refresh});
 	}
-
-
+	
 	getNodeLoc {arg index;
 		var x, y;
 		x = paraNodes[index].nodeloc.x - bounds.left;
@@ -358,7 +354,7 @@ ParaSpace {
 		^[x-0.5, y-0.5];
 	}
 
-	setNodeLoc1_ {arg index, argX, argY, refresh = true;
+	setNodeLoc1_ {arg index, argX, argY, refresh=true;
 		var x, y;
 		x = (argX * bounds.width).round(1);
 		y = (argY * bounds.height).round(1);
@@ -386,17 +382,18 @@ ParaSpace {
 	}
 	
 	getNodeStates {
-		var locs, color, size;
-		locs = List.new; color = List.new; size = List.new;
+		var locs, color, size, string;
+		locs = List.new; color = List.new; size = List.new; string = List.new;
 		paraNodes.do({arg node; 
 			locs.add(node.nodeloc);
 			color.add(node.color); 
 			size.add(node.size);
+			string.add(node.string);
 		});
-		^[locs, connections, color, size];
+		^[locs, connections, color, size, string];
 	}
 
-	setNodeStates_ {arg array, refresh = true; // array with [locs, connections, color, size]
+	setNodeStates_ {arg array; // array with [locs, connections, color, size, string]
 		if(array[0].isNil == false, {
 			paraNodes = List.new; 
 			array[0].do({arg loc; 
@@ -407,20 +404,21 @@ ParaSpace {
 		if(array[1].isNil == false, { connections = array[1];});
 		if(array[2].isNil == false, { paraNodes.do({arg node, i; node.setColor_(array[2][i];)})});
 		if(array[3].isNil == false, { paraNodes.do({arg node, i; node.setSize_(array[3][i];)})});
-		if(refresh == true, {this.refresh});
-	}
-
-	setBackgrColor_ {arg color;
-		background = color;
+		if(array[4].isNil == false, { paraNodes.do({arg node, i; node.string = array[4][i];})});
 		this.refresh;
 	}
+
+	setBackgrColor_ {arg color, refresh=true;
+		background = color;
+		if(refresh == true, {this.refresh});
+	}
 		
-	setFillColor_ {arg color;
+	setFillColor_ {arg color, refresh=true;
 		fillcolor = color;
 		paraNodes.do({arg node; 
 			node.setColor_(color);
 		});
-		this.refresh;
+		if(refresh == true, {this.refresh});
 	}
 	
 	setOutlineColor_ {arg color;
@@ -428,17 +426,19 @@ ParaSpace {
 		this.refresh;
 	}
 	
-	setSelectFillColor_ {arg color;
+	setSelectFillColor_ {arg color, refresh=true;
 		selectFillColor = color;
+		if(refresh == true, {this.refresh});
 	}
 
-	setSelectStrokeColor_ {arg color;
+	setSelectStrokeColor_ {arg color, refresh=true;
 		selectStrokeColor = color;
+		if(refresh == true, {this.refresh});
 	}
 	
-	setShape_ {arg argshape;
+	setShape_ {arg argshape, refresh=true;
 		shape = argshape;
-		this.refresh;	
+		if(refresh == true, {this.refresh});
 	}
 	
 	reconstruct { arg aFunc;
@@ -458,12 +458,11 @@ ParaSpace {
 			refreshDeferred = true;
 		});
 	}
-	
-	setNodeSize_ {arg index, size, refresh = true;
+				
+	setNodeSize_ {arg index, size, refresh=true;
 		if(size == nil, {
 			nodeSize = index;
 			paraNodes.do({arg node; node.setSize_(nodeSize)});
-			//"nodesize is :".post; nodeSize.postln;
 		}, {
 			paraNodes[index].setSize_(size);
 		});
@@ -474,7 +473,7 @@ ParaSpace {
 		^paraNodes[index].size;
 	}
 	
-	setNodeColor_ {arg index, color, refresh = true;
+	setNodeColor_ {arg index, color, refresh=true;
 		paraNodes[index].setColor_(color);
 		if(refresh == true, {this.refresh});
 	}
@@ -499,7 +498,6 @@ ParaSpace {
 	getNodeString {arg index;
 		^paraNodes[index].string;
 	}
-	
 	// PASSED FUNCTIONS OF MOUSE OR BACKGROUND
 	nodeDownAction_ { arg func;
 		downAction = func;
@@ -527,12 +525,13 @@ ParaSpace {
 	}
 	
 	keyDownAction_ {arg func;
+		//mouseTracker.canFocus_(true); // in order to detect keys the view has to be focusable
 		keyDownAction = func;
 	}
 	
-	setBackgrDrawFunc_ { arg func, refresh = true;
+	setBackgrDrawFunc_ { arg func;
 		backgrDrawFunc = func;
-		if(refresh == true, {this.refresh});
+		this.refresh;
 	}
 	
 	// local function
@@ -545,7 +544,6 @@ ParaSpace {
 		^nil;
 	}
 }
-
 
 ParaNode {
 	var <>fillrect, <>state, <>size, <rect, <>nodeloc, <>refloc, <>color, <>outlinecolor;
@@ -609,69 +607,3 @@ ParaNode {
 		^color;
 	}
 }
-
-
-/*
-ParaNode {
-	var <>fillrect, <>state, <>size, <rect, <>nodeloc, <>refloc, <>color, <>outlinecolor;
-	var <>spritenum;
-	var bounds;
-	var <>string;
-	
-	*new { arg x, y, color, bounds, spnum, size;
-		^super.new.initGridNode(x, y, color, bounds, spnum, size);
-	}
-	
-	initGridNode {arg argX, argY, argcolor, argbounds, spnum, argsize;
-		spritenum = spnum;
-		nodeloc =  Point(argX, argY);	
-		refloc = nodeloc;
-		color = argcolor;	
-		outlinecolor = Color.black;
-		size = argsize ? 8;
-		bounds = argbounds;
-		rect = Rect((argX-(size/2))+0.5, (argY-(size/2))+0.5, size, size);
-		string = "";
-	}
-		
-	setLoc_ {arg point;
-		nodeloc = point;
-		// keep paranode inside the bounds
-		if((point.x) > (bounds.left+bounds.width), 
-			{nodeloc.x = bounds.left+bounds.width - 0.5});
-		if((point.x) < (bounds.left), 
-			{nodeloc.x = bounds.left + 0.5});
-		if((point.y) > (bounds.top+bounds.height), 
-			{nodeloc.y = bounds.top+bounds.height -0.5});
-		if((point.y) < (bounds.top), 
-			{nodeloc.y = bounds.top + 0.5});
-		rect = Rect((nodeloc.x-(size/2))+0.5, (nodeloc.y-(size/2))+0.5, size, size);
-	}
-		
-	setState_ {arg argstate;
-		state = argstate;
-	}
-	
-	getState {
-		^state;
-	}
-	
-	setSize_ {arg argsize;
-		size = argsize;
-		rect = Rect((nodeloc.x-(size/2))+0.5, (nodeloc.y-(size/2))+0.5, size, size);
-	}
-	
-	getSize {
-		^size;
-	}
-	
-	setColor_ {arg argcolor;
-		color = argcolor;
-	}
-	
-	getColor {
-		^color;
-	}
-}
-
-*/
