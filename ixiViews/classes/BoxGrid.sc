@@ -117,28 +117,36 @@ BoxGrid {
 			backgrDrawFunc.value; // background draw function
 //			Color.black.set;
 			pen.color = Color.black;
-			pen.font = font;
+			//pen.font = font;
 			// Draw the boxes
 			gridNodes.do({arg row;
 				row.do({arg node; 
 					if(node.state == true, {
 						if(fillmode, {
-//							fillcolor.set;
-							if( fillColor != node.color, { pen.fillColor = fillColor = node.color });
+							pen.color = fillcolor;
+							//if( fillColor != node.color, { pen.fillColor = fillColor = node.color });
 							pen.fillRect(node.fillrect);
-//							Color.black.set;
-//							pen.strokeColor = Color.black;
+							pen.color = Color.black;
+							pen.strokeColor = Color.black;
 							pen.strokeRect(node.fillrect);
 						},{
-//							Color.black.set;
-//							pen.strokeColor = Color.black;
+							pen.color = Color.black;
+							pen.strokeColor = Color.black;
 							pen.strokeRect(node.fillrect);
 						});
 						if( node.string != "", {
-							if( fillColor != fontColor, {Êpen.fillColor = fillColor = fontColor });
-							pen.stringInRect( node.string, Rect(node.fillrect.left+5,
-					    					node.fillrect.top+(node.fillrect.height/2)-(font.size/1.5), 
+							//if( fillColor != fontColor, {Êpen.fillColor = fillColor = fontColor });
+							if(GUI.current.id == \swing, {
+								pen.font = font;
+								pen.stringInRect( node.string, Rect(node.fillrect.left+5,
+										node.fillrect.top+(node.fillrect.height/2)-(font.size/1.5), 
 					    					80, 16));
+							}, {
+								node.string.drawInRect(Rect(node.fillrect.left+5,
+				    					node.fillrect.top+(node.fillrect.height/2)-(font.size/1.5), 
+				    					80, 16),   
+				    					font, fontColor);
+				    			});
 					    	});
 					});
 				});
