@@ -16,8 +16,9 @@ p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {color: #606060}
-span.s4 {color: #0026b4}
-span.s5 {text-decoration: underline}
+span.s4 {color: #002eaf}
+span.s5 {font: 12.0px Lucida Grande}
+span.s6 {text-decoration: underline}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -30,6 +31,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="s3">"sleep 3"</span>.unixCmdInferPID({<span class="s4">|pid|</span> (<span class="s3">"The PID is"</span> + pid).postln})</p>
 <p class="p4">"sleep 3"<span class="s2">.unixCmdThen({</span><span class="s4">|pid|</span><span class="s2"> (</span>"The PID was"<span class="s2"> + pid ++ </span>"; the program has completed"<span class="s2">).postln})</span></p>
 <p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">thor:</p>
+<p class="p5"><span class="s3">"python </span><span class="s5">pyprog.py</span><span class="s3">"</span>.unixCmdInferPID({<span class="s4">|pid|</span> p = pid; (<span class="s3">"The PID is"</span> + pid).postln})</p>
+<p class="p6"><br></p>
+<p class="p5">("kill "++p.asString).unixCmd</p>
+<p class="p6"><br></p>
 <p class="p2"><br></p>
 <p class="p3">This toolbox contains the following:</p>
 <p class="p2"><br></p>
@@ -51,6 +58,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><b>Score:recordNRTThen</b></p>
 <p class="p2"><br></p>
-<p class="p3">Just like Score's recordNRT methods except wrapped up in the unixCmdThen method described above. This is particularly helpful for running [<span class="s5">Non-Realtime-Synthesis</span>] processes and then automatically doing something else once the rendering is complete.</p>
+<p class="p3">Just like Score's recordNRT methods except wrapped up in the unixCmdThen method described above. This is particularly helpful for running [<span class="s6">Non-Realtime-Synthesis</span>] processes and then automatically doing something else once the rendering is complete.</p>
 </body>
 </html>
