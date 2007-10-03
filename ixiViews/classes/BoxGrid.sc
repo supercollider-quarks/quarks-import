@@ -332,7 +332,11 @@ BoxGrid {
 	getNodeString {arg row, col;
 		^gridNodes[col][row].string;
 	}
-
+	
+	remove {
+		mouseTracker.remove;
+		win.refresh;
+	}
 	// local function
 	findNode {arg x, y;
 		gridNodes.do({arg row;
