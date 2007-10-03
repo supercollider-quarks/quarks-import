@@ -33,9 +33,11 @@ ParaSpace {
 		if((win= w).isNil, {
 			win = GUI.window.new("ParaSpace",
 				Rect(10, 250, bounds.left + bounds.width + 40, bounds.top + bounds.height+30));
-			win.front
+			win.front;
 		});
-		win.acceptsMouseOver = false;
+		
+		// if w is not a scrollview but a scwindow
+		if(w.isKindOf(SCScrollView).not, {win.acceptsMouseOver = false}); 
 
 		background = Color.white;
 		fillcolor = Color.new255(103, 148, 103);
