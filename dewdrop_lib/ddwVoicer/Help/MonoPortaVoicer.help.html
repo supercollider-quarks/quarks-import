@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 24.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+    span.s1 {color: #800080}
+    span.s2 {color: #ff0000}
+    span.s3 {color: #0000bf}
+    span.s4 {font: 9.0px Monaco}
+    span.s5 {color: #000000}
+    span.s6 {color: #007300}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>MonoPortaVoicer : Voicer</b></p>
+<p class="p2"><br></p>
+<p class="p3">A subclass of <b>[Voicer]</b>, providing similar functionality for sequencing and MIDI response. Designed to emulate the behavior of mono synthesizers with fingered portamento.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>Differences:</b></p>
+<p class="p2"><br></p>
+<p class="p3">MonoPortaVoicer allows only one voice. You must still give 1 as the first argument to MonoPortaVoicer.new. Any other number will be changed to 1 for you.</p>
+<p class="p3">If a second note is played while the first is sustaining, the pitch will slide to the new pitch <span class="s1"><i>if your synthdef is written correctly</i></span> (see below). Envelopes will not be retriggered.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>Getting portamento in your synthdefs and Instr's</b></p>
+<p class="p2"><br></p>
+<p class="p3">As in Voicer, the arguments <i>freq</i> and <i>gate</i> are required. To these, add <i>freqlag</i> -- the lagtime to slide from one pitch to the next. The lagtime argument will be assigned by the voicer depending on whether portamento is needed for this note or not. <b>Do not set <i>freqlag</i> in your initial arguments—above all, </b><span class="s2"><b>do not make <i>freqlag</i> a fixed argument if you're using Instr</b></span><b>.</b> Portamento will not work as you expect in that case.</p>
+<p class="p2"><br></p>
+<p class="p3">Include the line</p>
+<p class="p2"><br></p>
+<p class="p5"><span class="Apple-tab-span">	</span>freq = <span class="s3">Lag</span>.kr(freq, freqlag);</p>
+<p class="p2"><br></p>
+<p class="p3">in your synthdef or Instr. For portamento to work correctly, it must be a variable-length lag, and this is the only way to do it.</p>
+<p class="p2"><br></p>
+<p class="p3">To set the portamento time, use<span class="Apple-converted-space">  </span><span class="s4">myVoicer.portaTime = myTime;</span></p>
+<p class="p2"><br></p>
+<p class="p3">Example:</p>
+<p class="p2"><br></p>
+<p class="p5">(</p>
+<p class="p6"><span class="s3">Instr</span><span class="s5">([</span>\analog<span class="s5">, </span>\two_osc<span class="s5">], {</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">arg</span> freq, freqlag, gate, ffreq, rq, velsense, env, fenv, detune, width;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> amp, sig;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>amp = <span class="s3">Latch</span>.kr(gate, gate) * velsense + 1-velsense;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>freq = <span class="s3">Lag</span>.kr(freq, freqlag);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>sig = <span class="s3">Mix</span>.ar(<span class="s3">Pulse</span>.ar([freq, freq*detune], width, amp));</p>
+<p class="p5"><span class="Apple-tab-span">	</span>sig = <span class="s3">RLPF</span>.ar(sig, <span class="s3">EnvGen</span>.kr(fenv, gate) * ffreq, rq);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>sig = sig * <span class="s3">EnvGen</span>.kr(env, gate, doneAction:2);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>[sig, sig] * 0.5</p>
+<p class="p5">}, #[<span class="s6">\freq</span>, [0, 2], <span class="s6">\amp</span>, <span class="s6">\freq</span>, [1, 0.05, <span class="s6">\linear</span>, 0, 0.5], <span class="s6">\amp</span>, <span class="s3">nil</span>, <span class="s3">nil</span>, [0.98, 1.02, <span class="s6">\linear</span>, 0, 1], [0, 1]]);</p>
+<p class="p7"><br></p>
+<p class="p5">v = <span class="s3">MonoPortaVoicer</span>(1, <span class="s3">Instr</span>.at([<span class="s6">\analog</span>, <span class="s6">\two_osc</span>]), [<span class="s6">\ffreq</span>, 2000, <span class="s6">\rq</span>, 0.5, <span class="s6">\env</span>, <span class="s3">Env</span>.adsr(0.05, 0.1, 0.8, 0.2), <span class="s6">\fenv</span>, <span class="s3">Env</span>.adsr(0.2, 0.3, 0.25, 1), <span class="s6">\detune</span>, 0.99, <span class="s6">\width</span>, 0.25]);</p>
+<p class="p5">)</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="s5">k = </span><span class="s3">VoicerMIDISocket</span><span class="s5">(0, v);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// to play the voicer on your keyboard</p>
+<p class="p8"><span class="s5">k.addControl(1, </span><span class="s6">\ffreq</span><span class="s5">, 2000, </span><span class="s6">\freq</span><span class="s5">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// control filter cutoff using modwheel; optional</p>
+<p class="p8"><span class="s5">v.gui;<span class="Apple-tab-span">	</span></span>// optional</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="s5">v.portaTime = 1;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// try these different settings, see what the effect is</p>
+<p class="p5">v.portaTime = 0.25;</p>
+<p class="p8"><span class="s5">v.portaTime = 0;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// note that there's always a slide, even if the time is 0, except on retrig</p>
+<p class="p5">v.portaTime = 0.4;</p>
+<p class="p7"><br></p>
+<p class="p8"><span class="s5">v.free;<span class="Apple-tab-span">	</span></span>// when you're done playing</p>
+<p class="p7"><br></p>
+</body>
+</html>

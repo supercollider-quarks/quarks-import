@@ -1,0 +1,15 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf420
+{\fonttbl\f0\fnil\fcharset77 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red96\green96\blue96;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs18 \cf2 (\
+	name:		\cf3 "ddwSensitivity"\cf2 ,\
+	path:		\cf3 "dewdrop_lib/ddwSensitivity"\cf2 ,\
+	summary:		\cf3 "A macro UGen that mimics the behavior of the 'sensitivity' control in many hardware synths."\cf2 ,\
+	author:		\cf3 "James Harkins"\cf2 ,\
+	version:		1.0,\
+	helpdoc:		\cf3 "Help/Sensitivity.help.html"\cf2 ,\
+	url:			\cf3 "http://www.dewdrop-world.net/sc3"\cf2 \
+)\
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.42">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 28.0px; text-indent: -28.0px; font: 12.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 28.0px; text-indent: -28.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+    span.s1 {color: #0000bf}
+    span.s2 {color: #007300}
+    span.s3 {color: #000000}
+    span.s4 {color: #bf0000}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>TimeSpec</b></p>
+<p class="p2"><br></p>
+<p class="p3">Objects for implementing more flexible quantized scheduling using TempoClock-play. Applies to any object that plays using TempoClock (such as Pbind).</p>
+<p class="p2"><br></p>
+<p class="p3"><b>NilTimeSpec</b> -- always schedules for now</p>
+<p class="p3"><b>BasicTimeSpec</b> -- like standard scheduling: schedules for next multiple of the input number</p>
+<p class="p3"><b>QuantOffsetTimeSpec</b> -- like Basic, but adds an offset to the next multiple</p>
+<p class="p3"><b>QuantOffsetLatencyTimeSpec</b> -- takes server-side latency into account; latency is in beats (not seconds)</p>
+<p class="p3"><b>QuantOffsetLatencyWrapTimeSpec</b> -- takes latency into account; if the latency pushes the onset before the current time, it will be scheduled for (quant) beats later</p>
+<p class="p2"><br></p>
+<p class="p3">TimeSpec has a couple of features that distinguish it from the normal way of handling quantized scheduling.</p>
+<p class="p2"><br></p>
+<p class="p4">-<span class="Apple-tab-span">	</span>A single TimeSpec object can be shared among multiple processes (see especially BP in the chucklib addon, where a TimeSpec can be stored in the ~quant variable). If you change the instance variables of the time spec without replacing the object, you can change the quantization of multiple processes simultaneously.</p>
+<p class="p5"><br></p>
+<p class="p4">-<span class="Apple-tab-span">	</span>I found it useful to handle latency terms of beats, rather than seconds as in the normal event framework. Why? Suppose you have two processes that need to sound together, but where one process must execute just ahead of the other. Using TimeSpec, you can apply a latency of 0.6 to the process that must happen first and 0.5 to the other. If you play them at the same time, the first gets scheduled for onset time - 0.6, the second for onset time - 0.5 (just later). This relationship holds even if you change the tempo of the clock.</p>
+<p class="p5"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>This does require the prototype event to convert the latency in beats into seconds using latency / thisThread.clock.tempo, but it's a small price to pay to have this kind of control over timing.</p>
+<p class="p2"><br></p>
+<p class="p6"><b>Usage:</b></p>
+<p class="p3">asTimeSpec should be implemented for every type of object that should be able to be converted into a TimeSpec by playing a process. Current implementations are:</p>
+<p class="p2"><br></p>
+<p class="p3">nil --&gt; NilTimeSpec</p>
+<p class="p3">quant --&gt; NilTimeSpec if 0, BasicTimeSpec otherwise (compatibility with standard syntax)</p>
+<p class="p3">[quant, offset] --&gt; QuantOffsetTimeSpec</p>
+<p class="p3">[quant, offset, latency] --&gt; QuantOffsetLatencyTimeSpec</p>
+<p class="p2"><br></p>
+<p class="p6"><b>Example:</b></p>
+<p class="p2"><br></p>
+<p class="p7"><span class="s1">SynthDescLib</span>.global.read;</p>
+<p class="p7">c = <span class="s1">Pbind</span>(<span class="s2">\freq</span>, <span class="s1">Pseq</span>(#[5000, 2500, 2500, 2500], <span class="s1">inf</span>), <span class="s2">\delta</span>, 1, <span class="s2">\legato</span>, 0.01, <span class="s2">\instrument</span>, <span class="s2">\default</span>);</p>
+<p class="p7">p = <span class="s1">Pbind</span>(<span class="s2">\freq</span>, <span class="s1">Pfunc</span>({ rrand(200, 800) }), <span class="s2">\delta</span>, 0.25, <span class="s2">\legato</span>, 0.6, <span class="s2">\instrument</span>, <span class="s2">\default</span>);</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">c.play(quant: 4);<span class="Apple-tab-span">	</span></span>// start a metronome</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">e = p.play(quant: </span><span class="s1">nil</span><span class="s3">);<span class="Apple-tab-span">	</span></span>// not synced with metronome</p>
+<p class="p7">e.stop;</p>
+<p class="p8"><br></p>
+<p class="p9"><span class="s3">e = p.play(quant: 4);<span class="Apple-tab-span">	</span></span>// synced -- this is standard SC play syntax, so no old stuff is broken</p>
+<p class="p7">e.stop;</p>
+<p class="p8"><br></p>
+<p class="p7">e = p.play(quant: <span class="s1">BasicTimeSpec</span>(4));</p>
+<p class="p7">e.stop;</p>
+<p class="p8"><br></p>
+<p class="p7">[4, 2].asTimeSpec.dump;</p>
+<p class="p8"><br></p>
+<p class="p7">e = p.play(quant: [4, 2].asTimeSpec);<span class="Apple-tab-span">	</span><span class="s4">// synced, on "beat 3 of the measure"</span></p>
+<p class="p7">e.stop;</p>
+<p class="p8"><br></p>
+<p class="p9">// cmd-. to stop metronome</p>
+<p class="p2"><br></p>
+<p class="p6"><b>Extensibility:</b></p>
+<p class="p2"><br></p>
+<p class="p3">You can write your own TimeSpecs. They need to respond to schedTime(argClock) and return the absolute number of beats when the event should be scheduled (suitable for TempoClock-schedAbs). See the class definitions for the above timespecs for examples of how to do it. They should also have an applyLatency method to convert your timespec into one that understands latency, in case a calling class needs it.</p>
+</body>
+</html>
