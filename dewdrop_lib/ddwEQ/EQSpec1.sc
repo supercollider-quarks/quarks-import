@@ -52,7 +52,7 @@ EQSpec1 {
 	
 	synthArgs {
 		case { type == \eq } {
-				^[\freq, freq, \rq, rq, \db, k.ampdb]
+				^[\freq, freq, \rq, rq, \k, k/*.ampdb*/]
 			}
 			
 			{ #[\lopass, \hipass].includes(type) } {
@@ -107,6 +107,8 @@ EQBand : EQSpec1 {
 		<>gui;
 	
 	*initClass {
+		var	dir;
+		
 			// if the band is already playing, this.play(target) moves the synth
 			// rather than making a new one. This dictionary converts add messages
 			// into move messages.
@@ -121,78 +123,7 @@ EQBand : EQSpec1 {
 			\moveBefore -> \moveBefore
 		];
 		
-			// install one-band EQ synthdefs
-		("synthdefs/EQ".pathMatch.size == 0).if({
-			"mkdir synthdefs/EQ".unixCmd;
-		});
 		
-		{	SynthDef.writeOnce("EQ/eq1", {
-				arg outbus, freq, rq, db, mul = 1;
-				ReplaceOut.ar(outbus, MidEQ.ar(In.ar(outbus, 1), freq, rq, db, mul));
-			});
-			
-			SynthDef.writeOnce("EQ/eq2", {
-				arg outbus, freq, rq, db, mul = 1;
-				ReplaceOut.ar(outbus, MidEQ.ar(In.ar(outbus, 2), freq, rq, db, mul));
-			});
-			
-			SynthDef.writeOnce("EQ/lopass1", {
-				arg outbus, freq, mul = 1;
-				ReplaceOut.ar(outbus, LPF.ar(In.ar(outbus, 1), freq, mul));
-			});
-			
-			SynthDef.writeOnce("EQ/lopass2", {
-				arg outbus, freq, mul = 1;
-				ReplaceOut.ar(outbus, LPF.ar(In.ar(outbus, 2), freq, mul));
-			});
-			
-			SynthDef.writeOnce("EQ/hipass1", {
-				arg outbus, freq, mul = 1;
-				ReplaceOut.ar(outbus, HPF.ar(In.ar(outbus, 1), freq, mul));
-			});
-			
-			SynthDef.writeOnce("EQ/hipass2", {
-				arg outbus, freq, mul = 1;
-				ReplaceOut.ar(outbus, HPF.ar(In.ar(outbus, 2), freq, mul));
-			});
-			
-			SynthDef.writeOnce("EQ/loshelf1", {
-				arg outbus, b1, k, mul = 1, add = 0;
-				var in, allpass;
-				in = In.ar(outbus, 1);
-				allpass = FOS.ar(in, b1.neg, 1, b1, k.sign);
-				ReplaceOut.ar(outbus,
-					(0.5 * (in + allpass + (k.abs * (in-allpass))) * mul + add));
-			});
-			
-			SynthDef.writeOnce("EQ/loshelf2", {
-				arg outbus, b1, k, mul = 1, add = 0;
-				var in, allpass;
-				in = In.ar(outbus, 2);
-				allpass = FOS.ar(in, b1.neg, 1, b1, k.sign);
-				ReplaceOut.ar(outbus,
-					(0.5 * (in + allpass + (k.abs * (in-allpass))) * mul + add));
-			});
-			
-			SynthDef.writeOnce("EQ/hishelf1", {
-				arg outbus, b1, k, mul = 1, add = 0;
-				var in, allpass;
-				in = In.ar(outbus, 1);
-				allpass = FOS.ar(in, b1.neg, 1, b1, k.sign);
-				ReplaceOut.ar(outbus,
-					(0.5 * (in + allpass + (k.abs * (in-allpass))) * mul + add));
-			});
-			
-			SynthDef.writeOnce("EQ/hishelf2", {
-				arg outbus, b1, k, mul = 1, add = 0;
-				var in, allpass;
-				in = In.ar(outbus, 2);
-				allpass = FOS.ar(in, b1.neg, 1, b1, k.sign);
-				ReplaceOut.ar(outbus,
-					(0.5 * (in + allpass + (k.abs * (in-allpass))) * mul + add));
-			});
-		}.defer(1);
-
 	}
 	
 	*new { arg type = \eq, freq = 440, k = 1, rq = 1, numChannels = 1, sr = 44100;
@@ -219,7 +150,7 @@ EQBand : EQSpec1 {
 	
 		// place the eq band on the server
 	play { arg targ, b, addAct = \addToTail, amp = 1;
-		var bundle, groupbus;
+		var bundle, groupbus, def;
 			// fix target
 		target = targ ? target;
 		bus = b ? bus;
@@ -247,11 +178,13 @@ EQBand : EQSpec1 {
 		mul = amp;
 
 		synth.isNil.if({		// make new synth, else move it using action and target
-			bundle = List.new;
+			def = this.makeSynthDef;
+
 			synth = Synth.basicNew("EQ/"++type.asString++numChannels, target.server);
-			bundle.add(synth.newMsg(target,
-				this.calc.synthArgs ++ [\outbus, bus.index, \mul, mul], addAction));
-			target.server.listSendBundle(nil, bundle);
+			
+			bundle = [\d_recv, def.asBytes, synth.newMsg(target,
+				this.calc.synthArgs ++ [\outbus, bus.index, \mul, mul], addAction)];
+			target.server.sendBundle(nil, bundle);
 		}, {
 			synth.perform(translateMethods.at(addAction), target);
 		});
@@ -325,4 +258,10 @@ EQBand : EQSpec1 {
 		});
 	}
 	
+	makeSynthDef {
+		^SynthDef("EQ/" ++ type ++ numChannels, { |outbus, mul = 1, add = 0|
+			var	sig = In.ar(outbus, numChannels);
+			ReplaceOut.ar(outbus, SynthDef.wrap(StaticEQ.eqFuncs[type], nil, [sig]));
+		})
+	}
 }
