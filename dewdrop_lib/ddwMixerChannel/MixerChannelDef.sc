@@ -94,6 +94,8 @@ MixerChannelDef {
 		});
 		
 		Library.global.put(\mixerdefs, name, this);
+		
+		this.sendDefsToRunningServers;
 	}
 	
 	*at { |name|
