@@ -1,7 +1,8 @@
 
 // this class stores parameters needed to define a mixer channel
+
 // mixers should be customizable for any number of channels, any panning methodology
-// define all that here
+// define all that in this class; definitions are reused in multiple mixers
 // h. james harkins -- jamshark70@dewdrop-world.net
 
 MixerChannelDef {
