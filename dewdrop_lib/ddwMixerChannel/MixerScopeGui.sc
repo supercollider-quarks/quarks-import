@@ -28,7 +28,7 @@ MixerScopeGui : ObjectGui {
 	remove { arg dummy, freeModel = true;	// when model frees programmatically, this is false
 		model.dependants.remove(this);	// to avoid recursion with model.free below
 		
-		view.isActive.if({	
+		view.notClosed.if({	
 			view.remove;
 //			masterLayout.recursiveResize;
 		});

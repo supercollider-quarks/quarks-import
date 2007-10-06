@@ -128,7 +128,7 @@ TempoClockGui : ObjectGui {
 //		guis.remove(this);
 		model.removeDependant(this);
 //		model.changed(\guiClosed, this);
-		view.isActive.if({
+		view.notClosed.if({
 //"removing view".postln;
 			view.remove;
 			mainLayout.recursiveResize;

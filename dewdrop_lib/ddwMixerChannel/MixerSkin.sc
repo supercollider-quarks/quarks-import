@@ -129,11 +129,11 @@ MixerWidgetBase {
 			this.restoreView;
 			this.update;
 		}, {
-			view.isActive.if({ this.clearView; });
+			view.notClosed.if({ this.clearView; });
 		});
 	}
 	update { |value|
-		view.isActive.if({
+		view.notClosed.if({
 			mixer.notNil.if({
 				this.updateView(value);
 			}, {
@@ -276,7 +276,7 @@ MixerPresendWidget {
 	}
 
 	update { 
-		slider.isActive.if({
+		slider.notClosed.if({
 			(mixer.notNil and: { mixer.preSends[index].notNil }).if({
 				slider.value_(spec.unmap(mixer.preSends[index].level));
 			}, {
@@ -349,7 +349,7 @@ MixerPostsendWidget : MixerPresendWidget {
 	}
 
 	update { 
-		slider.isActive.if({
+		slider.notClosed.if({
 			(mixer.notNil and: { mixer.postSends[index].notNil }).if({
 				slider.value_(spec.unmap(mixer.postSends[index].level));
 			}, {

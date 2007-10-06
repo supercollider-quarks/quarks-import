@@ -457,7 +457,7 @@ VoicerGCView {
 	displayNameSet {
 		var cc;
 		var dispName, midiName;
-		(nameView.notNil and: { nameView.isActive }).if({
+		(nameView.notNil and: { nameView.notClosed }).if({
 			dispName = model.name.asString;
 			cc = model.midiControl;  // do I have a controller num?
 //				// fix display name if it's midi-routed
