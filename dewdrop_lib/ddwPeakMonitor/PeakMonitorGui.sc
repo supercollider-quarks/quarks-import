@@ -39,7 +39,7 @@ PeakMonitorGui : ObjectGui {
 	
 	update {
 		var newpeaks, str;
-		multiSl.isActive.if({	// if you close the window at the wrong time, this prevents a choke
+		multiSl.notClosed.if({	// if you close the window at the wrong time, this prevents a choke
 			newpeaks = model.peaks.collect({ arg p, i; 
 				(p > maxClip[i]).if({ maxClip[i] = p });
 				((p = p.abs) > 1).if({

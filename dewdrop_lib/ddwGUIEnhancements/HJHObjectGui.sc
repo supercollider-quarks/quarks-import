@@ -22,7 +22,7 @@ HJHObjectGui : ObjectGui {
 
 	remove {
 		model.notNil.if({
-			view.isActive.if({
+			view.notClosed.if({
 				view.remove;
 				masterLayout.recursiveResize;
 			});

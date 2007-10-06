@@ -27,7 +27,7 @@ StatusBox : SCViewHolder {
 
 	remove {
 		(default === this).if({ default = nil });	// forget about me if I'm going away
-		view.isActive.if({ super.remove; });
+		view.notClosed.if({ super.remove; });
 	}
 	
 		// this is necessary to make sure lines post in the right order
@@ -35,7 +35,7 @@ StatusBox : SCViewHolder {
 		notScheduled.if({
 			AppClock.sched(0, {
 				try {
-					view.isActive.if({
+					view.notClosed.if({
 						view.string_(view.string ++ strToPost);
 						strToPost = "";
 					});
@@ -56,7 +56,7 @@ StatusBox : SCViewHolder {
 //		routine.isNil.if({
 //			routine = Routine({
 //				while { queue.size > 0 } {
-//					view.isActive.if({
+//					view.notClosed.if({
 //						view.string_(view.string ++ queue[0]);
 //					}, { queue = Array.new; nil.yield });
 //					queue.removeAt(0);

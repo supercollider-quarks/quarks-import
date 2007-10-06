@@ -72,7 +72,7 @@ VoicerProcess {
 	}
 	
 	playUpdateGui { arg playResult;
-		parent.view.isActive.if({
+		parent.view.notClosed.if({
 			{ parent.view.background_(	// yellow if no play, green if it went ok
 				playResult.isNil.if({ Color.new255(255, 248, 60) }, { Color.green })
 			  ); }.defer;
@@ -89,7 +89,7 @@ VoicerProcess {
 	}
 	
 	stopUpdateGui {
-		parent.view.isActive.if({
+		parent.view.notClosed.if({
 			{ parent.view.background_(Color.clear); }.defer;
 		});		
 	}
@@ -101,7 +101,7 @@ VoicerProcess {
 			task.clock.schedAbs(this.getQuant(quant, 0.2+(voicer.latency ? 0))
 				.asTimeSpec.schedTime(task.clock), { task.resume; nil });
 		});
-		parent.view.isActive.if({
+		parent.view.notClosed.if({
 			{ parent.view.background_(Color.green); }.defer;
 		});
 	}
@@ -115,7 +115,7 @@ VoicerProcess {
 	
 	isPlaying {
 		task.notNil.if({
-			parent.view.isActive.if({
+			parent.view.notClosed.if({
 				{ parent.view.background_(task.isPlaying.if
 					({ Color.red }, { Color.clear })); }.defer;
 			});
@@ -200,7 +200,7 @@ VoicerProcessGroup {
 	
 	value_ { arg v, updateGUI = true;
 		value = v;
-		(updateGUI && { view.isActive }).if({
+		(updateGUI && { view.notClosed }).if({
 			{ view.value_(v) }.defer;
 		});
 	}

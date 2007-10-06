@@ -189,7 +189,7 @@ VoicerProxyGui : ObjectGui {
 											// just break connections--why?
 				gc.gui = nil;					// -- view.remove removes all its children
 			});
-			view.isActive.if({
+			view.notClosed.if({
 				view.remove;
 //				masterLayout.recursiveResize;
 			});
