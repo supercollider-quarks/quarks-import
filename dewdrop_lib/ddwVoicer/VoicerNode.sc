@@ -203,6 +203,8 @@ SynthVoicerNode {
 // GENERAL SUPPORT METHODS
 	server { ^target.server }	// tell the outside world where I live
 
+	trace { this.isPlaying.if({ synth.trace }) }
+
 //	translateArgs { arg ... args;
 //		var	newarg;
 //			// looks up symbols in argDict and substitutes synthdef arg names

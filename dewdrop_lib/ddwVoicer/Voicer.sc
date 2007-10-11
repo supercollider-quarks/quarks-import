@@ -92,6 +92,10 @@ Voicer {		// collect and manage voicer nodes
 		(n.size > 0).if({ ^n }, { ^[ this.earliest ] });
 	}
 	
+	playingNodes {
+		^nodes.select(_.isPlaying)
+	}
+	
 	earliest {	// earliest triggered node
 		^nodes.copy.sort({ arg a, b; a.lastTrigger < b.lastTrigger }).at(0)
 	}
@@ -426,7 +430,7 @@ Voicer {		// collect and manage voicer nodes
 	asMixer { ^bus.asMixer }
 	
 	panic {		// free all nodes
-		nodes.do({ arg n; n.free });
+		nodes.do({ arg n; n.releaseNow });
 	}
 	
 	cleanup {		// free non-playing nodes; kind of superfluous now
@@ -435,6 +439,12 @@ Voicer {		// collect and manage voicer nodes
 
 	steal_ { |bool = true|
 		nodes.do(_.steal = bool);
+	}
+	
+		// trace all playing nodes
+		// no need to check here b/c VoicerNode tests isPlaying before issuing n_trace
+	trace {
+		nodes.do({ |node| node.trace });
 	}
 	
 // GUI support
