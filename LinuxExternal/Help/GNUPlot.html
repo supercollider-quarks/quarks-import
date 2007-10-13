@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #623924}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #623924}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #1b34d9}
+span.s3 {color: #142fe0}
+span.s4 {color: #000000}
+span.s5 {color: #303b89}
+span.s6 {color: #623924}
+span.s7 {font: 12.0px Helvetica; color: #000000}
+span.s8 {color: #1427a2}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>GNUPlot<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>class to interface GNUPlot from SuperCollider</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: </b><a href="../Core/Object.html"><span class="s2"><b>Object</b></span></a></p>
+<p class="p3"><br></p>
+<p class="p4"><b>You need to have GNUPlot installed in order to be able to use this class!</b></p>
+<p class="p2"><br></p>
+<p class="p4"><b>Creation / Class Methods</b></p>
+<p class="p5"><br></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>*plot( arg data )</b></p>
+<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Plot the data which should be an array.</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// plot example</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">GNUPlot</span>.plot( [0,2,3,2,1,0.4] );</p>
+<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// using the Collection extensions you can also directly use plot on the array:</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0,2,3,2,1,0.4].plot;</p>
+<p class="p5"><br></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>*new</b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This creates an instance of GNUPlot, and a Pipe interface to pass on new plot data to it.</p>
+<p class="p7"><br></p>
+<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// create an instance and plot data:</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">GNUPlot</span>.new;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.plot( [0,2,3,2,1,0.4] );</p>
+</p>
+<p class="p10"><span class="s6">// plot several sets of data in one figure:</span></p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.plot( [ [0,2,3,2,1,0.4], [2,1,2,-2,0.4,0.2] ], 2 )</p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.stop</p>
+<p class="p7"><br></p>
+<p class="p11"><b>Accessing Instance and Class Variables</b></p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>plot(arg data, ns, label)</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Plots the data, assuming ns rows, and using the label. This method uses a temporary file to pass on the data to GNUPlot.</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">GNUPlot</span>.new;</p>
+<p class="p10"><span class="s6">// plot several sets of data in one figure:</span></p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.plot( [ [0,2,3,2,1,0.4], [2,1,2,-2,0.4,0.2] ], 2, "example" )</p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.stop</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>plotd(arg data, ns, label)</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Plots the data, assuming ns rows, and using the label. This method pipes the data directly to GNUPlot, without using a temporary file.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>setXrange( arg min, max )</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Sets the x-range for the data.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>setYrange( arg min, max )</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Sets the y-range for the data.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>stop</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Stops the instance and closes the pipe.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>monitor( arg updateF,dt,length,ns=1,skip=1 )</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Creates a monitor for data.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>updateF </b>- update function; this should return the additional data to be plotted.</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dt<span class="Apple-converted-space"> </span></b> - time interval between updates</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>length<span class="Apple-converted-space"> </span></b> - the number of data points to plot</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ns<span class="Apple-converted-space"> </span></b> - the number of rows in the data</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>skip<span class="Apple-converted-space"> </span></b> - how many updates are in between plots. If skip is 1 then every dt there is a new plot. If skip=10, then every ten updates of the data, it is actually plotted. This allows you to keep the graphical update rate lower than the data update rate.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>startMonitor</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Start the monitor.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>stopMonitor</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Start the monitor.</p>
+
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><b>Example: monitoring data:</b></p>
+<p class="p6">In some cases it is useful to monitor data as it comes in.</p>
+<p class="p3"><br></p>
+<p class="p13">// what this example does</p>
+<p class="p14">g = <span class="s8">GNUPlot</span>.new;</p>
+<p class="p14">g.monitor( { 1.0.rand; }, 0.3, 20, 1 );</p>
+<p class="p14">g.startMonitor;</p>
+<p class="p14">g.stopMonitor;</p>
+<p class="p13">// monitor two values in one plot:</p>
+<p class="p14">g.monitor( { [1.0.rand, 2.0.rand] }, 0.3, 20, 2 );</p>
+<p class="p14">g.startMonitor;</p>
+<p class="p14">g.stopMonitor;</p>
+<p class="p13">// clean up:</p>
+<p class="p14">g.stop;</p>
+</body>
+</html>
