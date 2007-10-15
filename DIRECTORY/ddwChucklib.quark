@@ -4,7 +4,7 @@
 	summary:		"Support for advanced algorithmic composition designs.",
 	author:		"James Harkins",
 	version:		1.0,
-	helpdoc:		"Help/ChuckOverview.help.html",
+	helpdoc:		"Help/ChuckOverview.html",
 	url:			"http://www.dewdrop-world.net/sc3",
 	dependencies:	#["ddwCommon", "ddwGUIEnhancements", "ddwMixerChannel", "ddwPatterns", "ddwTemperament", "MathLib"]
 )

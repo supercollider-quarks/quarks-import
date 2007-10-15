@@ -4,7 +4,7 @@
 	summary:		"General-purpose signal routing, mixing, with GUI mixing board.",
 	author:		"James Harkins",
 	version:		1.0,
-	helpdoc:		"Help/MixerChannel.help.html",
+	helpdoc:		"Help/MixerChannel.html",
 	url:			"http://www.dewdrop-world.net/sc3",
 	dependencies:	#["ddwCommon", "ddwGUIEnhancements"]
 )
