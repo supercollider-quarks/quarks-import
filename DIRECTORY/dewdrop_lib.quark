@@ -4,7 +4,7 @@
 	summary:		"The main container for dewdrop_lib. All the code exists in the other ddw Quarks; this Quark simply has the dependencies to install all the others automatically.",
 	author:		"James Harkins",
 	version:		1.0,
-	helpdoc:		"dewdrop.help.html",
+	helpdoc:		"dewdrop.html",
 	url:			"http://www.dewdrop-world.net/sc3",
 	dependencies:	#["ddwChucklib", "ddwCommon", "ddwEQ", "ddwGUIEnhancements", "ddwMIDI", "ddwMixerChannel", "ddwPatterns", "ddwPeakMonitor", "ddwRational", "ddwSensitivity", "ddwStatusBox", "ddwTemperament", "ddwVoicer"]
 )
