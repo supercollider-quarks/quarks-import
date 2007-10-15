@@ -7,7 +7,7 @@
 \organization: "nescivi",
 \country: "Netherlands",
 \since: "2007",
-\helpdoc: "LinuxExternal.html",
+\helpdoc: "Help/LinuxExternal.html",
 \ext_dependancy: "GNUPlot, jack_connect, jack_lsp, meterbridge",
 \url: "http://www.nescivi.nl"
 )
