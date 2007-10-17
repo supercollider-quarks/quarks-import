@@ -355,11 +355,12 @@ max {
 }
 
 do { |func, incDeleted=false|
+	leftChild  !? {  leftChild.do(func, incDeleted) };
+	rightChild !? { rightChild.do(func, incDeleted) };
+	// DEPTH-FIRST iteration - important for .allNearest
 	if(notDeleted || incDeleted, {
 		func.value(this);
 	});
-	leftChild  !? {  leftChild.do(func, incDeleted) };
-	rightChild !? { rightChild.do(func, incDeleted) };
 }
 
 // Users should not supply arraySoFar
