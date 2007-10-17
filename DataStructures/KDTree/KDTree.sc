@@ -44,27 +44,29 @@ init { |array, dep=0, par, lastIsLabel=false, uid=1|
 }
 
 nearest { |point, nearestSoFar, bestDist=inf|
-	var nearest, searchParent, dist, max, min, sibling;
+	var quickGuess, searchParent, quickGuessDist, max, min, sibling;
+
 	
 	// Descend to the leaf that would be parent of the point if it was in the data.
 	// Actually, because the partition may leave exact matches on either side of the partition, we use a modified descent.
-	nearest = this.pr_QuickDescend(point);
+	quickGuess = this.pr_QuickDescend(point);
 	
-	dist = if(nearest.notDeleted, {
-		(nearest.location - point).abs.squared.sum.sqrt
+	quickGuessDist = if(quickGuess.notDeleted, {
+		(quickGuess.location - point).abs.squared.sum.sqrt
 	}, {
 		inf
 	});
 	
 	// externally-supplied guess may be better - let's check
-	if(bestDist<dist){
-		dist = bestDist;
-		nearest = nearestSoFar;
+	if(quickGuessDist < bestDist){
+		bestDist = quickGuessDist;
+		nearestSoFar = quickGuess;
 	};
 	
-	// Next we descend from the root, examining child nodes only if the cut-line makes it possible 
+
+	// Next we ascend back up from the QUICK GUESS (NOT from the best so far), examining other branches only if the cut-line makes it possible 
 	// for a point to be closer than the nearest-so-far.
-	^nearest.pr_nearest_ascend(point, nearest, dist, stopAtDepth: this.depth)
+	^quickGuess.pr_nearest_ascend(point, nearestSoFar, bestDist, stopAtDepth: this.depth)
 }
 
 pr_BestLeafFor{ |point|
@@ -131,7 +133,7 @@ pr_nearest_descend {|point, nearestSoFar, dist|
 	if(rightChild.isNil.not && ((point[axis]+dist) > location[axis]), {
 		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, nearestSoFar, dist);
 	});
-	
+
 	^[nearestSoFar, dist];
 }
 
@@ -168,6 +170,9 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 				};
 				
 			};
+		}{
+			if(parent.leftChild.isNil.not){
+			};
 		};
 		
 	}{ // is left child:
@@ -186,6 +191,9 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 					bestDist = curDist;
 				};
 				
+			};
+		}{
+			if(parent.rightChild.isNil.not){
 			};
 		};
 		
@@ -218,7 +226,7 @@ nearestToNode { |nearestSoFar, bestDist=inf|
 			nearestSoFar = curr;
 		};
 	});
-	
+
 	// Now ascend up the tree, checking if we need to search the sibling subtrees.
 	^this.pr_nearest_ascend(location, nearestSoFar, bestDist)
 }

@@ -1,13 +1,16 @@
 /*
 KDTree.test;
 
+TestKDTree.dumpTrees = false
+TestKDTree.dumpTrees = true
+
 TestKDTree.tree.dumpTree
 TestKDTree.tree.highestUniqueId
 
 TestKDTree.tree.nearest([0,1], verbose: true)
 TestKDTree.tree2.nearest([7,9], verbose: true).location
 
-TestKDTree.tree.nearest([5,9]).location
+TestKDTree.tree.nearest([5,5,0])[0].location
 ~bl = TestKDTree.tree.pr_BestLeafFor([5,9])
 ~bl = TestKDTree.tree.pr_QuickDescend([5,9])
 ~bl.location
@@ -16,7 +19,9 @@ TestKDTree.tree.nearest([5,9]).location
 ~bl.isLeftChild
 ~bl.parent.location
 
-
+~node = TestKDTree.tree.find([7, 4, 3]);
+~node.leftChild.nearest(~node.location)
+~node.nearestToNode[0].location
 
 */
 TestKDTree : UnitTest {
@@ -29,16 +34,16 @@ TestKDTree : UnitTest {
 	
 	// Creates a 3D data structure and tests whether certain searches return the same 
 	// results under simple data rotation.
-	test_rotate {
+	test_multi {
 		// int
-		this.rotationTest(2,50, 10);
-		this.rotationTest(3,50, 10);
+		this.multiTest(2,40, 10);
+		this.multiTest(3,40, 10);
 		// float
-		this.rotationTest(2,50, 10.0);
-		this.rotationTest(3,50, 10.0);
+		this.multiTest(2,40, 10.0);
+		this.multiTest(3,40, 10.0);
 	}
 	
-	rotationTest { |dims=3, size=100, randLimit=10|
+	multiTest { |dims=3, size=100, randLimit=10|
 		var probe, probe2, match1, match2, dist1, dist2;
 		
 		array = {{randLimit.rand}.dup(dims)}.dup(size);
@@ -94,6 +99,23 @@ TestKDTree : UnitTest {
 			# match2, dist2 = tree2.nearest(probe2);
 						
 			this.assert(dist1 == dist2, "rotated space check: tree.nearest(%) same distance away as tree2.nearest(%)".format(probe, probe2));
+		};
+		
+		this.allNearestTest(tree);
+	}
+	
+	allNearestTest { |tree|
+		var probe, match1, dist1, match2, dist2;
+		// Check that the all-nearest neighbours query is returning the same data as the nearest-neighbour query is doing
+		tree.allNearest.do{ |res|
+			probe = res.key;
+			match1 = res.value[0];
+			dist1 = res.value[1];
+			
+			# match2, dist2 = probe.nearestToNode;
+
+			this.assert(dist1 == dist2, "allNearest check: allNearest result (% -> %) same distance away as node.nearestToNode %: % == %"
+					.format(probe.location, match1.location, match2.location, dist1, dist2));
 		};
 	}
 }
