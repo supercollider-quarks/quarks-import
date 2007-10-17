@@ -20,7 +20,7 @@ TestKDTree.tree.nearest([5,9]).location
 
 */
 TestKDTree : UnitTest {
-	classvar <array, <size, <dims, <tree, <array2, <tree2;
+	classvar <array, <size, <dims, <tree, <array2, <tree2, <>dumpTrees=false;
 	
 	setUp {
 	}
@@ -60,7 +60,7 @@ TestKDTree : UnitTest {
 		this.assert(tree.min==array.flop.collect(_.minItem), "tree.min==array.flop.collect(_.minItem) : % == %".format(tree.min,array.flop.collect(_.minItem)));
 		this.assert(tree.max==array.flop.collect(_.maxItem), "tree.max==array.flop.collect(_.maxItem) : % == %".format(tree.max,array.flop.collect(_.maxItem)));
 		
-		if(array.size < 60){
+		if(this.class.dumpTrees){
 			tree.dumpTree;
 			tree2.dumpTree;
 		};
