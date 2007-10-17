@@ -43,14 +43,14 @@ init { |array, dep=0, par, lastIsLabel=false, uid=1|
 	rightChild = if(medianPos==(array.size-1), nil, { KDTree.new(sorted[medianPos+1..], depth+1, this, lastIsLabel, uniqueid << 1 | 1)});
 }
 
-nearest { |point, ignoreLabel, nearestSoFar, bestDist=inf|
+nearest { |point, nearestSoFar, bestDist=inf|
 	var nearest, searchParent, dist, max, min, sibling;
 	
 	// Descend to the leaf that would be parent of the point if it was in the data.
 	// Actually, because the partition may leave exact matches on either side of the partition, we use a modified descent.
 	nearest = this.pr_QuickDescend(point);
 	
-	dist = if(nearest.notDeleted && (ignoreLabel.isNil || (ignoreLabel != nearest.label)), {
+	dist = if(nearest.notDeleted, {
 		(nearest.location - point).abs.squared.sum.sqrt
 	}, {
 		inf
@@ -111,13 +111,14 @@ pr_QuickDescend{ |point|
 	}).pr_QuickDescend(point);
 }
 
-// Recursive, and called by pr_nearest_ascend
-pr_nearest_descend {|point, ignoreLabel, nearestSoFar, dist|
+// Recursive, and called by pr_nearest_ascend.
+// Note: pr_allnearest_descend is similar, make sure code updates are done in parallel
+pr_nearest_descend {|point, nearestSoFar, dist|
 	var curDist;
 
 	// Check self location, NB leave it squared
 	curDist = (location - point).abs.squared.sum;
-	if(notDeleted && (ignoreLabel.isNil || (ignoreLabel != this.label)) && (curDist < dist.squared), {
+	if(notDeleted && (curDist < dist.squared), {
 		nearestSoFar = this; 
 		dist = curDist.sqrt;
 	});
@@ -125,10 +126,10 @@ pr_nearest_descend {|point, ignoreLabel, nearestSoFar, dist|
 	// Descend into children only if logically necessary.
 
 	if(leftChild.isNil.not && ((point[axis]-dist) < location[axis]), {
-		# nearestSoFar, dist =  leftChild.pr_nearest_descend(point, ignoreLabel, nearestSoFar, dist);
+		# nearestSoFar, dist =  leftChild.pr_nearest_descend(point, nearestSoFar, dist);
 	});
 	if(rightChild.isNil.not && ((point[axis]+dist) > location[axis]), {
-		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, ignoreLabel, nearestSoFar, dist);
+		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, nearestSoFar, dist);
 	});
 	
 	^[nearestSoFar, dist];
@@ -138,6 +139,7 @@ pr_nearest_descend {|point, ignoreLabel, nearestSoFar, dist|
 // Will first be called on the query node itself; eventually will be called on the root.
 // What this does is assumes that we've searched inside the current node and its subtree, 
 // and it checks the parent to see if the sibling should be searched.
+// Note: pr_allnearest_ascend is similar, make sure code updates are done in parallel
 pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 	var cur, curDist;
 	
@@ -150,7 +152,7 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 	// is nearer than the best dist so far, is it logically possible for a nearer
 	// one to be in the parent's location or the sibling
 	if(this.isRightChild){
-		if(point[parent.axis] - parent.location[parent.axis] <= bestDist){
+		if(point[parent.axis] - parent.location[parent.axis] < bestDist){
 			if((curDist=(parent.location - point).abs.squared.sum) < bestDist.squared){
 				nearestSoFar = parent;
 				bestDist = curDist.sqrt;
@@ -158,7 +160,7 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 			if(parent.leftChild.isNil.not){
 				
 				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
-				# cur, curDist = parent.leftChild.pr_nearest_descend(point, nil, nearestSoFar, bestDist);
+				# cur, curDist = parent.leftChild.pr_nearest_descend(point, nearestSoFar, bestDist);
 				//# cur, curDist = parent.leftChild.nearest(point, nil, nearestSoFar: nearestSoFar, bestDist: bestDist);
 				if(curDist < bestDist){
 					nearestSoFar = cur;
@@ -169,7 +171,7 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 		};
 		
 	}{ // is left child:
-		if(parent.location[parent.axis] - point[parent.axis] <= bestDist){
+		if(parent.location[parent.axis] - point[parent.axis] < bestDist){
 			if((curDist=(parent.location - point).abs.squared.sum) < bestDist.squared){
 				nearestSoFar = parent;
 				bestDist = curDist.sqrt;
@@ -177,7 +179,7 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 			if(parent.rightChild.isNil.not){
 				
 				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
-				# cur, curDist = parent.rightChild.pr_nearest_descend(point, nil, nearestSoFar, bestDist);
+				# cur, curDist = parent.rightChild.pr_nearest_descend(point, nearestSoFar, bestDist);
 				//# cur, curDist = parent.rightChild.nearest(point, nil, nearestSoFar: nearestSoFar, bestDist: bestDist);
 				if(curDist < bestDist){
 					nearestSoFar = cur;
@@ -221,7 +223,7 @@ nearestToNode { |nearestSoFar, bestDist=inf|
 	^this.pr_nearest_ascend(location, nearestSoFar, bestDist)
 }
 
-allNearest {
+allNearestOLD {
 	// Runs .nearestToNode for each item, but optimised slightly to re-use data sometimes.
 	// Actually it doesn't provide a big speedup, which is a shame. Maybe there are cleverer all-nearest-neighbours algos.
 
@@ -256,6 +258,138 @@ allNearest {
 		};
 	};
 	^results
+}
+
+allNearest {
+	var dict, results;
+	dict = Array.newClear(this.highestUniqueId + 1); // For numeric indexing, array is much faster than an actual Dictionary
+	results = Array.new(this.size);
+	
+	this.do{|node|
+		// For children we use direct descent, not a first guess as in ordinary .nearest;
+		// because search is depth-first there will always be a decent first guess already existing, for non-leaf nodes.
+		if(node.leftChild.isNil.not, {
+			node.leftChild.pr_allnearest_descend(dict, node);
+		});
+		if(node.rightChild.isNil.not, {
+			node.rightChild.pr_allnearest_descend(dict, node);
+		});
+		
+		node.pr_allnearest_ascend(dict, node);
+		
+		// Now we know that this node has correctly been analysed, add it to the "real" results array
+		results = results.add(node -> dict[node.uniqueid]);
+	};
+	
+	^results;
+	
+}
+
+// Takes a node pair, compares distance against stored vals, and updates the two dictionary entries if it's better
+*pr_allnearest_checkandstoredist { |dict, node1, node2|
+	
+	var outsideCube1=false, outsideCube2=false, dist1, dist2, delta;
+	
+	// The previously-stored distances
+	dist1 = if(dict[node1.uniqueid].isNil, {inf}, {dict[node1.uniqueid][1]});
+	dist2 = if(dict[node1.uniqueid].isNil, {inf}, {dict[node1.uniqueid][1]});
+	// The ABS'ed vector between the two points
+	delta = (node1.location - node2.location).abs;
+	
+	// First the fast check
+	if((dist1 == dist2 == inf).not){
+		node1.location.size.do{|dim|
+			if(delta[dim] > dist1){
+				outsideCube1 = true;
+			};
+			if(delta[dim] > dist2){
+				outsideCube2 = true;
+			};
+			if(outsideCube1 && outsideCube2, {
+				^this; // no-one will even want to check in detail
+			});
+		};
+	};
+	
+	// So now we'll convert delta to a scalar - the squared-distance
+	delta = delta.squared.sum;
+	
+	if(outsideCube1.not && (dict[node1.uniqueid].isNil || (delta < dist1.squared))){
+		dict[node1.uniqueid] = [node2, delta.sqrt];
+	};
+	if(outsideCube2.not && (dict[node2.uniqueid].isNil || (delta < dist2.squared))){
+		dict[node2.uniqueid] = [node1, delta.sqrt];
+	};
+}
+
+// Takes a newly-calculated distance and updates the two dictionary entries if it's better
+*pr_allnearest_storedist { |dict, node1, node2, dist|
+	if(dict[node1.uniqueid].isNil || (dict[node1.uniqueid][1] > dist)){
+		dict[node1.uniqueid] = [node2, dist];
+	};
+	if(dict[node2.uniqueid].isNil || (dict[node2.uniqueid][1] > dist)){
+		dict[node2.uniqueid] = [node1, dist];
+	};
+}
+
+// Recursive, and called by pr_allnearest_ascend.
+// Note: pr_nearest_descend is similar, make sure code updates are done in parallel
+pr_allnearest_descend {|dict, node|
+	var curDist, point, dist;
+	
+	point = node.location;
+
+	// Check self location
+	this.class.pr_allnearest_checkandstoredist(dict, node, this);
+	
+	dist = dict[node.uniqueid][1];
+	// Descend into children only if logically necessary.
+	if(leftChild.isNil.not && ((point[axis]-dist) < location[axis]), {
+		leftChild.pr_allnearest_descend(dict, node);
+	});
+	if(rightChild.isNil.not && ((point[axis]+dist) > location[axis]), {
+		rightChild.pr_allnearest_descend(dict, node);
+	});
+}
+
+// Note: pr_nearest_ascend is similar, make sure code updates are done in parallel
+pr_allnearest_ascend { |dict, node, stopAtDepth=0|
+	var cur, curDist, point, bestDist;
+	
+	point = node.location;
+	
+	if(this.depth <= stopAtDepth){
+		// collapse out of the recursion
+		^this
+	};
+	
+	bestDist = if(dict[node.uniqueid].isNil, {inf}, {dict[node.uniqueid][1]});	
+	// Only if the perp distance from the query point to the division plane
+	// is nearer than the best dist so far, is it logically possible for a nearer
+	// one to be in the parent's location or the sibling
+	if(this.isRightChild){
+		if(point[parent.axis] - parent.location[parent.axis] < bestDist){
+			
+			this.class.pr_allnearest_checkandstoredist(dict, node, parent);
+			if(parent.leftChild.isNil.not){
+				parent.leftChild.pr_allnearest_descend(dict, node);
+			};
+		};
+		
+	}{ // is left child:
+		if(parent.location[parent.axis] - point[parent.axis] < bestDist){
+			
+			this.class.pr_allnearest_checkandstoredist(dict, node, parent);
+			if(parent.rightChild.isNil.not){
+				parent.rightChild.pr_allnearest_descend(dict, node);
+			};
+		};
+		
+	};
+	
+	// OK, so we've checked our sibling and parent, pass on up to the parent to do the same
+	^parent.pr_allnearest_ascend(dict, node, stopAtDepth: stopAtDepth);
+	
 }
 
 sibling {
