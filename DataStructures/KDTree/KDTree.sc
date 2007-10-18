@@ -413,16 +413,16 @@ find { |point, incDeleted = false|
 	}, {
 		
 		if(point[axis] <= location[axis], {
-			
-			leftChild  !? { ret = leftChild.find(point, incDeleted)  };
-			if(ret.isNil.not, { ^ret });
-		
+			leftChild  !? {
+				ret = leftChild.find(point, incDeleted);
+				ret !? { ^ret };
+			};
 		});	
 		if(point[axis] >= location[axis], {
-			
-			rightChild !? { ret = rightChild.find(point, incDeleted) };
-			if(ret.isNil.not, { ^ret });
-			
+			rightChild !? {
+				ret = rightChild.find(point, incDeleted);
+				ret !? { ^ret };
+			};
 		});
 		
 		^nil
