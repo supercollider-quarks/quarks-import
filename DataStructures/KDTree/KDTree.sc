@@ -509,11 +509,11 @@ do { |func, incDeleted=false|
 collect { |func, incDeleted=false, arraySoFar|
 	if(arraySoFar.isNil, {arraySoFar = Array.new(this.size)});
 	
+	leftChild  !? {  leftChild.collect(func, incDeleted, arraySoFar) };
+	rightChild !? { rightChild.collect(func, incDeleted, arraySoFar) };
 	if(notDeleted || incDeleted, {
 		arraySoFar = arraySoFar.add(func.value(this));
 	});
-	leftChild  !? {  leftChild.collect(func, incDeleted, arraySoFar) };
-	rightChild !? { rightChild.collect(func, incDeleted, arraySoFar) };
 	^arraySoFar
 }
 
