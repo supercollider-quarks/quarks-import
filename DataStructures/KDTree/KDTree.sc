@@ -52,7 +52,7 @@ nearest { |point, nearestSoFar, bestDist=inf|
 	quickGuess = this.pr_QuickDescend(point);
 	
 	quickGuessDist = if(quickGuess.notDeleted, {
-		(quickGuess.location - point).abs.squared.sum.sqrt
+		(quickGuess.location - point).sum{|x| x * x}.sqrt
 	}, {
 		inf
 	});
@@ -75,7 +75,7 @@ pr_BestLeafFor{ |point|
 	
 	if(this.isLeaf, { ^this });
 	
-	chosen = if((point[axis] <= location[axis]) && leftChild.isNil.not, {leftChild}, {rightChild});
+	chosen = if((point[axis] <= location[axis]) and:{leftChild.notNil}, {leftChild}, {rightChild});
 	^if(chosen.isNil, {
 		this
 	}, {
@@ -87,13 +87,13 @@ pr_QuickDescend{ |point|
 	// Finds a quick first guess as to the nearest item. Used by NN search.
 	var l, r;
 	
-	if(this.isLeaf || (this.location==point), { ^this });
+	if(this.isLeaf or:{this.location==point}, { ^this });
 	
-	if(point[axis] == location[axis] && leftChild.isNil.not && rightChild.isNil.not){
+	if(point[axis] == location[axis] and:{leftChild.notNil and: {rightChild.notNil}}){
 		// We don't know which side to look down (partitioning could have put points on either side), so we must examine both.
 		l =  leftChild.pr_QuickDescend(point);
 		r = rightChild.pr_QuickDescend(point);
-		^if(((l.location-point).abs.squared.sum) < ((r.location-point).abs.squared.sum)){
+		^if(((l.location-point).sum{|x| x * x}) < ((r.location-point).sum{|x| x * x})){
 			l
 		}{
 			r
@@ -105,7 +105,7 @@ pr_QuickDescend{ |point|
 	^if(leftChild.isNil, {
 		rightChild
 	},{
-		if(rightChild.isNil || (point[axis] <= location[axis])){
+		if(rightChild.isNil or:{point[axis] <= location[axis]}){
 			leftChild
 		}{
 			rightChild
@@ -119,18 +119,18 @@ pr_nearest_descend {|point, nearestSoFar, dist|
 	var curDist;
 
 	// Check self location, NB leave it squared
-	curDist = (location - point).abs.squared.sum;
-	if(notDeleted && (curDist < dist.squared), {
+	curDist = (location - point).sum{|x| x * x};
+	if(notDeleted and:{curDist < (dist * dist)}, {
 		nearestSoFar = this; 
 		dist = curDist.sqrt;
 	});
 	
 	// Descend into children only if logically necessary.
 
-	if(leftChild.isNil.not && ((point[axis]-dist) < location[axis]), {
+	if(leftChild.notNil and:{(point[axis]-dist) < location[axis]}, {
 		# nearestSoFar, dist =  leftChild.pr_nearest_descend(point, nearestSoFar, dist);
 	});
-	if(rightChild.isNil.not && ((point[axis]+dist) > location[axis]), {
+	if(rightChild.notNil and:{(point[axis]+dist) > location[axis]}, {
 		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, nearestSoFar, dist);
 	});
 
@@ -155,11 +155,11 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 	// one to be in the parent's location or the sibling
 	if(this.isRightChild){
 		if(point[parent.axis] - parent.location[parent.axis] < bestDist){
-			if((curDist=(parent.location - point).abs.squared.sum) < bestDist.squared){
+			if((curDist=(parent.location - point).sum{|x| x * x}) < (bestDist*bestDist)){
 				nearestSoFar = parent;
 				bestDist = curDist.sqrt;
 			};
-			if(parent.leftChild.isNil.not){
+			if(parent.leftChild.notNil){
 				
 				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
 				# cur, curDist = parent.leftChild.pr_nearest_descend(point, nearestSoFar, bestDist);
@@ -171,17 +171,17 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 				
 			};
 		}{
-			if(parent.leftChild.isNil.not){
+			if(parent.leftChild.notNil){
 			};
 		};
 		
 	}{ // is left child:
 		if(parent.location[parent.axis] - point[parent.axis] < bestDist){
-			if((curDist=(parent.location - point).abs.squared.sum) < bestDist.squared){
+			if((curDist=(parent.location - point).sum{|x| x * x}) < (bestDist*bestDist)){
 				nearestSoFar = parent;
 				bestDist = curDist.sqrt;
 			};
-			if(parent.rightChild.isNil.not){
+			if(parent.rightChild.notNil){
 				
 				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
 				# cur, curDist = parent.rightChild.pr_nearest_descend(point, nearestSoFar, bestDist);
@@ -193,14 +193,14 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 				
 			};
 		}{
-			if(parent.rightChild.isNil.not){
+			if(parent.rightChild.notNil){
 			};
 		};
 		
 	};
 	
 	// OK, so we've checked our sibling and parent, pass on up to the parent to do the same
-	^parent.pr_nearest_ascend(point, nearestSoFar, bestDist, stopAtDepth: stopAtDepth);
+	^parent.pr_nearest_ascend(point, nearestSoFar, bestDist, stopAtDepth);
 	
 }
 
@@ -212,15 +212,15 @@ nearestToNode { |nearestSoFar, bestDist=inf|
 	
 	location;
 	
-	if(leftChild.isNil.not, {
-		# curr, curDist = leftChild.nearest(location, nearestSoFar: nearestSoFar, bestDist: bestDist);
+	if(leftChild.notNil, {
+		# curr, curDist = leftChild.nearest(location, nearestSoFar, bestDist);
 		if(curDist < bestDist){
 			bestDist = curDist;
 			nearestSoFar = curr;
 		};
 	});
-	if(rightChild.isNil.not, {
-		# curr, curDist = rightChild.nearest(location, nearestSoFar: nearestSoFar, bestDist: bestDist);
+	if(rightChild.notNil, {
+		# curr, curDist = rightChild.nearest(location, nearestSoFar, bestDist);
 		if(curDist < bestDist){
 			bestDist = curDist;
 			nearestSoFar = curr;
@@ -244,12 +244,12 @@ allNearestOLD {
 	results = Array.new(this.size);
 	
 	this.do{|node|
-		if((guess = dict[node.uniqueid]).isNil.not){
+		if((guess = dict[node.uniqueid]).notNil){
 			if(guess[1]==0){
 				best = guess; // can't do better than 0 distance
 			}{
 				// Ordinary search but with a first guess added in
-				best = node.nearestToNode(nearestSoFar: guess[0], bestDist: guess[1]);
+				best = node.nearestToNode(guess[0], guess[1]);
 			};
 		}{
 			// Ordinary search
@@ -276,10 +276,10 @@ allNearest {
 	this.do{|node|
 		// For children we use direct descent, not a first guess as in ordinary .nearest;
 		// because search is depth-first there will always be a decent first guess already existing, for non-leaf nodes.
-		if(node.leftChild.isNil.not, {
+		if(node.leftChild.notNil, {
 			node.leftChild.pr_allnearest_descend(dict, node);
 		});
-		if(node.rightChild.isNil.not, {
+		if(node.rightChild.notNil, {
 			node.rightChild.pr_allnearest_descend(dict, node);
 		});
 		
@@ -313,29 +313,29 @@ allNearest {
 			if(delta[dim] > dist2){
 				outsideCube2 = true;
 			};
-			if(outsideCube1 && outsideCube2, {
+			if(outsideCube1 and:{outsideCube2}, {
 				^this; // no-one will even want to check in detail
 			});
 		};
 	};
 	
 	// So now we'll convert delta to a scalar - the squared-distance
-	delta = delta.squared.sum;
+	delta = delta.sum{|x| x * x};
 	
-	if(outsideCube1.not && (dict[node1.uniqueid].isNil || (delta < dist1.squared))){
+	if(outsideCube1.not and:{dict[node1.uniqueid].isNil or:{delta < (dist1 * dist1)}}){
 		dict[node1.uniqueid] = [node2, delta.sqrt];
 	};
-	if(outsideCube2.not && (dict[node2.uniqueid].isNil || (delta < dist2.squared))){
+	if(outsideCube2.not and:{dict[node2.uniqueid].isNil or:{delta < (dist2 * dist2)}}){
 		dict[node2.uniqueid] = [node1, delta.sqrt];
 	};
 }
 
 // Takes a newly-calculated distance and updates the two dictionary entries if it's better
 *pr_allnearest_storedist { |dict, node1, node2, dist|
-	if(dict[node1.uniqueid].isNil || (dict[node1.uniqueid][1] > dist)){
+	if(dict[node1.uniqueid].isNil or:{dict[node1.uniqueid][1] > dist}){
 		dict[node1.uniqueid] = [node2, dist];
 	};
-	if(dict[node2.uniqueid].isNil || (dict[node2.uniqueid][1] > dist)){
+	if(dict[node2.uniqueid].isNil or:{dict[node2.uniqueid][1] > dist}){
 		dict[node2.uniqueid] = [node1, dist];
 	};
 }
@@ -352,10 +352,10 @@ pr_allnearest_descend {|dict, node|
 	
 	dist = dict[node.uniqueid][1];
 	// Descend into children only if logically necessary.
-	if(leftChild.isNil.not && ((point[axis]-dist) < location[axis]), {
+	if(leftChild.notNil and:{(point[axis]-dist) < location[axis]}, {
 		leftChild.pr_allnearest_descend(dict, node);
 	});
-	if(rightChild.isNil.not && ((point[axis]+dist) > location[axis]), {
+	if(rightChild.notNil and:{(point[axis]+dist) > location[axis]}, {
 		rightChild.pr_allnearest_descend(dict, node);
 	});
 }
@@ -379,7 +379,7 @@ pr_allnearest_ascend { |dict, node, stopAtDepth=0|
 		if(point[parent.axis] - parent.location[parent.axis] < bestDist){
 			
 			this.class.pr_allnearest_checkandstoredist(dict, node, parent);
-			if(parent.leftChild.isNil.not){
+			if(parent.leftChild.notNil){
 				parent.leftChild.pr_allnearest_descend(dict, node);
 			};
 		};
@@ -388,7 +388,7 @@ pr_allnearest_ascend { |dict, node, stopAtDepth=0|
 		if(parent.location[parent.axis] - point[parent.axis] < bestDist){
 			
 			this.class.pr_allnearest_checkandstoredist(dict, node, parent);
-			if(parent.rightChild.isNil.not){
+			if(parent.rightChild.notNil){
 				parent.rightChild.pr_allnearest_descend(dict, node);
 			};
 		};
@@ -396,7 +396,7 @@ pr_allnearest_ascend { |dict, node, stopAtDepth=0|
 	};
 	
 	// OK, so we've checked our sibling and parent, pass on up to the parent to do the same
-	^parent.pr_allnearest_ascend(dict, node, stopAtDepth: stopAtDepth);
+	^parent.pr_allnearest_ascend(dict, node, stopAtDepth);
 	
 }
 
@@ -408,7 +408,7 @@ sibling {
 
 find { |point, incDeleted = false|
 	var ret = nil;
-	if((notDeleted || incDeleted) && (location == point), {
+	if((notDeleted or:{incDeleted}) and:{location == point}, {
 		^this 
 	}, {
 		
@@ -435,39 +435,39 @@ add { |point, label|
 }
 pr_add{ |point, label|
 	if(point[axis] < location[axis], {
-		leftChild  = KDTree([point ++ label], depth+1, this, label.isNil.not, uniqueid: uniqueid << 1);
+		leftChild  = KDTree([point ++ label], depth+1, this, label.notNil, uniqueid << 1);
 	}, {
-		rightChild = KDTree([point ++ label], depth+1, this, label.isNil.not, uniqueid: uniqueid << 1 | 1);
+		rightChild = KDTree([point ++ label], depth+1, this, label.notNil, uniqueid << 1 | 1);
 	});
 }
 
 delete { |point|
 	var res;
 	res = this.find(point);
-	if(res.isNil.not, {"deleted".postln; res.notDeleted = false});
+	if(res.notNil, {"deleted".postln; res.notDeleted = false});
 }
 undelete { |point|
 	var res;
-	res = this.find(point, incDeleted: true);
-	if(res.isNil.not, {"undeleted".postln; res.notDeleted = true});
+	res = this.find(point, true);
+	if(res.notNil, {"undeleted".postln; res.notDeleted = true});
 }
 
 recreate {
-	^this.class.new(this.asArray(incLabels: true), lastIsLabel: true);
+	^this.class.new(this.asArray(true), lastIsLabel: true);
 }
 
 // Search within a rectangle (hyperrectangle) area
 rectSearch { | lo, hi |
 	var points = Array.new;
-	if(leftChild.isNil.not && (location[axis] >= lo[axis])){
+	if(leftChild.notNil and:{location[axis] >= lo[axis]}){
 		points = points ++ leftChild.rectSearch(lo, hi);
 	};
-	if(rightChild.isNil.not && (location[axis] <= hi[axis])){
+	if(rightChild.notNil and:{location[axis] <= hi[axis]}){
 		points = points ++ rightChild.rectSearch(lo, hi);
 	};
 	if(notDeleted 
-	     && (location >= lo).indexOf(false).isNil
-	     && (location <= hi).indexOf(false).isNil){
+	     and: {(location >= lo).indexOf(false).isNil}
+	     and: {(location <= hi).indexOf(false).isNil}){
 		points = points ++ this;
 	};
 	^points;
@@ -479,7 +479,7 @@ rectSearch { | lo, hi |
 radiusSearch { |point, radius=1|
 	var results;
 	results = this.rectSearch(point - radius, point + radius);
-	results = results.select({|res| (res.location-point).abs.squared.sum.sqrt <= radius });
+	results = results.select({|res| (res.location-point).sum{|x| x * x}.sqrt <= radius });
 	^results;
 }
 
@@ -500,7 +500,7 @@ do { |func, incDeleted=false|
 	leftChild  !? {  leftChild.do(func, incDeleted) };
 	rightChild !? { rightChild.do(func, incDeleted) };
 	// DEPTH-FIRST iteration - important for .allNearest
-	if(notDeleted || incDeleted, {
+	if(notDeleted or:{incDeleted}, {
 		func.value(this);
 	});
 }
@@ -511,7 +511,7 @@ collect { |func, incDeleted=false, arraySoFar|
 	
 	leftChild  !? {  leftChild.collect(func, incDeleted, arraySoFar) };
 	rightChild !? { rightChild.collect(func, incDeleted, arraySoFar) };
-	if(notDeleted || incDeleted, {
+	if(notDeleted or:{incDeleted}, {
 		arraySoFar = arraySoFar.add(func.value(this));
 	});
 	^arraySoFar
@@ -522,8 +522,8 @@ collect { |func, incDeleted=false, arraySoFar|
 asArray { |incLabels=false, arr|
 	arr = arr ?? Array.new(this.size);
 	if(notDeleted, {arr = arr.add(if(incLabels, {location ++ [label]}, {location});)});
-	if(leftChild.isNil.not,  { arr = leftChild.asArray( incLabels, arr) });
-	if(rightChild.isNil.not, { arr = rightChild.asArray(incLabels, arr) });
+	if(leftChild.notNil,  { arr = leftChild.asArray( incLabels, arr) });
+	if(rightChild.notNil, { arr = rightChild.asArray(incLabels, arr) });
 	^arr;
 }
 
@@ -546,11 +546,11 @@ isRightChild {
 	^parent.rightChild==this
 }
 isLeaf {
-	^leftChild.isNil && rightChild.isNil
+	^leftChild.isNil and: {rightChild.isNil}
 }
 
 size { |incDeleted = false|
-	^ if(notDeleted || incDeleted, 1, 0) 
+	^ if(notDeleted or:{incDeleted}, 1, 0) 
 		+ if(leftChild.isNil , 0, {leftChild.size }) 
 		+ if(rightChild.isNil, 0, {rightChild.size});
 }
@@ -569,10 +569,10 @@ highestUniqueId {
 		   (this.uniqueid == that.uniqueid)
 		   // Between trees, we're not sure so we should check other things
 		   // Note: put the easiest checks first! boolean, integer - push location and label checks later
-		&& (this.notDeleted == that.notDeleted)
-		&& (this.depth      == that.depth) 
-		&& (this.location   == that.location) 
-		&& (this.label      == that.label)
+		and:{this.notDeleted == that.notDeleted}
+		and:{this.depth      == that.depth}
+		and:{this.location   == that.location}
+		and:{this.label      == that.label}
 }
 
 } // End class
