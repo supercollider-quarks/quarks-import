@@ -269,6 +269,12 @@ allNearestOLD {
 }
 
 allNearest {
+	// My optimised methods are not faster :(
+	// I wonder if there are methods that are genuinely better than:
+	^this.collect({|n| n -> n.nearestToNode});
+}
+
+allNearestOLD2 {
 	var dict, results;
 	dict = Array.newClear(this.highestUniqueId + 1); // For numeric indexing, array is much faster than an actual Dictionary
 	results = Array.new(this.size);
