@@ -537,13 +537,16 @@ dumpTree { |maxDepth=inf|
 }
 
 isRoot {
-	^parent.isNil
+	// ^parent.isNil
+	 ^uniqueid==1 //faster
 }
 isLeftChild {
-	^parent.leftChild==this
+	// ^parent.leftChild==this
+	 ^   (uniqueid != 1) and:{uniqueid & 1 == 0} //faster
 }
 isRightChild {
-	^parent.rightChild==this
+	// ^parent.rightChild==this
+	^   (uniqueid != 1) and:{uniqueid & 1 == 1} //faster
 }
 isLeaf {
 	^leftChild.isNil and: {rightChild.isNil}
