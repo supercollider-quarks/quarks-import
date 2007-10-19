@@ -43,19 +43,22 @@ init { |array, dep=0, par, lastIsLabel=false, uid=1|
 	rightChild = if(medianPos==(array.size-1), nil, { KDTree.new(sorted[medianPos+1..], depth+1, this, lastIsLabel, uniqueid << 1 | 1)});
 }
 
-nearest { |point, nearestSoFar, bestDist=inf|
+nearest { |point, nearestSoFar, bestDist=inf, incExact=true|
 	var quickGuess, searchParent, quickGuessDist, max, min, sibling;
 
 	
 	// Descend to the leaf that would be parent of the point if it was in the data.
 	// Actually, because the partition may leave exact matches on either side of the partition, we use a modified descent.
-	quickGuess = this.pr_QuickDescend(point);
+	quickGuess = this.pr_QuickDescend(point, incExact);
 	
 	quickGuessDist = if(quickGuess.notDeleted, {
 		(quickGuess.location - point).sum{|x| x * x}.sqrt
 	}, {
 		inf
 	});
+	if(incExact.not and:{quickGuessDist==0}){
+		quickGuessDist = inf; // Needs to be done after the distance calc, NOT with equality test
+	};
 	
 	// externally-supplied guess may be better - let's check
 	if(quickGuessDist < bestDist){
@@ -63,10 +66,9 @@ nearest { |point, nearestSoFar, bestDist=inf|
 		nearestSoFar = quickGuess;
 	};
 	
-
 	// Next we ascend back up from the QUICK GUESS (NOT from the best so far), examining other branches only if the cut-line makes it possible 
 	// for a point to be closer than the nearest-so-far.
-	^quickGuess.pr_nearest_ascend(point, nearestSoFar, bestDist, stopAtDepth: this.depth)
+	^quickGuess.pr_nearest_ascend(point, nearestSoFar, bestDist, this.depth, incExact)
 }
 
 pr_BestLeafFor{ |point|
@@ -83,11 +85,11 @@ pr_BestLeafFor{ |point|
 	});
 }
 
-pr_QuickDescend{ |point|
+pr_QuickDescend{ |point, incExact=true|
 	// Finds a quick first guess as to the nearest item. Used by NN search.
 	var l, r;
 	
-	if(this.isLeaf or:{this.location==point}, { ^this });
+	if(this.isLeaf or:{incExact and:{this.location==point}}, { ^this });
 	
 	if(point[axis] == location[axis] and:{leftChild.notNil and: {rightChild.notNil}}){
 		// We don't know which side to look down (partitioning could have put points on either side), so we must examine both.
@@ -110,17 +112,17 @@ pr_QuickDescend{ |point|
 		}{
 			rightChild
 		};
-	}).pr_QuickDescend(point);
+	}).pr_QuickDescend(point, incExact);
 }
 
 // Recursive, and called by pr_nearest_ascend.
 // Note: pr_allnearest_descend is similar, make sure code updates are done in parallel
-pr_nearest_descend {|point, nearestSoFar, dist|
+pr_nearest_descend {|point, nearestSoFar, dist, incExact=true|
 	var curDist;
 
 	// Check self location, NB leave it squared
 	curDist = (location - point).sum{|x| x * x};
-	if(notDeleted and:{curDist < (dist * dist)}, {
+	if(notDeleted and:{curDist < (dist * dist) and:{incExact or: {curDist!=0}}}, {
 		nearestSoFar = this; 
 		dist = curDist.sqrt;
 	});
@@ -128,10 +130,10 @@ pr_nearest_descend {|point, nearestSoFar, dist|
 	// Descend into children only if logically necessary.
 
 	if(leftChild.notNil and:{(point[axis]-dist) < location[axis]}, {
-		# nearestSoFar, dist =  leftChild.pr_nearest_descend(point, nearestSoFar, dist);
+		# nearestSoFar, dist =  leftChild.pr_nearest_descend(point, nearestSoFar, dist, incExact);
 	});
 	if(rightChild.notNil and:{(point[axis]+dist) > location[axis]}, {
-		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, nearestSoFar, dist);
+		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, nearestSoFar, dist, incExact);
 	});
 
 	^[nearestSoFar, dist];
@@ -142,7 +144,7 @@ pr_nearest_descend {|point, nearestSoFar, dist|
 // What this does is assumes that we've searched inside the current node and its subtree, 
 // and it checks the parent to see if the sibling should be searched.
 // Note: pr_allnearest_ascend is similar, make sure code updates are done in parallel
-pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
+pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0, incExact=true|
 	var cur, curDist;
 	
 	if(this.depth <= stopAtDepth){
@@ -155,14 +157,14 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 	// one to be in the parent's location or the sibling
 	if(this.isRightChild){
 		if(point[parent.axis] - parent.location[parent.axis] < bestDist){
-			if((curDist=(parent.location - point).sum{|x| x * x}) < (bestDist*bestDist)){
+			if((curDist=(parent.location - point).sum{|x| x * x}) < (bestDist*bestDist) and:{incExact or:{curDist!=0}}){
 				nearestSoFar = parent;
 				bestDist = curDist.sqrt;
 			};
 			if(parent.leftChild.notNil){
 				
 				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
-				# cur, curDist = parent.leftChild.pr_nearest_descend(point, nearestSoFar, bestDist);
+				# cur, curDist = parent.leftChild.pr_nearest_descend(point, nearestSoFar, bestDist, incExact);
 				//# cur, curDist = parent.leftChild.nearest(point, nil, nearestSoFar: nearestSoFar, bestDist: bestDist);
 				if(curDist < bestDist){
 					nearestSoFar = cur;
@@ -170,21 +172,18 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 				};
 				
 			};
-		}{
-			if(parent.leftChild.notNil){
-			};
 		};
 		
 	}{ // is left child:
 		if(parent.location[parent.axis] - point[parent.axis] < bestDist){
-			if((curDist=(parent.location - point).sum{|x| x * x}) < (bestDist*bestDist)){
+			if((curDist=(parent.location - point).sum{|x| x * x}) < (bestDist*bestDist) and:{incExact or:{curDist!=0}}){
 				nearestSoFar = parent;
 				bestDist = curDist.sqrt;
 			};
 			if(parent.rightChild.notNil){
 				
 				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
-				# cur, curDist = parent.rightChild.pr_nearest_descend(point, nearestSoFar, bestDist);
+				# cur, curDist = parent.rightChild.pr_nearest_descend(point, nearestSoFar, bestDist, incExact);
 				//# cur, curDist = parent.rightChild.nearest(point, nil, nearestSoFar: nearestSoFar, bestDist: bestDist);
 				if(curDist < bestDist){
 					nearestSoFar = cur;
@@ -192,35 +191,32 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0|
 				};
 				
 			};
-		}{
-			if(parent.rightChild.notNil){
-			};
 		};
 		
 	};
 	
 	// OK, so we've checked our sibling and parent, pass on up to the parent to do the same
-	^parent.pr_nearest_ascend(point, nearestSoFar, bestDist, stopAtDepth);
+	^parent.pr_nearest_ascend(point, nearestSoFar, bestDist, stopAtDepth, incExact);
 	
 }
 
 // Compared against .nearest, this should be faster due to knowledge about where the query node is in the tree.
 // Users aren't expected to supply bestSoFar, bestDist values - they're used internally
 // (They're fed in when the allNearest algorithm runs, making use of this method)
-nearestToNode { |nearestSoFar, bestDist=inf|
+nearestToNode { |nearestSoFar, bestDist=inf, incExact=true|
 	var curr, curDist;
 	
 	location;
 	
 	if(leftChild.notNil, {
-		# curr, curDist = leftChild.nearest(location, nearestSoFar, bestDist);
+		# curr, curDist = leftChild.nearest(location, nearestSoFar, bestDist, incExact);
 		if(curDist < bestDist){
 			bestDist = curDist;
 			nearestSoFar = curr;
 		};
 	});
 	if(rightChild.notNil, {
-		# curr, curDist = rightChild.nearest(location, nearestSoFar, bestDist);
+		# curr, curDist = rightChild.nearest(location, nearestSoFar, bestDist, incExact);
 		if(curDist < bestDist){
 			bestDist = curDist;
 			nearestSoFar = curr;
@@ -228,7 +224,7 @@ nearestToNode { |nearestSoFar, bestDist=inf|
 	});
 
 	// Now ascend up the tree, checking if we need to search the sibling subtrees.
-	^this.pr_nearest_ascend(location, nearestSoFar, bestDist)
+	^this.pr_nearest_ascend(location, nearestSoFar, bestDist, 0, incExact)
 }
 
 allNearestOLD {
@@ -268,10 +264,12 @@ allNearestOLD {
 	^results
 }
 
-allNearest {
+// You can speed this up by passing a bestDist value beyond which you don't want to search,
+//  which may skip some values by accident and make the search slightly approximate
+allNearest { |bestDist=inf, incExact=true|
 	// My optimised methods are not faster :(
 	// I wonder if there are methods that are genuinely better than:
-	^this.collect({|n| n -> n.nearestToNode});
+	^this.collect({|n| n -> n.nearestToNode(nil, bestDist, incExact)});
 }
 
 allNearestOLD2 {
