@@ -36,11 +36,11 @@ TestKDTree : UnitTest {
 	// results under simple data rotation.
 	test_multi {
 		// int
-		this.multiTest(2,40, 10);
-		this.multiTest(3,40, 10);
+		this.multiTest(2,60, 10);
+		this.multiTest(3,60, 10);
 		// float
-		this.multiTest(2,40, 10.0);
-		this.multiTest(3,40, 10.0);
+		this.multiTest(2,60, 10.0);
+		this.multiTest(3,60, 10.0);
 	}
 	
 	multiTest { |dims=3, size=100, randLimit=10|
@@ -72,18 +72,19 @@ TestKDTree : UnitTest {
 		
 		// Easy test - nearest neighbour to actual node, *without* excluding that node,
 		// should be either that node itself or another node with exact same location.
+		"Running TestKDTree nearest-to-node tests".postln;
 		tree.do{|node|
 			probe = node.location;
 			# match1, dist1 = tree.nearest(probe);
-			this.assert(dist1==0, "tree.nearest(%) dist==0".format(probe, dist1));
+			this.assert(dist1==0, "tree.nearest(%) dist==0".format(probe, dist1), false);
 			
 			probe2 = node.location.rotate(1);
 			# match2, dist2 = tree2.nearest(probe2);
-			this.assert(dist2==0, "tree2.nearest(%) dist==0".format(probe2, dist2));
+			this.assert(dist2==0, "tree2.nearest(%) dist==0".format(probe2, dist2), false);
 			
 			// When we use .nearestToNode, we should *not* get ourself back.
 			# match1, dist1 = node.nearestToNode;
-			this.assert(match1 != node, "node.nearestToNode should not return the self node: %, depth %".format(node.location, node.depth));
+			this.assert(match1 != node, "node.nearestToNode should not return the self node: %, depth %".format(node.location, node.depth), false);
 		};
 		
 		
@@ -91,6 +92,7 @@ TestKDTree : UnitTest {
 		// If there is a "tie-break" in NN queries then the order of preference
 		// is arbitrary, so we have to test not on what the actual NN is, but 
 		// by checking its distance from the probe.
+		"Running TestKDTree nearest-to-point tests".postln;
 		50.do{
 			probe = {randLimit.rand}.dup(dims);
 			probe2 = probe.rotate(1);
@@ -98,7 +100,7 @@ TestKDTree : UnitTest {
 			# match1, dist1 = tree.nearest(probe);
 			# match2, dist2 = tree2.nearest(probe2);
 						
-			this.assert(dist1 == dist2, "rotated space check: tree.nearest(%) same distance away as tree2.nearest(%)".format(probe, probe2));
+			this.assert(dist1 == dist2, "rotated space check: tree.nearest(%) same distance away as tree2.nearest(%)".format(probe, probe2), false);
 		};
 		
 		this.allNearestTest(tree);
@@ -107,15 +109,16 @@ TestKDTree : UnitTest {
 	allNearestTest { |tree|
 		var probe, match1, dist1, match2, dist2;
 		// Check that the all-nearest neighbours query is returning the same data as the nearest-neighbour query is doing
+		"Running TestKDTree:allNearestTest".postln;
 		tree.allNearest.do{ |res|
 			probe = res.key;
 			match1 = res.value[0];
 			dist1 = res.value[1];
 			
 			# match2, dist2 = probe.nearestToNode;
-
+			
 			this.assert(dist1 == dist2, "allNearest check: allNearest result (% -> %) same distance away as node.nearestToNode %: % == %"
-					.format(probe.location, match1.location, match2.location, dist1, dist2));
+					.format(probe.location, match1.location, match2.location, dist1, dist2), false);
 		};
 	}
 }

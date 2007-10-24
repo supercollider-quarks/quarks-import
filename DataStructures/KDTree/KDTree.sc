@@ -134,22 +134,22 @@ pr_QuickDescend{ |point, incExact=true|
 }
 
 // Recursive, and called by pr_nearest_ascend.
-// Note: pr_allnearest_descend is similar, make sure code updates are done in parallel
 pr_nearest_descend {|point, nearestSoFar, dist, incExact=true|
-	var curDist;
+	var curDistSq, sepFromSplit;
 
 	// Check self location, NB leave it squared
-	curDist = (location - point).sum{|x| x * x};
-	# nearestSoFar, dist = this.pr_updateNearestSq(this, curDist, nearestSoFar, dist, incExact);
+	curDistSq = (location - point).sum{|x| x * x};
+	# nearestSoFar, dist = this.pr_updateNearestSq(this, curDistSq, nearestSoFar, dist, incExact);
 	
 	// Descend into children only if logically necessary.
+	sepFromSplit = point[axis] - location[axis]; // May be pos or neg
 
-	if(leftChild.notNil and:{(point[axis]-dist) < location[axis]}, {
+	if(leftChild.notNil and:{sepFromSplit < dist}){
 		# nearestSoFar, dist =  leftChild.pr_nearest_descend(point, nearestSoFar, dist, incExact);
-	});
-	if(rightChild.notNil and:{(point[axis]+dist) > location[axis]}, {
+	};
+	if(rightChild.notNil and:{sepFromSplit > (0 - dist)}){
 		# nearestSoFar, dist = rightChild.pr_nearest_descend(point, nearestSoFar, dist, incExact);
-	});
+	};
 
 	^[nearestSoFar, dist];
 }
@@ -158,9 +158,8 @@ pr_nearest_descend {|point, nearestSoFar, dist, incExact=true|
 // Will first be called on the query node itself; eventually will be called on the root.
 // What this does is assumes that we've searched inside the current node and its subtree, 
 // and it checks the parent to see if the sibling should be searched.
-// Note: pr_allnearest_ascend is similar, make sure code updates are done in parallel
 pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0, incExact=true|
-	var cur, curDist;
+	var cur, curDist, sepFromSplit;
 	
 	if(this.depth <= stopAtDepth){
 		// collapse out of the recursion
@@ -170,29 +169,28 @@ pr_nearest_ascend { |point, nearestSoFar, bestDist, stopAtDepth=0, incExact=true
 	// Only if the perp distance from the query point to the division plane
 	// is nearer than the best dist so far, is it logically possible for a nearer
 	// one to be in the parent's location or the sibling
+	sepFromSplit = point[parent.axis] - parent.location[parent.axis]; // May be pos or neg
 	if(this.isRightChild){
-		if(point[parent.axis] - parent.location[parent.axis] < bestDist){
+		if(sepFromSplit < bestDist){
 			curDist=(parent.location - point).sum{|x| x * x};
 			# nearestSoFar, bestDist = this.pr_updateNearestSq(parent, curDist, nearestSoFar, bestDist, incExact);
 			if(parent.leftChild.notNil){
 				
-				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
+				// Using .pr_nearest_descend rather than a full .nearest is generally faster
 				# cur, curDist = parent.leftChild.pr_nearest_descend(point, nearestSoFar, bestDist, incExact);
 				# nearestSoFar, bestDist = this.pr_updateNearest(cur, curDist, nearestSoFar, bestDist, incExact);
-				
 			};
 		};
 		
 	}{ // is left child:
-		if(parent.location[parent.axis] - point[parent.axis] < bestDist){
+		if((0 - sepFromSplit) < bestDist){
 			curDist=(parent.location - point).sum{|x| x * x};
 			# nearestSoFar, bestDist = this.pr_updateNearestSq(parent, curDist, nearestSoFar, bestDist, incExact);
 			if(parent.rightChild.notNil){
 				
-				// My benchmarks indicate that using .pr_nearest_descend rather than a full .nearest is generally faster
+				// Using .pr_nearest_descend rather than a full .nearest is generally faster
 				# cur, curDist = parent.rightChild.pr_nearest_descend(point, nearestSoFar, bestDist, incExact);
 				# nearestSoFar, bestDist = this.pr_updateNearest(cur, curDist, nearestSoFar, bestDist, incExact);
-				
 			};
 		};
 		
@@ -212,8 +210,6 @@ nearestToNode { |nearestSoFar, bestDist=inf, incExact=true|
 kNearestToNode { |k, nearestSoFar, bestDist=inf, incExact=true|
 	var curr, curDist;
 	
-	location;
-	
 	if(leftChild.notNil, {
 		# curr, curDist = leftChild.kNearest(location, k, nearestSoFar, bestDist, incExact);
 		# nearestSoFar, bestDist = this.pr_updateNearest(curr, curDist, nearestSoFar, bestDist, incExact);
@@ -230,8 +226,8 @@ kNearestToNode { |k, nearestSoFar, bestDist=inf, incExact=true|
 // You can speed this up by passing a bestDist value beyond which you don't want to search,
 //  which may skip some values by accident and make the search slightly approximate
 allNearest { |bestDist=inf, incExact=true|
-	// My optimised methods are not faster :(
-	// I wonder if there are methods that are genuinely better than:
+	// My optimised methods are not faster :(   ):
+	// I wonder if there are methods that are genuinely typically faster than:
 	^this.collect({|n| n -> n.nearestToNode(nil, bestDist, incExact)});
 }
 
