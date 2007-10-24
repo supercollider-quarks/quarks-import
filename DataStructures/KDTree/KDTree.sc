@@ -47,24 +47,24 @@ nearest { |point, nearestSoFar, bestDist=inf, incExact=true|
 	^this.kNearest(point, 1, nearestSoFar, bestDist, incExact)
 }
 kNearest { |point, k, nearestSoFar, bestDist=inf, incExact=true|
-	var quickGuess, searchParent, quickGuessDist, max, min, sibling;
+	var quickGuess, searchParent, quickGuessDistSq, max, min, sibling;
 
 	
 	// Descend to the leaf that would be parent of the point if it was in the data.
 	// Actually, because the partition may leave exact matches on either side of the partition, we use a modified descent.
 	quickGuess = this.pr_QuickDescend(point, incExact);
 	
-	quickGuessDist = if(quickGuess.notDeleted, {
-		(quickGuess.location - point).sum{|x| x * x}.sqrt
+	quickGuessDistSq = if(quickGuess.notDeleted, {
+		(quickGuess.location - point).sum{|x| x * x}
 	}, {
 		inf
 	});
-	if(incExact.not and:{quickGuessDist==0}){
-		quickGuessDist = inf; // Needs to be done after the distance calc, NOT with equality test
+	if(incExact.not and:{quickGuessDistSq==0}){
+		quickGuessDistSq = inf; // Needs to be done after the distance calc, NOT with equality test
 	};
 	
 	// externally-supplied guess may be better - let's check
-	# nearestSoFar, bestDist = this.pr_updateNearest(quickGuess, quickGuessDist, nearestSoFar, bestDist, incExact);
+	# nearestSoFar, bestDist = this.pr_updateNearestSq(quickGuess, quickGuessDistSq, nearestSoFar, bestDist, incExact);
 	
 	// Next we ascend back up from the QUICK GUESS (NOT from the best so far), examining other branches only if the cut-line makes it possible 
 	// for a point to be closer than the nearest-so-far.
