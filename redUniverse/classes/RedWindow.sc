@@ -2,18 +2,16 @@
 
 RedWindow : SCWindow {
 	var <mouse, <isPlaying= false;
-	*new {|name= "redWindow", bounds, resizable= false, border= true|
-		^super.new.initSCWindow(name, bounds, resizable, border)
+	*new {|name= "redWindow", bounds, resizable= false, border= true, server, scroll= false|
+		^super.new.initSCWindow(name, bounds, resizable, border, scroll)
 	}
-	*initClass {
-		UI.registerForShutdown({ this.closeAll });
-	}
-	initSCWindow {|argName, argBounds, resizable, border|
+	initSCWindow {|argName, argBounds, resizable, border, scroll|
 		name= argName.asString;
 		argBounds= argBounds ?? {Rect(128, 64, 300, 300)};
 		allWindows= allWindows.add(this);
+		if(scroll, {"RedWindow: can't scroll".warn});
 		view= SCTopView(nil, argBounds.moveTo(0,0));
-		this.prInit(name, argBounds, resizable, border, view);
+		this.prInit(name, argBounds, resizable, border, false, view);
 		
 		this.background_(Color.black);
 		this.acceptsMouseOver= true;
