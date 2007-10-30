@@ -43,10 +43,10 @@ MixerGUIDef {
 		{	viewProtos.size.do({ |i|
 				views.add(viewProtos[i].new(layout, viewBounds[i].moveBy(origin.x, origin.y),
 					mixer, mcgui, this, preSendIndex, postSendIndex));
+				switch(views.last.sendType)
+					{ \pre } { preSendIndex = preSendIndex + 1 }
+					{ \post } { postSendIndex = postSendIndex + 1 };
 			});
-			switch(views.last.sendType)
-				{ \pre } { preSendIndex = preSendIndex + 1 }
-				{ \post } { postSendIndex = postSendIndex + 1 };
 		}.defer;
 		^views
 	}
@@ -313,6 +313,9 @@ MixerPresendWidget {
 }
 
 MixerPostsendWidget : MixerPresendWidget {
+	*new { |layout, bounds, mixer, gui, def, presendIndex, postsendIndex|
+		^super.new(layout, bounds, mixer, gui, def, postsendIndex)
+	}
 	sendType { ^\post }
 	doSliderAction { |view|
 		mixer !? {
