@@ -1,0 +1,12 @@
+(
+	\name: 			"SETO",
+	\path: 			"seto",
+	\summary:		"SuperCollider Environment for Tangible Objects (SETO)",
+	\author: 		"Till Bovermann",
+	\organization: 	"Bielefeld University",
+	\country: 		"Germany",
+	\since: 		"2007",
+	\dependencies: [("LFSaw.de" -> 1.0)],
+	\url:           "http://tuio.lfsaw.de/",
+	\version:	1.0
+)
