@@ -27,7 +27,7 @@ Voicer {		// collect and manage voicer nodes
 	}
 	
 	init { arg v, th, ar, b, targ, addAct;
-		var args;		// for initializing nodes
+		var args, lcm;		// for initializing nodes
 
 		globalControls = IdentityDictionary.new;
 
@@ -57,13 +57,14 @@ Voicer {		// collect and manage voicer nodes
 
 			// create nodes: loop thru things
 		nodes = Array.new(voices);	// must add the nodes incrementally
+		lcm = th.size.lcm(args.size);
 		voices.do({ |i|
 			nodes = nodes.add(this.makeNode(th.wrapAt(i), args.wrapAt(i),
 					// i < th.size.lcm(args.size) : patches will become superfluous
 					// after least common multiple of # of instrs and # of arg sets
-				(i < th.size.lcm(args.size)).if({ nil }, // nil=not superfluous, make patch
+				(i < lcm).if({ nil }, // nil=not superfluous, make patch
 						// else, wrap around and get defname to reuse
-					{ nodes[i % th.size.lcm(args.size)].defname })
+					{ nodes[i % lcm].defname })
 			));
 		});
 
