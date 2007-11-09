@@ -3,7 +3,7 @@
 	// if you want MIDI controls not assigned to a VoicerGC or proxy NOT to die on
 	// MIDIPort.update
 VoicerGCDummy {
-	*new { this.shouldNotImplement(\new)	}
+	*new { this.shouldNotImplement(\new) }
 	
 	*set {}
 	
@@ -462,7 +462,11 @@ VoicerGCView {
 			cc = model.midiControl;  // do I have a controller num?
 //				// fix display name if it's midi-routed
 			cc.notNil.if({
-				{ midiName = /*" " ++*/ cc.ccnum.shortName }.try({ "" });
+				{ midiName = cc.ccnum.shortName }.try({ |err| 
+					if(err.species == DoesNotUnderstandError and: { err.selector == \shortName }) {
+						midiName = cc.ccnum.asString
+					};
+				})
 			});
 			{ 	nameView.string_(dispName);
 				midiDrag.string_(midiName);
