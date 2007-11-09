@@ -163,11 +163,11 @@
 //		target = target.asTarget;
 
 		target.server.waitForBoot({
-			this.send(target.server);	// tell the server about me
+			this.send(target.asTarget.server);	// tell the server about me
 			
 				// make the player
-			voicer = makeVoicerFunc.(this, #[], target: target, bus: bus)
-				?? { Voicer.new(20, this, target: target, bus: bus) };
+			voicer = makeVoicerFunc.(this.name, #[], target: target, bus: bus)
+				?? { Voicer.new(20, this.name, target: target, bus: bus) };
 			socket = VoicerMIDISocket.new(channel, voicer);  // plug into MIDI
 			
 				// make guis for controls other than freq and gate
