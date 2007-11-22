@@ -52,7 +52,7 @@
 }
 
 + FlowView {
-	resizeToFitContents
+	resizeToFitContents {
 			// need bounds relative to parent's bounds
 		var new, maxpt, comparept, mybounds, used;
 		mybounds = this.bounds;
