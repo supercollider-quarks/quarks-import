@@ -2,6 +2,11 @@
 	// for correct behavior of AdhocClass
 + Function {
 	isFunction { ^true }
+
+	// environment safety: asynchronous functions don't remember
+	// the environment - scheduled funcs, OSCresponders, etc.
+	// this is an easy way to make an environment-safe function
+	e { ^this.inEnvir }
 }
 
 + Object {

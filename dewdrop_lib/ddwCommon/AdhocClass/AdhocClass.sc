@@ -7,6 +7,8 @@
 // ~next = func to generate next value
 
 AdhocClass {
+	classvar	<>strict = false, <>warnOnAssignment = true;
+
 	var	<>env;	// I'm providing a setter for env, but it's really for internal use only
 				// be careful if you muck around with it!
 	var	<>putAction,
@@ -75,53 +77,46 @@ AdhocClass {
 	
 	next { arg ... args;
 		var result;
-		this.use({ result = ~next.valueArray([this] ++ args); });
+		this.use({ result = ~next.valueArray(args); });
 		^result
 	}
 	
 	value { arg ... args;
 		var result;
-		this.use({ result = ~next.valueArray([this] ++ args); });
+		this.use({ result = ~next.valueArray(args); });
 		^result
 	}
 	
 	reset { arg ... args;
 		var result;
-		this.use({ result = ~reset.valueArray([this] ++ args); });
+		this.use({ result = ~reset.valueArray(args); });
 		^result
 	}
 	
 	update { arg ... args;
 		var result;
-		this.use({ result = ~update.valueArray([this] ++ args); });
+		this.use({ result = ~update.valueArray(args); });
 		^result
 	}
 	
 	asStream { arg ... args;
 		var result;
-		this.use({ result = ~asStream.valueArray([this] ++ args); });
+		this.use({ result = ~asStream.valueArray(args); });
 		^result
 	}
 	
 	asPattern { arg ... args;
 		var result;
-		this.use({ result = ~asPattern.valueArray([this] ++ args); });
+		this.use({ result = ~asPattern.valueArray(args); });
 		^result
 	}
 	
-//	use { arg func;
-//		var result;
-//		env.use({ result = func.value; });
-//		^result
-//	}
-
 	use { arg func;
 		var result, saveEnvir;
+		saveEnvir = currentEnvironment;
+		currentEnvironment = this;
 		protect {
-			saveEnvir = currentEnvironment;
-			currentEnvironment = this;
 			result = func.value;
-			currentEnvironment = saveEnvir;
 		} {
 			currentEnvironment = saveEnvir;
 		};
@@ -142,8 +137,7 @@ AdhocClass {
 	}
 	
 	free { arg ... args;
-//		env.put(\me, nil);		// may be necessary for gc to explicitly kill the circular ref.
-		this.use({ ~free.valueArray([this] ++ args) });
+		this.use({ ~free.valueArray(args) });
 		env = nil;
 	}
 	
@@ -157,26 +151,30 @@ AdhocClass {
 	doesNotUnderstand { arg selector ... args;
 		var result, item;
 		(item = env.at(selector)).isFunction.if({
-			this.use({ result = item.valueArray([this] ++ args) });
+			this.use({ result = item.valueArray(args) });
 		}, {
-				// if setter is defined as a function in the environment, it will be
-				// handled by the above branch -- this needs only to do a simple put
 			selector.isSetter.if({
-				this.put(selector.asGetter, args[0]);
+				selector = selector.asGetter;
+				(warnOnAssignment and: { super.respondsTo(selector) }).if({
+					"'%' is already a method for AdhocClass. Conflicts may occur."
+						.format(selector).warn;
+				});
+				this.put(selector, args[0]);
 				result = this
 			}, {
-				result = item
+				strict.if({ 
+					this.envRespondsTo(selector).if({ result = item },
+						{ DoesNotUnderstandError(this, selector, args).throw });
+				}, {
+					result = item
+				});
 			});
 		});
 		^result
 	}
 	
 	perform { arg selector ... args;
-//		super.respondsTo(selector).if({
-//			^super.performList(selector, args)
-//		}, {
 			^this.performList(\doesNotUnderstand, [selector] ++ args);
-//		});
 	}
 
 	tryPerform { arg selector ... args;	// for sth like draggedInto...GUI
@@ -184,7 +182,22 @@ AdhocClass {
 	}
 	
 	respondsTo { arg selector;
-		^super.respondsTo(selector) or: { env.keys.includes(selector) }
+		super.respondsTo(selector).if({ ^true });
+		^this.envRespondsTo(selector)
+	}
+	
+	envRespondsTo { |selector|
+		var	recursivetest = { |environment, method|
+				block { |break|
+					environment.keysDo({ |key|
+						(key === method).if({ break.(true) });
+					});
+					environment.parent.notNil.if(
+						{ recursivetest.(environment.parent, method) },
+						{ false });
+				};
+			};
+		^recursivetest.(env, selector)
 	}
 	
 		// make a copy of this node, and run this func to change some props
@@ -242,3 +255,97 @@ AdhocClass {
 	}
 
 }
+
+
+//// experimental: remove need to declare self argument in method functions
+//// change [this] ++ args to just args
+//// in method funcs, use currentEnvironment for reference to the AdhocClass itself
+//
+//AdhocClass : OldAdhocClass {
+//	next { arg ... args;
+//		var result;
+//		this.use({ result = ~next.valueArray(args); });
+//		^result
+//	}
+//	
+//	value { arg ... args;
+//		var result;
+//		this.use({ result = ~next.valueArray(args); });
+//		^result
+//	}
+//	
+//	reset { arg ... args;
+//		var result;
+//		this.use({ result = ~reset.valueArray(args); });
+//		^result
+//	}
+//	
+//	update { arg ... args;
+//		var result;
+//		this.use({ result = ~update.valueArray(args); });
+//		^result
+//	}
+//	
+//	asStream { arg ... args;
+//		var result;
+//		this.use({ result = ~asStream.valueArray(args); });
+//		^result
+//	}
+//	
+//	asPattern { arg ... args;
+//		var result;
+//		this.use({ result = ~asPattern.valueArray(args); });
+//		^result
+//	}
+//	
+//	use { arg func;
+//		var result, saveEnvir;
+//		saveEnvir = currentEnvironment;
+//		currentEnvironment = this;
+//		protect {
+//			result = func.value;
+//		} {
+//			currentEnvironment = saveEnvir;
+//		};
+//		^result
+//	}
+//
+//	make { arg func;
+//		var saveEnvir;
+//		protect {
+//			saveEnvir = currentEnvironment;
+//			currentEnvironment = this;
+//			func.value;
+//			currentEnvironment = saveEnvir;
+//		} {
+//			currentEnvironment = saveEnvir;
+//		};
+//		^this
+//	}
+//	
+//	free { arg ... args;
+//		this.use({ ~free.valueArray(args) });
+//		env = nil;
+//	}
+//	
+//	doesNotUnderstand { arg selector ... args;
+//		var result, item;
+////selector.debug("AdhocClass:doesNotUnderstand");
+//		(item = env.at(selector)).isFunction.if({
+//			this.use({ result = item.valueArray(args) });
+//		}, {
+//			selector.isSetter.if({
+//				this.put(selector.asGetter, args[0]);
+//				result = this
+//			}, {
+//				strict.if({ 
+//					this.envRespondsTo(selector).if({ result = item },
+//						{ DoesNotUnderstandError(this, selector, args).throw });
+//				}, {
+//					result = item
+//				});
+//			});
+//		});
+//		^result
+//	}
+//}
