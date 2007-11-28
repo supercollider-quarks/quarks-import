@@ -51,7 +51,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="s2">a = </span>AdhocClass<span class="s2">({</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span>~a = 1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>~b = 2;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>~mulAB = { <span class="s1">|self|</span> ~a * ~b };</p>
+<p class="p5"><span class="Apple-tab-span">	</span>~mulAB = { ~a * ~b };</p>
 <p class="p5">}, parentKeys: #[b]);</p>
 <p class="p8"><br></p>
 <p class="p5">a.env</p>
@@ -77,12 +77,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="s2">a = </span>AdhocClass<span class="s2">({</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span>~a = 1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>~b = 2;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>~mulAB = { <span class="s1">|self|</span> ~a * ~b };</p>
+<p class="p5"><span class="Apple-tab-span">	</span>~mulAB = { ~a * ~b };</p>
 <p class="p5">}, parentKeys: #[b]);</p>
 <p class="p8"><br></p>
 <p class="p5">b = a.clone({</p>
 <p class="p5"><span class="Apple-tab-span">	</span>~c = 3;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>~divAC = { <span class="s1">|self|</span> ~a * ~c };</p>
+<p class="p5"><span class="Apple-tab-span">	</span>~divAC = { ~a * ~c };</p>
 <p class="p5">});</p>
 <p class="p8"><br></p>
 <p class="p5">b.env</p>
@@ -193,7 +193,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>~a = 1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>~b = 2;</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
-<p class="p4"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// method definition: self must be the first argument</p>
 <p class="p4"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// all functions are moved to the parent environment to be shared between instances</p>
 <p class="p5"><span class="Apple-tab-span">	</span>~times = { <span class="s1">|mul|</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>mul.notNil.if({ mul }, { ~a }) * ~b</p>
