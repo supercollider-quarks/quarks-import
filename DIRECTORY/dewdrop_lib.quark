@@ -6,5 +6,5 @@
 	version:		1.0,
 	helpdoc:		"dewdrop.html",
 	url:			"http://www.dewdrop-world.net/sc3",
-	dependencies:	#["ddwChucklib", "ddwCommon", "ddwEQ", "ddwGUIEnhancements", "ddwMIDI", "ddwMixerChannel", "ddwPatterns", "ddwPeakMonitor", "ddwRational", "ddwSensitivity", "ddwStatusBox", "ddwTemperament", "ddwVoicer"]
+	dependencies:	#["ddwAdhocClass", "ddwChucklib", "ddwCommon", "ddwEQ", "ddwGUIEnhancements", "ddwMIDI", "ddwMixerChannel", "ddwPatterns", "ddwPeakMonitor", "ddwRational", "ddwSensitivity", "ddwStatusBox", "ddwTemperament", "ddwVoicer"]
 )
