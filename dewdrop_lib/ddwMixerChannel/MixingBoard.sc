@@ -42,7 +42,8 @@ MixingBoard {
 			// false says to hold off gui updates
 		onClose.value(this);
 		w.isClosed.not.if({ w.onClose = nil; w.close; });
-		mixers.do({ arg m; m.mixer.free(false); });
+//		mixers.do({ arg m; m.mixer.free(false); });
+		mixers.do({ arg m; m.mixer = nil });
 		boards.remove(this);
 //		MixingBoard.renumberChannels;	// fix indices in MixerChannels
 	}
