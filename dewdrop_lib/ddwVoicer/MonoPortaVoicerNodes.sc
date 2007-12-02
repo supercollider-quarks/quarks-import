@@ -93,11 +93,15 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 	}
 
 	release { arg gate = 0, latency;
+//		var	bundle;
 //"MonoPortaInstrVoicerNode-release - ".post;
 		this.isPlaying.if({
+//DEPRECATED:
 //			voicer.lastFreqs.remove(frequency).postln;
 //this.setMsg([\gate, gate]).postln;
-			this.set([\gate, gate], latency);
+			this.target.server.listSendBundle(latency, (#[[error, -1]] ++ this.setMsg([\gate, gate]) ++ #[[error, -2]]));
+//			this.set([\gate, gate], latency);
+//			this.target.server.listSendBundle(latency, this.releaseMsg(gate));
 			isPlaying = false;
 			isReleasing = true;
 		});

@@ -89,7 +89,7 @@ Voicer {		// collect and manage voicer nodes
 // SUPPORT METHODS FOR NODE LOCATORS:
 	nonplaying {	// returns all nonplaying nodes, (or if none, an array containing earliest node)
 		var n;
-		n = nodes.select({ arg n; n.isPlaying.not });
+		n = nodes.select({ arg n; n.reserved.not });
 		(n.size > 0).if({ ^n }, { ^[ this.earliest ] });
 	}
 	
@@ -118,6 +118,18 @@ Voicer {		// collect and manage voicer nodes
 		});
 		^nodesTemp.sort({ |a, b| a.lastTrigger < b.lastTrigger }).at(0)
 	}
+
+		// this method is reserved for Event usage
+		// you should not use it yourself - instead use trigger, release and gate methods
+	prGetNodes { |numNodes|
+		var	node;
+		^Array.fill(numNodes, {
+				// must set reserved = true
+				// so that the next node request doesn't return the same
+			node = this.perform(stealer).reserved_(true);
+		});
+	}
+		
 	
 // NODE LOCATORS:
 // to choose one, do yourVoicer.stealer_( a symbol == the method name )
@@ -136,14 +148,16 @@ Voicer {		// collect and manage voicer nodes
 			// if all nodes playing, returns earliest triggered
 		cycleRout.isNil.if({
 			cycleRout = Routine.new({
-				nodes.do({ arg n;
-						// if nonplaying returns a playing node, then all nodes are playing
-					(this.nonplaying.at(0).isPlaying).if({
-						this.earliest.yield
-					}, {
-						n.isPlaying.not.if({ n.yield })
+				loop {
+					nodes.do({ arg n;
+							// if nonplaying returns a playing node, then all nodes are playing
+						(this.nonplaying.at(0).reserved).if({
+							this.earliest.yield
+						}, {
+							n.reserved.not.if({ n.yield })
+						});
 					});
-				});
+				}
 			});
 		});
 		^cycleRout.next
@@ -154,7 +168,7 @@ Voicer {		// collect and manage voicer nodes
 		var n;
 		n = this.nonplaying;
 			// if 1 or more nodes are not playing, return one of them
-		(n.at(0).isPlaying.not).if({ ^n.choose },
+		(n.at(0).reserved.not).if({ ^n.choose },
 			{ ^this.earliest }		// otherwise, give earliest triggered node
 		);
 	}
@@ -322,6 +336,49 @@ Voicer {		// collect and manage voicer nodes
 		// does not affect currently playing nodes, only new ones
 	setArgDefaults { arg args;
 		nodes.do({ |n| n.setArgDefaults(args); });
+	}
+	
+	setArgsInEvent { |event|
+		var	build = {
+			var synthDesc, argList, controls, cname;
+			~args = ~nodes.collect({ |node, i|
+					// if synthdesc is available
+					// we can't assume the same synthdesc for every node
+				(synthDesc = node.getSynthDesc(~synthLib)).notNil.if({
+					controls = synthDesc.controls.select({ |c|
+						c.rate != \noncontrol and:
+							{ #[freq, gate, out, i_out, outbus].includes(c.name.asSymbol).not }
+					});
+					argList = Array(controls.size * 2);
+					controls.do({ |c|
+						cname = c.name.asSymbol;
+						(cname.envirGet.size == 0).if({ cname.envirPut(cname.envirGet.asArray) });
+							// add value: environment overrides node's initarg,
+							// which overrides the SynthDef's default
+						argList.add(cname)
+							.add(cname.envirGet.wrapAt(i)
+								?? { node.initArgAt(cname) }
+								?? { c.defaultValue }
+							);
+					});
+					argList
+				}, {
+					argList = Array(~argKeys.size * 2);
+					~argKeys.do({ |c|
+						c = c.asSymbol;
+						(c.envirGet.size == 0).if({ c.envirPut(c.envirGet.asArray) });
+						argList.add(c).add(c.envirGet.wrapAt(i));
+					});
+					argList
+				});
+			});
+		};
+		(event !== currentEnvironment).if({
+			event.use(build)
+		}, {
+			build.value
+		});
+		^event
 	}
 	
 	target_ { |targ|
@@ -495,70 +552,88 @@ Voicer {		// collect and manage voicer nodes
 			prepNote: #{
 				var i;
 				~freq = ~freq ?? { ~note.freq };
-				(~midi ? true).if({ ~freq = ~midiNoteToFreq.value(~freq) });
+				(~midi ? true).if({ ~freq = ~midiNoteToFreq.value(~freq).asArray },
+					{ ~freq = ~freq.asArray });
 				~delta = ~delta ? ~note.dur;
-				~length = ~length ? ~note.length;
+				~length = (~length ? ~note.length).asArray;
 				~args = ~args ? ~note.args;
-				~gate = ~gate ?? {
+				~gate = (~gate ?? {
 						// identify the \gate, xxx pair in the args array
 						// 2nd removeAt should return the value *wink*
 					(i = ~args.detectIndex({ |item| item == \gate })).notNil
 						.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
-				};
-				(~argKeys.size > 0).if({
-					~args = ~args ++
-						~argKeys.collect({ |a| [a, a.envirGet].flop }).flop
-							.collect({ |a| a.flatten(1) });
-				});
+				}).asArray;
+
+				~nodes = ~voicer.prGetNodes(max(~freq.size, max(~length.size, ~gate.size)));
+				~voicer.setArgsInEvent(currentEnvironment);
+
+//				(~argKeys.size > 0).if({
+//					~args = ~args ++
+//						~argKeys.collect({ |a| [a, a.envirGet].flop }).flop
+//							.collect({ |a| a.flatten(1) });
+//				});
 			},
 			
 			play: #{
-				~prepNote.value;
-				~finish.value;	// user-definable
 				~voicer.notNil.if({
-					~length.isNil.if({		// midi input... note will be released later
-						~voicer.trigger(~freq, ~gate, ~args, ~latency);
-					}, {
-						~voicer.gate(~freq, ~length, ~gate, ~args, ~latency);
+					var	latency = ~latency;
+					~prepNote.value;
+					~finish.value;	// user-definable
+
+					~nodes.do({ |node, i|
+						var	freq = ~freq.wrapAt(i);
+						node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i), latency);
+						~length.wrapAt(i).notNil.if({
+							thisThread.clock.sched(~length.wrapAt(i), {
+								node.release(0, latency, freq);
+							});
+						});
 					});
+
+//					~length.isNil.if({		// midi input... note will be released later
+//						~voicer.trigger(~freq, ~gate, ~args, ~latency);
+//					}, {
+//						~voicer.gate(~freq, ~length, ~gate, ~args, ~latency);
+//					});
 				});
 			}
 		));
 
 		Event.default[\eventTypes].put(\voicerNote, #{|server|
-			var freqs, lag, dur, strum, sustain, desc, msgFunc, i;
+			var lag, strum, sustain, i;
 			
-			freqs = ~freq = ~freq.value + ~detune;
-							
-			if (freqs.isSymbol.not) {
-				~amp = ~amp.value;
+			~freq = (~freq.value + ~detune).asArray;
+
+			if (~freq.isSymbol.not) {
+				~amp = ~amp.value.asArray;
 				lag = ~lag + server.latency;
 				strum = ~strum;
-				sustain = ~sustain = ~sustain.value;
-				~gate = ~gate ?? {
+				sustain = ~sustain = ~sustain.value.asArray;
+				~gate = (~gate ?? {
 						// identify the \gate, xxx pair in the args array
 						// 2nd removeAt should return the value *wink*
 					(i = ~args.detectIndex({ |item| item == \gate })).notNil
 						.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
-				};
-				~args = [[\freq, freqs], [\sustain, sustain], [\gate, ~gate]] ++ ~voicerArgs;
-				(~argKeys.size > 0).if({
-					~args = ~args ++
-						~argKeys.collect({ |a| [a, a.envirGet] });
-				});
-				~args = ~args.collect(_.flop).flop.collect(_.flatten(1));
-				~args.do {|msgArgs, i|
-					var latency;
+				}).asArray;
+				
+				~nodes = ~voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
+				~voicer.setArgsInEvent(currentEnvironment);
+				
+				~nodes.do({ |node, i|
+					var latency, freq;
 					
 					latency = i * strum + lag;
-					
-					~voicer.gate1(msgArgs[1], msgArgs[3], msgArgs[5], 
-						msgArgs[6..max(6, msgArgs.size-1)], latency);
-				}
+					freq = ~freq.wrapAt(i);
+
+					node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i), latency);
+					thisThread.clock.sched(~sustain.wrapAt(i), {
+							// must include freq here b/c node might have been stolen
+						node.release(0, latency, freq);
+					});
+				});
 			};
 		});
 	}
-
 }
 
 MonoPortaVoicer : Voicer {
