@@ -5,16 +5,17 @@ SynthVoicerNode {
 		// for other types, subclass SynthVoicerNode and override methods
 		// H. James Harkins, jamshark70@dewdrop-world.net
 
-	var	>isPlaying = false,
+	var	isPlaying = false,
 		<>isReleasing = false,
+		<>reserved = false,
 		<>frequency,				// so voicer can identify notes to release
 		<>lastTrigger = 0,			// ditto -- time of last trigger
 		<>target, <>addAction,		// for allocating nodes
 		<>bus,				// output bus to pass to things
 		<synth, 		// the node
 		<initArgs,	// send to each node on initiation
+		<initArgDict,	// quicker access to initial arg values
 		<defname,
-//		<argDict,		// maps standard names \freq, \gate, etc to the actual arg names
 		voicer,		// to help with globally mapped controls; what if voicer is nil?
 		myLastLatency,	// because latency is now variable at the voicer level
 						// important because you may have 2 processes with different latencies
@@ -34,6 +35,7 @@ SynthVoicerNode {
 		
 			// remove arg pairs from ar whose key is \freq, \gate or \outbus
 		initArgs = this.makeInitArgs(ar);
+		initArgDict = this.makeInitArgDict(initArgs);
 		
 		voicer = par;
 		defname = th;
@@ -50,19 +52,32 @@ SynthVoicerNode {
 
 	makeInitArgs { arg ar;
 		var out;
-		out = Array.new;
-		ar.pairsDo({ |name, value|
-			(#[\freq, \freqlag, \gate, \t_gate, \out, \outbus].includes(name).not and:
-					{ this.testArgClass(value) })
-				.if({
-				out = out ++ [name, value];
+		ar.notNil.if({
+			out = Array.new;
+			ar.pairsDo({ |name, value|
+				(#[\freq, \freqlag, \gate, \t_gate, \out, \outbus].includes(name.asSymbol).not and:
+						{ this.testArgClass(value) })
+					.if({
+					out = out ++ [name.asSymbol, value];
+				});
 			});
+		}, {
+			out = Array(initArgDict.size * 2);
+			initArgDict.keysValuesDo({ |name, value| out.add(name).add(value) });
 		});
 		^out
 	}
 	
+	makeInitArgDict { |initArgs|
+		var	out = IdentityDictionary.new;
+		initArgs.pairsDo({ |name, value| out.put(name, value) });
+		^out
+	}
+	
+	initArgAt { |name| ^initArgDict[name.asSymbol] }
+	
 		// this test is split out of the above in case future subclasses need a different test
-	testArgClass { |argValue| ^argValue.isNumber }
+	testArgClass { |argValue| ^argValue.asUGenInput.isValidSynthArg }
 
 	triggerMsg { arg freq, gate = 1, args;
 		var bundle, args2;
@@ -105,14 +120,14 @@ SynthVoicerNode {
 			(msg == \n_end).if({
 					// synth may have changed
 				(syn == synth).if({
-					isPlaying = isReleasing = false;
+					reserved = isPlaying = isReleasing = false;
 				});
 				syn.releaseDependants;	// remove node and Updater from dependants dictionary
 			});
 		});
 		frequency = freq;	// save frequency for Voicer.release
 		lastTrigger = Main.elapsedTime;	// save time
-		isPlaying = true;
+		this.isPlaying = true;
 		isReleasing = false;
 	}
 	
@@ -124,11 +139,13 @@ SynthVoicerNode {
 		// must pass in node because, when a node is stolen, my synth variable has changed
 		// to the new node, not the old one that should go away
 	stealNode { |node, latency|
-		node.server.sendBundle(latency, #[error, 0], node.setMsg(\gate, -1), #[error, 1]);
+		(synth.notNil/* and: { synth.isPlaying }*/).if({
+			node.server.sendBundle(latency, #[error, -1], node.setMsg(\gate, -1), #[error, -2]);
+		});
 	}
 	
 	releaseMsg { arg gate = 0;
-		^[#[error, 0], [15, synth.nodeID, \gate, gate]/*, #[error, 1]*/]
+		^[#[error, -1], [15, synth.nodeID, \gate, gate], #[error, -2]]
 	}
 	
 	releaseCallBack {
@@ -142,12 +159,15 @@ SynthVoicerNode {
 	release { arg gate = 0, latency, freq;
 		this.shouldRelease(freq).if({ 
 			synth.server.listSendBundle(latency, this.releaseMsg(gate)/*.debug("% release".format(thisThread.clock.beats))*/);
-			isPlaying = false;
+			this.isPlaying = false;
 			isReleasing = true;
 		});
 	}
 	
 	isPlaying { ^isPlaying or: { (synth.notNil and: { synth.isPlaying }) } }
+	isPlaying_ { |bool = false|
+		isPlaying = reserved = bool;
+	}
 	
 	shouldRelease { arg freq;
 		^(this.isPlaying and: { freq.isNil or: { freq == frequency } })
@@ -165,7 +185,7 @@ SynthVoicerNode {
 
 	free {	// remove from server; assumes envelope is already released
 		(this.isPlaying).if({ synth.free; });
-		isPlaying = false;
+		this.isPlaying = false;
 	}
 	
 	setMsg { arg args;
@@ -190,14 +210,22 @@ SynthVoicerNode {
 	}
 	
 	setArgDefaults { |args|
-		var	index;
-		args.pairsDo({ |key, value|
-			(index = initArgs.indexOf(key)).notNil.if({
-				initArgs[index + 1] = value;
-			}, {
-				initArgs = initArgs.add(key).add(value);
-			});
-		})
+//		var	index;
+		args.pairsDo({ |key, value| initArgDict.put(key, value) });
+		initArgs = this.makeInitArgs;
+
+//		args.pairsDo({ |key, value|
+//			(index = initArgs.indexOf(key)).notNil.if({
+//				initArgs[index + 1] = value;
+//			}, {
+//				initArgs = initArgs.add(key).add(value);
+//			});
+//		})
+	}
+	
+		// nil if SynthDesc not found
+	getSynthDesc { |synthLib|
+		^(synthLib ?? { SynthDescLib.global }).tryPerform(\at, defname.asSymbol)
 	}
 	
 // GENERAL SUPPORT METHODS
@@ -281,8 +309,16 @@ InstrVoicerNode : SynthVoicerNode {
 					// this breaks nested patches but I never use that anyway
 				def = patch.asSynthDef;
 				def.name = (defname = def.name ++ UniqueID.next);
-				def.send(target.server);
-//				def.memStore;		// this might not work with wrapped Instr's
+				try { def.memStore }		// this might not work with wrapped Instr's
+					{ |error|
+						error.notNil.if({
+							"Error occurred during InstrVoicerNode initialization: memStore.\nSending synthdef normally.".warn;
+							error.reportError;
+							"\nContinuing. Voicer will be usable. Pattern arguments will not be detected automatically.".postln;
+							def.send(target.server);
+						});
+					};
+							
 //				patch.prepareForPlay(target, false, bus);
 //				defname = patch.defName;
 //				patch = nil;		// garbage collect patch
@@ -293,6 +329,7 @@ InstrVoicerNode : SynthVoicerNode {
 			defname = olddefname;
 			initArgs = this.makeInitArgs(ar);
 		});
+		initArgDict = this.makeInitArgDict(initArgs);
 	}
 	
 	dtor {
@@ -342,13 +379,13 @@ InstrVoicerNode : SynthVoicerNode {
 		Updater(synth, { |syn, msg|
 			(msg == \n_end).if({
 				(syn == synth).if({
-					isPlaying = isReleasing = false;
+					reserved = isPlaying = isReleasing = false;
 				});
 				syn.releaseDependants;	// remove node and Updater from dependants dictionary
 			});
 		});
 
-		isPlaying = true;
+		this.isPlaying = true;
 		isReleasing = false;
 		^bundle
 	}
@@ -359,7 +396,7 @@ InstrVoicerNode : SynthVoicerNode {
 		this.shouldRelease(freq).if({
 			this.target.server.listSendBundle(latency, this.releaseMsg(gate));
 //			this.set([\gate, gate], latency);
-			isPlaying = false;
+			this.isPlaying = false;
 			isReleasing = true;
 		});
 	}
@@ -373,15 +410,16 @@ InstrVoicerNode : SynthVoicerNode {
 	releaseMsg { arg gate = 0, wrap = true;	// wrap with \error msg?
 		var bundle;
 //["InstrVoicerNode-releaseMsg", synth.tryPerform(\nodeID), gate].postln;
-		wrap.if({
-			bundle = [#[\error, 0]];
-		}, {
-			bundle = Array.new;
-		});
-		children.do({ |child| bundle = bundle ++ child.releaseMsg(gate, false); });
-		bundle = bundle ++ [[15, synth.nodeID, \gate, gate]];
-			// not needed because ['/error', 0] is now local to the bundle
-//		wrap.if({ bundle = bundle ++ [#[error, 1]]; });
+		(synth.notNil /*and: { synth.isPlaying }*/).if({
+			wrap.if({
+				bundle = [#[\error, -1]];
+			}, {
+				bundle = Array.new;
+			});
+			children.do({ |child| bundle = bundle ++ child.releaseMsg(gate, false); });
+			bundle = bundle ++ [[15, synth.nodeID, \gate, gate]];
+			wrap.if({ bundle = bundle ++ [#[error, -2]]; });
+		})
 //["InstrVoicerNode-releaseMsg - message: ", bundle].postln;
 		^bundle
 	}
@@ -393,7 +431,7 @@ InstrVoicerNode : SynthVoicerNode {
 	freeMsg {
 		var bundle;
 		(synth.notNil and: { synth.isPlaying }).if({
-			isPlaying = false;
+			this.isPlaying = false;
 			bundle = List.new;
 				// collect free messages for children
 			children.do({ arg child; bundle = bundle ++ child.freeMsg; });
@@ -456,7 +494,7 @@ InstrVoicerNode : SynthVoicerNode {
 //		children.do({ arg child; bundle.add(child.freeMsg) });
 //		bundle.add(this.freeMsg);
 		target.server.listSendBundle(nil, this.freeMsg/*.debug("% free".format(thisThread.clock.beats))*/);
-		isPlaying = false;
+		this.isPlaying = false;
 	}
 	
 	displayName { ^instr.name.asString }
@@ -550,7 +588,7 @@ InstrVoicerNode : SynthVoicerNode {
 				});
 			};
 		});
-
+		
 		^argArray
 	}
 
