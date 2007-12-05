@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.41">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #0000bf}
+span.s4 {text-decoration: underline}
+span.s5 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedWindow</b></span><span class="s2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wrapper for </b></span><b>SCWindow</b></p>
+<p class="p2"><br></p>
+<p class="p3">superclass: <span class="s3">SCWindow</span></p>
+<p class="p2"><b></b><br></p>
+<p class="p3">adding some functionallity to the standard window class.</p>
+<p class="p3">requires <span class="s3">RedVector</span></p>
+<p class="p4"><b></b><br></p>
+<p class="p1"><span class="s2">see also [</span><span class="s4">RedJWindow</span><span class="s2">], [</span><span class="s4">SCWindow</span><span class="s2">]</span></p>
+<p class="p4"><b></b><br></p>
+<p class="p3"><span class="s4">instance methods:</span></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span>draw(func)</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>alias for drawHook_</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>play(fps= 25)</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>starts an internal thread on the <span class="s3">AppClock</span> updating at rate fps</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>stop</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stop internal thread</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>resize([width, height])</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>change window size while keeping x and y position.<span class="Apple-converted-space">  </span>the argument can also be a <span class="s3">RedVector</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>background_(color)</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set window background.<span class="Apple-converted-space">  </span>alias for w.view.background_</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>isOpen</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>boolean</p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="s4">instance variables:</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>&lt;mouse</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns a <span class="s3">RedVector</span> for mouse x and y position</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>&lt;isPlaying</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if the window is updating</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">w= <span class="s3">RedWindow</span>.new.front;</p>
+<p class="p6">w.close;</p>
+<p class="p5"><br></p>
+<p class="p7">//or better - for platform independet code...</p>
+<p class="p6"><span class="s3">GUI</span>.cocoa;</p>
+<p class="p6">w= <span class="s3">GUI</span>.redWindow.new(scroll:true).front;</p>
+<p class="p5"><br></p>
+<p class="p6">w.resize(<span class="s3">RedVector2D</span>[200, 200])</p>
+<p class="p6">w.background_(<span class="s3">Color</span>.red)</p>
+<p class="p5"><br></p>
+<p class="p6">w.draw{<span class="s3">GUI</span>.pen.fillOval(<span class="s3">Rect</span>.aboutPoint(175.rand@175.rand, 50, 50))}</p>
+<p class="p6">w.play(25)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">//25fps</span></p>
+<p class="p6">w.stop</p>
+<p class="p5"><br></p>
+<p class="p7"><span class="s2">(<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mouse control</p>
+<p class="p6">w.draw{</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">var</span> radius= 100.rand;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.strokeColor_(<span class="s3">Color</span>.red(0.5, radius/100));</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">GUI</span>.pen.fillOval(<span class="s3">Rect</span>.aboutRedVector2D(w.mouse, radius))</p>
+<p class="p6">}</p>
+<p class="p6">)</p>
+<p class="p6">w.play(25)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">//25fps</span></p>
+<p class="p6">w.mouse</p>
+<p class="p6">w.isPlaying</p>
+<p class="p6">w.isOpen</p>
+<p class="p6">w.stop</p>
+<p class="p6">w.close</p>
+</body>
+</html>
