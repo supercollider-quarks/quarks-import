@@ -1,10 +1,12 @@
 // this file is part of redUniverse toolkit /redFrik
 
+//uncomment this code and recompile if you're using swingosc (linux/windows)
 
-/*RedJWindow : JSCWindow {
+/*
+RedJWindow : JSCWindow {
 	var <mouse, <isPlaying= false;
-	*new {|name= "redWindow", bounds, resizable= false, border= true, server|
-		^super.new.initSCWindow(name, bounds, resizable, border, server)
+	*new {|name= "redWindow", bounds, resizable= false, border= true, server, scroll= false|
+		^super.new.initSCWindow(name, bounds, resizable, border, scroll, server)
 	}
 	*initClass {
 		StartUp.add{
@@ -12,14 +14,15 @@
 		};
 		UI.registerForShutdown({ this.closeAll });
 	}
-	initSCWindow {|argName, argBounds, resizable, border, argServer|
+	initSCWindow {|argName, argBounds, resizable, argBorder, scroll, argServer|
 		name			= argName.asString;
+		border		= argBorder;
 		argBounds		= argBounds ?? { Rect.new( 128, 64, 300, 300 )};
 		server		= argServer ?? { SwingOSC.default; };
 		allWindows	= allWindows.add( this );
 		id			= server.nextNodeID;
 		dataptr		= this.id;
-		this.prInit( name, argBounds, resizable, border ); // , view );
+		this.prInit( name, argBounds, resizable, border, scroll ); // , view );
 		
 		this.background_(Color.black);
 		this.acceptsMouseOver= true;
