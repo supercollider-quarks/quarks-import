@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.41">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {font: 18.0px Helvetica; color: #0000bf}
+span.s2 {color: #0000bf}
+span.s3 {text-decoration: underline}
+span.s4 {color: #000000}
+span.s5 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedVector</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a vector of any dimension</b></p>
+<p class="p2"><br></p>
+<p class="p1">superclass: <span class="s2">FloatArray</span></p>
+<p class="p2"><b></b><br></p>
+<p class="p1">for 2 and 3 dimensional vectors, consider using the subclasses <span class="s2">RedVector2D</span> and <span class="s2">RedVector3D</span>.<span class="Apple-converted-space">  </span>these are optimized for speed.</p>
+<p class="p3"><b></b><br></p>
+<p class="p1"><span class="s3">instance methods:</span></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>mag</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get the magnitude of the vector as a float</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>distance(redVec)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get the distance between two vectors as a float</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>dot(redVec)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dot product</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>normalize</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get a new vector with normalized magnitude</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>limit(max)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>get a new vector limited to max value</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>cross(redVec)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cross product (note: <span class="s2">RedVector3D</span> only)</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5">a= <span class="s2">RedVector</span>[10, 20]</p>
+<p class="p5">b= a.normalize</p>
+<p class="p4"><br></p>
+<p class="p5">a.mag</p>
+<p class="p5">b.mag</p>
+<p class="p4"><br></p>
+<p class="p5">c= a.limit(5)</p>
+<p class="p5">c.mag</p>
+<p class="p4"><br></p>
+<p class="p5">a.distance(b)</p>
+<p class="p5">b.distance(c)</p>
+<p class="p5">c.distance(a)</p>
+<p class="p4"><br></p>
+<p class="p5">a+b</p>
+<p class="p5">c*<span class="s2">RedVector</span>[100, 200].rand</p>
+<p class="p4"><br></p>
+<p class="p6"><span class="s2">RedVector2D</span><span class="s4">[320, 240]<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//this one is hardcoded to 2 dimensions</p>
+<p class="p6"><span class="s2">RedVector3D</span><span class="s4">[320, 240, 160]<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//this one is hardcoded to 3 dimensions</p>
+<p class="p5">a= <span class="s2">RedVector</span>[1, 2, 3, 4, 5, 6]<span class="Apple-tab-span">	</span><span class="s5">//6 dimensions</span></p>
+<p class="p6"><span class="s4">b= </span><span class="s2">RedVector</span><span class="s4">[10]<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//1 dimension</p>
+<p class="p5">a+b</p>
+</body>
+</html>
