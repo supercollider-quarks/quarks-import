@@ -1,12 +1,7 @@
 (
 	\name: "redUniverse",
 	\path: "redUniverse",
-	\summary: "a simple toolkit\n
-		note: if you run LINUX of WINDOWS or just prefer
-		SwingOSC over Cocoa, you'll need to uncomment
-		all the code in the file RedJWindow.sc and
-		recompile.
-		also see the file 'readme.txt'
+	\summary: "a simple toolkit\n\t\tnote: if you run LINUX of WINDOWS or just prefer\n\t\tSwingOSC over Cocoa, you'll need to uncomment\n\t\tall the code in the file RedJWindow.sc and\n\t\trecompile.\n\t\talso see the file 'readme.txt'"
 	\author: "redFrik",
 	\url: "http://www.fredrikolofsson.com/"
 )
