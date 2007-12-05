@@ -28,15 +28,17 @@ JInT {
 		this.stopCustom;
 	}
 	at {|keys = 0|
+		var res;
 		try {
-			keys.isKindOf(Collection).not.if({
-				^this.basicAt(keys);
+			res = keys.isKindOf(Collection).not.if({
+				this.basicAt(keys);
 			}, {
-				^keys.collect{|key| this.basicAt(key)};
+				keys.collect{|key| this.basicAt(key)};
 			});
 		} {
 			(format("JInT-at: malformed argument (%). has to be either a valid key, an index, or a collection of these.\n", keys)).warn;
-		}
+		};
+		^res
 	}
 	basicAt {|key|
 		key.isKindOf(Symbol).if({
@@ -46,9 +48,9 @@ JInT {
 		});
 	}
 	info {
-		postf("%:\n", this.class);
+		postf("%\n", this.class);
 		controllers.do{|cont, i|
-			postf("\t% (%):\t%\n", cont.short, i, cont.description);
+			postf("\t  '%' (%) - \"%\" (% DOF) \n\t\t-> %\n", cont.short, i, cont.description, cont.numDOF, cont.semantics.flatten.asSet.asArray);
 		}
 	}
 }

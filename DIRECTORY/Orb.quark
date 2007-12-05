@@ -4,6 +4,7 @@
 	\summary:		"Interface to Ambient Lights",
 	\author: 		"Till Bovermann, Eckard Riedenklau",
 	\organization: 	"Bielefeld University",
+	\version:		0.2, // must be a float
 	\country: 		"Germany",
 	\since: 		"2005",
 	\url:           "http://www.lfsaw.de/hardware/ambient_lights.shtml"

@@ -6,5 +6,6 @@
 	\organization: 	"LFSaw",
 	\country: 		"Germany",
 	\since: 		"2006",
-	\url:           "http://LFSaw.de"
+	\url:           "http://LFSaw.de",
+	\version: 1.1
 )

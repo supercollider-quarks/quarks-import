@@ -155,16 +155,16 @@ SETOServer {
 		};
 		interactions = [];
 
-		format = aFormat;
+		format = aFormat.asSymbol;
 		if (format.asString.beginsWith("_").not , {
-			realFormat = setoClass.formatDict.at(format);
+			realFormat = setoClass.formatDict.at(format.asSymbol);
 			// if Nil -> not in Dict -> warning;
 			if (realFormat.isNil, {
 				("SETOServer:pr_initSETOServer : Format not recognized -" + format).warn;
 				^nil
 			})
 		}, {
-			realFormat = format.copyRange(1, format.size-1);
+			realFormat = format.asString[1..];
 		});
 		// determine if using Euler or Axis rotation notation
 		isEuler = Set.newFrom(realFormat.asString).sect(Set[$u, $v, $w]).isEmpty;

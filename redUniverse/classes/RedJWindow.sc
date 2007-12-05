@@ -1,7 +1,7 @@
 // this file is part of redUniverse toolkit /redFrik
 
 
-RedJWindow : JSCWindow {
+/*RedJWindow : JSCWindow {
 	var <mouse, <isPlaying= false;
 	*new {|name= "redWindow", bounds, resizable= false, border= true, server|
 		^super.new.initSCWindow(name, bounds, resizable, border, server)
@@ -36,3 +36,4 @@ RedJWindow : JSCWindow {
 	background_ {|color| view.background_(color)}
 	isOpen {^this.isClosed.not}
 }
+*/
