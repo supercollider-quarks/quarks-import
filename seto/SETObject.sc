@@ -74,19 +74,23 @@ SETObject { 	// abstract class
 	classvar <formatDict;	// the dictionary containing the predefined formats
 	classvar <keyDict;		// dictionary mapping the keys to elements in the object
 	
+	/** method needed for testing purposes*/
+	asArray {
+		^([id, classID, pos, rotAxis, rotEuler, velocity, acceleration, freeSpace].flatten);
+	}
 	*initClass {
 		super.initClass;
 		//init
 		formatDict = Dictionary.newFrom(IdentityDictionary[
-			'2Dobj'	->'ixyaXYAmr',
-			'3Dobj'	->'ixyzabcXYZABCmr',
-			'25Dobj'	->'ixyzabcXYZABCmr',
-			'2Dcurs'	->'ixyXYm',
-			'3Dcurs'	->'ixyzXYZm',
-			'25Dcurs'	->'ixyzabcXYZABCmr',
-			'tDObj' 	->'ixya',
-			'tDobj' 	->'ixya', 
-			'tdObj' 	->'ixya' 
+			'2Dobj'	->"ixyaXYAmr",
+			'3Dobj'	->"ixyzabcXYZABCmr",
+			'25Dobj'	->"ixyzabcXYZABCmr",
+			'2Dcurs'	->"ixyXYm",
+			'3Dcurs'	->"ixyzXYZm",
+			'25Dcurs'	->"ixyzabcXYZABCmr",
+			'tDObj' 	->"ixya",
+			'tDobj' 	->"ixya", 
+			'tdObj' 	->"ixya" 
 		]);
 		
 		

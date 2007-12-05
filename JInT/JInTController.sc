@@ -19,14 +19,17 @@ Subclasses implement the dedicated semantics.
 
 	@todo values on server are currently set to be in [-1, 1]
 
+	@ what about trigger buttons only sending that something's triggered?
+
+
 */
 JInTController {
 	var <numDOF;			/// number of available degrees of freedom
 	var <description;		/// a String describing the functionality
 	var <>short;			/// a shortcut, e.g. for a fader \f1
 	var <>action;			/// a function which will be evaluated on a value change. param: this
-	var <>beginAction;		/// a function evaluated on start of a contiuous action. param: this
-	var <>endAction;		/// a function evaluated on stop  of a contiuous action. param: this
+	var <>beginAction;		/// a function evaluated on start of a continuous action. param: this
+	var <>endAction;		/// a function evaluated on stop  of a continuous action. param: this
 	
 	var isRunning;
 	var nodeProxy;
@@ -36,7 +39,7 @@ JInTController {
 	
 			[values]
 		\discrete		[discrete values]
-		\continuous	[contiuous values]
+		\continuous	[continuous values]
 
 			[what happens if user lets go controller?]
 		\snapBack		[snaps back into a predefined state]
@@ -93,6 +96,12 @@ JInTController {
 		// set values to be in [-1, 1]
 		action.value(this);
 		nodeProxy !? {nodeProxy.set(which, this.value(which)*2-1);};
+	}
+	setAll {|vals|
+		rawVals = vals;
+		// set values to be in [-1, 1]
+		action.value(this);
+		nodeProxy !? {vals.do{|val, which| nodeProxy.set(which, this.value(which)*2-1)};};
 	}
 	beginCont {|which = 0, val = 0|
 		beginAction.value(this);
@@ -157,28 +166,35 @@ JInTC_Button : JInTC_onoff{
 }
 
 
-/// simple one-DOF contiuous controller
+/// simple one-DOF continuous controller
 JInTC_linear : JInTController{
 	*new {|desc, server, spec|
-		^super.new(desc ? "simple one-DOF contiuous controller", server).initLinear(spec);
+		^super.new(desc ? "simple one-DOF continuous controller", server).initLinear(spec);
 	}
 	initLinear{|spec|
 		numDOF = 1;
-		semantics = [[\contiuous]];
+		semantics = [[\continuous]];
 		specs = spec.isNil.if({[[0, 1, \linear].asSpec]}, {[spec]});
 		rawVals 		= [specs.first.default];
 	}
 }
 
-/// simple one-DOF contiuous controller, snapping back into default position
+/// simple one-DOF continuous controller, snapping back into default position
 JInTC_linearSnapper : JInTC_linear{
 	*new {|desc, server, spec|
-		^super.new(desc ? "simple one-DOF contiuous controller, snapping back into default position", server).initLinearSnapper(spec);
+		^super.new(desc ? "simple one-DOF continuous controller, snapping back into default position", server).initLinearSnapper(spec);
 	}
 	initLinearSnapper{|spec|
 		semantics[0] = semantics[0] ++ [\snapBack];
 		specs = spec.isNil.if({[ControlSpec(0, 1, default: 0.5)]}, {[spec]});
 		rawVals 		= [specs.first.default];
+	}
+}
+
+
+JInTC_PenPressure : JInTC_linearSnapper {
+	*new {|desc, server, spec|
+		^super.new(desc ? "pressure of a pen", server, spec ?? {ControlSpec(0, 1, default: 0)});
 	}
 }
 
@@ -255,6 +271,38 @@ JInTC_ThumbStick : JInTC_composite {
 	}
 }
 
+/** as found on nunchuck; same as JInTC_ThumbStick, except for having no button */
+JInTC_SimpleThumbStick : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [ControlSpec(0, 1, default: 0.5), ControlSpec(0, 1, default: 0.5)];
+		^super.new(desc ? 
+			"small two DOF analog joystick. Snap-back.",
+			server, 
+			[
+				JInTC_linearSnapper.new(spec: specs[0]), // x
+				JInTC_linearSnapper.new(spec: specs[1]), // y
+			]
+		);
+	}
+}
+
+/** acceleration of objects */
+JInTC_Acceleration : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [ControlSpec(0, 1, default: 0.5), ControlSpec(0, 1, default: 0.5), ControlSpec(0, 1, default: 0.5)];
+		^super.new(desc ? 
+			"Acceleration of an object(-part)",
+			server, 
+			[
+				JInTC_linear.new(spec: specs[0]), // x
+				JInTC_linear.new(spec: specs[0]), // y
+				JInTC_linear.new(spec: specs[0])  // z
+			]
+		);
+	}
+}
+
+
 /** a pressure sensitive touch-pad like it is found on sampling machines (MPC) */
 JInTC_PPad : JInTC_composite {
 	*new {|desc, server, specs|
@@ -270,3 +318,40 @@ JInTC_PPad : JInTC_composite {
 	}
 	
 }
+
+JInTC_PenPos : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [
+			ControlSpec(0, 1, default: 0), // posX
+			ControlSpec(0, 1, default: 0) // posX
+		];
+		^super.new(desc ? 
+			"position of a pen.",
+			server, 
+			[
+				JInTC_linear.new(spec: specs[0]), // posX
+				JInTC_linear.new(spec: specs[1])  // posY
+			]
+		);
+	}
+	
+}
+
+JInTC_PenTilt : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [
+			ControlSpec(0, 1, default: 0), // tiltX
+			ControlSpec(0, 1, default: 0)  // tiltY
+		];
+		^super.new(desc ? 
+			"Tilting of a pen.",
+			server, 
+			[
+				JInTC_linear.new(spec: specs[3]),  // tiltX
+				JInTC_linear.new(spec: specs[4])  // tiltY
+			]
+		);
+	}
+	
+}
+
