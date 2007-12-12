@@ -282,9 +282,10 @@ MixerChannel {
 
 					// if you're using my MIDI hierarchy, check for midi controls
 					// that are connected to this mixer
-			Class.allClasses.includes(MIDIPort).if({
-				MIDIPort.update;
-			});
+			'MIDIPort'.asClass.update;
+//			Class.allClasses.includes(MIDIPort).if({
+//				MIDIPort.update;
+//			});
 		});
 	}
 	
@@ -385,7 +386,9 @@ MixerChannel {
 	
 	updateMixersInChain { |incr = 0|
 		numMixersInChain = numMixersInChain + incr;
-		antecedents.do(_.tryPerform(\updateMixersInChain, incr));
+		antecedents.do({ |ante|
+			(ante !== this).if({ ante.tryPerform(\updateMixersInChain, incr) });
+		});
 	}
 		
 	*fixNodeOrderToBundle { |serv, bundle|
@@ -456,6 +459,7 @@ MixerChannel {
 //// PRIVATE METHODS FOR ANTECEDENTS/DEPENDENTS -- DO NOT CALL THESE YOURSELF ////
 
 	descendentsInclude { |mc|
+		(mc === this).if({ ^true });
 		descendents.includes(mc).if({ ^true }, {
 			descendents.do({ |desc|
 				desc.descendentsInclude(mc).if({ ^true });
