@@ -64,7 +64,7 @@
 								\inbufnum,0, \outbufnum, 1, \length, infilelength] ++ synthparams],
 					// [...later...]
 					//  - Write the output data to disk
-					[synthdur,[\b_write, 1, outfilepath,"WAV", "float"]],
+					[synthdur,[\b_write, 1, outfilepath, sfreader.headerFormat, "float"]],
 					// Kill the synth
 					[synthdur, [\n_free, 1000]]
 				];
