@@ -34,14 +34,6 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 		isReleasing = false;
 	}
 	
-	release { arg gate = 0, latency;	// release using Env's releaseNode
-		this.isPlaying.if({ 
-			synth.server.listSendBundle(latency, this.releaseMsg(gate));
-			isPlaying = false;
-			isReleasing = true;
-		});
-	}
-	
 	shouldSteal {
 		^super.shouldSteal and: { isReleasing.not }
 	}
@@ -90,21 +82,6 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 		isPlaying = true;
 		isReleasing = false;
 //["MonoPortaInstrVoicerNode-trigger", freq, voicer.lastFreqs].asCompileString.postln;
-	}
-
-	release { arg gate = 0, latency;
-//		var	bundle;
-//"MonoPortaInstrVoicerNode-release - ".post;
-		this.isPlaying.if({
-//DEPRECATED:
-//			voicer.lastFreqs.remove(frequency).postln;
-//this.setMsg([\gate, gate]).postln;
-			this.target.server.listSendBundle(latency, (#[[error, -1]] ++ this.setMsg([\gate, gate]) ++ #[[error, -2]]));
-//			this.set([\gate, gate], latency);
-//			this.target.server.listSendBundle(latency, this.releaseMsg(gate));
-			isPlaying = false;
-			isReleasing = true;
-		});
 	}
 
 	shouldSteal {
