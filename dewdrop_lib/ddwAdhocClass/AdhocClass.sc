@@ -1,12 +1,12 @@
 
-// AdhocClass: a flexible environment that can be evaluated like a stream to return SequenceNotes
+// Proto: for prototype-based programming
 // all object properties and functions (evaluation, new object generation, self-modification)
 // must be stored in environment variables
 
 // certain variables must have specific names to be found easily from outside:
 // ~next = func to generate next value
 
-AdhocClass {
+Proto {
 	classvar	<>strict = false, <>warnOnAssignment = true;
 
 	var	<>env;	// I'm providing a setter for env, but it's really for internal use only
@@ -29,7 +29,7 @@ AdhocClass {
 		// init clears the environment
 	init { arg func, initEnv, parentKeys;
 		var new;
-//		initEnv = AdhocClassEnvir.newFrom(initEnv);
+//		initEnv = ProtoEnvir.newFrom(initEnv);
 		initEnv.isNil.if({
 				// the initfunc needs to establish all the envir vars
 			env = Environment.new;
@@ -47,7 +47,7 @@ AdhocClass {
 	import { |objectKeyDict, parentKeys|
 		var obj2;
 		objectKeyDict.keysValuesDo({ |obj, keysToImport|
-			(obj2 = obj.asAdhocClassImportable).notNil.if({
+			(obj2 = obj.asProtoImportable).notNil.if({
 				keysToImport.do({ |key|
 					this.put(key, obj2[key]);
 				});
@@ -58,7 +58,7 @@ AdhocClass {
 		env.moveFunctionsToParent(parentKeys);
 	}
 	
-	asAdhocClassImportable {}
+	asProtoImportable {}
 	
 	moveFunctionsToParent { |keysToMove|
 		env.moveFunctionsToParent(keysToMove)
@@ -141,12 +141,12 @@ AdhocClass {
 		env = nil;
 	}
 	
-		// make the AdhocClass act like an object
+		// make the Proto act like an object
 		// selector must be implemented as a func assigned to an environment var
 		// named for the selector
 		// if that key returns nil, object does not understand!
 		
-		// messages not understood by AdhocClass should be passed to the environment
+		// messages not understood by Proto should be passed to the environment
 		// so: node.message == node.perform(\message) == node.use({ ~message.value })
 	doesNotUnderstand { arg selector ... args;
 		var result, item;
@@ -156,7 +156,7 @@ AdhocClass {
 			selector.isSetter.if({
 				selector = selector.asGetter;
 				(warnOnAssignment and: { super.respondsTo(selector) }).if({
-					"'%' is already a method for AdhocClass. Conflicts may occur."
+					"'%' is already a method for Proto. Conflicts may occur."
 						.format(selector).warn;
 				});
 				this.put(selector, args[0]);
@@ -206,7 +206,7 @@ AdhocClass {
 				// no modification, just return a straight copy
 			^this.copy
 		}, {
-				// create a new AdhocClass, applying the modFunc to the existing environment
+				// create a new Proto, applying the modFunc to the existing environment
 			^this.class.new(modFunc, env, parentKeys)
 		});
 	}
