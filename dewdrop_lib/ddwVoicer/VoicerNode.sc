@@ -339,7 +339,8 @@ InstrVoicerNode : SynthVoicerNode {
 	}
 	
 	makePatch { |instr, args|
-		^PatchNoDep.new(instr, this.makePatchArgs(instr, args))
+		^(instr.tryPerform(\patchClass) ?? { Patch }).new(instr, this.makePatchArgs(instr, args))
+//		^PatchNoDep.new(instr, this.makePatchArgs(instr, args))
 	}
 	
 		// does trigger et al. need to hit the children?
@@ -535,7 +536,8 @@ InstrVoicerNode : SynthVoicerNode {
 		
 			// to support instr wrapping, I need to know what args are created during def building
 		try {
-			(basePatch = PatchNoDep(instr)).asSynthDef;  // can throw this one away
+				// can throw this one away
+			(basePatch = (instr.tryPerform(\patchClass) ?? { Patch }).new(instr)).asSynthDef;
 			argNames = basePatch.argNames;
 			argSpecs = basePatch.argSpecs;
 		} {
@@ -588,7 +590,7 @@ InstrVoicerNode : SynthVoicerNode {
 				});
 			};
 		});
-		
+
 		^argArray
 	}
 
