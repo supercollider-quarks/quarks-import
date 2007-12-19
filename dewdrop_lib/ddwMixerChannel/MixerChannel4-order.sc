@@ -558,7 +558,7 @@ MixerChannel {
 	ready { ^(bundled == 2) }
 	
 	copy { ^this }		// bad idea to copy mixerchannels (bundled status may get out of sync)
-	deepCopy { ^this }		// AdhocClass copies things, so I prevent copying here
+	deepCopy { ^this }		// Proto copies things, so I prevent copying here
 	shallowCopy { ^this }
 
 		// in: (level: GenericGlobalControl, pan: GenericGlobalControl)
@@ -795,7 +795,7 @@ MixerChannel {
 ///////////////////// BASIC PLAYING /////////////////////
 
 	play { arg thing, args;
-		^thing.playInMixerGroup(this, synthgroup, Patch, args);
+		^thing.playInMixerGroup(this, synthgroup, thing.tryPerform(\patchClass) ?? { Patch }, args);
 	}
 	
 	playfx { arg thing, args;
