@@ -1,9 +1,9 @@
 (
-	name:		"ddwAdhocClass",
-	path:		"dewdrop_lib/ddwAdhocClass",
+	name:		"ddwPrototype",
+	path:		"dewdrop_lib/ddwPrototype",
 	summary:		"Support for prototype-based programming.",
 	author:		"James Harkins",
 	version:		1.0,
-	helpdoc:		"Help/AdhocClass.html",
+	helpdoc:		"Help/Proto.html",
 	url:			"http://www.dewdrop-world.net/sc3"
 )
