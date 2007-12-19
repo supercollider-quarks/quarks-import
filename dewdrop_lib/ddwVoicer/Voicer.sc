@@ -575,8 +575,9 @@ Voicer {		// collect and manage voicer nodes
 			},
 			
 			play: #{
+				var	latency;
 				~voicer.notNil.if({
-					var	latency = ~latency;
+					latency = ~latency;
 					~prepNote.value;
 					~finish.value;	// user-definable
 
