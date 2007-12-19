@@ -1,5 +1,5 @@
 
-	// for correct behavior of AdhocClass
+	// for correct behavior of Proto
 + Function {
 	isFunction { ^true }
 
@@ -13,7 +13,7 @@
 	isFunction { ^false }
 }
 
-	// in adhocclass, parent should contain all functions; all data should go in main dict
+	// in Proto, parent should contain all functions; all data should go in main dict
 	// some data maybe should go in parent: provide a collection of keys
 + IdentityDictionary {
 	moveFunctionsToParent { |keysToMove|
@@ -36,9 +36,9 @@
 // for importing methods
 
 + Dictionary {
-	asAdhocClassImportable {}
+	asProtoImportable {}
 }
 
 + Ref {
-	asAdhocClassImportable { ^this.value.asAdhocClassImportable }
+	asProtoImportable { ^this.value.asProtoImportable }
 }
