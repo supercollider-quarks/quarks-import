@@ -287,6 +287,9 @@ VoicerProxy {
 		^voicer.releaseNow(freq, sec)
 	}
 	
+	prGetNodes { |numNodes = 1| ^voicer.prGetNodes(numNodes) }
+	setArgsInEvent { |event| ^voicer.setArgsInEvent(event) }
+	
 //////// does the proxy need these?
 
 //	nonplaying {

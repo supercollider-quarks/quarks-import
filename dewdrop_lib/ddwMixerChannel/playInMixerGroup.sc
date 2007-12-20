@@ -126,7 +126,7 @@
 + Bus {
 	asMixer {		// returns the mixer if "this" corresponds to a MixerChannel inbus,
 				// nil otherwise
-		^MixerChannel.servers.at(server).at(index);
+		^MixerChannel.servers.at(server).tryPerform(\at, index);
 	}
 }
 

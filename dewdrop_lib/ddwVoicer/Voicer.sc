@@ -481,7 +481,7 @@ Voicer {		// collect and manage voicer nodes
 		^(mixer = this.asMixer).notNil.if({
 			mixer.isRunning;
 		}, {
-			target.isRunning ? true;
+			target.tryPerform(\isRunning) ? true;
 		});
 	}
 	
