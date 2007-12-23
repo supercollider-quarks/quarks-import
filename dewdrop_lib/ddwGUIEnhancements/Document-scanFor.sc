@@ -38,7 +38,7 @@
 		// doc arg is ignored now, will be implemented later
 		// opens a browser to open the source file of the Instr clicked upon
 		instrSuffix = instrSuffix ? "";
-		^this.makeBrowserDoc.mouseDownAction_({ arg d;
+		^this.makeBrowserDoc.mouseUpAction_({ arg d;
 			var clickpos, tempstr, instrStart, instrEnd, whileFlag;
 			clickpos = d.selectionStart;
 			tempstr = d.string(clickpos-1, 2);
@@ -72,7 +72,7 @@
 	*makeBrowserDoc {
 		var d, dispFunc;
 		d = Document.new("Instr browsing", "");
-		Instr.loadAll;
+		this.loadAll;
 		d.selectLine(1);
 		d.selectedString_("Available Instrs, by category\n");
 		d.selectedString_("Click inside angle brackets to open the Instr's definition file\n");
@@ -84,8 +84,9 @@
 					d.selectedString_("\n" ++ level.reptChar($\t) ++ kvPair.at(0) ++ "\n");
 					dispFunc.value(kvPair.at(1).asSortedArray, level+1);
 				}, {
-					d.selectedString_(level.reptChar($\t) ++ "< Instr.at("
-						++ kvPair.at(1).name.asCompileString ++ ") >\n");
+					d.selectedString_("%< % >\n".format(level.reptChar($\t), kvPair[1].asString));
+//					d.selectedString_(level.reptChar($\t) ++ "< Instr.at("
+//						++ kvPair.at(1).name.asCompileString ++ ") >\n");
 				});
 			});
 		};
@@ -93,7 +94,7 @@
 //						d.selectedString_((i > 0).if(", ", "") ++ "'" ++ n ++ "'");
 //					});
 //					d.selectedString_("]) >\n");
-		dispFunc.value(Library.global.at(Instr).asSortedArray);
+		dispFunc.value(Library.global.at(this).asSortedArray);
 		{ d.removeUndo }.defer(2);
 		^d.front
 	}
