@@ -92,7 +92,7 @@
 		var	dummyPatch,	// Instrs that use Instr-wrap must be patched before revealing all args
 			names, spc;
 		try {	// this might fail, so set up a fallback position
-			dummyPatch = Patch(this);
+			dummyPatch = this.patchClass.new(this);
 			dummyPatch.asSynthDef;
 			names = dummyPatch.argNames;
 			spc = dummyPatch.argSpecs;
