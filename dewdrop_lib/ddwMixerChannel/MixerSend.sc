@@ -151,11 +151,6 @@ MixerSend {
 	
 	makeServerObjects { |bus|	// details are handled by subclass - objectsToBundle
 		var bundle;
-//		SynthDef("mixers/Send" ++ bus.numChannels, {
-//			arg busin, busout, level;
-//			Out.ar(busout, In.ar(busin, bus.numChannels) * level);
-//		}).send(inMixer.server);
-
 		bundle = List.new;
 		this.makeServerObjectsToBundle(bus, bundle);
 		MixerChannelReconstructor.queueBundle(inMixer.server, bundle);
@@ -256,10 +251,6 @@ MixerPreSend : MixerSend {
 			inMixer.updateMixersInChain(mc.numMixersInChain.neg);
 			mc.prRemoveAntecedent(inMixer);	// requiring both method calls is bad form
 			inMixer.prRemoveDescendent(mc);
-//			mc.removeDependant(inMixer);
-// I think this is not really needed -- it causes an error when freeing all channels anyway
-//			MixerChannel.fixNodeOrderToBundle(inMixer.server, bundle);
-//			MixerChannelReconstructor.queueBundle(inMixer.server, bundle);
 		});
 
 		inMixer.preSends.remove(this);
@@ -314,13 +305,6 @@ MixerPostSend : MixerSend {
 				++ " -- " ++ inMixer.outChannels ++ " --> " ++ outbus.numChannels).postln;
 		});
 		
-			// if inMixer uses the post-send ready architecture, we don't need
-			// to make a transfer synth and bus
-		inMixer.postSendReady.not.if({
-			inMixer.makeXfer;
-			inMixer.xfer.addClient(this);
-		});
-		
 		this.makeServerObjects(out1);
 		
 		guiIndex = inMixer.postSends.size;
@@ -338,9 +322,9 @@ MixerPostSend : MixerSend {
 		sendSynth = Synth.basicNew("mixers/Send" ++ inMixer.outChannels, inMixer.server,
 			inMixer.server.nodeAllocator.allocPerm);
 		bundle.add(sendSynth.addAfterMsg(inMixer.synth,
-			[\busin, inMixer.postSendReady.if(
+			[\busin, inMixer.inbus.index  /*inMixer.postSendReady.if(
 				{ inMixer.inbus.index },
-				{ inMixer.xfer.bus.index }),
+				{ inMixer.xfer.bus.index })*/,
 			 \busout, (bus ? outbus).index,
 			 \level, level]
 		));
@@ -368,10 +352,6 @@ MixerPostSend : MixerSend {
 		sendSynth.free;	// stop sending
 		sendSynth.server.nodeAllocator.freePerm(sendSynth.nodeID);
 		levelControl.free;
-
-			// if we hit zero, free the xfer synth
-			// but, if the channel is recording, keep the xfer open
-		inMixer.removeClient(this);
 
 			// fix gui display
 		(inMixer.mcgui.notNil && updateGUI).if({ inMixer.mcgui.board.refresh });

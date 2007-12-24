@@ -16,8 +16,6 @@ MixerChannel {
 		<server,			// the server
 		<inbus, <outbus,	// buses: multiple MixerChannels can go to the same
 						// outbus; these are not optional
-		<postSendReady,	// if true, post sends are more efficient
-						// should be false if post sends will not be used -- saves CPU
 
 // DO NOT CHANGE THE ORDER OF THE ABOVE INSTANCE VARIABLES! Below, changes are fine.
 
@@ -29,8 +27,6 @@ MixerChannel {
 		<controls,			// GenericGlobalControls for each parm defined in the MCDef
 		<autoSynths,			// for synth-based automation
 		<lineRoutines,		// for lineTo methods
-
-		<xfer,	// needed for operations that depend on fader's output if postSendReady == false
 
 		<>preSends, <>postSends,	// keep track of sends for gui
 
@@ -59,14 +55,14 @@ MixerChannel {
 ///////////////////// CREATION AND INITIALIZATION /////////////////////
 
 	*new { arg 	name = nil, server, inChannels = 1, outChannels = 2, 
-				level = 0.75, pan = 0, postSendReady = false, inbus, outbus,
+				level = 0.75, pan = 0, /*postSendReady = false,*/ inbus, outbus,
 				completionFunc;
 
 		^this.newFromDef(name, "mix%x%".format(inChannels, outChannels).asSymbol,
-			server, (level:level, pan:pan), postSendReady, inbus, outbus, completionFunc);
+			server, (level:level, pan:pan), /*postSendReady,*/ inbus, outbus, completionFunc);
 	}
 
-	*newFromDef {	|name, defname, server, initValues, postSendReady = false,
+	*newFromDef {	|name, defname, server, initValues, /*postSendReady = false,*/
 			inbus, outbus, completionFunc|
 		server = server ? Server.default;
 
@@ -77,7 +73,7 @@ MixerChannel {
 			server.addDependant(MixerChannel);
 		});
 		
-		^super.newCopyArgs(name, MixerChannelDef.at(defname), server, inbus, nil, postSendReady)
+		^super.newCopyArgs(name, MixerChannelDef.at(defname), server, inbus, nil/*, postSendReady*/)
 			.init(outbus, initValues, completionFunc);
 	}
 	
@@ -108,9 +104,6 @@ MixerChannel {
 		
 		var	argOutbus, mctemp;
 
-//			// in case you changed the synthdef in the MixerChannelDef
-//		def.synthdef(postSendReady).send(server);
-		
 		antecedents = IdentitySet.new;
 		descendents = IdentitySet.new;
 		
@@ -123,7 +116,7 @@ MixerChannel {
 
 		inbus.isNil.if({	// if in/out buses are nil, create them
 			inbus = BusDict.audio(server, 
-					postSendReady.if({ def.outChannels }, { def.inChannels }), name ++ " in");
+				 max(def.outChannels, def.inChannels), name ++ " in");
 		});
 		bus.isNil.if({
 			bus = Bus.new(\audio, 0, def.outChannels, server);
@@ -136,7 +129,7 @@ MixerChannel {
 		inbus = inbus.isKindOf(Bus).if(
 			{ inbus },	// if it's already a bus, leave it alone
 			{ Bus.new(\audio, inbus,
-				postSendReady.if({ def.outChannels }, { def.inChannels }), server) }
+				max(def.outChannels, def.inChannels), server) }
 		);
 		
 		inbus = SharedBus.newFrom(inbus, this);	// so Patch.free won't take away my bus
@@ -196,9 +189,6 @@ MixerChannel {
 				// if these groups already exist, they might be targets
 				// for other objects; therefore they must keep the same nodeID
 			fadergroup.isNil.if({
-//				(id = server.nodeAllocator.allocPerm(4)).isNil.if({
-//					Error("No block of 4 reserved node IDs available.").throw;
-//				});
 				fadergroup = fadergroup ?? { Group.basicNew(server,
 					server.nodeAllocator.allocPerm).isRunning_(true) };
 				synthgroup = synthgroup ?? { Group.basicNew(server,
@@ -206,21 +196,17 @@ MixerChannel {
 				effectgroup = effectgroup ?? { Group.basicNew(server,
 					server.nodeAllocator.allocPerm) };
 			});
-//			fadergroup = fadergroup ?? { Group.basicNew(server).isRunning_(true) };
-//			synthgroup = synthgroup ?? { Group.basicNew(server) };
-//			effectgroup = effectgroup ?? { Group.basicNew(server) };
 			bundle.add(fadergroup.addToTailMsg(server.asTarget));
 			bundle.add(synthgroup.addToTailMsg(fadergroup));
 			bundle.add(effectgroup.addToTailMsg(fadergroup));
 				// fader synth goes after effectgroup (i.e. at tail)
-			synth = Synth.basicNew(def.defName(postSendReady), server,
+			synth = Synth.basicNew(def.defName/*(postSendReady)*/, server,
 				server.nodeAllocator.allocPerm);
 			bundle.add(synth.addToTailMsg(fadergroup, 
 				[\busin, inbus.index, \busout, (outbus ? bus).index] ++ this.mapArgList));
 	
 				// this is here in case we're reconstructing after a cmd-.
 			preSends.do({ |pre| pre.makeServerObjectsToBundle(nil, bundle); });
-			xfer.notNil.if({ xfer.makeServerObjectsToBundle(bundle); });
 			postSends.do({ |post| post.makeServerObjectsToBundle(nil, bundle); });
 			bus.notNil.if({ this.outbusSetToBundle(bus, false, bundle:bundle); });
 			bundled = 1;
@@ -256,7 +242,6 @@ MixerChannel {
 			this.freePatches; 		// stop all processes -- Patches first
 			preSends.do({ arg p; p.free(false) });
 			postSends.do({ arg p; p.free(false) });
-			xfer.notNil.if({ xfer.freeClients });	// remove any hangers-on like scope
 			fadergroup.free;
 			[fadergroup, synthgroup, effectgroup, synth].do({ |node|
 				server.nodeAllocator.freePerm(node.nodeID);
@@ -275,7 +260,7 @@ MixerChannel {
 			controls.do(_.free);
 
 			inbus = outbus = synth = fadergroup = effectgroup = synthgroup =
-				controls = autoSynths = lineRoutines = def = xfer =
+				controls = autoSynths = lineRoutines = def =
 				postSends = preSends = server = mcgui = nil;
 			
 			bundled = -1;		// to make sure .ready returns false
@@ -283,9 +268,6 @@ MixerChannel {
 					// if you're using my MIDI hierarchy, check for midi controls
 					// that are connected to this mixer
 			'MIDIPort'.asClass.update;
-//			Class.allClasses.includes(MIDIPort).if({
-//				MIDIPort.update;
-//			});
 		});
 	}
 	
@@ -354,7 +336,6 @@ MixerChannel {
 					// if the dest mixer is routed to another mixer,
 					// place the dest mixer before its destination
 				incr = incr + mc.numMixersInChain;
-	//			mc.addDependant(this);
 				mc.prAddAntecedent(this);
 				this.prAddDescendent(mc);
 			});
@@ -363,7 +344,6 @@ MixerChannel {
 			// bookkeeping for old outbus if it's a mixer
 		(oldmc = outbus.asMixer).notNil.if({
 			incr = incr + oldmc.numMixersInChain.neg;
-//			oldmc.removeDependant(this);
 			oldmc.prRemoveAntecedent(this);
 			this.prRemoveDescendent(oldmc);
 		});
@@ -424,7 +404,6 @@ MixerChannel {
 		// adds mc as an antecedent (source) for this mixer
 	addDependantMC { |mc|
 		var bundle;
-//		super.addDependant(mc);
 		this.prAddAntecedent(mc);
 		mc.prAddDescendent(this);
 		mc.updateMixersInChain(numMixersInChain);
@@ -437,7 +416,6 @@ MixerChannel {
 	
 	removeDependantMC { |mc|
 		var bundle;
-//		super.removeDependant(mc);
 		this.prRemoveAntecedent(mc);
 		mc.prRemoveDescendent(this);
 		mc.updateMixersInChain(numMixersInChain.neg);
@@ -581,13 +559,6 @@ MixerChannel {
 		midiControl.notNil.if({ midiControl.resync },
 			{ mcgui !? { mcgui.resyncMIDI } });
 	}
-
-//	midiControl_ { |cc|
-//		this.removeDependant(midiControl);
-//		(midiControl = cc).notNil.if({
-//			this.addDependant(midiControl);
-//		});
-//	}
 	
 ///////////////////// INSTANT SETTING OF BASIC PARMS /////////////////////
 
@@ -777,7 +748,6 @@ MixerChannel {
 
 	levelTo {		// start from current level
 		arg end, dur, warp;
-		
 		this.controlLineTo(\level, end, dur, warp);
 	}
 
@@ -788,7 +758,6 @@ MixerChannel {
 	
 	panTo {		// start from current level
 		arg end, dur, warp;
-		
 		this.controlLineTo(\pan, end, dur, warp);
 	}
 		
@@ -884,30 +853,6 @@ MixerChannel {
 		^new
 	}
 	
-	makeXfer {
-			// make an xfer synth; needed for postsends, recording, and PeakMonitor
-		(postSendReady.not and: xfer.isNil).if({
-			xfer = MixerXfer.new(this);
-		});
-	}
-	
-	freeXfer {
-		xfer !? {
-			xfer.free;	// xfer object includes safeguard in case it still has clients
-			xfer.channel.isNil.if({		// it was freed
-				xfer = nil;
-			});
-		}
-	}
-	
-	removeClient { |client|
-		xfer !? {
-			xfer.removeClient(client);
-			this.freeXfer;	// when dropping a client, you want to check
-							// whether the whole xfer can be dropped
-		}
-	}
-	
 ///////////////////// INITIALIZATION /////////////////////
 
 	*initClass {
@@ -915,94 +860,6 @@ MixerChannel {
 		Class.initClassTree(Server);
 		Server.set.do({ |srv| srv.addDependant(MixerChannel); });
 	}
-}
-
-MixerXfer {
-		// needed for postsends, recording and scope if mc's bus isn't big enough
-	var	<channel, <bus, <synth, <clients;
-	
-	*new { arg mc;	// mixerchannel
-		^super.new.init(mc);
-	}
-	
-	init { arg mc;
-			// if inbus (processing bus) has enough channels, reuse it
-		channel = mc;
-		clients = [];
-
-		bus = BusDict.audio(mc.server, mc.def.outChannels, "send xfer bus : " ++ mc.name);
-		
-		this.makeServerObjects;
-	}
-	
-	makeServerObjects {
-		var bundle;
-		bundle = List.new;
-		this.makeServerObjectsToBundle(bundle);
-		MixerChannelReconstructor.queueBundle(channel.server, bundle);
-	}
-
-
-// PROBLEM: I need synth creation AND rerouting to occur simultaneously
-// not possible with d_recv completion message
-	
-	makeServerObjectsToBundle { arg bundle;
-		var	synthmsg;
-
-			// place the xfer synth after the fader
-			// take from sendbus, send to mixerchannel out
-
-//		bundle.add([\d_recv, ]);
-
-		SynthDef("mixers/xfer" ++ channel.def.outChannels, {
-			arg busin, busout;
-			Out.ar(busout, In.ar(busin, channel.def.outChannels));
-		}).send(channel.server);
-
-		synth = Synth.basicNew("mixers/xfer" ++ channel.def.outChannels, channel.server,
-			channel.server.nodeAllocator.allocPerm);
-		bundle.add(synth.addAfterMsg(channel.synth, 
-			[\busin, bus.index, \busout, channel.outbus.index]
-		));
-
-			// re-route the signal
-		bundle.add([\n_set, channel.synth.nodeID, \busout, bus.index]);
-		
-			// do I need to reconstruct any clients?
-			// sends will be handled separately by MixerChannel
-		clients.do({ |cl|
-			cl.isKindOf(MixerSend).not.if({
-				cl.tryPerform(\makeServerObjectsToBundle, bundle);
-			});
-		});
-	}
-	
-	free {
-		(clients.size == 0).if({	// cannot free xfer until all its clients are gone
-			// return mixer's output to correct location
-			channel.synth.set(\busout, channel.outbus.index);
-			synth.free;
-			channel.server.nodeAllocator.freePerm(synth.nodeID);
-			BusDict.free(bus);
-			bus = synth = channel = nil;
-		});
-	}
-	
-	freeClients {
-		clients.copy.do({ |cl| cl.free; });
-	}
-	
-	addClient { arg thing;
-			// can't add the same client more than once
-		clients.includes(thing).not.if({
-			clients = clients.add(thing);
-		});
-	}
-	
-	removeClient { arg thing;
-		^clients.remove(thing);
-	}
-
 }
 
 MixerScope {
@@ -1019,21 +876,9 @@ MixerScope {
 			"Scope can only be used with the internal server.".die;
 		}, {
 			channel = mc;
-			
-			mc.postSendReady.not.if({
-				mc.makeXfer;
-				mc.xfer.notNil.if({ 
-					bus = mc.xfer.bus;
-					mc.xfer.addClient(this);
-				});
-			}, {
-				bus = mc.inbus;
-			});
-			
+			bus = mc.inbus;
 			buffer = Buffer.alloc(channel.server, 4096, mc.def.outChannels);
-			
 			this.makeServerObjects;
-			
 			this.gui(layout);
 		});
 	}

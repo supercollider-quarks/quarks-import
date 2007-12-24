@@ -4,14 +4,6 @@ MixerRecorder {
 	classvar	<dir = "sounds/";
 	var	<mixer, <buffer, <path, <synth, <running = false;
 	
-//	*initClass {
-//		for(1,8,{ arg i;
-//			SynthDef.writeOnce("sys-MixRec-" ++ i.asString, { arg i_in, i_bufNum=0;
-//				DiskOut.ar(i_bufNum, In.ar(i_in, i));
-//			});
-//		});
-//	}
-	
 	*dir_ { |path|
 		dir = path;
 		(dir.last != thisProcess.platform.pathSeparator).if({
@@ -47,20 +39,12 @@ MixerRecorder {
 		
 			// should not create a synth if already recording
 		synth.isNil.if({
-			mixer.postSendReady.if({
-				bus = mixer.inbus;
-			}, {
-				mixer.makeXfer;
-				bus = mixer.xfer.bus;
-				mixer.xfer.addClient(this);	// register so xfer knows when it's not needed
-			});
+			bus = mixer.inbus;
 
 			synth = Synth.basicNew("mixers/Rec" ++ mixer.outChannels, mixer.server,
 				mixer.server.nodeAllocator.allocPerm);
 			mixer.server.sendBundle(nil, synth.newMsg(mixer.fadergroup,
 				[\i_in, bus.index, \i_bufNum, buffer.bufnum], \addToTail));
-//			synth = Synth.tail(mixer.fadergroup, "mixers/Rec" ++ mixer.outChannels,
-//				[\i_in, bus.index, \i_bufNum, buffer.bufnum]);
 			paused.if({
 				this.pause;
 			}, {
@@ -103,12 +87,7 @@ MixerRecorder {
 		path = nil;
 		buffer.free;
 		buffer = nil;
-			// clear xfer if it isn't needed
-			// need to check for active PeakMonitors on this channel
-		mixer.xfer.tryPerform(\removeClient, this);
-		mixer.freeXfer;	// will free only if there are no other clients
 		running = false;
 		CmdPeriod.remove(this);		// does not need to respond to cmd-. any more
 	}
-
 }

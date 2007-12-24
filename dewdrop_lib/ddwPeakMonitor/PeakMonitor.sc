@@ -38,14 +38,14 @@ PeakMonitor {
 		freq = f ? 2;
 		(groupbus = t.tryPerform(\groupBusInfo, \fader)).notNil.if({
 			mixer = t;	// save for free
-			t.postSendReady.if({
+//			t.postSendReady.if({
 				target = groupbus[1];	// if it's postsendready, fader's output is on the mc's bus
-			}, {
-					// need to isolate the fader's output on a new bus
-				t.xfer.isNil.if({ t.makeXfer });
-				t.xfer.addClient(this);
-				target = t.xfer.bus;
-			});
+//			}, {
+//					// need to isolate the fader's output on a new bus
+//				t.xfer.isNil.if({ t.makeXfer });
+//				t.xfer.addClient(this);
+//				target = t.xfer.bus;
+//			});
 			synthTarget = groupbus[0];	// place at tail of fadergroup
 		}, {
 				// convert other types of args
@@ -92,9 +92,9 @@ PeakMonitor {
 			all.removeAt(bus.index);
 			bus.free;
 		};
-		mixer.notNil.if({
-			mixer.removeClient(this);
-		});
+//		mixer.notNil.if({
+//			mixer.removeClient(this);
+//		});
 		synth = bus = peaks = target = synthTarget = updater = mixer = nil;
 	}
 	

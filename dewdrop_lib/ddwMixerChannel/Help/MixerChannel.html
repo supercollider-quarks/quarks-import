@@ -14,15 +14,15 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a41919}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #8d2222}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001ab2; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024a6; min-height: 12.0px}
 span.s1 {font: 12.0px Helvetica}
-span.s2 {color: #001ab2}
+span.s2 {color: #0024a6}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
-span.s5 {color: #36701f}
-span.s6 {color: #a41919}
+span.s5 {color: #496d2c}
+span.s6 {color: #8d2222}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -48,7 +48,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span>effectgroup (contains effects)</p>
 <p class="p3"><span class="Apple-tab-span">	</span>fader synth</p>
 <p class="p2"><br></p>
-<p class="p3">MixerChannel uses an audio bus to handle all signal processing. The bus is allocated depending on the argument postSendReady, described below. You may use only part of the bus at either end, allowing a MixerChannel to expand a mono signal to stereo, or reduce a stereo or quad signal to mono (quad support is not currently provided, but you can add it easily using MixerChannelDef).</p>
+<p class="p3">MixerChannel uses an audio bus to handle all signal processing. You may use only part of the bus at either end, allowing a MixerChannel to expand a mono signal to stereo, or reduce a stereo or quad signal to mono (quad support is not currently provided, but you can add it easily using MixerChannelDef).</p>
 <p class="p2"><br></p>
 <p class="p4"><b>Synthdef conventions<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
@@ -90,13 +90,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p9"><b>Creation and destruction</b></p>
 <p class="p2"><br></p>
-<p class="p3"><b>*new(name, server, inChannels = 1, outChannels = 2, level = 0.75, pan = 0, postSendReady = false, inbus, outbus, completionFunc)</b><span class="Apple-converted-space"> </span></p>
+<p class="p3"><b>*new(name, server, inChannels = 1, outChannels = 2, level = 0.75, pan = 0, inbus, outbus, completionFunc)</b><span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
 <p class="p3">Creates a new instance. You must specify a server. Name is optional, although if you're planning to use MixingBoard, you'll need the name to know which channel is which. Inbus and outbus will be created for you. Outbus defaults to zero (main hardware out), but can be overridden to point to a bus or another MixerChannel, allowing for a MixerChannel to serve as a submix.</p>
 <p class="p2"><br></p>
-<p class="p3">postSendReady: if false, the minimum ugens are used. If true, an alternate architecture is used which routes the level-scaled/panned signal to the outbus, <i>and</i> replaces the signal on inbus. If you're not planning to use post-fader sends, the former structure is more efficient; but if you do, the latter is noticeably faster.</p>
-<p class="p2"><br></p>
-<p class="p3"><b>*newFromDef(name, defname, server, initValues, postSendReady, inbus, outbus, completionFunc)</b></p>
+<p class="p3"><b>*newFromDef(name, defname, server, initValues, inbus, outbus, completionFunc)</b></p>
 <p class="p2"><br></p>
 <p class="p3">Creates an instance using a specific MixerChannelDef. For instance, the following statements will generate functionally equivalent MixerChannels.</p>
 <p class="p2"><br></p>
