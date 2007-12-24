@@ -43,7 +43,7 @@ EQSpec1 {
 			}
 		
 			{ \loshelf } {
-				k = k.abs;	// k values will be converted to negative in .synthArgs
+				k = k.abs;	// k values will be converted to negative in synthdef
 				wc = pi * freq * sampleRate.reciprocal;
 				a0 = (1 - wc)/(1 + wc);
 			}
@@ -60,7 +60,7 @@ EQSpec1 {
 			}
 			
 			{
-				^[\b1, a0, \k, k * (type == \loshelf).if(-1, 1)]
+				^[\b1, a0, \k, k]
 			}
 	}
 	
