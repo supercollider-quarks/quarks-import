@@ -1,17 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="824.42">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    span.s1 {font: 24.0px Helvetica}
-  </style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.44">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+span.s1 {font: 24.0px Helvetica}
+</style>
 </head>
 <body>
 <p class="p1"><span class="s1"><b>MixerPreSend </b></span><b>(pre-fader send)</b></p>
@@ -26,8 +26,6 @@
 <p class="p3">Creates the send. In must be a MixerChannel. Out can be a MixerChannel, a Bus, or an integer representing an audio bus number. This bus must be on the same server as the input MixerChannel. Level scales the signal that is sent; it's a simple scaling factor, so decibels must be converted using .dbamp. Keep in mind that positive decibel values could result in distortion.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
 <p class="p3">This method, and <b>free</b>, can be activated using the MixingBoard window by choosing a bus identifier from the popup menu representing the destination. The popup menu takes its choices from bus names registered by BusDict. MixerChannels create their buses using BusDict, so they will appear in the list. If you want other buses to show up, use BusDict to create them.</p>
-<p class="p2"><br></p>
-<p class="p3">Note that post-fader sends will be more efficient if you initially created the input MixerChannel with the postSendReady flag set to true. Plan ahead before creating your MixerChannels! This flag is irrelevant for pre-fader sends.</p>
 <p class="p2"><br></p>
 <p class="p3"><b>free<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>

@@ -14,19 +14,15 @@ MixerChannelDef {
 		// outChannels, basicFader and postSendReadyFader automatically cause synthdefs
 		// to be resent so that running servers are in sync with the definition
 
-	var	<>name, <>inChannels, <outChannels,
-		<basicFader, <postSendReadyFader,
+	var	<>name, <>inChannels, <outChannels, <fader,
 		<>controls, <>guidef;
 
 	*initClass {
 		Class.initClassTree(Collection);
 		Library.global.put(\mixerdefs, IdentityDictionary.new);
 		MixerChannelDef(\mix1x1, 1, 1,
-			basicFader: SynthDef("mixers/Mix1x1", {	// mono-to-stereo mixer channel
+			fader: SynthDef("mixers/Mxb1x1", {
 						arg busin, busout, level;
-						Out.ar(busout, In.ar(busin, 1) * level);
-					}), 
-			postSendReadyFader: SynthDef("mixers/Mxb1x1", {						arg busin, busout, level;
 						var in;
 						in = In.ar(busin, 1) * level;
 							// so that mixerchan bus can be used as postsendbus
@@ -37,11 +33,8 @@ MixerChannelDef {
 		);
 		
 		MixerChannelDef(\mix1x2, 1, 2,
-			basicFader: SynthDef("mixers/Mix1x2", {	// mono-to-stereo mixer channel
+			fader: SynthDef("mixers/Mxb1x2", {
 						arg busin, busout, level, pan;
-						Out.ar(busout, Pan2.ar(In.ar(busin, 1), pan, level));
-					}), 
-			postSendReadyFader: SynthDef("mixers/Mxb1x2", {						arg busin, busout, level, pan;
 						var in, out;
 						in = In.ar(busin, 1);
 						out = Pan2.ar(in, pan, level);
@@ -55,13 +48,8 @@ MixerChannelDef {
 		);
 		
 		MixerChannelDef(\mix2x2, 2, 2,
-			basicFader: SynthDef("mixers/Mix2x2", {	// stereo-to-stereo mixer channel
+			fader: SynthDef("mixers/Mxb2x2", {
 						arg busin, busout, level, pan;
-						var l, r;
-						#l, r = In.ar(busin, 2);
-						Out.ar(busout, Balance2.ar(l, r, pan, level));
-					}), 
-			postSendReadyFader: SynthDef("mixers/Mxb2x2", {						arg busin, busout, level, pan;
 						var l, r, out;
 						#l, r = In.ar(busin, 2);
 						out = Balance2.ar(l, r, pan, level);
@@ -75,11 +63,11 @@ MixerChannelDef {
 
 	}
 
-	*new { |name, inChannels, outChannels, basicFader, postSendReadyFader, controls, guidef|
+	*new { |name, inChannels, outChannels, /*basicFader, */fader, controls, guidef|
 		inChannels.isNil.if({
 			^this.at(name)
 		}, {
-			^super.newCopyArgs(name, inChannels, outChannels, basicFader, postSendReadyFader,
+			^super.newCopyArgs(name, inChannels, outChannels, /*basicFader, */fader,
 				controls, guidef).init
 		});
 	}
@@ -87,8 +75,7 @@ MixerChannelDef {
 		// validate inputs and store in Library
 	init {
 		name = name.asSymbol;
-		basicFader = basicFader.asSynthDef;
-		postSendReadyFader = postSendReadyFader.asSynthDef;
+		fader = fader.asSynthDef;
 		controls.respondsTo(\keys).not.if({
 			MethodError("Error constructing MixerChannelDef - controls must be a Dictionary",
 				this).throw
@@ -108,11 +95,11 @@ MixerChannelDef {
 		// instance methods
 
 	synthdef { |postSendReady = false|
-		^postSendReady.if({ postSendReadyFader }, { basicFader })
+		^fader
 	}
 	
 	defName { |postSendReady = false|
-		^this.synthdef(postSendReady).name
+		^fader.name
 	}
 
 	makeControlArray { |mixerName|
@@ -130,16 +117,9 @@ MixerChannelDef {
 		});
 	}
 	
-	basicFader_ { |synthdef|
+	fader_ { |synthdef|
 		synthdef.notNil.if({
-			basicFader = synthdef;
-			this.sendDefsToRunningServers;
-		});
-	}
-	
-	postSendReadyFader_ { |synthdef|
-		synthdef.notNil.if({
-			postSendReadyFader = synthdef;
+			fader = synthdef;
 			this.sendDefsToRunningServers;
 		});
 	}
@@ -154,14 +134,7 @@ MixerChannelDef {
 	sendSynthDefs { |server|
 		server = server ?? Server.default;
 		server.serverRunning.if({
-			#[true, false].do({ |bool|
-				this.synthdef(bool).send(server);
-			});
-		
-			SynthDef("mixers/xfer" ++ outChannels, {
-				arg busin, busout;
-				Out.ar(busout, In.ar(busin, outChannels));
-			}).send(server);
+			this.synthdef.send(server);
 			
 				// this doesn't cover all cases
 				// if you have defs only for stereo outs, there would be no send def for mono in
