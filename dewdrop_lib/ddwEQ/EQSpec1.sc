@@ -207,17 +207,17 @@ EQBand : EQSpec1 {
 	}
 
 	type_ { arg t, updateGUI = true;
-		var bundle;
+		var bundle, def;
 		type = t;
 		
 			// if type changes, synth node must be replaced
 		bundle = List.new;
 		synth.notNil.if({
-			synth.free;
+			def = this.makeSynthDef;
+			bundle = [synth.freeMsg];
 			synth = Synth.basicNew("EQ/"++type.asString++numChannels, target.server);
-			bundle.add(synth.newMsg(target, 
-				this.calc.synthArgs ++ [\outbus, bus.index], addAction));
-//bundle.asCompileString.postln;
+			bundle.add([\d_recv, def.asBytes, synth.newMsg(target,
+				this.calc.synthArgs ++ [\outbus, bus.index, \mul, mul], addAction)]);
 			target.server.listSendBundle(nil, bundle);
 		});
 		(gui.notNil && updateGUI).if({
