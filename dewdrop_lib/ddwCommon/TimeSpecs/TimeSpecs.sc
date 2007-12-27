@@ -36,25 +36,25 @@ DelayTimeSpec : NilTimeSpec {
 	}
 }
 
-// should be used only once then thrown away
+// schedule for a specific beat number
 AbsoluteTimeSpec : NilTimeSpec {
-	var	<>quant;
-	*new { arg quant; ^super.prNew.quant_(quant ? 1) }
+	var	<>quant, <>clock;
+	*new { arg quant; ^super.prNew.quant_(quant ? 1).clock_(TempoClock.default) }
 	applyLatency { ^this }
-	schedTime {
-		var	saveQuant = quant;
-		quant.notNil.if({
-			quant = nil;
-			^saveQuant
+	schedTime { |argClock|
+		(quant >= (argClock ? clock).beats).if({
+			^quant
 		}, {
-			MethodError("AbsoluteTimeSpec may not be reused.", this);
+				// invalid after given time has passed
+			MethodError("AbsoluteTimeSpec(%) has expired at % beats."
+				.format(quant, (argClock ? clock).beats), this).throw;
 		});
 	}
 }
 
 BasicTimeSpec : AbsoluteTimeSpec {   // quant only
 	var	<>clock;
-	*new { arg quant; ^super.prNew.quant_(quant ? 1) }
+	*new { arg quant; ^super.prNew.quant_(quant ? 1).clock_(TempoClock.default) }
 	applyLatency { |latency| ^QuantOffsetLatencyWrapTimeSpec(quant, 0, latency ? 0) }
 	schedTime { arg argClock, argQuant;
 		^(argClock ? clock).elapsedBeats.roundUp(argQuant ? quant);
