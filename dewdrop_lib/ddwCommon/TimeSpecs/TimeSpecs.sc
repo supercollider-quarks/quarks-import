@@ -1,6 +1,5 @@
 
 // plug-n-play quantizing algorithms for process onsets
-// borrowed from Julian Rohrhuber on sc-dev, 15 jan 04
 
 // for help -- see [TimeSpec.help.rtf]
 
@@ -17,7 +16,7 @@ NilTimeSpec {   // always schedules for now
 	schedTime { arg clock; 
 		^clock.tryPerform(\beats) ? 0
 	}
-//	adjustTimeForLatency { |time, clock| ^time }
+	adjustTimeForLatency { |time| ^time }
 		// for compatibility with normal TempoClock-play
 	nextTimeOnGrid { |clock| ^this.schedTime(clock) }
 	quant { ^0 }
@@ -37,23 +36,9 @@ DelayTimeSpec : NilTimeSpec {
 	}
 }
 
-BasicTimeSpec : NilTimeSpec {   // quant only
-	var <>quant, <>clock;
-	*new { arg quant; ^super.prNew.quant_(quant ? 1) }
-	applyLatency { |latency| ^QuantOffsetLatencyWrapTimeSpec(quant, 0, latency ? 0) }
-//	applyLatency { |lat| latency = lat ? 0 };
-	schedTime { arg argClock, argQuant;
-		^(argClock ? clock).elapsedBeats.roundUp(argQuant ? quant);
-	}
-//		// this will most likely be shared for all subclasses
-//		// could be simpler but if I change the implementation later, easier to update
-//	adjustTimeForLatency { |time, clock|
-//		^time - latency
-//	}
-}
-
 // should be used only once then thrown away
-AbsoluteTimeSpec : BasicTimeSpec {
+AbsoluteTimeSpec : NilTimeSpec {
+	var	<>quant;
 	*new { arg quant; ^super.prNew.quant_(quant ? 1) }
 	applyLatency { ^this }
 	schedTime {
@@ -63,6 +48,22 @@ AbsoluteTimeSpec : BasicTimeSpec {
 			^saveQuant
 		}, {
 			MethodError("AbsoluteTimeSpec may not be reused.", this);
+		});
+	}
+}
+
+BasicTimeSpec : AbsoluteTimeSpec {   // quant only
+	var	<>clock;
+	*new { arg quant; ^super.prNew.quant_(quant ? 1) }
+	applyLatency { |latency| ^QuantOffsetLatencyWrapTimeSpec(quant, 0, latency ? 0) }
+	schedTime { arg argClock, argQuant;
+		^(argClock ? clock).elapsedBeats.roundUp(argQuant ? quant);
+	}
+	adjustTimeForLatency { |time, latency, argClock|
+		((time = time - (latency ? 0)) < (argClock ? clock).elapsedBeats).if({
+			^time + quant
+		}, {
+			^time
 		});
 	}
 }
@@ -99,15 +100,12 @@ QuantOffsetLatencyTimeSpec : QuantOffsetTimeSpec {
 		});
 	}
 	schedTime { arg argClock, argQuant, argOffset, argLatency;
-		var time, tempClock;
-		time = (tempClock = argClock ? clock).elapsedBeats.roundUp(argQuant ? quant)
-			+ (argOffset ? offset) - ((argLatency ? latency)/* * tempClock.tempo*/);
-//		(time < tempClock.elapsedBeats).if({
-//			^time + quant
-//		}, {
-			^time
-//		});
+		var time;
+		time = (argClock ? clock).elapsedBeats.roundUp(argQuant ? quant)
+			+ (argOffset ? offset) - (argLatency ? latency);
+		^time
 	}
+	adjustTimeForLatency { |time, argLatency| ^(time - (argLatency ? latency)) }
 }
 
 	// scheduling will always succeed
@@ -116,9 +114,14 @@ QuantOffsetLatencyWrapTimeSpec : QuantOffsetLatencyTimeSpec {
 	schedTime { arg argClock, argQuant, argOffset, argLatency;
 		var time, tempClock = argClock ? clock;
 		time = super.schedTime(tempClock, argQuant, argOffset, argLatency);
-//		time = (tempClock = argClock ? clock).elapsedBeats.roundUp(argQuant ? quant)
-//			+ (argOffset ? offset) - (argLatency ? latency);
 		(time < tempClock.elapsedBeats).if({
+			^time + quant
+		}, {
+			^time
+		});
+	}
+	adjustTimeForLatency { |time, argLatency|
+		((time = time - (argLatency ? latency)) < clock.elapsedBeats).if({
 			^time + quant
 		}, {
 			^time
