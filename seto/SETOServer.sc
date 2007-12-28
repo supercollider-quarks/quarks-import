@@ -91,7 +91,7 @@ SETOServer {
 		"SETOServer:stop : abstract method - no effect".warn
 	}
 	gui {|editable = true|
-		var addButton, idBox, classIdBox, xBox, yBox, aBox;
+		var addButton, idBox, classIdBox, xBox, yBox, aBox, eBox;
 		hasGUI.not.if({
 			window = GUI.window.new("SETObjects", Rect(800, 0, 480, 400))
 				.front
@@ -104,7 +104,7 @@ SETOServer {
 			view.background = Color.fromArray([0.918, 0.902, 0.886] * 0.5 ++ [0.8]);
 			view.resize_(5);
 			addButton = GUI.button.new(window, Rect(400, 5, 75, 20))
-				.states_(	[["add SETObject", Color.black, Color.gray(0.5)]])
+				.states_(	[["add", Color.black, Color.gray(0.5)]])
 				.action_{|butt|
 					this.setWithFormat("ixya", idBox.value, [classIdBox.value, xBox.value, yBox.value, aBox.value]);
 					this.allAlive;
@@ -129,7 +129,7 @@ SETOServer {
  				GUI.numberBox.new(window, Rect(415, 110, 60, 20)).value_(0).step_(0.01).resize_(3);
  			
  			GUI.staticText.new(window, Rect(400, 180, 10, 20)).string_("ext").resize_(3);
- 			aBox  = 
+ 			eBox  = 
  				GUI.numberBox.new(window, Rect(415, 180, 60, 20)).value_(SETO_GUIObj.oExtent).step_(1).resize_(3).action_{|me| SETO_GUIObj.oExtent = me.value};
 			hasGUI = true;
 			^window.front;
@@ -208,7 +208,7 @@ SETOServer {
 		hasGUI.if{{
 			view.alive(argObjectIDs);
 			view.refresh;
-			window.refresh;
+			//window.refresh;
 		}.defer};
 		deadObjectIDs = argObjectIDs.asSet -- objectIDs;
 		deadObjectIDs.do{|id|
@@ -279,6 +279,7 @@ SETOServerView {
 	initView{|parent, bounds, tServer|
 		setoServer = tServer;
 		view = GUI.compositeView.new(parent,bounds);
+		view.relativeOrigin = true;
 		view.background = Color.white;
 		objects = ();
 	}
