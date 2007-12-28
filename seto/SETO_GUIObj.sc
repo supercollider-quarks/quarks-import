@@ -22,7 +22,7 @@ Author:
 SETO_GUIObj{
 	var <obj, setObj, tServer, <>isEditable = true;
 	classvar <>oExtent = 40;
-
+	
 	*new {|parent, setObj, setoServer|
 		^super.new.initGUIObj(parent, setObj, setoServer)
 	}
@@ -33,12 +33,10 @@ SETO_GUIObj{
 		tServer = setoServer;
 
 		obj = GUI.userView.new(parent, bounds);
+		obj.relativeOrigin_(true).clearOnRefresh_(true);
+		this.updateBounds;
 		obj.drawFunc_({|me|
-				var x, y;
-				
-				#x, y = (setObj.pos[0..1] * parent.bounds.asArray[2..3]);
-				GUI.pen.translate(x+(0.5*oExtent), y+(0.5*oExtent));
-				
+				"hello".inform;
 				setObj.isEuler.if({
 //					GUI.pen.color = Color.hsv(setObj.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87);
 					GUI.pen.color = Color.hsv(setObj.classID+1 * 0.2, 1, 1, alpha: 0.5);
@@ -52,19 +50,19 @@ SETO_GUIObj{
 				},{
 					GUI.pen.color = Color.hsv(setObj.classID+1 * 0.2, 1, 1, alpha: 0.25);
 				});
-				GUI.pen.translate(-0.5*oExtent, -0.5*oExtent);
-				//GUI.pen.addRect(Rect(10,10, oExtent, oExtent));
-				//(Rect(0,0,40,40) == me.bounds.moveTo(0,0)).postln;
-				GUI.pen.addRect(me.bounds.moveTo(0,0));//
-				GUI.pen.fill;
+				GUI.pen.fillRect(Rect(0, 0, 400, 400));
 				GUI.pen.use{
 					GUI.pen.color = Color.black;
-					//Pen.font = GUI.font.new("Helvetica", 500);
-					GUI.pen.stringInRect(setObj.id.asString, me.bounds.moveTo(0,0));
+					GUI.pen.string(setObj.id.asString);
 				};
-				this.pr_updateBoundsFromSETO;
+				/*GUI.pen.color = Color.yellow(0.3, 0.2);
+				GUI.pen.fillRect(Rect(0, 0, 400, 400));
+				*/
+				
+				
+
 		});
-		obj.mouseTrackFunc_({|me, x, y|
+		obj.mouseMoveAction_({|me, x, y|
 				var bounds;
 				isEditable.if{
 					bounds = obj.parent.bounds.asArray;
@@ -75,7 +73,7 @@ SETO_GUIObj{
 					tServer.allAlive;
 				}
 			})
-			.keyDownFunc_({|me, key, modifiers, unicode|
+			.keyDownAction_({|me, key, modifiers, unicode|
 				(unicode == 127).if{
 					tServer.deleteObjs(setObj.id);
 				}
@@ -97,7 +95,7 @@ SETO_GUIObj{
 		obj.resize_(val) // TODO!!!!
 	}
 /////////// private
-	pr_updateBoundsFromSETO {
+	updateBounds {
 		var bounds,x, y;
 		
 		bounds = obj.parent.bounds.asArray;
@@ -107,6 +105,6 @@ SETO_GUIObj{
 		obj.bounds = Rect(x, y, oExtent, oExtent);
 	}
 	refresh {
-		obj.refresh
+		this.updateBounds;
 	}
 }
