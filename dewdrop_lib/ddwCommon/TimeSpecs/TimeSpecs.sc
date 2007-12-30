@@ -21,6 +21,7 @@ NilTimeSpec {   // always schedules for now
 	nextTimeOnGrid { |clock| ^this.schedTime(clock) }
 	quant { ^0 }
 	bindClassName { ^\NilTimeSpec }
+	adjustQuantForPhaseAndOffset {}
 }
 
 DelayTimeSpec : NilTimeSpec {
@@ -53,7 +54,6 @@ AbsoluteTimeSpec : NilTimeSpec {
 }
 
 BasicTimeSpec : AbsoluteTimeSpec {   // quant only
-	var	<>clock;
 	*new { arg quant; ^super.prNew.quant_(quant ? 1).clock_(TempoClock.default) }
 	applyLatency { |latency| ^QuantOffsetLatencyWrapTimeSpec(quant, 0, latency ? 0) }
 	schedTime { arg argClock, argQuant;
@@ -65,6 +65,9 @@ BasicTimeSpec : AbsoluteTimeSpec {   // quant only
 		}, {
 			^time
 		});
+	}
+	adjustQuantForPhaseAndOffset { |phase = 0, offset = 0|
+		^QuantOffsetLatencyWrapTimeSpec(quant, phase, offset)
 	}
 }
 
@@ -83,6 +86,9 @@ QuantOffsetTimeSpec : BasicTimeSpec {
 		}, {
 			^time
 		});
+	}
+	adjustQuantForPhaseAndOffset { |phase = 0, offset = 0|
+		^QuantOffsetLatencyWrapTimeSpec(quant, this.offset + phase, offset)
 	}
 }
 
@@ -106,6 +112,9 @@ QuantOffsetLatencyTimeSpec : QuantOffsetTimeSpec {
 		^time
 	}
 	adjustTimeForLatency { |time, argLatency| ^(time - (argLatency ? latency)) }
+	adjustQuantForPhaseAndOffset { |phase = 0, offset = 0|
+		^this.copy.offset_(phase + this.offset, latency + offset)
+	}
 }
 
 	// scheduling will always succeed
