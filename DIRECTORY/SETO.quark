@@ -6,7 +6,7 @@
 	\organization: 	"Bielefeld University",
 	\country: 		"Germany",
 	\since: 		"2007",
-	\dependencies: [("LFSaw.de" -> 1.0)],
+	\dependencies: [("lfsaw.de" -> 1.0)],
 	\url:           "http://tuio.lfsaw.de/",
 	\version:	1.0
 )
