@@ -2,7 +2,7 @@
 (
 // a must:
 	\name: 		"GeoGraphy",
-	\path: 		"path/relative/to/quark/dir",
+	\path: 		"GeoGraphy",
 	\summary:		"A graph-based sequencing environment",
 	\author: 		"Andrea Valle",
 
