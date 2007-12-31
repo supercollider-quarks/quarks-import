@@ -3,7 +3,7 @@
 // a must:
 	\name: 		"GeoGraphy",
 	\path: 		"path/relative/to/quark/dir",
-	\summary:		"A human readable explanation on the purposes of this quark.\nThis will be visible in Quarks.listInstalled",
+	\summary:		"A graph-based sequencing environment",
 	\author: 		"Andrea Valle",
 
 // optional:
