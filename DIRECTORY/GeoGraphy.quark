@@ -3,7 +3,7 @@
 // a must:
 	\name: 		"GeoGraphy",
 	\path: 		"GeoGraphy",
-	\summary:		"A graph-based sequencing environment",
+	\summary:	"A graph-based sequencing environment. Caution! Experimental",
 	\author: 		"Andrea Valle",
 
 // optional:
