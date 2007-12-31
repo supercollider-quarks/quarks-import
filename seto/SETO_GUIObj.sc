@@ -1,7 +1,6 @@
 /*
 The GUI representation of SETObjects (needed by SETOServerView)
-	http://tuio.lfsaw.de/
-	http://modin.yuri.at/publications/tuio_gw2005.pdf
+	http://tuio.lfsaw.de/seto.shtml
 
 Author: 
 	2004, 2005, 2006, 2007
@@ -14,6 +13,7 @@ Author:
 
 /*
 	Changes
+		2007-12-30	fixed gui to use relative coordinates
 		2007-10-31	changed to new SCUserview behaviour
 		2007-10-29	renamed to SETObject
 */
@@ -36,7 +36,6 @@ SETO_GUIObj{
 		obj.relativeOrigin_(true).clearOnRefresh_(true);
 		this.updateBounds;
 		obj.drawFunc_({|me|
-				"hello".inform;
 				setObj.isEuler.if({
 //					GUI.pen.color = Color.hsv(setObj.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87);
 					GUI.pen.color = Color.hsv(setObj.classID+1 * 0.2, 1, 1, alpha: 0.5);

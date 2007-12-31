@@ -4,7 +4,7 @@ Implementing a general style of SETObjects
 	http://modin.yuri.at/publications/tuio_gw2005.pdf
 
 Author: 
-	2004, 2005, 2006
+	2004, 2005, 2006, 2007
 	Till Bovermann 
 	Neuroinformatics Group 
 	Faculty of Technology 
