@@ -127,6 +127,10 @@ Ctl {
 		this.dispatchRecv;
 		this.send;
 	}
+	
+	asUGenInput {
+		^this.index
+	}
 
 	setup {
 		arg newName = "", newSpec = nil, newValue = nil, newDepth = 1, newStateMap = nil;
