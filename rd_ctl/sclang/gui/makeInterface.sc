@@ -10,7 +10,7 @@
 		width = columns * CtlView.width;
 		height = rows * CtlView.height;
 		rect = Rect(128, 128, width, height);
-		window = GUI.window.new(windowName, rect);
+		window = GUI.window.new(windowName, rect, resizable:false);
 		flow = FlowLayout.new(window.view.bounds,
 			Point.new(0,0),
 			Point.new(0,0););
