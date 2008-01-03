@@ -1,0 +1,9 @@
+(
+	\name: 			"livecoding",
+	\path: 			"livecoding", // path relative to the root Quarks folder
+	\summary:		"extensions to JITLib",
+	\author: 		"Julian Rohrhuber",
+	\organization: 	"University Cologne",
+	\country: 		"Germany",
+	\since: 		"2007"
+)
