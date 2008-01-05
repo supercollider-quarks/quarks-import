@@ -71,7 +71,13 @@ Proto {
 		env.put(key = key.asSymbol, value);		// keys MUST be symbols
 		putAction.value(key, value, this);
 	}
-	putAll { |... dictionaries| env.putAll(*dictionaries) }
+	putAll { |... dictionaries| 
+		dictionaries.do {|dict| 
+			dict.keysValuesDo { arg key, value; 
+				this.put(key, value) 
+			}
+		}
+	}
 	parent { ^env.parent }
 	isPrototype { ^isPrototype == true }
 	
