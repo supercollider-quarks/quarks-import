@@ -453,6 +453,15 @@ Voicer {		// collect and manage voicer nodes
 	
 	processes { ^proxy.tryPerform(\processes) }
 
+		// if the voicer's target is a MC, assign it to the gui
+	draggedIntoMixerGUI { |gui|
+		var	mc;
+		(mc = bus.tryPerform(\asMixer)).notNil.if({
+			gui.mixer_(mc);
+			gui.refresh;
+		});
+	}
+
 // BOOKKEEPING:
 	free {
 			// activates onClose which frees the gui

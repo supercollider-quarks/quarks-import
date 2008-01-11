@@ -28,28 +28,6 @@
 	}
 }
 
-+ Voicer {
-		// if the voicer's target is a MC, assign it to the gui
-	draggedIntoMixerGUI { |gui|
-		var	mc;
-		(mc = bus.tryPerform(\asMixer)).notNil.if({
-			gui.mixer_(mc);
-			gui.refresh;
-		});
-	}
-}
-
-+ VoicerProxy {
-		// change the voicer's target to the mixer in this gui
-		// does not affect currently playing notes
-		// if the gui is empty, the drag-n-drop will be ignored
-	draggedIntoMixerGUI { |gui|
-		voicer.notNil.if({
-			voicer.draggedIntoMixerGUI(gui)
-		});
-	}
-}
-
 // I have to override this core method. Sorry.
 // If I don't, MixerChannelReconstructor doesn't work.
 + Server {

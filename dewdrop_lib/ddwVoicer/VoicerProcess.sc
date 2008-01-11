@@ -64,7 +64,7 @@ VoicerProcess {
 //("VoicerProcess-play : " ++ tag).postln;
 		clock = clock ?? { task.clock };
 		q = this.getQuant(quant, voicer.latency);
-//(["VoicerProcess-play", clock.elapsedBeats, q.schedTime(clock)]).postln;
+//(["VoicerProcess-play", clock.elapsedBeats, q.nextTimeOnGrid(clock)]).postln;
 			// QuantTasks have a different argument order than PauseStreams,
 			// so use keyword addressing
 		result = task.play(quant: q, argClock: clock, doReset: doReset ? false);  // nil if play failed
@@ -83,7 +83,7 @@ VoicerProcess {
 //("VoicerProcess-stop : " ++ tag).postln;
 		task.notNil.if({
 			task.clock.schedAbs(this.getQuant(quant, 0.2+(voicer.latency ? 0))
-				.asTimeSpec.schedTime(task.clock), { task.stop; nil });
+				.asTimeSpec.nextTimeOnGrid(task.clock), { task.stop; nil });
 		});
 		this.stopUpdateGui;
 	}
@@ -99,7 +99,7 @@ VoicerProcess {
 	resume { arg quant;
 		task.notNil.if({
 			task.clock.schedAbs(this.getQuant(quant, 0.2+(voicer.latency ? 0))
-				.asTimeSpec.schedTime(task.clock), { task.resume; nil });
+				.asTimeSpec.nextTimeOnGrid(task.clock), { task.resume; nil });
 		});
 		parent.view.notClosed.if({
 			{ parent.view.background_(Color.green); }.defer;
@@ -109,7 +109,7 @@ VoicerProcess {
 	reset { arg quant;
 		task.notNil.if({
 			task.clock.schedAbs(this.getQuant(quant, 0.2+(voicer.latency ? 0))
-				.asTimeSpec.schedTime(task.clock), { task.reset; nil });
+				.asTimeSpec.nextTimeOnGrid(task.clock), { task.reset; nil });
 		});
 	}
 	
@@ -144,7 +144,7 @@ VoicerProcess {
 		}, {
 			quant = quant ? QuantOffsetLatencyTimeSpec(1, 0, adjustment)
 		});
-//["getQuant", tag, quant.asTimeSpec.schedTime(this.clock)].postln;
+//["getQuant", tag, quant.asTimeSpec.nextTimeOnGrid(this.clock)].postln;
 //quant.asTimeSpec.dump;
 		^quant
 	}
@@ -214,7 +214,7 @@ VoicerProcessGroup {
 			// if you trigger a change too late, the previously running thing shouldn't die
 		var quant;
 		quant = p.getQuant;
-		(voicer.clock.elapsedBeats < quant.schedTime(p.task.clock ? TempoClock.default)).if({
+		(voicer.clock.elapsedBeats < quant.nextTimeOnGrid(p.task.clock ? TempoClock.default)).if({
 			processes.do({ arg pp;
 				(pp.task != p.task).if({
 					pp.stop

@@ -148,6 +148,15 @@ VoicerProxy {
 			this.free;
 		});
 	}
+	
+		// change the voicer's target to the mixer in this gui
+		// does not affect currently playing notes
+		// if the gui is empty, the drag-n-drop will be ignored
+	draggedIntoMixerGUI { |gui|
+		voicer.notNil.if({
+			voicer.draggedIntoMixerGUI(gui)
+		});
+	}
 
 	clock {
 		^voicer.clock;
