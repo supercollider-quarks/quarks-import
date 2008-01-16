@@ -20,6 +20,7 @@
 	
 	//--loop
 	w.draw{
+		GUI.pen.width_(1);
 		world.objects.do{|o, i|						//iterate all objects in this world
 			o.addForce(o.world.gravity);			//add gravity
 			world.objects.do{|oo, j| if(i!=j, {o.collide(oo)})};

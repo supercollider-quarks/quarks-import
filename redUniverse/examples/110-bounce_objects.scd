@@ -17,6 +17,7 @@
 	//--loop
 	w.draw{
 		GUI.pen.strokeColor_(Color.grey(0.7, 0.5));
+		GUI.pen.width_(1);
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
 			o.addForce(o.frictionForce(-0.3));

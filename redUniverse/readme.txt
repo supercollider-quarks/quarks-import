@@ -7,6 +7,8 @@ some of the examples require additional classes like RedGA, RedLSystem etc.  the
 
 
 //--
+080116 - changed from 25 to 40 fps for RedWindow and RedJWindow .play
+	some small corrections to match Pen changes to width_
 071205 - converted all help.rtf to .html and the examples to .scd
 	added the example overview file.
 	changed so that RedJWindow is disabled by default.

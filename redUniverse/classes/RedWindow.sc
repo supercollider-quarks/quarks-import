@@ -19,7 +19,7 @@ RedWindow : SCWindow {
 		SCUserView(this, view.bounds).mouseOverAction_({|v, x, y| mouse= RedVector2D[x, y]});
 	}
 	draw {|func| this.drawHook_(func)}
-	play {|fps= 25|
+	play {|fps= 40|
 		isPlaying= true;
 		{while{this.isOpen&&isPlaying} {this.refresh; fps.reciprocal.wait}}.fork(AppClock);
 	}

@@ -20,6 +20,7 @@
 	
 	//--loop
 	w.draw{
+		GUI.pen.width_(1);
 		GUI.pen.strokeColor_(Color.white);
 		world.objects.do{|o, i|
 			o.addForceAngular2D(world.gravity);

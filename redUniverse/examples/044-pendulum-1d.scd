@@ -21,6 +21,7 @@
 	//--loop
 	w.draw{
 		GUI.pen.strokeColor_(Color.white);
+		GUI.pen.width_(1);
 		world.objects.do{|o|
 			o.addForceAngular1D(world.gravity);
 			//o.addForce(world.gravity);

@@ -32,6 +32,7 @@ s.waitForBoot{
 	
 	//--loop
 	w.draw{
+		GUI.pen.width_(1);
 		4.do{|i|
 			GUI.pen.fillColor_(Color.grey(0.4, i+1/(4)));
 			GUI.pen.fillOval(Rect.aboutRedVector2D(w.mouse, (4-i)/3*50));
@@ -55,5 +56,6 @@ s.waitForBoot{
 			GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
 		}
 	}.play;
+	w.onClose_{world.objects.do{|o| o.state.at(\synth).free}};
 	}.play(AppClock);
 })

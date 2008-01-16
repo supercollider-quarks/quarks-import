@@ -31,6 +31,7 @@ s.waitForBoot{
 	//--loop
 	w.draw{
 		var set;
+		GUI.pen.width_(3);
 		set= Set.new;
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
@@ -61,5 +62,6 @@ s.waitForBoot{
 			);
 		};
 	}.play;
+	w.onClose_{synths.do{|x| x.free}};
 }
 )

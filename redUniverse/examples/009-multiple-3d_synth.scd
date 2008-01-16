@@ -60,4 +60,5 @@ s.waitForBoot{
 			GUI.pen.fillOval(Rect.aboutRedObject3D(o, ff, ss));
 		};
 	}.play;
+	w.onClose_{synths.do{|x| x.free}};
 })
