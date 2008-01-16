@@ -54,5 +54,6 @@ s.waitForBoot{
 			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
+	w.onClose_{synths.do{|x| x.free}};
 }
 )

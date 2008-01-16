@@ -4,7 +4,7 @@
 (
 s.waitForBoot{
 	var width= 640, height= 480, w, world, n= 20,
-		synths, buf, bus, human;
+		syn, buf, bus, human;
 	
 	//--world
 	Routine{
@@ -20,7 +20,7 @@ s.waitForBoot{
 	buf= Buffer.alloc(s, 2048, 1);
 	SynthDef(\human, {|out, bufnum| Out.kr(out, RedTrack.kr(AudioIn.ar, bufnum))}).send(s);
 	1.wait;
-	Synth(\human, [\out, 10, \bufnum, buf.bufnum]);	//output 6 ch control data from tracker
+	syn= Synth(\human, [\out, 10, \bufnum, buf.bufnum]);//output 6 ch control data from tracker
 	bus= Bus(\control, 10, 6);						//access control data at ch 10-15
 	
 	//--objects
@@ -98,5 +98,11 @@ s.waitForBoot{
 		};
 		//human.state.freq.postln;
 	}.play;
+	w.onClose_{
+		syn.free;
+		bus.free;
+		buf.free;
+		world.objects.do{|o| o.state.at(\synth).free};
+	};
 	}.play(AppClock);
 })

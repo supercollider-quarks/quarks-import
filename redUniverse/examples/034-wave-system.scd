@@ -29,7 +29,8 @@
 		sys.update;
 		
 		//--render
-		GUI.pen.strokeColor_(Color.grey(1, 0.5));
+		GUI.pen.fillColor_(Color.grey(1, 0.5));
+		//GUI.pen.strokeColor_(Color.grey(1, 0.5));
 		//GUI.pen.moveTo(sys.objects[0].loc.asPoint);
 		sys.do{|o, i|
 			GUI.pen.fillOval(Rect.aboutRedObject2D(o));

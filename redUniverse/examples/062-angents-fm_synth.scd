@@ -154,5 +154,13 @@ s.waitForBoot{
 			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
+	w.onClose_{
+		Tdef(\seq).stop;
+		fmbusses.free;
+		rmbusses.free;
+		delay.free;
+		dist.free;
+		drums.do{|x| x.free};
+	};
 	}.play(AppClock);
 })

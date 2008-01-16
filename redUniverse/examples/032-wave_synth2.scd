@@ -62,4 +62,5 @@ s.waitForBoot{
 			});
 		};
 	}.play;
+	w.onClose_{synths.do{|x| x.free}};
 })

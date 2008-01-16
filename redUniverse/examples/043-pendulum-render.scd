@@ -17,6 +17,7 @@
 	
 	//--loop
 	w.draw{
+		GUI.pen.width_(1);
 		100.do{|i|
 			GUI.pen.strokeColor_(Color.grey(i/100, 0.5));
 			world.objects.do{|o|

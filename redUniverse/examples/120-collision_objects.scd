@@ -18,6 +18,7 @@
 	
 	//--loop
 	w.draw{
+		GUI.pen.width_(1);
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
 			world.objects.do{|oo, j| if(i!=j, {o.collide(oo)})};

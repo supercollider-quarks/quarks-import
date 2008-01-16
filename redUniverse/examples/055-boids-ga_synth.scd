@@ -87,5 +87,6 @@ RedGAPhenome(c[0]).asSynthDef2.play(s, [\amp, 0.1])
 		};
 		
 	}.play;
+	w.onClose_{synths.do{|x| x.free}};
 	}.play(AppClock);
 )

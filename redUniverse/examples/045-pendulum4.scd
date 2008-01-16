@@ -20,6 +20,7 @@
 	//--loop
 	w.draw{
 		GUI.pen.strokeColor_(Color.white);
+		GUI.pen.width_(1);
 		world.objects.do{|o, i|
 			world.objects.do{|oo, j|
 				if(i!=j, {
