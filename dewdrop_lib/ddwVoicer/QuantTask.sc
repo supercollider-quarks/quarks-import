@@ -13,7 +13,7 @@ QuantTask : Task {
 		(quant == 0 || quant.isNil).if({	// no quantize, do it now
 			clock.play(this, quant)
 		}, {
-			schedTime = quant.asTimeSpec.schedTime(clock);
+			schedTime = quant.asTimeSpec.nextTimeOnGrid(clock);
 				// is it too late to schedule? this can happen b/c of a negative offset
 //["QuantTask-play", clock.elapsedBeats, clock.elapsedBeats.roundUp(quant), schedTime].postln;
 			(clock.elapsedBeats > schedTime).if({ ^stream = nil });
@@ -26,7 +26,7 @@ QuantTask : Task {
 			originalStream.reset
 		}, {
 //["QuantTask-reset", clock.elapsedBeats.roundUp(quant) + offset - (0.01*clock.tempo)].postln;
-			clock.schedAbs(quant.asTimeSpec.schedTime(clock) - (0.01*clock.tempo), {
+			clock.schedAbs(quant.asTimeSpec.nextTimeOnGrid(clock) - (0.01*clock.tempo), {
 				originalStream.reset;
 				nil
 			});
@@ -37,7 +37,7 @@ QuantTask : Task {
 		(quant == 0 || quant.isNil).if({	// no quantize, do it now
 			stream = nil
 		}, {
-			clock.schedAbs(quant.asTimeSpec.schedTime(clock), {
+			clock.schedAbs(quant.asTimeSpec.nextTimeOnGrid(clock), {
 				stream = nil 
 			});
 		});
@@ -47,7 +47,7 @@ QuantTask : Task {
 		(quant == 0 || quant.isNil).if({	// no quantize, do it now
 			stream = nil
 		}, {
-			clock.schedAbs(quant.asTimeSpec.schedTime(clock), {
+			clock.schedAbs(quant.asTimeSpec.nextTimeOnGrid(clock), {
 				stream = nil 
 			});
 		});
@@ -61,7 +61,7 @@ QuantTask : Task {
 	}
 	
 	schedTime { arg quant;
-		^quant.asTimeSpec.schedTime(clock)
+		^quant.asTimeSpec.nextTimeOnGrid(clock)
 	}
 		
 	stream_ { arg argStream, quant;
@@ -69,7 +69,7 @@ QuantTask : Task {
 			originalStream = argStream; 
 			if (stream.notNil, { stream = argStream });
 		}, {
-			clock.schedAbs(quant.asTimeSpec.schedTime(clock), {
+			clock.schedAbs(quant.asTimeSpec.nextTimeOnGrid(clock), {
 				originalStream = argStream; 
 				if (stream.notNil, { stream = argStream });
 			});
