@@ -483,7 +483,7 @@ MixerChannel {
 			{ \fader } { [fadergroup, inbus] }
 			{ \synth } { [synthgroup, inbus] }
 			{ \effect } { [effectgroup, inbus] }
-			{ nil } { [synthgroup, inbus] }
+			/* default */ { [synthgroup, inbus] }
 	}
 	
 	asString { 
