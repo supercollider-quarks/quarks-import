@@ -6,18 +6,31 @@
 		children.do({ arg c;
 			c.recursiveResize;
 		});
-		this.tryPerform(\reflowAll);
-		this.tryPerform(\resizeToFitContents).isNil.if({
-			this.tryPerform(\resizeToFit);
-		});
 	}
 	
-	findRightBottom {		// a containerview can find the lowest-right point occupied by
-		var maxpt;
-		maxpt = this.bounds.leftTop;
+		// a containerview can find the lowest-right point occupied by its children
+	findRightBottom {
+		var origin = this.bounds.leftTop, maxpt;
+//[this.class.name, this.bounds, this.bounds.rightBottom].debug(">> SCContainerView:findRightBottom");
+//"view pointer: ".post; dataptr.postln;
+		if(this.tryPerform(\relativeOrigin) ? false) {
+			maxpt = Point(0, 0);
+		} {
+			maxpt = origin;
+		};
 		children.do({ arg c;
 			maxpt = maxpt.max(c.findRightBottom);
 		});
+		if(this.tryPerform(\relativeOrigin) ? false) {
+//"adding origin".debug;
+			maxpt = maxpt + origin;
+		};
+		if(decorator.notNil) {
+//"adding margin".debug;
+			maxpt = maxpt + decorator.margin;
+		};
+//[this.class.name, maxpt].debug("<< SCContainerView:findRightBottom");
+//"view pointer: ".post; dataptr.postln;
 		^maxpt
 	}
 }
@@ -36,46 +49,90 @@
 + SCView {
 	recursiveResize { ^nil }	// the buck stops here
 	
-	findRightBottom { ^this.bounds.rightBottom }	// non-recursive: give result to caller
+		// non-recursive: give result to caller
+	findRightBottom {
+//[this.class.name, this.bounds, this.bounds.rightBottom].debug("SCView:findRightBottom");
+//"view pointer: ".post; dataptr.postln;
+		^this.bounds.rightBottom
+	}
 
 	isActive { ^dataptr.notNil }
+
+	absoluteBounds {
+		var	bounds = this.bounds;
+		this.getParents.do({ |parent|
+			(parent.tryPerform(\relativeOrigin) == true).if({
+				bounds = bounds.moveBy(parent.bounds.left, parent.bounds.top)
+			}, {
+				^bounds
+			});
+		});
+		^bounds
+	}
 }
 
 + StartRow {
 	recursiveResize { ^nil }
+	findRightBottom { ^Point(0, 0) }
 }
 
 + Object { isActive { ^false } }		// non-views should reply with false
 
 + SCViewHolder {
-	findRightBottom { ^this.bounds.rightBottom }	// non-recursive: give result to caller
+	findRightBottom { 
+		var	out;
+//[this.class.name, this.bounds, this.bounds.rightBottom].debug(">> SCViewHolder:findRightBottom");
+//"view pointer: ".post; view.instVarAt(0).postln;
+		out = view.findRightBottom;
+//out.debug("<< SCViewHolder:findRightBottom");
+//"view pointer: ".post; view.instVarAt(0).postln;
+		^out
+	}
 }
 
 + FlowView {
 	resizeToFitContents {
 			// need bounds relative to parent's bounds
 		var new, maxpt, comparept, mybounds, used;
+//">> FlowView:resizeToFitContents - ".post; view.instVarAt(0).postln;
 		mybounds = this.bounds;
-		maxpt = mybounds.leftTop;	// w/o this, maxpt could be above or left of top left-bad
+//mybounds.debug("initial bounds");
+		if(view.tryPerform(\relativeOrigin) ? false) {
+			maxpt = Point(0, 0);
+		} {
+			maxpt = mybounds.leftTop;
+		};
 		this.children.do({ arg c;
 			comparept = c.findRightBottom;
 			maxpt = maxpt.max(comparept);
 		});
-		new = mybounds.resizeTo(maxpt.x - mybounds.left + this.decorator.margin.x,
-			maxpt.y - mybounds.top + this.decorator.margin.y);
-		this.bounds_(new, reflow: false);
-		// don't reflow unless asked
+//maxpt.debug("bottom right point");
+		if(view.tryPerform(\relativeOrigin) ? false) {
+			new = mybounds.resizeTo(maxpt.x + this.decorator.margin.x,
+				maxpt.y + this.decorator.margin.y);
+		} {
+			new = mybounds.resizeTo(maxpt.x - mybounds.left + this.decorator.margin.x,
+				maxpt.y - mybounds.top + this.decorator.margin.y);
+		};
+		this.bounds_(new, reflow: false);	// don't reflow unless asked
+//new.debug("set bounds to");
+//"<< FlowView:resizeToFitContents - ".post; view.instVarAt(0).postln;
 		^new
 	}
 
 	recursiveResize {
+//">> FlowView:recursiveResize - ".post; view.instVarAt(0).postln;
 		this.children.do({ arg c;
 			c.recursiveResize;
 		});
+//"reflowing - ".post; view.instVarAt(0).postln;
 		this.tryPerform(\reflowAll);
+//"resizing to fit contents - ".post; view.instVarAt(0).postln;
 		this.tryPerform(\resizeToFitContents).isNil.if({
+//"resizing to fit - ".post; view.instVarAt(0).postln;
 			this.tryPerform(\resizeToFit);
 		});
+//"<< FlowView:recursiveResize - ".post; view.instVarAt(0).postln;
 	}
 }
 
@@ -93,16 +150,13 @@
 
 + Integer {
 	reptChar { arg c = $\t;
-		var s;
-		s = "";
-		this.do({ s = s ++ c; });
-		^s
+		^(c ! this).as(String);
 	}
 }
 
-+ Rect {
-	asString { ^"Rect( " ++ left ++ ", " ++ top ++ ", " ++ width ++ ", " ++ height ++ " )" }
-}
+//+ Rect {
+//	asString { ^"Rect( " ++ left ++ ", " ++ top ++ ", " ++ width ++ ", " ++ height ++ " )" }
+//}
 
 
 + ObjectGui {
