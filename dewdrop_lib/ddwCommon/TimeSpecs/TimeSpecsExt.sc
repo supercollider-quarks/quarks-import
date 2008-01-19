@@ -10,17 +10,18 @@
 }
 
 +ArrayedCollection {
-	asTimeSpec { 
-		(this[0] == 0).if({
-			^NilTimeSpec.new
-		}, {
-			(this[2].isNil or: { this[2] == 0 }).if({
-				^QuantOffsetTimeSpec(*this)
-			}, {
-				^QuantOffsetLatencyTimeSpec(*this)
-			});
-		});
-	}			
+	asTimeSpec { ^BasicTimeSpec(*this) }
+//	asTimeSpec { 
+//		(this[0] == 0).if({
+//			^NilTimeSpec.new
+//		}, {
+//			(this[2].isNil or: { this[2] == 0 }).if({
+//				^QuantOffsetTimeSpec(*this)
+//			}, {
+//				^QuantOffsetLatencyTimeSpec(*this)
+//			});
+//		});
+//	}			
 }
 
 +Nil {
