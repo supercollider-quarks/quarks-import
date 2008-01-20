@@ -5,8 +5,37 @@
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs18 \cf0 \
+\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf2 //////////////////// type away in your own memory.\cf0 \
+\cf2 // eternal return. \cf0 \
+\cf2 // nonlinear history for live and experimental just in time programming.\cf0 \
+\cf2 // Julian Rohrhuber 2007\cf0 \
+\
+\cf2 /*\
+\
+\
+This program will give access to any ProxySpace (or subclass of LazyEnvir / EnvironmentRedirect) that is present as current environment. If none is present, it will create a ProxySpace and push it.\
+\
+It creates a document window with some temporal navigations. \
+This document is a throw away GUI, it can be closed anytime.\
+\
+- the black stripe is the current time. here the edits become visible.\
+- the first number box is the current time\
+- the last number box represents the length of history, after which we return to beginning\
+\
+Buttons:\
+_	navigate in time without entering it (toggles)\
+->	start time / stop time (toggles)\
+<<	rewind to beginning of time\
+:<	step back to previous edit\
+>:	step forward to next edit	\
+<	backward 0.25 sec in time\
+>	forward 0.25 sec in time\
+#	post the complete history\
+\
+\
+*/\cf0 \
+\
 \
 (\
 \pard\pardeftab560\li200\ql\qnatural
@@ -28,7 +57,7 @@
 		if(running.value) \{ task.play(\cf3 AppClock\cf0 ) \} \{ task.stop \};\
 	\};\
 	\
-	nietzsche = #[\cf4 "Alles Laufenkoennen muss gelaufen sein"\cf0 , \cf4 "Der Torweg muss auch gelaufen sein"\cf0 , \cf4 "Der Augenblick zieht alles nach sich, auch sich selbst"\cf0 , \cf4 "Alles Laufenkoennen muss noch laufen"\cf0 , \cf4 "Out of damp and gloomy days, out of solitude, out of loveless words directed at us, conclusions grow in us like fungus: one morning they are there, we do not know how, and they gaze upon us."\cf0 , \cf4 "Woe to the thinker who is not the gardener but only the soil of the plants that grow up in him!"\cf0 ];\
+	\
 	\
 	\cf2 // get the next appropriate point in time,\cf0 \
 	\cf2 // either the next delta step, or, if closer, the next timepoint\cf0 \
@@ -71,12 +100,11 @@
 		envir = dispatch.envir;\
 		if(browseMode) \{\
 			pairs = dispatch.getPairsForTime(val);\
-			\
-			d.string_(\
-				pairs.collect \{ \cf3 |pair|\cf0 \
-					format(\cf4 "\\n~% = %;\\n\\n"\cf0 , pair[0], pair[1].asCompileString)\
-				\}.join;\
-			);\
+			if(pairs.isNil) \{ d.string = \cf4 ""\cf0  \} \{\
+				d.string = pairs.collect \{ \cf3 |pair|\cf0 \
+						format(\cf4 "\\n~% = %;\\n\\n"\cf0 , pair[0], pair[1].asCompileString)\
+					\}.join;\
+			\};\
 		\} \{\
 			changed = dispatch.setTime(val);\
 			if(changed) \{\
@@ -184,7 +212,7 @@
 	fla.action = \{ \
 		i = dispatch.timepoints.indexOfGreaterThan(scaledValue - 0.01);\
 		i = i ? dispatch.timepoints.lastIndex;\
-		if(i > 0) \{\
+		if(i.notNil and: \{ i > 0 \}) \{\
 			valMap.(dispatch.timepoints.wrapAt(i-1))\
 		\}\
 	\};\
@@ -214,9 +242,11 @@
 	w.front;\
 	d = \cf3 Document\cf0 .new(\cf4 "history doc"\cf0 ).bounds_(\cf3 Rect\cf0 (20, 280, 670, 481));\
 	d.onClose = \{ w.close; windowFollow.stop; \cf3 CmdPeriod\cf0 .remove(playRout); \};\
+	w.onClose = \{ windowFollow.stop; \cf3 CmdPeriod\cf0 .remove(playRout); \};\
 	d.toFrontAction = d.toFrontAction.addFunc \{\
 		if(w.isClosed.not) \{ ff.valueAction = 0 \};\
 	\};\
+	nietzsche = #[\cf4 "Alles Laufenkoennen muss gelaufen sein"\cf0 , \cf4 "Der Torweg muss auch gelaufen sein"\cf0 , \cf4 "Der Augenblick zieht alles nach sich, auch sich selbst"\cf0 , \cf4 "Alles Laufenkoennen muss noch laufen"\cf0 , \cf4 "Out of damp and gloomy days, out of solitude, out of loveless words directed at us, conclusions grow in us like fungus: one morning they are there, we do not know how, and they gaze upon us."\cf0 , \cf4 "Woe to the thinker who is not the gardener but only the soil of the plants that grow up in him!"\cf0 ];\
 	windowFollow = \cf3 Routine\cf0  \{ \
 		\cf3 var\cf0  x;\
 		loop \{\
@@ -243,6 +273,7 @@
 	\
 	playRout.value;\
 	valMap.value(0);\
+	\
 \
 )\
 }
