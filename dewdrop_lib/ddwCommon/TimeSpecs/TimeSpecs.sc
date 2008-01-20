@@ -11,6 +11,7 @@ NilTimeSpec {   // always schedules for now
 	*new { ^default }
 	*prNew { ^super.new }
 	asTimeSpec { ^this }
+	asQuant { ^this }	// for compatibility with pattern playing
 	applyLatency { ^this }	// can't schedule earlier than now!
 		// override schedTime in subclasses for different scheduling results
 	nextTimeOnGrid { arg clock; 
@@ -78,18 +79,21 @@ BasicTimeSpec : AbsoluteTimeSpecLeadTime {
 		^super.new(quant).phase_(phase).offset_(offset).clock_(TempoClock.default)
 	}
 	applyLatency { |latency| ^this.copy.offset_(latency) }
-	nextTimeOnGrid { arg argClock, argQuant;
-		^(argClock ? clock).nextTimeOnGrid(quant ? 0, phase ? 0, offset ? 0);
+	nextTimeOnGrid { arg argClock;
+		^(argClock ? clock).nextTimeOnGrid(quant ? 0, phase ? 0) - (offset ? 0);
 	}
-		// bpSchedTime is inherited from AbsoluteTimeSpecLeadTime
-		// so it will take bp's leadtime into account
+		// BP's leadTime overrides BasicTimeSpec's offset
+	bpSchedTime { |bp|
+		^this.nextTimeOnGrid(bp.clock) + (offset ? 0) - (bp.leadTime ? 0)
+	}
 }
 
 QuantOffsetTimeSpec : BasicTimeSpec {
 //	var <>offset;
-//	*new { arg quant, offset;
-//		^super.new(quant).offset_(offset ? 0)
-//	}
+	*new { arg quant, offset;
+		this.deprecated(thisMethod, Meta_BasicTimeSpec.findRespondingMethodFor(\new));
+		^super.new(quant, offset)
+	}
 //	applyLatency { |latency| ^QuantOffsetLatencyWrapTimeSpec(quant, offset, latency ? 0) }
 //	nextTimeOnGrid { arg argClock, argQuant, argOffset;
 //		var time, tempClock;
@@ -109,9 +113,10 @@ QuantOffsetTimeSpec : BasicTimeSpec {
 	// scheduling will fail if latency window is passed
 QuantOffsetLatencyTimeSpec : QuantOffsetTimeSpec {
 //	var <>latency;
-//	*new { arg quant, offset, latency;
-//		^super.new(quant, offset).latency_(latency ? 0)
-//	}
+	*new { arg quant, offset, latency;
+		this.deprecated(thisMethod, Meta_BasicTimeSpec.findRespondingMethodFor(\new));
+		^super.new(quant, offset, latency)
+	}
 //	applyLatency { |argLatency|
 //		(latency == argLatency).if({
 //			^this
