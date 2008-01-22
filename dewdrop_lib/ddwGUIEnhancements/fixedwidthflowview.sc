@@ -11,10 +11,13 @@ FixedWidthFlowView : FlowView {
 			comparept = c.findRightBottom;
 			maxpt = maxpt.max(comparept);
 		});
-		this.view.bounds = new = mybounds.resizeTo(mybounds.width,
-			maxpt.y - mybounds.top + this.decorator.margin.y);
-		this.decorator.bounds = new;
-		// don't reflow unless asked
+		if(view.tryPerform(\relativeOrigin) ? false) {
+			new = mybounds.resizeTo(mybounds.width, maxpt.y + this.decorator.margin.y)
+		} {
+			new = mybounds.resizeTo(mybounds.width,
+				maxpt.y - mybounds.top + this.decorator.margin.y);
+		};
+		this.bounds_(new, reflow: false);	// don't reflow unless asked
 		^new
 	}
 
