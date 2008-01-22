@@ -96,13 +96,19 @@ ToggleTextField : SCViewAdapter {
 	}
 	
 	buttonBounds {
-		^Rect(bounds.left, bounds.top, buttonWidth, bounds.height)
-//		^Rect(0, 0, buttonWidth, bounds.height)
+		^if(view.tryPerform(\relativeOrigin) ? false) {
+			Rect(0, 0, buttonWidth, bounds.height)
+		} {
+			Rect(bounds.left, bounds.top, buttonWidth, bounds.height)
+		}
 	}
 	
 	textBounds {
-		^Rect(bounds.left + buttonWidth + 5, bounds.top,
-			bounds.width - buttonWidth - 5, bounds.height)
-//		^Rect(buttonWidth + 5, 0, bounds.width - buttonWidth - 5, bounds.height)
+		^if(view.tryPerform(\relativeOrigin) ? false) {
+			Rect(buttonWidth + 5, 0, bounds.width - buttonWidth - 5, bounds.height)
+		} {
+			Rect(bounds.left + buttonWidth + 5, bounds.top,
+				bounds.width - buttonWidth - 5, bounds.height)
+		}
 	}
 }
