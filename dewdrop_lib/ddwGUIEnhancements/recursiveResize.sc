@@ -57,18 +57,6 @@
 	}
 
 	isActive { ^dataptr.notNil }
-
-	absoluteBounds {
-		var	bounds = this.bounds;
-		this.getParents.do({ |parent|
-			(parent.tryPerform(\relativeOrigin) == true).if({
-				bounds = bounds.moveBy(parent.bounds.left, parent.bounds.top)
-			}, {
-				^bounds
-			});
-		});
-		^bounds
-	}
 }
 
 + StartRow {
