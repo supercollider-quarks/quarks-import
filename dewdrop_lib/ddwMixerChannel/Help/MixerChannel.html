@@ -11,18 +11,19 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 24.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #8d2222}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024a6; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #002b9b; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 12.0px Helvetica}
-span.s2 {color: #0024a6}
+span.s2 {color: #0000bf}
 span.s3 {color: #000000}
 span.s4 {color: #606060}
-span.s5 {color: #496d2c}
-span.s6 {color: #8d2222}
+span.s5 {color: #007300}
+span.s6 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -119,6 +120,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span>an Instr (which will be placed in a Patch, and the Patch returned:</p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>myPatch = myMixer.play(myInstr, args)</p>
 <p class="p3"><span class="Apple-tab-span">	</span>a Patch (or any subclass of AbstractPlayer)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>an Event Pattern (any pattern that can be .play'ed on its own)</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
 <p class="p3">Args are optional, and must be written in an array as in the usual syntax. The synth object will be placed at the tail of synthgroup.</p>
 <p class="p2"><br></p>
@@ -126,6 +128,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p5">a = m.play(<span class="s4">"pinkfilt"</span>, [<span class="s5">\freq</span>, 2000, <span class="s5">\rq</span>, 0.02]);</p>
 <p class="p5">a.free;</p>
+<p class="p2"><br></p>
+<p class="p3">Playing a pattern (without MixerChannel) takes the arguments clock, protoEvent and quant. With MixerChannel, place these parameters into a dictionary (Event) and supply it to the argument.</p>
+<p class="p2"><br></p>
+<p class="p5">p = m.play(<span class="s2">Pbind</span>(</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s5">\degree</span>, <span class="s2">Pn</span>(<span class="s2">Pseries</span>(0, 1, 8), <span class="s2">inf</span>),</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s5">\dur</span>, 0.125</p>
+<p class="p5">), (quant: 4.0));</p>
+<p class="p6"><br></p>
+<p class="p5">p.stop;</p>
 <p class="p2"><br></p>
 <p class="p3"><b>playfx(name, args)<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
@@ -232,10 +243,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">b = <span class="s2">MixerChannel</span>(<span class="s5">\src2</span>, s, 2, 2, outbus:a);</p>
 <p class="p8"><span class="s3">a.outbus = b;<span class="Apple-tab-span">	</span></span>// this will produce an error</p>
 <p class="p2"><br></p>
-<p class="p5">ERROR: MixerChannel(src1, localhost, 2, 2) -&gt; MixerChannel(src2, localhost, 1, 2) will produce an infinite loop.</p>
-<p class="p5">RECEIVER:</p>
-<p class="p5">Instance of MixerChannel {<span class="Apple-converted-space">    </span>(0FFCF620, gc=54, fmt=00, flg=00, set=05)</p>
-<p class="p5"><span class="Apple-tab-span">	</span>...</p>
+<p class="p11">ERROR: MixerChannel(src1, localhost, 2, 2) -&gt; MixerChannel(src2, localhost, 1, 2) will produce an infinite loop.</p>
+<p class="p11">RECEIVER:</p>
+<p class="p11">Instance of MixerChannel {<span class="Apple-converted-space">    </span>(0FFCF620, gc=54, fmt=00, flg=00, set=05)</p>
+<p class="p11"><span class="Apple-tab-span">	</span>...</p>
 <p class="p2"><br></p>
 <p class="p3"><b>NOTE:</b> The same error will occur if you try to create a MixerChannel with the same inbus and outbus. MixerChannel is not designed for that use. Instead, use MasterMixerChannel.</p>
 <p class="p2"><br></p>
