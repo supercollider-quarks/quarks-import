@@ -114,6 +114,24 @@
 	}
 }
 
++ Pattern {
+	playInMixerGroup { |mixer, target, patchType, args|
+		var	protoEvent, quant;
+		args ?? { args = () };
+		protoEvent = args[\protoEvent] ?? { Event.default.copy };
+		protoEvent.proto ?? { protoEvent.proto = () };
+		protoEvent.proto.putAll((
+			chan: mixer,
+			group: target,
+			bus: mixer.inbus,
+			outbus: mixer.inbus.index,
+			out: mixer.inbus.index,
+			i_out: mixer.inbus.index
+		));
+		^this.play(args[\clock], protoEvent, args[\quant])
+	}
+}
+
 
 // needed for type tests
 
