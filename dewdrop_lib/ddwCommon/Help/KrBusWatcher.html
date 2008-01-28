@@ -13,15 +13,16 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-span.s1 {color: #0000bf}
-span.s2 {color: #000000}
+span.s1 {color: #0000ff}
+span.s2 {color: #0000bf}
+span.s3 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><b>KrBusWatcher : NodeWatcher</b></p>
 <p class="p2"><br></p>
-<p class="p3">Repeatedly polls control buses for their value and updates dependents assigned to the bus objects. Based on NodeWatcher.</p>
+<p class="p3">Repeatedly polls control buses for their value and updates dependents assigned to the bus objects. Based on <a href="SC://NodeWatcher"><span class="s1">NodeWatcher</span></a>.</p>
 <p class="p2"><br></p>
 <p class="p3"><b>*newFrom(server)<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
@@ -54,22 +55,22 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4">s.boot;</p>
 <p class="p5"><br></p>
 <p class="p4">(</p>
-<p class="p4">b = <span class="s1">Bus</span>.control(s, 1);</p>
-<p class="p4">a = { <span class="s1">LFNoise1</span>.kr(0.1, 0.5, 0.5) }.play(s, b);</p>
-<p class="p4"><span class="s1">KrBusWatcher</span>.register(b);</p>
+<p class="p4">b = <span class="s2">Bus</span>.control(s, 1);</p>
+<p class="p4">a = { <span class="s2">LFNoise1</span>.kr(0.1, 0.5, 0.5) }.play(s, b);</p>
+<p class="p4"><span class="s2">KrBusWatcher</span>.register(b);</p>
 <p class="p5"><br></p>
-<p class="p4">f = <span class="s1">FlowView</span>.new;</p>
-<p class="p4">x = <span class="s1">GUI</span>.slider.new(f, <span class="s1">Rect</span>(0, 0, 100, 15));</p>
-<p class="p6"><span class="s2">u = </span>Updater<span class="s2">(b, { </span>|bus, val|</p>
+<p class="p4">f = <span class="s2">FlowView</span>.new;</p>
+<p class="p4">x = <span class="s2">GUI</span>.slider.new(f, <span class="s2">Rect</span>(0, 0, 100, 15));</p>
+<p class="p6"><span class="s3">u = </span>Updater<span class="s3">(b, { </span>|bus, val|</p>
 <p class="p4"><span class="Apple-tab-span">	</span>{ x.value_(val[0]); }.defer;</p>
 <p class="p4">});</p>
 <p class="p4">)</p>
 <p class="p5"><br></p>
 <p class="p4">(</p>
-<p class="p4"><span class="s1">KrBusWatcher</span>.unregister(b);</p>
+<p class="p4"><span class="s2">KrBusWatcher</span>.unregister(b);</p>
 <p class="p4">u.remove;</p>
 <p class="p4">a.free; b.free;</p>
-<p class="p4">a = b = f = x = u = <span class="s1">nil</span>;</p>
+<p class="p4">a = b = f = x = u = <span class="s2">nil</span>;</p>
 <p class="p4">)</p>
 </body>
 </html>

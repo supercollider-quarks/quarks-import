@@ -16,11 +16,12 @@ p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-span.s1 {text-decoration: underline}
-span.s2 {color: #0000bf}
-span.s3 {color: #007300}
-span.s4 {color: #000000}
-span.s5 {color: #bf0000}
+span.s1 {color: #0000ff}
+span.s2 {text-decoration: underline}
+span.s3 {color: #0000bf}
+span.s4 {color: #007300}
+span.s5 {color: #000000}
+span.s6 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -30,9 +31,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3">Objects for implementing more flexible quantized scheduling using TempoClock-play. Applies to any object that plays using TempoClock (such as Pbind).</p>
 <p class="p2"><br></p>
 <p class="p3"><b>NilTimeSpec</b> -- always schedules for now.</p>
-<p class="p3"><b>BasicTimeSpec</b> -- like standard scheduling: quant, phase, timing offset (see <b>[</b><b><span class="s1">Quant</span></b><b>]</b>).</p>
+<p class="p3"><b>BasicTimeSpec</b> -- like standard scheduling: quant, phase, timing offset (see <a href="SC://Quant"><span class="s1">Quant</span></a>).</p>
 <p class="p3"><b>AbsoluteTimeSpec</b> -- schedules for a specific, precalculated beat number. This time spec is valid until the given time passes; once the clock's beat counter goes past that time, an error will be thrown.</p>
-<p class="p3"><b>AbsoluteTimeSpecLeadTime</b> -- for use with BP in chucklib, and subtracts the leadTime of the process from the given time. See the <b>[</b><b><span class="s1">BP</span></b><b>]</b> help file for details.</p>
+<p class="p3"><b>AbsoluteTimeSpecLeadTime</b> -- for use with BP in chucklib, and subtracts the leadTime of the process from the given time. See the <b>[</b><b><span class="s2">BP</span></b><b>]</b> help file for details.</p>
 <p class="p3"><b>DelayTimeSpec</b> -- schedules for the given number of beats from now. You can give a pattern instead of a constant number for a different delay on each call.</p>
 <p class="p3"><b>DelayTimeSpecLeadTime</b> -- subtracts the lead time from the delay.</p>
 <p class="p2"><br></p>
@@ -56,30 +57,30 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p6"><b>Example:</b></p>
 <p class="p2"><br></p>
-<p class="p7"><span class="s2">SynthDescLib</span>.global.read;</p>
-<p class="p7">c = <span class="s2">Pbind</span>(<span class="s3">\freq</span>, <span class="s2">Pseq</span>(#[5000, 2500, 2500, 2500], <span class="s2">inf</span>), <span class="s3">\delta</span>, 1, <span class="s3">\legato</span>, 0.01, <span class="s3">\instrument</span>, <span class="s3">\default</span>);</p>
-<p class="p7">p = <span class="s2">Pbind</span>(<span class="s3">\freq</span>, <span class="s2">Pfunc</span>({ rrand(200, 800) }), <span class="s3">\delta</span>, 0.25, <span class="s3">\legato</span>, 0.6, <span class="s3">\instrument</span>, <span class="s3">\default</span>);</p>
+<p class="p7"><span class="s3">SynthDescLib</span>.global.read;</p>
+<p class="p7">c = <span class="s3">Pbind</span>(<span class="s4">\freq</span>, <span class="s3">Pseq</span>(#[5000, 2500, 2500, 2500], <span class="s3">inf</span>), <span class="s4">\delta</span>, 1, <span class="s4">\legato</span>, 0.01, <span class="s4">\instrument</span>, <span class="s4">\default</span>);</p>
+<p class="p7">p = <span class="s3">Pbind</span>(<span class="s4">\freq</span>, <span class="s3">Pfunc</span>({ rrand(200, 800) }), <span class="s4">\delta</span>, 0.25, <span class="s4">\legato</span>, 0.6, <span class="s4">\instrument</span>, <span class="s4">\default</span>);</p>
 <p class="p8"><br></p>
-<p class="p9"><span class="s4">c.play(quant: 4);<span class="Apple-tab-span">	</span></span>// start a metronome</p>
+<p class="p9"><span class="s5">c.play(quant: 4);<span class="Apple-tab-span">	</span></span>// start a metronome</p>
 <p class="p8"><br></p>
-<p class="p9"><span class="s4">e = p.play(quant: </span><span class="s2">nil</span><span class="s4">);<span class="Apple-tab-span">	</span></span>// not synced with metronome</p>
+<p class="p9"><span class="s5">e = p.play(quant: </span><span class="s3">nil</span><span class="s5">);<span class="Apple-tab-span">	</span></span>// not synced with metronome</p>
 <p class="p7">e.stop;</p>
 <p class="p8"><br></p>
-<p class="p9"><span class="s4">e = p.play(quant: 4);<span class="Apple-tab-span">	</span></span>// synced -- this is standard SC play syntax, so no old stuff is broken</p>
+<p class="p9"><span class="s5">e = p.play(quant: 4);<span class="Apple-tab-span">	</span></span>// synced -- this is standard SC play syntax, so no old stuff is broken</p>
 <p class="p7">e.stop;</p>
 <p class="p8"><br></p>
-<p class="p7">e = p.play(quant: <span class="s2">BasicTimeSpec</span>(4));</p>
+<p class="p7">e = p.play(quant: <span class="s3">BasicTimeSpec</span>(4));</p>
 <p class="p7">e.stop;</p>
 <p class="p8"><br></p>
 <p class="p7">[4, 2].asTimeSpec.dump;</p>
 <p class="p8"><br></p>
-<p class="p7">e = p.play(quant: [4, 2].asTimeSpec);<span class="Apple-tab-span">	</span><span class="s5">// synced, on "beat 3 of the measure"</span></p>
+<p class="p7">e = p.play(quant: [4, 2].asTimeSpec);<span class="Apple-tab-span">	</span><span class="s6">// synced, on "beat 3 of the measure"</span></p>
 <p class="p7">e.stop;</p>
 <p class="p8"><br></p>
 <p class="p9">// cmd-. to stop metronome</p>
 <p class="p2"><br></p>
 <p class="p6"><b>Extensibility:</b></p>
 <p class="p2"><br></p>
-<p class="p3">You can write your own TimeSpecs. They need to respond to <b>nextTimeOnGrid(clock)</b> and return the absolute number of beats when the event should be scheduled (suitable for TempoClock-schedAbs). See the class definitions for the above timespecs for examples of how to do it. For chucklib compatibility, you should also implement <b>bpSchedTime(bp)</b>, which gets the next time on grid and subtract the input process's lead time. The BP process is passed into bpSchedTime so that any values in the BP object can be used to calculate the schedule time.</p>
+<p class="p3">You can write your own TimeSpecs. They need to respond to <b>nextTimeOnGrid(clock)</b> and return the absolute number of beats when the event should be scheduled (suitable for TempoClock-schedAbs). See the class definitions for the above timespecs for examples of how to do it. For chucklib compatibility, you should also implement <b>bpSchedTime(bp)</b>, which gets the next time on grid and subtracts the input process's lead time. The BP process is passed into bpSchedTime so that any values in the BP object can be used to calculate the scheduling time.</p>
 </body>
 </html>

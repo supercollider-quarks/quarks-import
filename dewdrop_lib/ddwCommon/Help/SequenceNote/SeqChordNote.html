@@ -1,48 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="824.42">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-    span.s1 {text-decoration: underline}
-    span.s2 {color: #000000}
-    span.s3 {color: #0000bf}
-    span.s4 {color: #bf0000}
-    span.s5 {color: #007300}
-    span.Apple-tab-span {white-space:pre}
-  </style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.44">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #a41919}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a41919}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001ab2}
+span.s1 {color: #0000ff}
+span.s2 {color: #000000}
+span.s3 {color: #001ab2}
+span.s4 {color: #a41919}
+span.s5 {color: #36701f}
+span.Apple-tab-span {white-space:pre}
+</style>
 </head>
 <body>
 <p class="p1"><b>SeqChordNote : SequenceNote</b></p>
 <p class="p2"><br></p>
 <p class="p3">Encapsulates all the notes of a chord into a single object. This way, manipulations on an array of note objects will not break a chord.</p>
 <p class="p2"><br></p>
-<p class="p3">See <span class="s1"><b>[SequenceNote]</b></span> for the base class, and <span class="s1"><b>[SequenceItem]</b></span> for a grace note + chord object.</p>
+<p class="p3">See <a href="SequenceNote.html"><span class="s1">SequenceNote</span></a> for the base class, and <a href="SequenceItem.html"><span class="s1">SequenceItem</span></a> for a grace note + chord object.</p>
 <p class="p2"><br></p>
 <p class="p3">A chord includes several notes, most of which must be very short to preserve the illusion of a simultaneous attack. SeqChordNote and its subclass, SequenceItem, use a new variable, shortDur, for the duration of the main note before playing the first chord note. As before, dur represents the delta between the first note of this chord and the first note of the next sequence note object.</p>
 <p class="p2"><br></p>
 <p class="p3">In the diagram below, N1 represents the primary note of the SeqChordNote object. That is, the freq, length and args instance variables of the SeqChordNote contain data for N1. Pitch and duration of information for N2 and N3 are contained in the chordNotes array.</p>
 <p class="p2"><br></p>
 <p class="p4">/** N1-3: one chord **/<span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>/** Next distinct event **/</p>
-<p class="p2"><b></b><br></p>
+<p class="p2"><br></p>
 <p class="p3"><b>*N1*<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>N2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>N3<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>N4</b></p>
 <p class="p2"><br></p>
-<p class="p3">^<span class="s1"><span class="Apple-tab-span">	</span><b>A</b><span class="Apple-tab-span">	</span></span>^</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="s1"><span class="Apple-tab-span">	</span><b>B</b><span class="Apple-tab-span">	</span></span>^</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="s1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>C</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>^</p>
-<p class="p3">^<span class="s1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>D</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>^</p>
+<p class="p3">^<span class="Apple-tab-span">	</span><b>A</b><span class="Apple-tab-span">	</span>^</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="Apple-tab-span">	</span><b>B</b><span class="Apple-tab-span">	</span>^</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>C</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^</p>
+<p class="p3">^<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>D</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>^</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p3"><b>A:</b> shortDur</p>
@@ -175,7 +175,7 @@
 <p class="p2"><br></p>
 <p class="p3">This MIDIRecBuf contains a simple I-IV-V-I in C major. After parsing, the buffer has only 4 objects in the array. But, when you stream out the notes in the buffer, everything comes back as it should.</p>
 <p class="p2"><br></p>
-<p class="p3">See <span class="s1"><b>[MIDIRecBuf]</b></span> for details on the parsing algorithm.</p>
+<p class="p3">See <b>[MIDIRecBuf]</b> for details on the parsing algorithm.</p>
 <p class="p2"><br></p>
 <p class="p9"><span class="s2">b = </span>MIDIRecBuf<span class="s2">(</span><span class="s5">\cmaj</span><span class="s2">, [</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span>#[60, 64, 67, 60, 65, 69, 62, 67, 71, 64, 67, 72],</p>
