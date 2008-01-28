@@ -10,16 +10,17 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-span.s1 {color: #000000}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a41919}
+span.s1 {color: #0000ff}
+span.s2 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><b>VoicerProxy</b></p>
 <p class="p2"><br></p>
-<p class="p3">A place-holder for a <b>[Voicer]</b>. Created automatically when a Voicer is .gui'ed.</p>
+<p class="p3">A place-holder for a <a href="Voicer.html"><span class="s1">Voicer</span></a>. Created automatically when a Voicer is .gui'ed.</p>
 <p class="p2"><br></p>
 <p class="p3">VoicerProxy makes it easy to replace the voicer represented in a particular GUI. There is no need to destroy GUI objects for one voicer and create new ones for the next. Simply assign a new voicer to the proxy, and the proxy takes responsibility for synchronizing the GUI.</p>
 <p class="p2"><br></p>
@@ -60,11 +61,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><b>Assignment:</b></p>
 <p class="p2"><br></p>
-<p class="p5"><span class="s1">aProxy.voicer = aVoicer;<span class="Apple-tab-span">	</span></span>// everything updates: gui, MIDI, controls, etc.</p>
+<p class="p5"><span class="s2">aProxy.voicer = aVoicer;<span class="Apple-tab-span">	</span></span>// everything updates: gui, MIDI, controls, etc.</p>
 <p class="p2"><br></p>
 <p class="p3"><b>Freeing:</b></p>
 <p class="p2"><br></p>
-<p class="p5"><span class="s1">aProxy.free;<span class="Apple-tab-span">	</span></span>// assigns the Voicer's proxy to nil (and global controls) and removes gui</p>
+<p class="p5"><span class="s2">aProxy.free;<span class="Apple-tab-span">	</span></span>// assigns the Voicer's proxy to nil (and global controls) and removes gui</p>
 <p class="p2"><br></p>
 </body>
 </html>

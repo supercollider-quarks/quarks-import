@@ -1,5 +1,5 @@
 
-DynMultiEQ {	// container for specifications for an EQ bank
+MultiEQ {	// container for specifications for an EQ bank
 	// creates an individual synthdef for each band and allows placing on server	// H. James Harkins, Jan 2003 - jamshark70@dewdrop-world.net	// based on Joseph Anderson's Regalia-Mitra EQ classes	// ftp://ftp.music.washington.edu/Public/jla/RM_Filters.sit		classvar	numArgs = 4,	// must equal the number of eq parms: type, freq, k, rq			<>sampleRate = 44100;
 		var	<spec,	// List of EQBand		<numChannels,
 		<target, <bus, <addAction, <mul = 1,
@@ -80,7 +80,6 @@ DynMultiEQ {	// container for specifications for an EQ bank
 //	guiClass { ^MultiEQGUI }
 }
 
-MultiEQ : DynMultiEQ { }
 
 StaticEQ {
 	// make a static synthdef out of given specs
