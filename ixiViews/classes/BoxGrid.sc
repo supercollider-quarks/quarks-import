@@ -123,7 +123,7 @@ BoxGrid {
 				row.do({arg node; 
 					if(node.state == true, {
 						if(fillmode, {
-							pen.color = fillcolor;
+							pen.color = node.color;
 							//if( fillColor != node.color, { pen.fillColor = fillColor = node.color });
 							pen.fillRect(node.fillrect);
 							pen.color = Color.black;

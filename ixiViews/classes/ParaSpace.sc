@@ -2,11 +2,12 @@
 // GNU licence - google it.
 
 
+
 ParaSpace {
 
 	var <>paraNodes, connections; 
 	var chosennode, mouseTracker;
-	var win, bounds;
+	var win, <bounds;
 	var downAction, upAction, trackAction, keyDownAction, rightDownAction, overAction, connAction;
 	var backgrDrawFunc;
 	var background, fillcolor;
@@ -58,9 +59,9 @@ ParaSpace {
 		pen	= GUI.pen;
 
 		// tracking the delete button
-		keytracker = GUI.userView.new(win, Rect(-10, -10, 10, 10))
+		keytracker = GUI.userView.new(win, Rect(-10, -10, 5, 5))
 			.canFocus_(true)
-			.keyDownFunc_({ |me, key, modifiers, unicode | // not = keyDownAction_ (as sciss says)
+			.keyDownAction_({ |me, key, modifiers, unicode | // not = keyDownAction_ (as sciss says)
 				if(unicode == 127, {
 					selNodes.do({arg box; 
 						paraNodes.copy.do({arg node, i; 

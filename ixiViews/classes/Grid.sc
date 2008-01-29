@@ -182,7 +182,8 @@ Grid {
 				});
 			});
 			pen.stroke;
-		});
+			});
+
 	}
 	
 	// GRID
