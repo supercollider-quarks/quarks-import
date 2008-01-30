@@ -53,10 +53,6 @@ SequenceNote : AbstractFunction {
 	numPerformBinaryOpOnNumber { arg aSelector, aNumber;
 		^aNumber.perform(aSelector, freq)
 	}
-		// have to think through this one	
-//	performBinaryOpOnSeqColl { arg aSelector, theOperand;
-//		theOperand.performBinaryOp(aSelector, freq)
-//	}
 
 		// compares frequency only. To compare the whole note use identity ===
 		// these do not work if you do 3 == aNote
@@ -71,9 +67,6 @@ SequenceNote : AbstractFunction {
 	asInteger { ^freq.asInteger }
 	asFloat { ^freq.asFloat }
 		
-//			// nothing interesting here but SeqChordNote and SequenceItem do other stuff
-//	freq_recalc { |newFreq| freq = newFreq; }
-	
 	convertGates {
 		args.isNumber.if({
 			^this.copy.args_([\gate, args])
@@ -189,13 +182,6 @@ SeqChordNote : SequenceNote {	// chord, no grace notes
 		^SequenceItem(freq, dur, length, args, notes, chordNotes)
 	}
 	
-//	freq_recalc { |newFreq|
-//		var	freqAdj;
-//		freqAdj = newFreq - freq;
-//		chordNotes.do({ |n| n.freq_(n.freq - freqAdj) });
-//		freq = newFreq;
-//	}
-//	
 		// outputs a new object
 	mapMode { |mode|
 		var	newFreq;
@@ -295,14 +281,6 @@ SequenceItem : SeqChordNote {	// add grace notes
 				{ (chordNotes + freq).unmapMode(mode) }))
 	}
 	
-//	freq_recalc { |newFreq|
-//		var	freqAdj;
-//		freqAdj = newFreq - freq;
-//		chordNotes.do({ |n| n.freq_(n.freq - freqAdj) });
-//		graceNotes.do({ |n| n.freq_(n.freq - freqAdj) });
-//		freq = newFreq;
-//	}
-//	
 	dur_ { |newDur|
 		var	ratio;
 		ratio = newDur / dur;

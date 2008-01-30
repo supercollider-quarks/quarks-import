@@ -56,7 +56,6 @@ MultiEQGUI {
 		this.resizeWindow;
 		origin = Point(10, 60);
 		bandguis.do({ arg g;
-//origin.postln;
 			g.origin_(origin).update;
 			origin = origin + Point(0, EQBandGUI.bandSize.y + 20);
 		});
@@ -80,7 +79,6 @@ MultiEQGUI {
 			eq.editor = nil;
 			(caller == \edit).if({	// editor should clean itself up
 				eq.free;
-//				eq.target.free;    // ?????????
 			});
 		}
 	}
@@ -123,7 +121,6 @@ EQBandGUI {
 		rqTxBounds = Rect(550, 30, 75, 20);
 		bypassBounds = Rect(640, 0, 25, 20);
 		removeBounds = Rect(675, 0, 50, 20);
-//		Class.initClassTree(GUI);
 		Class.initClassTree(StaticEQ);
 		typesArray = StaticEQ.eqFuncs.keys.asArray.sort;
 		Class.initClassTree(Spec);
@@ -140,8 +137,7 @@ EQBandGUI {
 	init { arg org, bnd, par;
 		band = bnd.gui_(this);
 		parent = par;
-		{ typeMenu = GUI.popUpMenu.new(parent.w, typeBounds)	// fill views with generic bounds
-			.items_(typesArray)
+		{ typeMenu = GUI.popUpMenu.new(parent.w, typeBounds)			.items_(typesArray)
 			.font_(textFont)
 			.action_(this.typeMenuAction);
 		freqSlider = GUI.slider.new(parent.w, freqSlBounds)

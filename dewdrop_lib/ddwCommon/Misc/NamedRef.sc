@@ -57,6 +57,4 @@ NamedRef : Ref {
 	}
 	
 	asString { ^name.asString }		// for display
-
-//	storeArgs { ^[value, name, type, properties] }
 }

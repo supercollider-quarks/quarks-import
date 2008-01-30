@@ -112,7 +112,6 @@ GlobalControlBase : AbstractFunction {
 		(proxy.notNil).if({
 			proxy.updateGUI(false);
 		});
-// ????
 //		this.changed((what: \value, updateGUI: updateGUI, resync: resync));
 	}
 	
@@ -304,9 +303,6 @@ VoicerGCProxy {
 		gc = c;
 		gc.notNil.if({ gc.proxy_(this); });	// set new connection
 		this.changed((what: \gc, resync:true));	// update gui and midicontrol
-//		gui.notNil.if({
-//			gui.updateStatus;	// gui should know how to change its name, spec etc.
-//		});
 	}
 	
 	bindGenericGlobalControl { |inputControl|
@@ -320,11 +316,8 @@ VoicerGCProxy {
 	}
 	
 	set { arg value, updateGUI = true, latency, resync = true;
-//"\n\n\nVoicerGCProxy-set".postln;
-//this.dumpBackTrace;
 		gc.notNil.if({ gc.set(value, false, latency, resync) });
 		this.changed((what: \value, updateGUI: updateGUI, resync: resync));
-//		(updateGUI and: { gui.notNil }).if({ gui.update });
 	}
 	
 	update { arg theChanger, args;
@@ -387,8 +380,6 @@ VoicerGCProxy {
 	
 	proxify { ^this }
 	
-//	parentProxy { ^gc.parentProxy }
-	
 }
 
 	// this gives you a name and NumberEditorGui for a global control
@@ -406,12 +397,9 @@ VoicerGCView {
 	}
 
 	init { arg gcproxy, doRefresh = true, voicerGUI;
-//		var voicerGUI;
 			// only create an editor if there isn't one and a voicer editor is open
 			// in what innocent circumstances will this test crash?
 		model = gcproxy;
-//["VoicerGCView-init", model.parentProxy.editor].postln;
-//this.dumpBackTrace;
 			// using ?? for conditional execution -- model.parentProxy.editor may fail,
 			// but it shouldn't if voicerGUI was passed in as argument
 		(voicerGUI = voicerGUI ?? { model.parentProxy.editor }).notNil.if({
@@ -437,7 +425,6 @@ VoicerGCView {
 	}
 
 	remove { arg doRefresh = true, resizeNow = true;
-//"VoicerGCView-remove".postln;
 		editor.removeDependant(model);
 		this.releaseFromDependencies;
 		doRefresh.if({  // doRefresh is true when removing a control, false when freeing whole gui
@@ -460,7 +447,7 @@ VoicerGCView {
 		(nameView.notNil and: { nameView.notClosed }).if({
 			dispName = model.name.asString;
 			cc = model.midiControl;  // do I have a controller num?
-//				// fix display name if it's midi-routed
+				// fix display name if it's midi-routed
 			cc.notNil.if({
 				{ midiName = cc.ccnum.shortName }.try({ |err| 
 					if(err.species == DoesNotUnderstandError and: { err.selector == \shortName }) {
@@ -478,11 +465,6 @@ VoicerGCView {
 		args.notNil.if({
 			switch(args[\what])
 				{ \value } { this.updateView(args[\updateBus] ? true) }
-//				{ \spec } {
-////					editor.spec_(model.spec);
-//					this.updateView(false);
-//					this.updateStatus;
-//				}
 				{		// default action, update gui
 					this.updateView(false);
 					this.updateStatus;

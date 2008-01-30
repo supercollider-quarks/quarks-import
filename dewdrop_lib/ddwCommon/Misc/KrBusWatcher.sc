@@ -12,9 +12,6 @@
 KrBusWatcher : NodeWatcher {
 	classvar	<>allBusWatchers;
 	
-//	var	<multiChanBuses;	// superclass nodes var is used for single chan buses
-//						// this one is for multichan (2 msgs must be sent)
-//	
 	var	<aliveThread, <>updateFreq = 2, <>server;
 
 	*initClass {
@@ -37,7 +34,6 @@ KrBusWatcher : NodeWatcher {
 	
 	clear {
 		nodes = IdentityDictionary.new;
-//		multiChanBuses = IdentityDictionary.new;
 		this.stopAliveThread;
 	}
 	
@@ -77,12 +73,7 @@ KrBusWatcher : NodeWatcher {
 	startAliveThread {
 		aliveThread = aliveThread ?? {
 			Routine({
-//				var	msgArgs;
 				inf.do({
-						// only send messages if nodes exist
-//					(nodes.size > 0).if({
-//						server.sendBundle(nil, ([\c_get] ++ nodes.collect(_.index)));
-//					});
 					(nodes.size > 0).if({
 						nodes.values.asArray.clump(10).do({ |busgroup|
 							server.sendBundle(nil, [\c_getn]
@@ -103,17 +94,6 @@ KrBusWatcher : NodeWatcher {
 		aliveThread = nil;
 	}
 
-	// private
-//	c_set { |msg|
-//		var bus;
-//		forBy(1, msg.size, 2, { |i|
-//			bus = nodes.at(msg.at(i));
-//			bus.notNil.if({
-//				bus.changed(msg[i+1])
-//			});
-//		});
-//	}
-//	
 	c_setn { |msg|
 		var bus, i;
 		i = 1;

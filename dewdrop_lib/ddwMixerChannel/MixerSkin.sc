@@ -142,7 +142,7 @@ MixerWidgetBase {
 		});
 	}
 	free {
-		view.remove;
+		view.notClosed.if({ view.remove });
 	}
 	sendType { ^nil }
 	restoreView {}
@@ -251,14 +251,14 @@ MixerPresendWidget {
 		mixer !? {
 			(menu.value != oldValue).if({
 					// if old value is "none," create a presend
-				(oldValue == (menu.items.size-1)).if({
+				(oldValue == (gui.menuItems.size-1)).if({
 						// default level is 0
 					"Making presend".postln;
 					MixerPreSend.new(mixer, menu.value, 0);
 					slider.setProperty(\value, 0);
 				}, {
 						// if new value is "none," free the presend
-					(menu.value == (menu.items.size-1)).if({
+					(menu.value == (gui.menuItems.size-1)).if({
 						("Freeing presend " ++ index).postln;
 						(mixer.preSends[index]).free;
 					}, {
@@ -295,12 +295,11 @@ MixerPresendWidget {
 	}
 
 	clearView { 
-		this.updateMenu;
 		slider.value_(0);
+		this.updateMenu;
 	}
 	
 	refresh { |bounds|
-//"send gui refresh".debug;
 		slider.bounds = this.getSliderBounds(bounds);
 		menu.bounds = this.getMenuBounds(bounds);
 		this.updateMenu;
@@ -308,7 +307,7 @@ MixerPresendWidget {
 	}
 
 	free {
-		menu.remove; slider.remove;
+		menu.notClosed.if({ menu.remove; slider.remove });
 	}
 }
 
@@ -327,14 +326,14 @@ MixerPostsendWidget : MixerPresendWidget {
 		mixer !? {
 			(menu.value != oldValue).if({
 					// if old value is "none," create a postsend
-				(oldValue == (menu.items.size-1)).if({
+				(oldValue == (gui.menuItems.size-1)).if({
 						// default level is 0
 					"Making postsend".postln;
 					MixerPostSend.new(mixer, menu.value, 0);
 					slider.setProperty(\value, 0);
 				}, {
 						// if new value is "none," free the postsend
-					(menu.value == (menu.items.size-1)).if({
+					(menu.value == (gui.menuItems.size-1)).if({
 						("Freeing postsend " ++ index).postln;
 						(mixer.postSends[index]).free;
 					}, {

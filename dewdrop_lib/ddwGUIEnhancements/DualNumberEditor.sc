@@ -22,7 +22,6 @@ DualNumberEditor : NumberEditor {
 	value_ { arg val;
 		int = val.asInteger;
 		fract = (val-int).round(fractspec.step);
-//		this.changed;   // ??????
 	}
 	
 	guiClass { ^DualNumberEditorGUI }

@@ -2,15 +2,7 @@
 TempoClick {
 	// takes a tempoclock, plays impulses on a kr bus based on the clock
 	
-	// this latency adjustment works on my iBook 700mHz
-	// if your routines don't play in sync with BufferSeq's,
-	// adjust this number. Smaller values mean the BufferSeq's
-	// will play slightly later.
-	// not yet determined if the correct latencyFudge depends on desired tempo
-
-	// 29 nov 06: latencyFudge is deprecated; variable kept for backward compatibility
 	classvar	<>latencyFudge = 0;
-//			nodeIDStart = 500, lastIDUsed;	// for bouncing between 2 reserved node IDs
 	
 	var	<server, <clock, <bus, <subdiv, <nodeID, nodeIDBounce;
 	var	aliveThread;
@@ -38,7 +30,6 @@ TempoClick {
 		clock.addDependant(this);
 		nodeID = server.nodeAllocator.allocPerm;
 		id2 = server.nodeAllocator.allocPerm;
-//		nodeID = nodeID.isNil.if({ nodeIDStart }, { lastIDUsed = lastIDUsed + 2 });
 		nodeIDBounce = nodeID + id2;
 		this.play;
 	}
@@ -46,7 +37,6 @@ TempoClick {
 	play {
 		server.waitForBoot({	// when server is booted
 			bus.isNil.if({ bus = Bus.control(server, 1) });
-//			synth.notNil.if({ synth.free });
 			this.startAliveThread;
 		});
 	}
@@ -81,7 +71,6 @@ TempoClick {
 		clock.removeDependant(this);
 		server.nodeAllocator.freePerm(nodeID);
 		server.nodeAllocator.freePerm(nodeIDBounce - nodeID);
-//		server.nodeAllocator.freePerm((nodeIDBounce - 1) >> 1);
 	}
 	
 	update {

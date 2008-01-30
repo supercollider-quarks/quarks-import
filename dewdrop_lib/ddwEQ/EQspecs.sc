@@ -57,14 +57,6 @@ MultiEQ {	// container for specifications for an EQ bank
 		isPlaying = false;
 	}
 	
-//	mul_ { arg m;
-//		mul = m ? 1;
-//		spec.at(0).mul_(mul);
-//		for(1, spec.size-1, { arg i;
-//			spec.at(i).mul_(1);
-//		});
-//	}
-
 	asString { 		var out;		out = "MultiEQ.new(" ++ numChannels ++ ", ";   // initialize string		spec.do( {		// loop through filters			arg s, i;			(i > 0).if({ out = out ++ ", " });  // skip comma for first eq			out = out ++ "\\" ++ s.type				++ ", " ++ s.freq.round(0.001)				++ ", " ++ s.k.ampdb.round(0.001) ++ ".dbamp"				++ ", " ++ s.rq.round(0.001);		});		^(out ++ ")")	}		edit { arg targ, b, addAct = \addToTail, amp = 1;	// just like .play
 			// assumes your synth or process is already playing
 		isPlaying.not.if({ this.play(targ, b, addAct, amp); });  // should be playing to edit
@@ -76,9 +68,7 @@ MultiEQ {	// container for specifications for an EQ bank
 	}
 
 	gui { MultiEQGUI.new(this, target.tryPerform(\name) ++ " EQ Editor") }
-	
-//	guiClass { ^MultiEQGUI }
-}
+}
 
 
 StaticEQ {
@@ -131,8 +121,6 @@ StaticEQ {
 	}
 	
 	prepareForPlay { arg targ, b, addAction = \addToTail;
-//"StaticEQ-prepareForPlay".postln;
-
 		this.fixTarget(targ, b, addAction);
 			// will this choke if completionMsg is nil?
 		this.asSynthDef.send(target.server);
@@ -144,8 +132,6 @@ StaticEQ {
 			// no provision for changing synth--
 			// if you need to change, use DynMultiEQ
 		var bundle;
-//"StaticEQ-play".postln;
-
 				// if already playing and not moving, do nothing
 		(synth.notNil && targ.isNil).if({ ^this });
 				// now we know targ is not nil, so we're moving
@@ -165,15 +151,11 @@ StaticEQ {
 		readyForPlay.if({
 			synth = Synth.basicNew(defname, target.server);
 			bundle.add(synth.newMsg(target, [\bus, bus.index, \mul, mul], addAction));
-//			synth = Synth.newToBundle(bundle, defname, 
-//				[\bus, bus.index, \mul, mul], target, addAction);
 			target.server.listSendBundle(nil, bundle);
 		}, {		// if it's not ready, make the synthdef, send it, and create the synth when done
 			defname = this.makeSynthName;
 			synth = Synth.basicNew(defname, target.server);
 			bundle.add(synth.newMsg(target, [\bus, bus.index, \mul, mul], addAction));
-//			synth = Synth.newToBundle(bundle, defname, 
-//				[\bus, bus.index, \mul, mul], target, addAction);
 			this.asSynthDef.send(target.server, bundle.at(0));
 		});
 		
