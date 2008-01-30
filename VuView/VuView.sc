@@ -1,4 +1,4 @@
-// 06/2006 blackrain@realizedsound.net
+// 06/2006 blackrain at realizedsound dot net
 
 VuView : SCUserView  {
 	var <value=0;
