@@ -1,7 +1,7 @@
 // blackrain at realizedsound dot net - 05/2006
 //	fix key modidiers bug by Stephan Wittwer 08/2006 - thanks!
 //	Knob updates only on value changes - 10/2006
-//	GUI.cocoa changes by Sciss - 07/2007
+//	GUI.cocoa changes - 04/2007
 
 Knob : SCUserView {
 	classvar <>defaultMode;
@@ -10,7 +10,7 @@ Knob : SCUserView {
 	*viewClass { ^GUI.userView }
 
 	*initClass {
-		defaultMode='round'; // early so this can be changed in startup
+		defaultMode='round'; // we set this early so it can be changed in startup
 		StartUp.add({ var kit;
 			kit = GUI.schemes[ \cocoa ];
 			if( kit.notNil, { kit.knob = Knob });
@@ -181,7 +181,7 @@ Knob : SCUserView {
 		^value
 	}
 	defaultCanReceiveDrag {
-		^currentDrag.isFloat;
+		^currentDrag.isNumber;
 	}
 }
 

@@ -2,19 +2,19 @@
 // blackrain at realizedsound dot net - 0106
 
 KnobEditorGui : EditorGui {
-	var <>knob, <>numv, <>roundVal = 0.001, size, <enabled=true;
+	var <>knob, <>numv, <>roundVal = 0.0001, size, <enabled=true, backColor;
 
-	guiBody { arg layout, size=28, centered=false, hasBox=true;
-		this.kn(layout, size, centered);
+	guiBody { arg layout, knobSize=28, numWidth=48, numHeight=14, hasBox=true, background;
+		layout.bounds = layout.bounds.width_(numWidth);
+		backColor = background ? Color.blue(0.1, 0.1);
+		this.kn(layout, knobSize);
 		if(hasBox,{
-			layout.startRow;
-			this.box(layout, size);
+			this.box(layout, numWidth-8, numHeight);
 		});
 	}
 	
-	kn { arg layout, size, centered=false;
+	kn { arg layout, size;
 		knob = GUI.knob.new(layout, size @ size);
-		knob.centered = centered;
 		knob.color[0] = this.knobColor;
 		knob.action_({arg v; 
 			model.activeValue_(model.spec.map(v.value)).changed(this);
@@ -22,32 +22,38 @@ KnobEditorGui : EditorGui {
 		knob.receiveDragHandler = { arg kn;
 			kn.valueAction = model.spec.unmap(SCView.currentDrag);
 		};
-		knob.beginDragAction = { arg kn;
-			model.spec.map(kn.value)
-		};
+		knob.beginDragAction = { model.value };
 		knob.value = model.spec.unmap(model.poll);
 		if(consumeKeyDowns,{ knob.keyDownAction = {nil}; });
 	}
 
-	box { arg layout, x, y=17;
-		var r;
-		x = x ? 40;
+	box { arg layout, x, y=14;
 		numv = GUI.numberBox.new(layout, x.max(40) @ y)
 			.object_(model.poll)
 			.action_({ arg nb;
 				model.activeValue_(nb.value).changed(numv);
 			})
 			.canReceiveDragHandler_({ SCView.currentDrag.isFloat })
-			.beginDragAction_({|v|
-				model.value
-			})
+			.beginDragAction_({ model.value })
 			.receiveDragHandler_({|v|
-				v.value = SCView.currentDrag.round(roundVal);
+				var val = SCView.currentDrag;
+				if (val < 0) {
+					v.value = val.round(roundVal)
+				}{
+					v.value = val
+				};
 				model.activeValue_(SCView.currentDrag).changed(numv);
-			})
-			.value_(model.value.round(roundVal));
+			});
+		
+		numv.value_(
+			if (model.value < 0) {
+				model.value.round(roundVal)
+			}{
+				model.value
+			}
+		);
 		numv.step = roundVal;
-		if(consumeKeyDowns,{ numv.keyDownAction = {nil}; });
+		if(consumeKeyDowns,{ numv.keyDownAction = { nil }; });
 	}
 	
 	centered_ { arg mode;
@@ -64,8 +70,10 @@ KnobEditorGui : EditorGui {
 			var val;
 			if(changer !== numv and: {numv.notNil},{
 				val = model.poll;
-				if (val <= -10, { roundVal = 0.01; });
-				numv.value_(val.round(roundVal));
+				if (val < 0) {
+					val = val.round(roundVal);
+				};
+				numv.value_(val);
 			});
 			if(changer !== knob,{
 				knob.value_(model.spec.unmap(model.poll));
@@ -74,7 +82,7 @@ KnobEditorGui : EditorGui {
 		}.defer;
 	}
 
-	background { ^Color.blue(0.2, 0.1) }
+	background { ^backColor }
 	knobColor { ^Color.blue(0.6, 0.3) }
 }
 
