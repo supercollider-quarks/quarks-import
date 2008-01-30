@@ -53,9 +53,7 @@ EZKnob	{
 			kn.valueAction = controlSpec.unmap(SCView.currentDrag);
 		};
 		
-		knobView.beginDragAction = { arg kn;
-			controlSpec.map(kn.value)
-		};
+		knobView.beginDragAction = { value };
 
 		numberView = GUI.numberBox.new(cv, numberWidth @ dimensions.y);
 		numberView.action = {
@@ -63,6 +61,7 @@ EZKnob	{
 			knobView.value = controlSpec.unmap(value);
 			action.value(this);
 		};
+		numberView.beginDragAction = { value };
 		
 		if (initAction, {
 			this.value = initVal;
@@ -75,10 +74,10 @@ EZKnob	{
 	}
 	value_ { arg value; if( knobView.enabled, { numberView.valueAction = value }) }
 	set { arg label, spec, argAction, initVal, initAction=false;
-		labelView.string = label;
-		controlSpec = spec.asSpec;
-		action = argAction;
-		initVal = initVal ? controlSpec.default;
+		labelView.string = label ? labelView.string;
+		controlSpec = (spec ? controlSpec).asSpec;
+		action = argAction ? action;
+		initVal = initVal ? value; //controlSpec.default;
 		if( knobView.enabled, { 
 			if (initAction) {
 				this.value = initVal;

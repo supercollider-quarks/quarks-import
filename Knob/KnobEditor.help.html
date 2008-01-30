@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.41">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande; min-height: 15.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf; min-height: 12.0px}
+span.s1 {font: 12.0px Lucida Grande}
+span.s2 {font: 12.0px Helvetica}
+span.s3 {color: #007300}
+span.s4 {color: #0000bf}
+span.s5 {color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>KnobEditor KrKnobEditor IrKnobEditor</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1"><b>KnobEditor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>A Scalar control object with a Knob and a NumberBox GUI controls.</p>
+<p class="p3"><span class="s1"><b>IrKnobEditor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>A Instrument rate control object with a Knob and a NumberBox GUI controls.</p>
+<p class="p3"><span class="s1"><b>KrKnobEditor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>A control rate control object with a Knob and a NumberBox GUI controls.</p>
+<p class="p4"><br></p>
+<p class="p5"><b>KnobEditor:new</b><span class="s2">(0.1, \amp)</span></p>
+<p class="p5"><b>KnobEditor:value_</b><span class="s2">(val)</span></p>
+<p class="p3"><span class="s1"><b>KnobEditor:action_</b></span>({ arg this; actionFunc })</p>
+<p class="p3"><span class="s1"><b>KnobEditor:changed - </b></span>notify dependants from a value change in the object. ie, the gui.</p>
+<p class="p6"><b></b><br></p>
+<p class="p3"><span class="s1"><b>KnobEditor:gui</b></span>(layout, bounds,<span class="Apple-converted-space">  </span>knobSize=28, numWidth=48, numHeight=14, hasKnob=true, back)</p>
+<p class="p5"><b>KnobEditorGui:centered_</b><span class="s2">(bool)</span></p>
+<p class="p2"><br></p>
+<p class="p5"><b>KnobEditorGui:knob</b><span class="s2"> - the knob object</span></p>
+<p class="p3"><span class="s1"><b>KnobEditorGui:numv</b></span> - the number box object</p>
+<p class="p3"><span class="s1"><b>KnobEditorGui:roundVal</b></span> - numbox round value - not the actual control's value.</p>
+<p class="p6"><br></p>
+<p class="p3">Keys work like on slider when the Knob gains focus:</p>
+<p class="p3"><b>arrow up</b>, <b>arrow right</b> or <b>]</b> - increment value by keystep</p>
+<p class="p3"><b>arrow dn</b>, <b>arrow left </b>or <b>[</b> decrement value by keystep</p>
+<p class="p3"><b>x </b>- set value to 1.0</p>
+<p class="p3"><b>c</b> - set value to 0.5</p>
+<p class="p3"><b>n</b> - set value to 0.0</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Behavior:</b></p>
+<p class="p3">The Knob's default tracking mode is <span class="s3">\round</span>.</p>
+<p class="p3">Pressing the <b>Control</b> key and drag places the knob temporarily into <span class="s3">\vert</span> tracking mode.</p>
+<p class="p3">Pressing the <b>Option</b> key and drag places the knob temporarily into <span class="s3">\horiz</span> tracking mode.</p>
+<p class="p3">Pressing the <b>Command</b> or <b>Apple</b> key drags out the knob's value. like for other views.</p>
+<p class="p2"><br></p>
+<p class="p3">In <span class="s3">\round</span> mode, draging farther from the knob's center increases the control's precision.</p>
+<p class="p6"><br></p>
+<p class="p3">see also: [<b>Knob</b>], [<b>EZKnob</b>], [<b>NumberEditor</b>], [<b>IrNumberEditor</b>], [<b>KrNumberEditor</b>]</p>
+<p class="p6"><br></p>
+<p class="p7">k = <span class="s4">KnobEditor</span>(0.1, <span class="s3">\pan</span>);</p>
+<p class="p7">k.action_({ <span class="s4">arg</span> v; v.value.postln });</p>
+<p class="p7">g = k.gui.centered_(<span class="s4">true</span>)</p>
+<p class="p7">g.centered_(<span class="s4">false</span>)</p>
+<p class="p7">g.insp</p>
+<p class="p4"><br></p>
+<p class="p8">// layout, bounds,<span class="Apple-converted-space">  </span>knobSize=28, numWidth=40, numHeight=14, hasBox=true, background</p>
+<p class="p7">g=k.gui(<span class="s4">nil</span>, <span class="s4">Rect</span>(100, 400, 200, 200), 38, 50, 14, <span class="s4">true</span>, <span class="s4">Color</span>.blue(0,0)).centered_(<span class="s4">true</span>)</p>
+<p class="p7">g.knob.color[0] = Color.green(0.5,0.4);</p>
+<p class="p7">g.knob.refresh;</p>
+<p class="p4"><br></p>
+<p class="p7">k = <span class="s4">KrKnobEditor</span>.new(880.0,<span class="s3">\freq</span>)</p>
+<p class="p7">k.gui</p>
+<p class="p7">k.value = 1200</p>
+<p class="p7">k.value</p>
+<p class="p7">k.changed</p>
+<p class="p7">k.set(220.0)</p>
+<p class="p7">k.changed</p>
+<p class="p7">k.state_(80)</p>
+<p class="p4"><br></p>
+<p class="p7">s.boot;</p>
+<p class="p4"><br></p>
+<p class="p7">z = { <span class="s4">arg</span> amp=0.25; <span class="s4">AudioIn</span>.ar([1,2], amp) }.play</p>
+<p class="p4"><br></p>
+<p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s3">\amp</span>);</p>
+<p class="p7">k.action = { <span class="s4">arg</span> v; z.set(<span class="s3">\amp</span>, v.value) };</p>
+<p class="p7">g = k.gui(<span class="s4">nil</span>, <span class="s4">nil</span>, 100).roundVal_(1e-8)</p>
+<p class="p4"><br></p>
+<p class="p7">z.release</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p8">// KnobEditor using the event framework</p>
+<p class="p7"><span class="s4">SynthDescLib</span>.global.read</p>
+<p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s3">\amp</span>);</p>
+<p class="p7">k.gui</p>
+<p class="p7">p = <span class="s4">Pbind</span>(<span class="s3">\amp</span>, k, <span class="s3">\dur</span>, 0.25).play</p>
+<p class="p7">p.stop</p>
+<p class="p4"><br></p>
+<p class="p8">// KrKnobEditor in a crucial library patch gui</p>
+<p class="p7">(</p>
+<p class="p7"><span class="s4">Patch</span>({ <span class="s4">arg</span> freq=110.0, amp=0.1;</p>
+<p class="p4"><br></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s4">LFCub</span>.ar(freq, 0, amp)</p>
+<p class="p4"><br></p>
+<p class="p7">}, [</p>
+<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s5">(110.0, </span><span class="s3">\freq</span><span class="s5">),</span></p>
+<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s5">(0.1, </span><span class="s3">\amp</span><span class="s5">),</span></p>
+<p class="p7">]).gui;</p>
+<p class="p7">)</p>
+<p class="p10"><br></p>
+</body>
+</html>
