@@ -31,8 +31,6 @@
 						  // 1 + max if others exist
 					index = branch.keys.asArray.maxItem.asInteger + 1;
 				});
-//				Library.performList(\put, [\objectCache, cacheKey, index.asSymbol,
-//					this].postln);
 				Library.put(\objectCache, cacheKey, index, this);
 				stream << ("Library.at(\\objectCache, '" ++ cacheKey
 					++ "', " ++ index ++ ")")
@@ -149,24 +147,11 @@
 	}
 }
 
-//+ Infinitum {
-//	storeEditOn { | stream, cacheKey |
-//		stream.putAll(this.asCompileString);
-//	}
-//}
-//
 + Nil {
 	storeEditOn { | stream, cacheKey |
 		stream.putAll(this.asCompileString);
 	}
 }
-
-//+ OSCBundle {
-//	storeEditOn { | stream, cacheKey |
-//		stream << this.class.name << ": ";	// this will break?
-//		messages.storeEditOn(stream, cacheKey);
-//	}
-//}
 
 + Point {
 	storeEditOn { | stream, cacheKey |
@@ -191,12 +176,6 @@
 		stream.putAll(this.asString);
 	}
 }
-
-//+ StringFunc {
-//	storeEditOn { | stream, cacheKey |
-//		stream.putAll(string.asCompileString);
-//	}
-//}
 
 + Symbol {
 	storeEditOn { | stream, cacheKey |

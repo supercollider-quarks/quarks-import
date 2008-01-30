@@ -37,8 +37,6 @@ ToggleTextField : SCViewAdapter {
 	
 	remove {
 		view.remove;
-//		enabledButton.remove;
-//		textField.remove;
 		view.parent.refresh;	// otherwise button doesn't disappear
 	}
 	

@@ -9,7 +9,6 @@ BusDict {
 			<controlNames, <controlObjects;
 	
 	*initClass {
-//	"INITIALIZING BUSDICT".postln;
 		audioNames = IdentityDictionary.new;
 		audioObjects = IdentityDictionary.new;
 		controlNames = IdentityDictionary.new;
@@ -83,14 +82,12 @@ BusDict {
 	}
 	
 	*free { arg bus;	// free bus by bus object
-//["Meta_BusDict-free", bus.rate, bus.server, bus.index].postln;
 		bus.isNil.not.if({
 			BusDict.freeAt(bus.rate, bus.server, bus.index);
 		});
 	}
 	
 	*freeAt { arg rate = \audio, server, index;	// free bus by index
-//["Meta_BusDict-freeAt", rate, server, index].postln;
 		(rate == \audio).if({
 			index.notNil.if({
 					// deallocate bus object if it's not hardware

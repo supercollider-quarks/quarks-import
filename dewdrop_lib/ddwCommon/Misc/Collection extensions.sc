@@ -30,7 +30,7 @@
 		this.do({ |item, i|
 			func.value(item, i).if({ indices = indices.add(i) });
 		});
-		^indices  // [0..indices.size-1] -- why did I write that? don't know what I was thinking
+		^indices
 	}
 	
 	detectIndexFrom { |func, start = 0, step = 1|
@@ -226,24 +226,6 @@
 }
 
 
-// for use with SCStatusBox
-// note that this will slow down regular posting behavior and is only experimental at this point
-
-//+ String {
-//	prPost { _PostString }
-//	prPostln { _PostLine }
-//	
-//	post {
-//		this.prPost;
-//		SCStatusBox.post(this);
-//	}
-//	
-//	postln {
-//		this.prPostln;
-//		SCStatusBox.postln(this);
-//	}
-//}
-
 + Symbol { isSymbol { ^true }}
 + Object {
 	isSymbol { ^false }
@@ -276,10 +258,6 @@
 	*listAll {
 		specs.asSortedArray.do(_.postcs)
 	}
-		// Object implements this	
-//	draggedIntoVoicerGCGUI { |gui|
-//		gui.model.spec = this.asSpec;
-//	}
 }
 
 + Server {
@@ -309,14 +287,6 @@
 + SequenceableCollection {
 	asFlatArray { ^this.collect(_.asFlatArray).flat }
 }
-
-// BroadcastServer compatibility
-
-//+ BroadcastServer {
-//	doesNotUnderstand { |selector ... args|
-//		homeServer.perform(selector, *args)
-//	}
-//}
 
 + Object {
 	releaseFromDependencies {

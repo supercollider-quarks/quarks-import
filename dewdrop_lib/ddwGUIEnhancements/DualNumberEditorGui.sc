@@ -6,7 +6,6 @@ DualNumberEditorGUI : NumberEditorGui {
 		var r;
 		slv = GUI.slider.new(layout, Rect(0,0,100,15));
 		slv.setProperty(\value,model.spec.unmap(model.int));
-		//slv.background_(this.background);
 		slv.action_({arg th; 
 			model.activeValue_(model.intspec.map(th.value)
 				+ model.fractspec.map(fractsl.value))
@@ -15,7 +14,6 @@ DualNumberEditorGUI : NumberEditorGui {
 
 		fractsl = GUI.slider.new(layout, Rect(0,0,100,15));
 		fractsl.setProperty(\value,model.spec.unmap(model.fract));
-		//fractsl.background_(this.background);
 		fractsl.action_({arg th; 
 			model.activeValue_(model.intspec.map(slv.value)
 				+ model.fractspec.map(th.value))
@@ -34,11 +32,7 @@ DualNumberEditorGUI : NumberEditorGui {
 		});
 	}
 
-//	gui { arg lay, bounds ... args;
-//		^super.performList(\gui, [lay, bounds ?? { Rect.new(0, 0, 210, 20) }] ++ args);
-//	}
 }
-
 
 NumericRangeGui : ObjectGui {
 	var	view;

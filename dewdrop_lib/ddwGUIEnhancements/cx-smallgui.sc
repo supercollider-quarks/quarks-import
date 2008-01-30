@@ -1,7 +1,6 @@
 
 + Object {
 	smallGui { arg  ... args;
-//"Object-smallGui".debug;
 		if(this.guiClass.findRespondingMethodFor(\smallGui).notNil,{
 			^this.guiClass.new(this).performList(\smallGui,args);
 		},{
@@ -11,12 +10,9 @@
 }
 
 
-// why is crucial so halfassed about some things?
-
 + ObjectGui {
 	smallGui { arg lay, bounds ... args;
 		var layout;
-//"ObjectGui-smallGui".debug;
 		layout=this.guify(lay,bounds, small:true);
 		layout.flow({ arg layout;
 			this.view = layout;

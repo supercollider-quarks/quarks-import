@@ -52,7 +52,7 @@ EQSpec1 {
 	
 	synthArgs {
 		case { type == \eq } {
-				^[\freq, freq, \rq, rq, \k, k/*.ampdb*/]
+				^[\freq, freq, \rq, rq, \k, k]
 			}
 			
 			{ #[\lopass, \hipass].includes(type) } {
