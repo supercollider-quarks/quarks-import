@@ -1,4 +1,6 @@
 
+// DEPRECATED. Chucklib is more powerful.
+
 VoicerProcess {
 
 		// a gui-able process that will be played by a voicer

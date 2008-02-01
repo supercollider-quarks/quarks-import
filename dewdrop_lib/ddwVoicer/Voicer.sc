@@ -45,8 +45,6 @@ Voicer {		// collect and manage voicer nodes
 		
 		addAction = addAct;
 		
-//		clock = clock ? TempoClock.default;	// otherwise you can only gate from inside a Routine
-
 		voices = (v ? 1).max(1);		// must have at least one node
 			// convert initial args to array of arrays
 		ar.isNil.if({ ar = [] });
@@ -188,7 +186,6 @@ Voicer {		// collect and manage voicer nodes
 		// lat -1 means use value defined in the voicer
 	trigger1 { arg freq, gate = 1, args, lat = -1;
 		var node;
-//["Voicer-trigger1", freq, gate, args, noLatency].asCompileString.postln;
 			// freq may be a symbol to produce a rest
 		freq.isNumber.if({
 			node = this.perform(stealer);
@@ -216,8 +213,6 @@ Voicer {		// collect and manage voicer nodes
 			gate.respondsTo(\wrapAt).not.if({ gate = [gate] });
 				// for each freq, get node and play it
 			^freq.collect({ arg f, i;
-//node = this.perform(stealer);
-//["Voicer-trigger", node.shouldSteal, nodes.select({ |n| n.shouldSteal }).size].postln;
 				f.isNumber.if({
 					this.perform(stealer).trigger(f, gate.wrapAt(i), args.wrapAt(i), lat);
 				});
@@ -230,17 +225,11 @@ Voicer {		// collect and manage voicer nodes
 	gate1 { arg freq, dur, gate = 1, args, lat = -1;
 			// play & schedule release for 1 note
 		var node, synth;
-//["Voicer-gate1", freq, dur, gate, args].asCompileString.postln;
 		(lat ? 0).isNegative.if({ lat = latency });
 		node = this.trigger1(freq, gate, args, lat);
 		synth = node.synth;
 		(clock ? thisThread.clock).sched(dur, { 
-//			(node.frequency == freq).if({
-				node.release(0, lat, freq)
-//			}, {
-//// temp fix for zombie problem with fast notes and no stealing
-//				synth.isPlaying.if({ synth.server.sendBundle(lat, synth.setMsg(\gate, 0)) });
-//			});
+			node.release(0, lat, freq)
 		});
 		^node
 	}
@@ -267,7 +256,6 @@ Voicer {		// collect and manage voicer nodes
 	
 	release1 { arg freq, lat = -1;
 		var node;
-//(freq.neg.asString++",").post;
 		(node = this.firstNodeFreq(freq)).notNil.if({
 			susPedal.if({
 				susPedalNodes.add(node);
@@ -306,10 +294,6 @@ Voicer {		// collect and manage voicer nodes
 	}
 	
 // CONVENIENCE: Apply methods to many nodes
-//	latency_ { arg l;
-//		nodes.do({ arg n; n.latency = l; });
-//	}
-//
 	set { arg args, lat;
 		var bus, ar;	// bus holder used in loops, argument sub-collection
 		
@@ -470,7 +454,9 @@ Voicer {		// collect and manage voicer nodes
 		globalControls.do({ arg gc; gc.free });
 		globalControls = IdentityDictionary.new;
 		voices = nil;
-		MIDIPort.update;	// clears VoicerMIDISocket associated with me
+			// asClass b/c you might not have MIDI Suite installed
+			// nil.update is OK (no-op)
+		'MIDIPort'.asClass.update;	// clears VoicerMIDISocket associated with me
 						// if socket is pointing to proxy, the socket will stay put
 	}
 	
@@ -523,21 +509,12 @@ Voicer {		// collect and manage voicer nodes
 	
 	draggedIntoVoicerGUI { arg dest;		// drag a voicer into a gui switches the gui to this vcr
 		var oldProxy;
-//"Voicer-draggedIntoVoicerGUI".postln; this.postln; dest.dump; "\n\n".postln;
 		oldProxy = proxy;		// must clear from old gui if there was one
-//"Voicer-draggedIntoVoicerGUI: setting new proxy".postln;
 		dest.model.voicer_(this);	// set new gui's proxy to this voicer
-//"Voicer-draggedIntoVoicerGUI: setting old proxy".postln;
-		oldProxy.notNil.if({ oldProxy.voicer_(nil) }
-//, { "\n\n\nDID NOT SET OLD PROXY'S VOICER TO NIL".postln; this.dumpBackTrace; "\n\n".postln; }
-);	// clear old proxy
-//		dest.updateStatus;	// handled in voicer_?
+		oldProxy.notNil.if({ oldProxy.voicer_(nil) });	// clear old proxy
 	}
 	
 	proxy_ { arg pr;	// set my proxy and fix my gc's proxies
-//this.insp; pr.insp;
-//"Voicer-proxy_".postln; this.postln; pr.dump; "\n\n".postln;
-//this.dumpBackTrace;
 		pr.isNil.if({ proxy.clearControlProxies });
 		proxy = pr;
 		proxy.notNil.if({ proxy.switchControlProxies });
@@ -545,8 +522,6 @@ Voicer {		// collect and manage voicer nodes
 	
 // chucklib support
 	bindClassName { ^Voicer }
-
-//	asVoicer { ^this }
 
 // drop in some events to use with voicers
 	*initClass {
@@ -575,12 +550,6 @@ Voicer {		// collect and manage voicer nodes
 
 				~nodes = ~voicer.prGetNodes(max(~freq.size, max(~length.size, ~gate.size)));
 				~voicer.setArgsInEvent(currentEnvironment);
-
-//				(~argKeys.size > 0).if({
-//					~args = ~args ++
-//						~argKeys.collect({ |a| [a, a.envirGet].flop }).flop
-//							.collect({ |a| a.flatten(1) });
-//				});
 			},
 			
 			play: #{
@@ -599,12 +568,6 @@ Voicer {		// collect and manage voicer nodes
 							});
 						});
 					});
-
-//					~length.isNil.if({		// midi input... note will be released later
-//						~voicer.trigger(~freq, ~gate, ~args, ~latency);
-//					}, {
-//						~voicer.gate(~freq, ~length, ~gate, ~args, ~latency);
-//					});
 				});
 			}
 		));
@@ -668,9 +631,6 @@ MonoPortaVoicer : Voicer {
 		
 		addAction = addAct;
 
-// defaults to thisThread.clock now		
-//		clock = clock ? SystemClock;	// otherwise you can only gate from inside a Routine
-		
 		voices = 1;		// may have only one node for a mono voicer
 			// convert initial args to array of arrays
 		ar.isNil.if({ ar = [] });
@@ -704,7 +664,6 @@ MonoPortaVoicer : Voicer {
 	}
 	
 	release1 { arg freq, lat = -1;
-//["MonoPortaVoicer-release1", freq, noLatency, lastFreqs].asCompileString.postln;
 		(lat ? 0).isNegative.if({ lat = latency });
 		lastFreqs.remove(freq);
 		(lastFreqs.size > 0).if({
@@ -728,7 +687,6 @@ MonoPortaVoicer : Voicer {
 		// gate one or many
 	gate { arg freq, dur, gate = 1, args, lat = -1;
 		var node, nodecoll;
-//["MonoPortaVoicer-gate", freq, dur, gate, args].postln;
 		(lat ? 0).isNegative.if({ lat = latency });
 		(freq.size > 0).if({
 			nodecoll = this.trigger(freq, gate ? 1, args, lat);  // play them

@@ -42,7 +42,6 @@ SynthVoicerNode {
 
 			// use given bus or hardware output
 		bus = b ? Bus.new(\audio, 0, 1, target.server);
-//		argDict = IdentityDictionary.new;
 		^this
 	}
 	
@@ -92,7 +91,6 @@ SynthVoicerNode {
 		synth = Synth.basicNew(defname, target.server);
 		bundle.add(synth.newMsg(target, args2 ++ this.mapArgs
 			++ [\out, bus.index, \outbus, bus.index], addAction));
-//bundle.asCompileString.postln;
 		^bundle
 	}
 	
@@ -101,19 +99,11 @@ SynthVoicerNode {
 
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
-//		this.shouldSteal.if({
-////			"Stealing node.".postln;
-//			bundle = this.releaseMsg(-1);	// release the node immediately
-//		}, {
-//			bundle = Array.new;
-//		});
 		this.shouldSteal.if({
-//			"Stealing node.".postln;
 			this.stealNode(synth, latency);
 		});
 		bundle = this.triggerMsg(freq, gate, args);
-//bundle.asCompileString.postln;
-		target.server.listSendBundle(myLastLatency = latency, bundle/*.debug("% trigger".format(thisThread.clock.beats))*/);
+		target.server.listSendBundle(myLastLatency = latency, bundle);
 		NodeWatcher.register(synth);
 			// when the synth node dies, I need to set my flags
 		Updater(synth, { |syn, msg|
@@ -158,7 +148,7 @@ SynthVoicerNode {
 		// if left nil, the release will go ahead.
 	release { arg gate = 0, latency, freq;
 		this.shouldRelease(freq).if({ 
-			synth.server.listSendBundle(latency, this.releaseMsg(gate)/*.debug("% release".format(thisThread.clock.beats))*/);
+			synth.server.listSendBundle(latency, this.releaseMsg(gate));
 			this.isPlaying = false;
 			isReleasing = true;
 		});
@@ -205,22 +195,13 @@ SynthVoicerNode {
 
 	set { arg args, latency;
 		(this.isPlaying).if({
-			target.server.listSendBundle(latency, this.setMsg(args)/*.debug("% set".format(thisThread.clock.beats))*/);
+			target.server.listSendBundle(latency, this.setMsg(args));
 		});
 	}
 	
 	setArgDefaults { |args|
-//		var	index;
 		args.pairsDo({ |key, value| initArgDict.put(key, value) });
 		initArgs = this.makeInitArgs;
-
-//		args.pairsDo({ |key, value|
-//			(index = initArgs.indexOf(key)).notNil.if({
-//				initArgs[index + 1] = value;
-//			}, {
-//				initArgs = initArgs.add(key).add(value);
-//			});
-//		})
 	}
 	
 		// nil if SynthDesc not found
@@ -233,26 +214,6 @@ SynthVoicerNode {
 
 	trace { this.isPlaying.if({ synth.trace }) }
 
-//	translateArgs { arg ... args;
-//		var	newarg;
-//			// looks up symbols in argDict and substitutes synthdef arg names
-//		args = args.flat;
-//			// if args is smaller than argDict, loop thru args
-//		((args.size / 2) < argDict.size).if({
-//			forBy(0, args.size-1, 2, {	// go thru in pairs
-//				arg i;
-//				newarg = argDict.at(args.at(i));
-//				newarg.notNil.if({ args.put(i, newarg) });
-//			});
-//		}, {		// otherwise loop thru argDict
-//			argDict.keysValuesDo({ arg k, v;
-//				newarg = args.indexOf(k);
-//				newarg.notNil.if({ args.put(newarg, v) });
-//			});
-//		});
-//		^args
-//	}
-//		
 	map { arg name, bus;	// do mapping for this node
 		synth.notNil.if({
 			synth.map(name, bus);
@@ -318,10 +279,6 @@ InstrVoicerNode : SynthVoicerNode {
 							def.send(target.server);
 						});
 					};
-							
-//				patch.prepareForPlay(target, false, bus);
-//				defname = patch.defName;
-//				patch = nil;		// garbage collect patch
 			});
 		}, {
 				// olddefname was not nil: the patch was made earlier by another node
@@ -340,28 +297,16 @@ InstrVoicerNode : SynthVoicerNode {
 	
 	makePatch { |instr, args|
 		^(instr.tryPerform(\patchClass) ?? { Patch }).new(instr, this.makePatchArgs(instr, args))
-//		^PatchNoDep.new(instr, this.makePatchArgs(instr, args))
 	}
 	
 		// does trigger et al. need to hit the children?
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
-//["InstrVoicerNode-trigger", synth.tryPerform(\nodeID), this.shouldSteal].postln;
-//		this.shouldSteal.if({
-////			"Stealing node.".postln;
-//			bundle = this.releaseMsg(-1);
-////bundle.asCompileString.postln;
-//		}, {
-//			bundle = Array.new
-//		});
-//["InstrVoicerNode-trigger - bundle before triggering:", bundle].postln;
 		this.shouldSteal.if({
-//			"Stealing node.".postln;
 			this.stealNode(synth, latency);
 		});
 		bundle = bundle ++ this.triggerMsg(freq, gate, args);
-//bundle.asCompileString.postln;
-		target.server.listSendBundle(myLastLatency = latency, bundle/*.debug("% trigger".format(thisThread.clock.beats))*/);
+		target.server.listSendBundle(myLastLatency = latency, bundle);
 		
 		frequency = freq;
 		lastTrigger = Main.elapsedTime;
@@ -396,22 +341,15 @@ InstrVoicerNode : SynthVoicerNode {
 	release { arg gate = 0, latency, freq;
 		this.shouldRelease(freq).if({
 			this.target.server.listSendBundle(latency, this.releaseMsg(gate));
-//			this.set([\gate, gate], latency);
 			this.isPlaying = false;
 			isReleasing = true;
 		});
 	}
 
-		// superclass takes care of this
-//	releaseNow { arg sec = 0;
-//		this.release(sec.abs.neg - 1, sec);
-//	}
-	
 		// releaseMsg assumes that the caller has done all the safety checks
 	releaseMsg { arg gate = 0, wrap = true;	// wrap with \error msg?
 		var bundle;
-//["InstrVoicerNode-releaseMsg", synth.tryPerform(\nodeID), gate].postln;
-		(synth.notNil /*and: { synth.isPlaying }*/).if({
+		(synth.notNil).if({
 			wrap.if({
 				bundle = [#[\error, -1]];
 			}, {
@@ -421,7 +359,6 @@ InstrVoicerNode : SynthVoicerNode {
 			bundle = bundle ++ [[15, synth.nodeID, \gate, gate]];
 			wrap.if({ bundle = bundle ++ [#[error, -2]]; });
 		})
-//["InstrVoicerNode-releaseMsg - message: ", bundle].postln;
 		^bundle
 	}
 	
@@ -448,7 +385,7 @@ InstrVoicerNode : SynthVoicerNode {
 
 	set { arg args, latency;
 		synth.notNil.if({
-			target.server.listSendBundle(latency, this.setMsg(args)/*.debug("% set".format(thisThread.clock.beats))*/);
+			target.server.listSendBundle(latency, this.setMsg(args));
 		});
 		this.setCallBack.value(args);
 	}
@@ -462,23 +399,7 @@ InstrVoicerNode : SynthVoicerNode {
 				bundle = bundle ++ child.setMsg(args) 
 			});
 
-//			ar = Array.new;
-//				// select only non-global controls
-//			forBy(0, args.size-1, 2, { arg i;
-//				voicer.globalControls.at(args.at(i).asSymbol).isNil.if({
-//					ar = ar ++ [args.at(i), args.at(i+1)];
-//				});
-//			});
-//			ar = this.translateArgs(ar);
-////			argColl = Array.new;
-////			ar.clump(2).do({ arg a;
-////				a.at(0).isInteger.if({
-////					argColl = argColl ++ a;
-////				});
-////			});
-			^bundle ++ /* (argColl.size > 0).if({ */
-				super.setMsg(args)
-//			})
+			^bundle ++ super.setMsg(args)
 		}, {
 			^[]	// if synth isn't playing, setMsg is meaningless
 		});
@@ -490,11 +411,7 @@ InstrVoicerNode : SynthVoicerNode {
 
 	free {
 		var bundle;
-//		bundle = List.new;
-//			// superclass does freeMsg
-//		children.do({ arg child; bundle.add(child.freeMsg) });
-//		bundle.add(this.freeMsg);
-		target.server.listSendBundle(nil, this.freeMsg/*.debug("% free".format(thisThread.clock.beats))*/);
+		target.server.listSendBundle(nil, this.freeMsg);
 		this.isPlaying = false;
 	}
 	
@@ -517,19 +434,6 @@ InstrVoicerNode : SynthVoicerNode {
 		});
 	}
 
-		// create dictionary for turning arg names into indices
-//	makeArgDict {
-//		var j;
-//		argDict = IdentityDictionary.new;
-//		
-//		instr.func.def.argNames.do({ arg name, i;
-//			j = patch.synthArgsIndices.at(i);
-//			j.notNil.if({
-//				argDict.put(name, j);
-//			});
-//		});
-//	}
-//
 	makePatchArgs { arg instr, ar;
 		var	argNames, argSpecs, argArray, proto,
 			argIndex, gateIndex, thisArg, basePatch, temp;
@@ -552,7 +456,6 @@ InstrVoicerNode : SynthVoicerNode {
 		argArray = argNames.collect({ arg name, i;
 			argIndex = ar.indexOf(name);	// find specified value, if any
 			thisArg = argIndex.isNil.if({ nil }, { ar.at(argIndex+1) });
-//[name, argIndex, thisArg].debug("arg");
 
 			switch(name)
 				{ \gate } { KrNumberEditor(thisArg ? 0, argSpecs[i]).lag_(nil) }

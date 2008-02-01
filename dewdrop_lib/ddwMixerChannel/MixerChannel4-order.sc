@@ -69,11 +69,11 @@ MixerChannel {
 			// if this is the first mixerchannel on this server,
 			// load all mixer and automation synthdefs
 		servers.keys.includes(server).not.if({
-			/*servers =*/ servers.put(server, IdentityDictionary.new);
+			servers.put(server, IdentityDictionary.new);
 			server.addDependant(MixerChannel);
 		});
 		
-		^super.newCopyArgs(name, MixerChannelDef.at(defname), server, inbus, nil/*, postSendReady*/)
+		^super.newCopyArgs(name, MixerChannelDef.at(defname), server, inbus, nil)
 			.init(outbus, initValues, completionFunc);
 	}
 	

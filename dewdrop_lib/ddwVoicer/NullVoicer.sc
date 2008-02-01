@@ -10,8 +10,6 @@ NullVoicer {
 	}
 	
 	proxy_ { arg pr;
-//"NullVoicer.proxy_".postln;
-//this.dumpBackTrace;
 		proxy = pr;
 		proxy.notNil.if({ proxy.switchControlProxies });
 	}
@@ -36,11 +34,6 @@ NullVoicer {
 	globalControlsByCreation { ^Array.new }
 	latency { ^nil }
 	isRunning { ^true }	// to display "run" in gui
-//	editor { ^nil }
-	oscsched {}
-	oscsched_ {}
-	oscschedMethod {}
-	oscschedMethod_ {}
 	clock {}
 	clock_ {}
 	init {}
@@ -63,14 +56,7 @@ NullVoicer {
 	releaseAll {}
 	releaseNow1 {}
 	releaseNow {}
-	osctrig1 {}
-	osctrig {}
-	oscgate1 {}
-	oscgate {}
-	oscrelease1 {}
-	oscrelease {}
 	set {}
-	oscset {}
 	mapGlobal {}
 	unmapGlobal {}
 	addProcess {}

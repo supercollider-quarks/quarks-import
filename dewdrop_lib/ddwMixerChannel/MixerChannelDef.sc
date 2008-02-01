@@ -67,7 +67,7 @@ MixerChannelDef {
 		inChannels.isNil.if({
 			^this.at(name)
 		}, {
-			^super.newCopyArgs(name, inChannels, outChannels, /*basicFader, */fader,
+			^super.newCopyArgs(name, inChannels, outChannels, fader,
 				controls, guidef).init
 		});
 	}

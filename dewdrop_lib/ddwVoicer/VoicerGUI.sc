@@ -37,7 +37,6 @@ VoicerProxyGui : ObjectGui {
 		<masterLayout, <layout, iMadeMasterLayout = false;
 
 	guify { arg lay,bounds,title, small=false;
-//"VoicerProxyGui-guify".debug;
 		if(lay.isNil,{
 			masterLayout = lay = FixedWidthMultiPageLayout
 				(title ?? { model.asString.copyRange(0,50) },
@@ -72,12 +71,7 @@ VoicerProxyGui : ObjectGui {
 				.action_({ |v|
 					model.run(v.value == 0);
 				});
-//			SCStaticText(layout, Rect(0, 0, 60, 20))
-//				.string_("Quant:").align_(\center);
-//			quant = SCTextField(layout, Rect(0, 0, 100, 20)).string_("4");
-
 			layout.startRow;
-//			StartRow(layout);
 
 			mainView = FixedWidthFlowView.new(layout, Rect(0, 0, width1 + width2 + 10, height))
 				.background_(backgr ? Color.grey);
@@ -97,7 +91,6 @@ VoicerProxyGui : ObjectGui {
 	}
 
 	smallGuiBody { arg lay, backgr, controlBackgr, processBackgr, doResize = true;
-//"VoicerProxyGui-smallGuiBody".debug;
 		mainView.isNil.if({	// init the views only if we need a new window
 			layout = lay;
 			dragSink = GUI.dragSink.new(layout, Rect(0, 0, 30, 20))
@@ -114,21 +107,13 @@ VoicerProxyGui : ObjectGui {
 				.action_({ |v|
 					model.run(v.value == 0);
 				});
-//			SCStaticText(layout, Rect(0, 0, 60, 20))
-//				.string_("Quant:").align_(\center);
-//			quant = SCTextField(layout, Rect(0, 0, 100, 20)).string_("4");
 
 			layout.startRow;
-//			StartRow(layout);
 
 			mainView = FixedWidthFlowView.new(layout, Rect(0, 0, width1 + 10, height))
 				.background_(backgr ? Color.grey);
 			controlView = FixedWidthFlowView.new(mainView, Rect(0, 0, width1, height))
 				.background_(controlBackgr ? Color.grey);
-			
-//			processView = FixedWidthFlowView.new(mainView, Rect(0, 0, width2, height))
-//				.background_(processBackgr ? Color.grey);
-//			processView.decorator.nextLine;
 			
 			model.editor = this;
 			this.makeViews;
@@ -139,11 +124,8 @@ VoicerProxyGui : ObjectGui {
 		});
 	}
 	
-//	smallGui { }	// same hack
-	
 	writeName { arg layout;
 		var n;
-//"VoicerProxyGui-writeName".debug;
 		n = model.asString;
 		InspectorLink.icon(model,layout);
 		dragSource = GUI.dragSource.new(layout,Rect(0,0,(n.size * 7.5).max(160),17))
@@ -191,7 +173,6 @@ VoicerProxyGui : ObjectGui {
 			});
 			view.notClosed.if({
 				view.remove;
-//				masterLayout.recursiveResize;
 			});
 			model.editor = nil;
 			model = nil;
@@ -201,7 +182,7 @@ VoicerProxyGui : ObjectGui {
 			});
 
 			// garbage
-			panicButton = runButton = controlView = processView = dragSink = /*quant =*/
+			panicButton = runButton = controlView = processView = dragSink =
 				masterLayout = nil;
 			
 		});

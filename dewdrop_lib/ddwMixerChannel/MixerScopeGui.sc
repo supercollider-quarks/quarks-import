@@ -30,7 +30,6 @@ MixerScopeGui : ObjectGui {
 		
 		view.notClosed.if({	
 			view.remove;
-//			masterLayout.recursiveResize;
 		});
 
 		iMadeMasterLayout.if({

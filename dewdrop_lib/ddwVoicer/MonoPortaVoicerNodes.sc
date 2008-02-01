@@ -20,12 +20,10 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 					(syn == synth).if({
 						isPlaying = isReleasing = false;
 					});
-					Object.dependantsDictionary.removeAt(syn);
-//					syn.releaseDependants;	// remove node and Updater from dependants dictionary
+					syn.releaseDependants;	// remove node and Updater from dependants dictionary
 				});
 			});
 		});
-//bundle.asCompileString.postln;
 		target.server.listSendBundle(myLastLatency = latency, bundle);
 		frequency = freq;	// save frequency for Voicer.release
 		voicer.lastFreqs.add(freq);
@@ -48,9 +46,6 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
 
-//"MonoPortaInstrVoicerNode-trigger - ".post;
-//[freq, gate, args, noLatency].asCompileString.postln;
-
 		this.shouldSteal.if({
 			bundle = this.setMsg([\freqlag, voicer.portaTime, \freq, freq,
 				\gate, gate, \t_gate, gate] ++ args);
@@ -67,13 +62,11 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 					(syn == synth).if({
 						isPlaying = isReleasing = false;
 					});
-					Object.dependantsDictionary.removeAt(syn);
-	//				syn.releaseDependants;	// remove node and Updater from dependants dictionary
+					syn.releaseDependants;	// remove node and Updater from dependants dictionary
 				});
 			});
 		});
 		
-//bundle.asCompileString.postln;
 		target.server.listSendBundle(myLastLatency = latency, bundle);
 		
 		frequency = freq;
@@ -81,11 +74,9 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 		lastTrigger = Main.elapsedTime;
 		isPlaying = true;
 		isReleasing = false;
-//["MonoPortaInstrVoicerNode-trigger", freq, voicer.lastFreqs].asCompileString.postln;
 	}
 
 	shouldSteal {
 		^super.shouldSteal and: { isReleasing.not }
 	}
-
 }

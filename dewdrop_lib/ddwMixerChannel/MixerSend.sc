@@ -113,7 +113,6 @@ MixerSend {
 					// if the dest mixer is routed to another mixer,
 					// place the dest mixer before its destination
 				incr = incr + mc.numMixersInChain;
-	//			mc.addDependant(this);
 				mc.prAddAntecedent(inMixer);
 				inMixer.prAddDescendent(mc);
 			});
@@ -122,7 +121,6 @@ MixerSend {
 			// bookkeeping for old outbus if it's a mixer
 		(oldmc = outbus.asMixer).notNil.if({
 			incr = incr + oldmc.numMixersInChain.neg;
-//			oldmc.removeDependant(this);
 			oldmc.prRemoveAntecedent(inMixer);
 			inMixer.prRemoveDescendent(oldmc);
 		});
@@ -322,9 +320,7 @@ MixerPostSend : MixerSend {
 		sendSynth = Synth.basicNew("mixers/Send" ++ inMixer.outChannels, inMixer.server,
 			inMixer.server.nodeAllocator.allocPerm);
 		bundle.add(sendSynth.addAfterMsg(inMixer.synth,
-			[\busin, inMixer.inbus.index  /*inMixer.postSendReady.if(
-				{ inMixer.inbus.index },
-				{ inMixer.xfer.bus.index })*/,
+			[\busin, inMixer.inbus.index,
 			 \busout, (bus ? outbus).index,
 			 \level, level]
 		));
