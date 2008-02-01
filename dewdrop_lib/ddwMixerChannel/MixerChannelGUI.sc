@@ -29,10 +29,6 @@ MixerChannelGUI {
 		guidef = mixer.tryPerform(\def).tryPerform(\guidef) ? defaultDef;
 		origin = origin ?? { Point(0, 0) };
 
-// gui protos are responsible for their own specs		
-//		panSpec = ControlSpec.new(-1, 1, \linear, 0, 0);
-//		levelSpec = ControlSpec.new(0, 1, \amp);
-
 		this.setMenuItems.makeViews;
 
 			// save path for mixerchannel to reach these views

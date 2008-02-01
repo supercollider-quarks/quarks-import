@@ -1,4 +1,7 @@
 
+// DEPRECATED.
+// Retained for the odd backward-compatibility purpose.
+
 QuantTask : Task {
 	// works like Task but with more flexible quantizing
 	// starting / stopping etc. can be quantized using a quantize factor AND an offset

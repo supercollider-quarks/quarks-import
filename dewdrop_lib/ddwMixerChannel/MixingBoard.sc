@@ -44,7 +44,6 @@ MixingBoard {
 		w.isClosed.not.if({ w.onClose = nil; w.close; });
 		mixers.do({ arg m; m.mixer = nil });
 		boards.remove(this);
-//		MixingBoard.renumberChannels;	// fix indices in MixerChannels
 	}
 	
 	add { arg ... mxs;
@@ -105,8 +104,6 @@ MixingBoard {
 			// later indexes will change and we'll remove the wrong channels
 		
 		ind = ind.sort({ arg a,b; a > b });
-//ind.postln;
-//freeIt.postln;		
 
 		ind.do({ arg i;	// loop over indexes
 				// clear associated views
@@ -177,7 +174,6 @@ MixingBoard {
 		num = mixers.size;
 
 			// mixers may have different sizes, so I have to iterate
-//[hSize, vSize, rowHeight, x, y, columns].debug("before loop");
 		mixers.do({ |mix|
 			guidef = mix.tryPerform(\guidef) ?? { MixerChannelGUI.defaultSkin };
 			rowHeight = max(rowHeight, guidef.channelSize.y);
@@ -191,7 +187,6 @@ MixingBoard {
 				x = x + guidef.channelSize.x + skin.gap.x;
 				columns = columns + 1;
 			});
-//[hSize, vSize, rowHeight, x, y, columns].debug("inside loop");
 		});
 			// take into account height of last row
 		vSize = vSize + rowHeight + skin.gap.y;
@@ -260,12 +255,4 @@ MixingBoard {
 		this.sizeWindow;
 		{ this.refresh; nil }.defer(0.1);	// redraw gui
 	}		
-	
-//	*facelift { 
-//		// refresh all boards
-//		boards.do({ arg b;
-//			b.sizeWindow;
-//			{ b.refresh; nil }.defer(0.1);	// defer allows resize to take
-//		});
-//	}
 }

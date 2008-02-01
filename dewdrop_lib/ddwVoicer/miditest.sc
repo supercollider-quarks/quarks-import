@@ -14,7 +14,6 @@
 				voicer.globalControlsByCreation.do({ arg gc;
 					gctemp.add(gc);
 					Post << $\\ << gc.name << ", " << gc.value << ", \n";
-	//					[gc.name, gc.value].postln;
 				});
 				gctemp.reverseDo({ |gc| gc.midiControl.free });
 				layout.close;
@@ -141,7 +140,6 @@
 				voicer.globalControlsByCreation.do({ arg gc;
 					gctemp.add(gc);
 					Post << $\\ << gc.name << ", " << gc.value << ", \n";
-	//					[gc.name, gc.value].postln;
 				});
 				gctemp.reverseDo({ |gc| gc.midiControl.free });
 	
@@ -160,7 +158,6 @@
 		channel = channel ? 0;
 		ctlChannel = ctlChannel ? channel;
 		specs = specs ? Array.new;
-//		target = target.asTarget;
 
 		target.server.waitForBoot({
 			this.send(target.asTarget.server);	// tell the server about me

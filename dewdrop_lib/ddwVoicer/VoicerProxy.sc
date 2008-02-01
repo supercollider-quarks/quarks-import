@@ -1,11 +1,6 @@
 
 VoicerProxy {
 
-// target, bus, addaction, clock -- store in voicerproxy and replace in voicer when voicer is
-// placed in this proxy? Or should voicer maintain it?
-// who owns midi objects (esp global controls?) gc's should be swappable, but tracking
-// will be hard
-
 	var	<voicer,		// the destination
 		<controlProxies,	// proxies to voicer's global controls
 		<processes,	// processes to be played on the destination
@@ -38,7 +33,6 @@ VoicerProxy {
 	proxify { ^this }
 	
 	voicer_ { arg v;
-//"VoicerProxy-voicer_".postln; v.postln; "\n\n".postln;
 			// to clear old voicer's proxy variable: voicer must not be nil
 			// and voicer's current proxy must be this
 			// if voicer is now pointing to another proxy (which is the case if
@@ -49,14 +43,11 @@ VoicerProxy {
 		voicer = v ?? { NullVoicer.new };	// change voicer object
 		voicer.proxy_(this);		// make new connection
 		editor.notNil.if({ editor.updateStatus; });
-//		clock = v.clock;
 	}
 	
 	draggedIntoVoicerGUI { arg dest;
 		voicer.draggedIntoVoicerGUI(dest);
 	}
-
-//	asVoicer { ^voicer }
 
 	addControlProxy { arg gcproxy, addAlways = false;
 		(this.canAddControlProxies and: {
@@ -78,12 +69,9 @@ VoicerProxy {
 		var gcproxy;
 			// loop thru controlProxies array
 			// gcproxy gets the first element of controlProxies whose model is nil
-//("\n\n\nVoicerProxy-getFreeControlProxy: " ++ gcmodel.tryPerform(\name)).postln;
-//this.dumpBackTrace;
 
 		maxControlProxies.isNil.if({ controlProxies }, { controlProxies[0..maxControlProxies-1] })
 		.do({ |pr, i|
-//[gcproxy, pr.tryPerform(\gc)].postln;
 			(gcproxy.isNil && pr.tryPerform(\gc).isNil).if({ gcproxy = pr });
 		});
 			 // if none was free, it's my responsibility to make it and add it to me
@@ -104,16 +92,10 @@ VoicerProxy {
 	
 	switchControlProxies {		// my controlproxies should point to my voicer's controls
 		var i;
-//"VoicerProxy-switchControlProxies".postln; voicer.postln; "\n\n".postln;
 			// take guiable proxies in order, sort in order of creation
 		voicer.globalControlsByCreation.do({ |gc|
 			this.getFreeControlProxy(gc);
 		});
-//		i = 0;
-//		{ gcs[i].notNil and: controlProxies[i].notNil }.while({
-//			controlProxies[i].gc_(gcs[i]);
-//			i = i+1;
-//		});
 			// when this proxy receives a voicer with fewer controls than I have proxies,
 			// remaining proxies must be set to nil
 		i = voicer.globalControls.size;
@@ -262,7 +244,6 @@ VoicerProxy {
 	}
 	
 	gate { arg freq, dur, gate = 1, args, lat = -1;
-//["VoicerProxy-gate", freq, dur, gate, args, voicer.asString].asCompileString.postln;
 		moreVoicers.do({ |v|
 			moreVoicerProb.coin.if({
 				v.gate(freq, dur, gate, args, lat)
@@ -299,44 +280,6 @@ VoicerProxy {
 	prGetNodes { |numNodes = 1| ^voicer.prGetNodes(numNodes) }
 	setArgsInEvent { |event| ^voicer.setArgsInEvent(event) }
 	
-//////// does the proxy need these?
-
-//	nonplaying {
-//		^voicer.nonplaying;
-//	}
-//	
-//	earliest {
-//		^voicer.earliest;
-//	}
-//	
-//	latest {
-//		^voicer.latest;
-//	}
-//	
-//	firstNodeFreq { arg freq;
-//		^voicer.firstNodeFreq(freq)
-//	}
-//	
-//	strictCycle {
-//		^voicer.strictCycle;
-//	}
-//	
-//	cycle {
-//		^voicer.cycle;
-//	}
-//	
-//	random {
-//		^voicer.random;
-//	}
-//	
-//	preferEarly {
-//		^voicer.preferEarly;
-//	}
-//	
-//	preferLate {
-//		^voicer.preferLate;
-//	}
-//	
 	guiClass {
 		^VoicerProxyGui
 	}
@@ -345,7 +288,7 @@ VoicerProxy {
 		^voicer.asString;
 	}
 	
-//////// getters and setters, come back and revisit these
+//////// getters and setters
 
 	latency {
 		^voicer.latency;
@@ -364,53 +307,12 @@ VoicerProxy {
 		^voicer.globalControlsByCreation
 	}
 	
-//	nodes {
-//		^voicer.nodes;
-//	}
-//	
-//	voices {
-//		^voicer.voices;
-//	}
-//	
 	target {
 		^voicer.target;
 	}
-//	
-//	addAction {
-//		^voicer.addAction;
-//	}
-//	
-//	addAction_ { 
-//		^voicer.addAction_;
-//	}
-//	
+
 	bus {
 		^voicer.bus;
 	}
-//	
-//	stealer {
-//		^voicer.stealer;
-//	}
-//	
-//	stealer_ {
-//		^voicer.stealer_;
-//	}
-//	
-//	oscsched {
-//		^voicer.oscsched;
-//	}
-//	
-//	oscsched_ {
-//		^voicer.oscsched_;
-//	}
-//	
-//	oscschedMethod {
-//		^voicer.oscschedMethod;
-//	}
-//	
-//	oscschedMethod_ {
-//		^voicer.oscschedMethod_;
-//	}
-//	
 
 }

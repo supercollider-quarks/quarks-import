@@ -8,12 +8,11 @@
 
 StatusBox : SCViewHolder {
 	classvar	<default;
-	var	//<>numLines,
-		<>display,
+	var	<>display,
 		strToPost = "", notScheduled = true;
 	
 	*new { arg argParent, argBounds;
-		^super.new.init(argParent, argBounds) // .numLines_(argLines ? 5).display_("")
+		^super.new.init(argParent, argBounds)
 	}
 	
 	init { |argParent, argBounds|
@@ -22,7 +21,6 @@ StatusBox : SCViewHolder {
 			.hasHorizontalScroller_(true)
 			.onClose_({ this.remove });
 		default.isNil.if({ this.makeDefault });
-//		queue = Array.new;
 	}
 
 	remove {
@@ -52,24 +50,10 @@ StatusBox : SCViewHolder {
 			notScheduled = false;
 		});
 
-//			// else routine continues to run
-//		routine.isNil.if({
-//			routine = Routine({
-//				while { queue.size > 0 } {
-//					view.notClosed.if({
-//						view.string_(view.string ++ queue[0]);
-//					}, { queue = Array.new; nil.yield });
-//					queue.removeAt(0);
-//					0.001.yield;
-//				};
-//				routine = nil;
-//			}).play(AppClock);
-//		});
 	}
 
 	post { arg str;
 		strToPost = strToPost ++ str.asString;
-//		queue = queue.add(str.asString);
 		this.startPostThread;
 	}
 	

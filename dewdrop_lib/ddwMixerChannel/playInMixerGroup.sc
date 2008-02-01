@@ -12,21 +12,10 @@
 		^result
 	}
 
-//	playInMixerGroupMsg { |mixer, target, patchType, args|
-//		args.includes(\outbus).not.if({ args = args
-//			++ [\outbus, mixer.inbus.index, \out, mixer.inbus.index] });
-//		^[\s_new, this, mixer.server.nextNodeID, 1, target.nodeID] ++ args
-//	}
-//	
-//	playInMixerGroupToBundle { |bundle, mixer, target, patchType, args|
-//		bundle.add(this.playInMixerGroupMsg(mixer, target, patchType, args)
-//	}
-//	
 	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
 		(args.notNil and: { args.includes(\outbus) }).not.if({ args = args 
 			++ [\outbus, gc.bus.index, \out, gc.bus.index, \i_out, gc.bus.index] });
 		^Synth(this, args, (target ?? { gc.server }).asTarget, addAction);
-//		^Synth.tail((target ?? { gc.server }).asTarget, this, args)
 	}
 }
 
@@ -65,16 +54,6 @@
 		^newPatch.playToMixer(mixer)
 	}
 	
-//	// no ...Msg method b/c it doesn't make sense for Instr/Patch
-//	
-//	// expects CXBundle
-//	playInMixerGroupToBundle { |mixer, target, patchType, args|
-//		var	newPatch;
-//		mixer.addPatch(newPatch = patchType.new(this, args));
-//		
-//		^newPatch.playToMixer(mixer)		
-//	}
-	
 	playOnGlobalControl { |gc, args, target|
 		^Patch(this, args).playOnGlobalControl(gc, target)
 	}
@@ -83,11 +62,7 @@
 + AbstractPlayer {
 	playInMixerGroup { |mixer, target, patchType, args|
 		mixer.addPatch(this);
-//		this.respondsTo(\playToMixer).if({
-//			this.playToMixer(mixer)
-//		}, {
-			this.play(target, nil, mixer.inbus.index);
-//		});
+		this.play(target, nil, mixer.inbus.index);
 	}
 	playOnGlobalControl { |gc, target|
 		this.play((target ?? { gc.server }).asTarget, nil, gc.bus)
@@ -110,7 +85,6 @@
 		^this.asSynthDef.play((target ?? { gc.server }).asTarget,
 			args ++ [\i_out, gc.bus.index, \out, gc.bus.index, \outbus, gc.bus.index],
 			addAction);
-//		^this.play((target ?? { gc.server }).asTarget, gc.bus.index)
 	}
 }
 

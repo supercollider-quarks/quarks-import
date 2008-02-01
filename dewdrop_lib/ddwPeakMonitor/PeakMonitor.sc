@@ -3,8 +3,6 @@ PeakMonitor {
 		// back end for graphic peak follower
 
 	classvar	<all;	// kr bus # -> monitor object
-//			<oldResponder,	// server -> previous inhabitant of OSCresponder for c_setn
-//			<serversInited;
 
 	var	<target,	// may be bus or mixer
 		<synth,	// writes peak level(s) onto control bus(es)
@@ -38,14 +36,7 @@ PeakMonitor {
 		freq = f ? 2;
 		(groupbus = t.tryPerform(\groupBusInfo, \fader)).notNil.if({
 			mixer = t;	// save for free
-//			t.postSendReady.if({
-				target = groupbus[1];	// if it's postsendready, fader's output is on the mc's bus
-//			}, {
-//					// need to isolate the fader's output on a new bus
-//				t.xfer.isNil.if({ t.makeXfer });
-//				t.xfer.addClient(this);
-//				target = t.xfer.bus;
-//			});
+			target = groupbus[1];	// if it's postsendready, fader's output is on the mc's bus
 			synthTarget = groupbus[0];	// place at tail of fadergroup
 		}, {
 				// convert other types of args
@@ -77,9 +68,6 @@ PeakMonitor {
 	
 	freq_ { arg f;
 		freq = f;
-//		synth.notNil.if({
-//			synth.set(\freq, freq);
-//		});
 	}
 	
 	free {
@@ -92,9 +80,6 @@ PeakMonitor {
 			all.removeAt(bus.index);
 			bus.free;
 		};
-//		mixer.notNil.if({
-//			mixer.removeClient(this);
-//		});
 		synth = bus = peaks = target = synthTarget = updater = mixer = nil;
 	}
 	

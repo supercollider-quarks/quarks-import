@@ -29,7 +29,6 @@ Proto {
 		// init clears the environment
 	init { arg func, initEnv, parentKeys;
 		var new;
-//		initEnv = ProtoEnvir.newFrom(initEnv);
 		initEnv.isNil.if({
 				// the initfunc needs to establish all the envir vars
 			env = Environment.new;
@@ -40,7 +39,6 @@ Proto {
 		});
 		this.make(func).moveFunctionsToParent(parentKeys);
 		env.know = true;
-//		env.parent.know = true;
 	}
 	
 		// myAdhoc.import((myOtherAdhoc: #[key1, key2]))
