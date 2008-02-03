@@ -16,3 +16,7 @@
 +Nil {
 	asTimeSpec { ^NilTimeSpec.new }
 }
+
++Quant {
+	asTimeSpec { ^BasicTimeSpec(this.quant, this.phase, this.offset) }
+}

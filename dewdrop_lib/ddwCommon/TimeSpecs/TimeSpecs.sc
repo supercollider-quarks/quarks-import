@@ -17,6 +17,11 @@ NilTimeSpec {   // always schedules for now
 	nextTimeOnGrid { arg clock; 
 		^clock.tryPerform(\beats) ? 0
 	}
+		// this is used in too many places, can't delete it outright yet
+	schedTime { |clock|
+		this.deprecated(thisMethod, this.class.findRespondingMethodFor(\nextTimeOnGrid));
+		^this.nextTimeOnGrid(clock)
+	}
 		// for chucklib, normally you shouldn't use this
 		// same as nextTimeOnGrid here but others have to take bp's leadTime into account
 	bpSchedTime { |bp|
