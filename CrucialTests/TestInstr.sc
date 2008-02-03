@@ -65,6 +65,13 @@ TestInstr : UnitTest {
 		sd = Instr("TestInstr.asSynthDef").asSynthDef;
 		this.assert( sd.isKindOf(InstrSynthDef),"should produce an InstrSynthDef succesfully");
 	}
+	test_doubleStore {
+		var leaves;
+		Instr("test_doubleStore",{ SinOsc.ar });
+		Instr("test_doubleStore",{ SinOsc.ar });
+		leaves = Instr.leaves;
+		this.assertEquals( leaves.size, 1,"should still only be one leaf");
+	}
 }
 
 

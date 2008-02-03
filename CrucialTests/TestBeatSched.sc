@@ -2,15 +2,28 @@
 TestBeatSched : UnitTest {
 	
 	test_beat {
-				var b,t;
-		//Tempo.bpm_(120);
-		b = BeatSched.beat;
-		t = BeatSched.time;
-		//[b,t,Tempo.secs2beats(t) ].postln;
+		var b,t, sched;
+		Tempo.bpm_(120);
+		sched = BeatSched.new;
+		b = sched.beat;
+		t = sched.time;
 		this.assertFloatEquals( Tempo.secs2beats( t ) ,   b,
 		 	"BeatSched .beat should be convertible to .time using Tempo");
 
 	}
+	test_setBeat {
+		var b,t, sched;
+		Tempo.bpm_(120);
+		sched = BeatSched.new;
+		sched.beat = 10.0;
+		// this calculates back through the tempo clock
+		b = sched.beat;
+		
+		this.assertFloatEquals( b , 10.0,
+		 	"setting beat should work");
+
+	}
+		
 	test_deltaTillNext {
 				var db,b,ds;
 		//Tempo.bpm_(120);
