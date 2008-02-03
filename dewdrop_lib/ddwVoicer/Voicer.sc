@@ -616,7 +616,7 @@ Voicer {		// collect and manage voicer nodes
 					~schedBundleArray.(~latency ? 0, ~timingOffset,
 						node.server,
 						node.server.makeBundle(false, {
-							node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i).debug("args"));
+							node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
 						})
 					);
 					(length.notNil and: { length != inf }).if({
@@ -626,12 +626,6 @@ Voicer {		// collect and manage voicer nodes
 								freq);
 						});
 					});
-//					node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i), latency);
-//					thisThread.clock.sched(~sustain.wrapAt(i), {
-//							// must include freq here b/c node might have been stolen
-//						node.release(0, latency, freq);
-//					});
-currentEnvironment.delta.debug("delta");
 				});
 			};
 		});
