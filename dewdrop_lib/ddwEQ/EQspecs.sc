@@ -117,7 +117,7 @@ StaticEQ {
 	
 	init { arg numChan ... z;
 		numChannels = numChan ? 1;
-		spec = DynMultiEQ.new(numChan, z).spec;
+		spec = MultiEQ.new(numChan, z).spec;
 	}
 	
 	prepareForPlay { arg targ, b, addAction = \addToTail;
