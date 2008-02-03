@@ -324,7 +324,10 @@ Voicer {		// collect and manage voicer nodes
 	
 	setArgsInEvent { |event|
 		var	build = {
-			var synthDesc, argList, controls, cname;
+			var synthDesc, argList, controls, cname,
+					// why? I want VoicerNode's initargs to override parent event defaults
+					// but keys set in the local event should take precedence
+				eventWithoutParent = currentEnvironment.copy.parent_(nil);
 			~args = ~nodes.collect({ |node, i|
 					// if synthdesc is available
 					// we can't assume the same synthdesc for every node
@@ -336,11 +339,14 @@ Voicer {		// collect and manage voicer nodes
 					argList = Array(controls.size * 2);
 					controls.do({ |c|
 						cname = c.name.asSymbol;
-						(cname.envirGet.size == 0).if({ cname.envirPut(cname.envirGet.asArray) });
+//						(cname.envirGet.size == 0).if({ cname.envirPut(cname.envirGet.asArray) });
+						(eventWithoutParent[cname].size == 0).if({
+							eventWithoutParent[cname] = eventWithoutParent[cname].asArray;
+						});
 							// add value: environment overrides node's initarg,
 							// which overrides the SynthDef's default
 						argList.add(cname)
-							.add(cname.envirGet.wrapAt(i)
+							.add(eventWithoutParent[cname].wrapAt(i)
 								?? { node.initArgAt(cname) }
 								?? { c.defaultValue }
 							);
@@ -553,18 +559,26 @@ Voicer {		// collect and manage voicer nodes
 			},
 			
 			play: #{
-				var	latency;
+				var	lag, timingOffset = ~timingOffset;
 				~voicer.notNil.if({
-					latency = ~latency;
+					lag = ~latency;
 					~prepNote.value;
 					~finish.value;	// user-definable
 
 					~nodes.do({ |node, i|
-						var	freq = ~freq.wrapAt(i);
-						node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i), latency);
-						~length.wrapAt(i).notNil.if({
-							thisThread.clock.sched(~length.wrapAt(i), {
-								node.release(0, latency, freq);
+						var	freq = ~freq.wrapAt(i), length = ~length.wrapAt(i);
+						~schedBundleArray.(~lag ? 0, ~timingOffset,
+							node.server,
+							node.server.makeBundle(false, {
+								node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
+							})
+						);
+						(length.notNil and: { length != inf }).if({
+							thisThread.clock.sched(length, {
+								node.release(0,
+									(lag / thisThread.clock.tempo + timingOffset)
+										+ node.server.latency,
+									freq);
 							});
 						});
 					});
@@ -573,13 +587,13 @@ Voicer {		// collect and manage voicer nodes
 		));
 
 		Event.default[\eventTypes].put(\voicerNote, #{|server|
-			var lag, strum, sustain, i;
+			var lag, strum, sustain, i, timingOffset = ~timingOffset;
 			
 			~freq = (~freq.value + ~detune).asArray;
 
 			if (~freq.isSymbol.not) {
 				~amp = ~amp.value.asArray;
-				lag = ~lag + server.latency;
+				lag = ~lag;
 				strum = ~strum;
 				sustain = ~sustain = ~sustain.value.asArray;
 				~gate = (~gate ?? {
@@ -593,16 +607,31 @@ Voicer {		// collect and manage voicer nodes
 				~voicer.setArgsInEvent(currentEnvironment);
 				
 				~nodes.do({ |node, i|
-					var latency, freq;
+					var latency, freq, length;
 					
 					latency = i * strum + lag;
 					freq = ~freq.wrapAt(i);
+					length = ~sustain.wrapAt(i);
 
-					node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i), latency);
-					thisThread.clock.sched(~sustain.wrapAt(i), {
-							// must include freq here b/c node might have been stolen
-						node.release(0, latency, freq);
+					~schedBundleArray.(~latency ? 0, ~timingOffset,
+						node.server,
+						node.server.makeBundle(false, {
+							node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i).debug("args"));
+						})
+					);
+					(length.notNil and: { length != inf }).if({
+						thisThread.clock.sched(length + timingOffset, {
+							node.release(0,
+								lag + node.server.latency,
+								freq);
+						});
 					});
+//					node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i), latency);
+//					thisThread.clock.sched(~sustain.wrapAt(i), {
+//							// must include freq here b/c node might have been stolen
+//						node.release(0, latency, freq);
+//					});
+currentEnvironment.delta.debug("delta");
 				});
 			};
 		});
