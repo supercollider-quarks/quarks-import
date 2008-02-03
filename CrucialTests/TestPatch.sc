@@ -48,5 +48,14 @@ TestPatch : UnitTest {
 		//p.free;
 		//this.wait( {p.readyForPlay.not},"after free, patch should not be ready for play");
 	}
+	test_gui {
+		Instr.clearAll;
+		Instr("sin",{SinOsc.ar});
+		Sheet({ arg f;
+			Patch("sin").gui(f);
+			Patch("sin").gui(f);
+		}).close;
+		this.assertEquals( Instr.leaves.size,1,"should only be one instr in the lib");
+	}
 }
 
