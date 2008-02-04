@@ -219,13 +219,25 @@ SETOServer {
 		// interaction support
 		interactions.do{|int| int.update};
 
+/*deadObjectIDs.isEmpty.not.if{
+	objectIDs.postln;
+};
+deadObjectIDs.isEmpty.not.if{
+	deadObjectIDs.postln;
+	deadObjectIDs.collect{|id| knownObjs[id].isUpdated.postln};
+};
+*/
 		// update setObj representations.
 		objectIDs.do{|id|
 			setObj = knownObjs[id];
 			setObj.isUpdated.if({
-				setObj.update; 
+				setObj.update;
 				setObj.isUpdated = false
 			});
+		};
+		deadObjectIDs.do{|id|
+			setObj = knownObjs[id];
+			setObj.update; 
 		};
 	}
 	set {|id, args|
