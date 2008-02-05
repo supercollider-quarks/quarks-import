@@ -972,7 +972,7 @@ MixerChannelReconstructor {
 				});
 				thisBundle[\chan] !? { thisBundle[\chan].bundled = 2 };  // "ready"
 				thisBundle[\func].notNil.if({
-					SystemClock.sched(thisBundle.server.latency, Routine({
+					SystemClock.sched(thisBundle.server.latency ? 0.2, Routine({
 						thisBundle[\env].notNil.if({
 							thisBundle[\env].use({
 								thisBundle[\func].value(thisBundle[\chan]);
