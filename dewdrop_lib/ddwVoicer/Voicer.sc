@@ -559,7 +559,7 @@ Voicer {		// collect and manage voicer nodes
 			},
 			
 			play: #{
-				var	lag, timingOffset = ~timingOffset;
+				var	lag, timingOffset = ~timingOffset ? 0;
 				~voicer.notNil.if({
 					lag = ~latency;
 					~prepNote.value;
@@ -574,10 +574,11 @@ Voicer {		// collect and manage voicer nodes
 							})
 						);
 						(length.notNil and: { length != inf }).if({
-							thisThread.clock.sched(length, {
+							thisThread.clock.sched(length + timingOffset, {
 								node.release(0,
-									(lag / thisThread.clock.tempo + timingOffset)
-										+ node.server.latency,
+									node.server.latency.notNil.if({
+										lag + node.server.latency
+									}),
 									freq);
 							});
 						});
@@ -587,7 +588,7 @@ Voicer {		// collect and manage voicer nodes
 		));
 
 		Event.default[\eventTypes].put(\voicerNote, #{|server|
-			var lag, strum, sustain, i, timingOffset = ~timingOffset;
+			var lag, strum, sustain, i, timingOffset = ~timingOffset ? 0;
 			
 			~freq = (~freq.value + ~detune).asArray;
 
@@ -622,7 +623,9 @@ Voicer {		// collect and manage voicer nodes
 					(length.notNil and: { length != inf }).if({
 						thisThread.clock.sched(length + timingOffset, {
 							node.release(0,
-								lag + node.server.latency,
+								node.server.latency.notNil.if({
+									lag + node.server.latency
+								}),
 								freq);
 						});
 					});
