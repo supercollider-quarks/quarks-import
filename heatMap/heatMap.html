@@ -10,15 +10,15 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0e03}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b71505}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0e03; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b71505; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0013fe}
-span.s3 {color: #000ebe}
-span.s4 {color: #bb0e03}
-span.s5 {color: #167209}
+span.s2 {color: #001bfd}
+span.s3 {color: #0014bd}
+span.s4 {color: #b71505}
+span.s5 {color: #20710d}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -38,8 +38,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">a = (0..9).scramble.blendAt((0.1, 0.2 .. 9));</p>
 <p class="p5">a.plot;</p>
 <p class="p5">a.heatMap(10);</p>
-<p class="p5">a.heatMap(10, <span class="s3">Rect</span>(0, 0, 300, 200), xLabels: <span class="s3">true</span>, yLabels: <span class="s3">true</span>);</p>
-<p class="p5">a.heatMap(10, xLabels: <span class="s3">true</span>, yLabels: <span class="s3">true</span>, showVals: <span class="s3">true</span> );</p>
+<p class="p5">a.heatMap(10, <span class="s3">Rect</span>(0, 0, 300, 200), xLabels: <span class="s3">true</span>, yLabels: <span class="s3">true, colscheme: \brw</span>);</p>
+<p class="p5">a.heatMap(10, xLabels: <span class="s3">true</span>, yLabels: <span class="s3">true</span>, showVals: <span class="s3">true</span>, <span class="s3">colscheme: \coals</span>);</p>
 <p class="p6"><br></p>
 <p class="p4">// A completely randomised set of values:</p>
 <p class="p5">a = {1.0.sum3rand}.dup(100);</p>
