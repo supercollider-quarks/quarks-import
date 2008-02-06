@@ -4,5 +4,6 @@
 	\summary: "a different plot\n
 		see RedFingerprint.help",
 	\author: "redFrik",
+	\helpdoc: "RedFingerprint.html",
 	\url: "http://www.fredrikolofsson.com/"
 )
