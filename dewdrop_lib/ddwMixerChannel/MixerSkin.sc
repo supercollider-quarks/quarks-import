@@ -76,9 +76,12 @@ MixerSkin {
 		<>maxAcross = inf;		// maximum channels across screen
 
 	*initClass {
-		Class.initClassTree(PageLayout);
-		screenHeight = PageLayout.screenHeight;	// crib height from felix!! Thanks!
-		screenWidth = PageLayout.screenWidth;
+		StartUp.add({
+			var	bounds = GUI.window.screenBounds;
+			screenHeight = bounds.height;
+			screenWidth = bounds.width;
+			Library.put(\mixer, \smallskin, this.new.maxAcross_(1));
+		});
 	}
 	
 	*new {
