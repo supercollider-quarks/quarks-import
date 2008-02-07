@@ -10,15 +10,19 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b71505}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b31a06}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b71505; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b31a06; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #001bfd}
-span.s3 {color: #0014bd}
-span.s4 {color: #b71505}
-span.s5 {color: #20710d}
+span.s2 {color: #0022fc}
+span.s3 {color: #0019bc}
+span.s4 {color: #b31a06}
+span.s5 {color: #277010}
+span.s6 {color: #000000}
+span.s7 {color: #0000bf}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -56,9 +60,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">a.heatMap(20, colscheme: <span class="s5">\brw</span>);</p>
 <p class="p5">a.heatMap(20, colscheme: <span class="s5">\coals</span>);</p>
 <p class="p6"><br></p>
-<p class="p4">// A larger dataset:</p>
-<p class="p5">a = 200.collect{<span class="s3">|x|</span>200.collect{<span class="s3">|y|</span> (x-y/0.1/(x+1)).sin.rand}}.flat;</p>
-<p class="p5">a.heatMap(200, <span class="s3">Rect</span>(0,0, 600, 600), showVals: <span class="s3">false</span>);</p>
+<p class="p8">// A larger dataset:</p>
+<p class="p8"><span class="s6">~datasize = 200; </span>// if using SwingOSC, reduce this to about 100 at most</p>
+<p class="p9">a = ~datasize.collect{<span class="s7">|x|</span> ~datasize.collect{<span class="s7">|y|</span> (x-y/0.1/(x+1)).sin.rand}}.flat;</p>
+<p class="p9">a.heatMap(~datasize, <span class="s7">Rect</span>(0,0, 600, 600), showVals: <span class="s7">false</span>);</p>
 <p class="p7"><br></p>
 <p class="p2"><br></p>
 <p class="p3">Buffers:</p>
