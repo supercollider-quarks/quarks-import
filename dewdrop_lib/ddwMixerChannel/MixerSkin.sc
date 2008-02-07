@@ -80,7 +80,6 @@ MixerSkin {
 			var	bounds = GUI.window.screenBounds;
 			screenHeight = bounds.height;
 			screenWidth = bounds.width;
-			Library.put(\mixer, \smallskin, this.new.maxAcross_(1));
 		});
 	}
 	
