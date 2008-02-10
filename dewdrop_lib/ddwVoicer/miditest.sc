@@ -159,6 +159,8 @@
 		ctlChannel = ctlChannel ? channel;
 		specs = specs ? Array.new;
 
+		target = target.asTarget;
+
 		target.server.waitForBoot({
 			this.send(target.asTarget.server);	// tell the server about me
 			
