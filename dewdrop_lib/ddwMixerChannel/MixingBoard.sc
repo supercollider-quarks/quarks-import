@@ -15,7 +15,7 @@ MixingBoard {
 
 	*initClass {
 		Class.initClassTree(MixerSkin);
-		defaultSkin = MixerSkin.new;
+		StartUp.add({ defaultSkin = MixerSkin.new });
 	}
 	
 	*new { arg name = "Mixer", skin ... mixers;
