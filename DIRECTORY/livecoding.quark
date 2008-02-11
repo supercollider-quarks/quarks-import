@@ -1,6 +1,6 @@
 (
 	\name: 			"livecoding",
-	\path: 			"livecoding", // path relative to the root Quarks folder
+	\path: 			"livecoding2", // path relative to the root Quarks folder
 	\summary:		"extensions to JITLib",
 	\author: 		"Julian Rohrhuber",
 	\organization: 	"University Cologne",
