@@ -72,6 +72,32 @@ TestInstr : UnitTest {
 		leaves = Instr.leaves;
 		this.assertEquals( leaves.size, 1,"should still only be one leaf");
 	}
+	
+	// strictly speaking this would be a Spec test, but defaultControl is a crucial extension
+	test_defaultControl {
+		Spec.specs.keysValuesDo({ |k,v|
+			var defcon;
+			this.assert(v.isKindOf(Spec),  k.asString + v + "is a spec");
+			// just testing that it works
+			defcon = v.defaultControl;
+
+//			[k,v,defcon].debug;
+//			this.assert(v.canAccept( defcon.poll), "spec "+k+v.asCompileString+"should be able to 'accept' its own defaultControl.poll");
+
+		});
+	}
+	test_pathWasSet {
+		// this makes quark dependant on cxaudio
+		var instr;
+		instr = Instr([\allBands,'threes-gated']);
+		this.assert( instr.path.notNil,"path should be set on instr loaded from disk");
+	}
+	test_loadAll {
+		var instr;
+		Instr.loadAll;
+		instr = Instr([\allBands,'threes-gated']);
+		this.assert( instr.path.notNil,"path should be set on instr loaded via Instr.loadAll");
+	}
 }
 
 

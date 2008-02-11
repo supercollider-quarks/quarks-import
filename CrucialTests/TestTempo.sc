@@ -7,5 +7,12 @@ TestTempo : UnitTest {
 			"with a bpm of 60, 1 beat should equal 1 second");
 	}
 
+	test_asCompileString {
+		var t;
+		t = TempoPlayer.new;
+		// and not the class
+		this.assert( t.asCompileString.compile.value.isKindOf(TempoPlayer),"should recompile as a TempoPlayer");
+	}
+
 }
 
