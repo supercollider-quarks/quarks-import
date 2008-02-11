@@ -159,9 +159,7 @@
 		ctlChannel = ctlChannel ? channel;
 		specs = specs ? Array.new;
 
-		target = target.asTarget;
-
-		target.server.waitForBoot({
+		target.asTarget.server.waitForBoot({
 			this.send(target.asTarget.server);	// tell the server about me
 			
 				// make the player
