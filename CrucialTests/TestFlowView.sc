@@ -45,5 +45,26 @@ TestFlowView : UnitTest {
 		g.close;
 	}
 	
+	/*
+
+w = GUI.window.new;
+w.front;
+
+w.view.horz({ |h|
+	GUI.staticText.new(h,100@100).string_("horz").background = Color.red;
+
+	GUI.staticText.new(h,100@100).string_("horz").background = Color.red;
+
+	// should be to the right of the other two
+	h.scroll({ |s|
+		GUI.staticText.new(s,200@200)
+			.string_("scroll123456789abcdefghijklmnopqrstuvwxyz").background = Color.blue;
+	},100@100)
+
+
+})
+
+*/
+
 }
 

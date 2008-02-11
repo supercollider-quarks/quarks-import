@@ -25,19 +25,19 @@ TestPatch : UnitTest {
 		//this.assert( p.readyForPlay,"patch should still be ready for play");
 		
 		p.free;
-		this.wait( {p.readyForPlay.not},"after free, patch should not be ready for play");
+		this.wait( {p.isPrepared.not},"after free, patch should not be ready for play");
 	}
 	
 	test_prepare {
 		p.prepareForPlay;
 		
-		this.wait( {p.readyForPlay},"wait for patch to be ready");
+		this.wait( {p.isPrepared},"wait for patch to be ready");
 		
 		p.play;
 		this.wait( {p.isPlaying},"wait for patch to play");
 
 		p.free;
-		this.wait({ p.readyForPlay.not},"wait for patch to be un-ready after free");
+		this.wait({ p.isPrepared.not},"wait for patch to be un-ready after free");
 
 		//p.stop;
 		//this.wait( {p.isPlaying.not},"waiting for patch to stop playing");
@@ -49,12 +49,17 @@ TestPatch : UnitTest {
 		//this.wait( {p.readyForPlay.not},"after free, patch should not be ready for play");
 	}
 	test_gui {
+		var s;
 		Instr.clearAll;
 		Instr("sin",{SinOsc.ar});
-		Sheet({ arg f;
-			Patch("sin").gui(f);
-			Patch("sin").gui(f);
-		}).close;
+		{
+			s = Sheet({ arg f;
+				Patch("sin").gui(f);
+				Patch("sin").gui(f);
+			});
+			s.close;
+		}.defer;
+		this.wait( { s.isClosed },"waiting for window to close");
 		this.assertEquals( Instr.leaves.size,1,"should only be one instr in the lib");
 	}
 }
