@@ -6,6 +6,7 @@ VuView : SCUserView  {
 	*viewClass { ^SCUserView }
 	init { arg parent, bounds;
 		super.init(parent, bounds);
+		this.relativeOrigin_(false);
 	}	
 	draw {
 		// frame

@@ -14,13 +14,13 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande; min-height: 15.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d50007}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000b7}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000b7; min-height: 12.0px}
 span.s1 {font: 12.0px Lucida Grande}
 span.s2 {font: 12.0px Helvetica}
-span.s3 {color: #007300}
-span.s4 {color: #0000bf}
+span.s3 {color: #006400}
+span.s4 {color: #0000b7}
 span.s5 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -36,7 +36,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><b>KnobEditor:value_</b><span class="s2">(val)</span></p>
 <p class="p3"><span class="s1"><b>KnobEditor:action_</b></span>({ arg this; actionFunc })</p>
 <p class="p3"><span class="s1"><b>KnobEditor:changed - </b></span>notify dependants from a value change in the object. ie, the gui.</p>
-<p class="p6"><b></b><br></p>
+<p class="p6"><br></p>
 <p class="p3"><span class="s1"><b>KnobEditor:gui</b></span>(layout, bounds,<span class="Apple-converted-space">  </span>knobSize=28, numWidth=48, numHeight=14, hasKnob=true, back)</p>
 <p class="p5"><b>KnobEditorGui:centered_</b><span class="s2">(bool)</span></p>
 <p class="p2"><br></p>
@@ -87,7 +87,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s3">\amp</span>);</p>
 <p class="p7">k.action = { <span class="s4">arg</span> v; z.set(<span class="s3">\amp</span>, v.value) };</p>
-<p class="p7">g = k.gui(<span class="s4">nil</span>, <span class="s4">nil</span>, 100).roundVal_(1e-8)</p>
+<p class="p7">g = k.gui(<span class="s4">nil</span>, <span class="s4">nil</span>, 100,110).roundVal_(1e-8)</p>
 <p class="p4"><br></p>
 <p class="p7">z.release</p>
 <p class="p4"><br></p>
