@@ -25,6 +25,7 @@ Knob : SCUserView {
 	
 	init { arg parent, bounds;
 		super.init(parent, bounds);
+		this.relativeOrigin_(false);
 		mode = defaultMode;
 		keystep = 0.01;
 		step = 0.01;
@@ -124,7 +125,7 @@ Knob : SCUserView {
 				{ mode == \round } {
 					pt = this.bounds.center - Point(x,y);
 					angle = Point(pt.y, pt.x.neg).theta;
-					if ((angle >= -0.80pi) && (angle <= 0.80pi), {
+					if ((angle >= -0.80pi) and: { angle <= 0.80pi} , {
 						value = [-0.75pi, 0.75pi].asSpec.unmap(angle);
 						if (last != value) {
 							action.value(this, x, y, modifiers);

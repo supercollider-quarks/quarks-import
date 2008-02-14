@@ -11,15 +11,16 @@ TriggerView : SCUserView {
 
 	init { arg parent, bounds;
 		super.init(parent, bounds);
+		this.relativeOrigin_(false);
 		hitColor = Color.blue(0.7, 0.2);
 		fillColor = Color.blue(0.0, 0.0);
 		fontColor = Color.black;
-		this.canFocus_(false);
-		area = this.bounds.insetBy(2,2);
+	//	this.canFocus_(false);
 		this.value_(false);
 	}
 	
 	draw {
+		area = this.bounds.insetBy(2,2);
 		Color.black.set;
 		Pen.strokeRect(this.bounds);
 		if (value, {
@@ -62,15 +63,16 @@ ToggleView : SCUserView {
 
 	init { arg parent, bounds;
 		super.init(parent, bounds);
-		area = this.bounds.insetBy(2,2);
+		this.relativeOrigin_(false);
 		hitColor = Color.blue(0.7, 0.2);
 		fillColor = Color.blue(0, 0);
 		fontColor = Color.black;
-		this.canFocus_(false);
+	//	this.canFocus_(false);
 		value = false;
 	}
 	
 	draw {
+		area = this.bounds.insetBy(2,2);
 		Color.black.set;
 		Pen.strokeRect(this.bounds);
 		if (value, {
