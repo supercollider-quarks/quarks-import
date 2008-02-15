@@ -114,6 +114,18 @@ Proto {
 		this.use({ result = ~asPattern.valueArray(args); });
 		^result
 	}
+
+	play { arg ... args;
+		var result;
+		this.use({ result = ~play.valueArray(args); });
+		^result
+	}
+	
+	stop { arg ... args;
+		var result;
+		this.use({ result = ~stop.valueArray(args); });
+		^result
+	}	
 	
 	use { arg func;
 		var result, saveEnvir;
@@ -178,7 +190,7 @@ Proto {
 	}
 	
 	perform { arg selector ... args;
-			^this.performList(\doesNotUnderstand, [selector] ++ args);
+		^this.performList(\doesNotUnderstand, [selector] ++ args);
 	}
 
 	tryPerform { arg selector ... args;	// for sth like draggedInto...GUI
