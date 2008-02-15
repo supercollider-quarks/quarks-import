@@ -572,8 +572,10 @@ TabbedView {
 	*newBasic{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(w, bounds, labels, colors, name, scroll);
-		q.labelColors_([Color.white.alpha_(0.3)]);
-		q.backgrounds_([Color.white.alpha_(0.3)]);
+		if( GUI.id === \cocoa)  {
+			q.labelColors_([Color.white.alpha_(0.3)]);
+			q.backgrounds_([Color.white.alpha_(0.3)]);
+		};
 		^q;
 	}
 	
@@ -619,7 +621,9 @@ TabbedView {
 	*newTransparent{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(w, bounds, labels, colors, name, scroll);
-		q.labelColors_([Color.white.alpha_(0.3)]);
+		if( GUI.id === \cocoa)  {
+			q.labelColors_([Color.white.alpha_(0.3)]);
+		};
 		q.backgrounds_([Color.clear]);
 		^q;
 	}
@@ -627,8 +631,10 @@ TabbedView {
 	*newPacked{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(w, bounds, labels, colors, name, scroll);
-		q.labelColors_([Color.white.alpha_(0.3)]);
-		q.backgrounds_([Color.white.alpha_(0.3)]);
+		if( GUI.id === \cocoa)  {
+			q.labelColors_([Color.white.alpha_(0.3)]);
+			q.backgrounds_([Color.white.alpha_(0.3)]);
+			};
 		q.tabCurve=3;
 		q.labelPadding=8;
 		q.tabHeight=14;
