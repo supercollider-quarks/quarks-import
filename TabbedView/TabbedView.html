@@ -16,26 +16,26 @@ p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #757070; m
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #78706f}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #767070}
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #3b3f3f}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #757070}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; color: #757070}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #3b3f3f; min-height: 12.0px}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #343f44}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #363f42}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 12.0px Helvetica}
 span.s3 {font: 14.0px Helvetica}
 span.s4 {color: #999999}
 span.s5 {font: 13.0px Helvetica}
-span.s6 {color: #395869}
+span.s6 {color: #3f5662}
 span.s7 {color: #000000}
-span.s8 {color: #343f44}
+span.s8 {color: #363f42}
 span.s9 {color: #606060}
 span.s10 {color: #3b3f3f}
-span.s11 {color: #78706f}
+span.s11 {color: #767070}
 span.s12 {color: #4c4f4c}
-span.s13 {color: #b7837e}
-span.s14 {font: 10.0px Monaco; color: #343f44}
+span.s13 {color: #af8a86}
+span.s14 {font: 10.0px Monaco; color: #363f42}
 span.s15 {font: 10.0px Monaco}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -43,7 +43,7 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><span class="s1"><b>TabbedView<span class="Apple-converted-space">  </span></b></span><b>An array of CompositeViews (or ScrollViews) with tabs for switching<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
-<p class="p3">by jostM, <span class="Apple-converted-space">  </span>Feb 12, 2008 version 1.10</p>
+<p class="p3">by jostM, <span class="Apple-converted-space">  </span>Feb 16, 2008 version 1.11</p>
 <p class="p3">Change history at bottom.</p>
 <p class="p4"><span class="Apple-converted-space">  </span></p>
 <p class="p1"><b>Class Methods</b></p>
@@ -64,8 +64,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b><span class="Apple-converted-space"> </span>Convenience method variations on *new for quick styling :</b></p>
 <p class="p2"><b><span class="Apple-converted-space"> </span></b></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>*newBasic</b></p>
-<p class="p1"><b><span class="Apple-converted-space"> </span>*newRGB</b></p>
-<p class="p1"><b><span class="Apple-converted-space"> </span>*newRGBLabels</b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>*newColor</b></p>
+<p class="p1"><b><span class="Apple-converted-space"> </span>*newColorLabels</b></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>*newFlat</b></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>*newTall</b></p>
 <p class="p1"><b><span class="Apple-converted-space"> </span>*newTransparent</b></p>
@@ -98,7 +98,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabHeight_ ( int )<span class="Apple-converted-space">  </span></b>guess ...</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabCurve_ ( int ) <span class="Apple-converted-space"> </span></b> ; the radius in pixels of the rounded tab corners</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">   </span></p>
-<p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>swingFactor_( float )<span class="Apple-converted-space">  </span>float</b> ;<span class="Apple-converted-space">  </span>a multiplication factor for a string/tab width for GUI.swing only. default 6.5</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>swingFactor_( float )<span class="Apple-converted-space">  </span>float</b> ;<span class="Apple-converted-space">  </span>a multiplication factor for a string/tab width for GUI.swing only. default<span class="Apple-converted-space">  </span>7.0</p>
 <p class="p3"><span class="s4"><span class="Apple-converted-space"> <span class="Apple-tab-span">	</span>   </span></span><span class="s5"><b>relativeOrigin_</b></span><span class="s3"><b> (</b></span><b>bool)</b><span class="Apple-converted-space">  </span>defaults to true. please see the cautions under <a href="SC://SCCompositeView"><span class="s6">SCCompositeView</span></a></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">   </span></p>
 <p class="p1"><b>Usage:</b></p>
@@ -134,9 +134,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p11">TabbedView<span class="s7">.newBasic</span></p>
 <p class="p7"><br></p>
-<p class="p11">TabbedView<span class="s7">.newRGB</span></p>
+<p class="p11">TabbedView<span class="s7">.newColor</span></p>
 <p class="p7"><br></p>
-<p class="p8"><span class="s10">TabbedView</span>.newRGBLabels</p>
+<p class="p8"><span class="s10">TabbedView</span>.newColorLabels</p>
 <p class="p7"><br></p>
 <p class="p11">TabbedView<span class="s7">.newFlat</span></p>
 <p class="p7"><br></p>
@@ -155,7 +155,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13">If your objects are encased in FlowViews at every level (including the object contents itself), all should be OK. Otherwise, you have to set the tab position before you add objects</p>
 <p class="p2"><br></p>
 <p class="p3"><b>(</b></p>
-<p class="p8">v=<span class="s8">TabbedView</span>.newRGBLabels(<span class="s8">nil</span>,<span class="s8">nil</span>,<span class="s8">Array</span>.fill(5,{<span class="s8">arg i; var q="aa";</span> i.do{q=<span class="s9">q</span>++"aa"}; q })); <span class="s11">//default</span></p>
+<p class="p8">v=<span class="s8">TabbedView</span>.newColorLabels(<span class="s8">nil</span>,<span class="s8">nil</span>,<span class="s8">Array</span>.fill(5,{<span class="s8">arg i; var q="aa";</span> i.do{q=<span class="s9">q</span>++"aa"}; q })); <span class="s11">//default</span></p>
 <p class="p8">v.views[0].flow({<span class="s8">arg</span> w;</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="s8">ActionButton</span>(w,<span class="s9">"tabs top"</span>,{v.tabPosition_(<span class="s12">\top</span>)},200,50);</p>
 <p class="p8"><span class="Apple-tab-span">	</span>w.startRow;</p>
@@ -167,7 +167,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p3">)</p>
 <p class="p7"><br></p>
-<p class="p8"><span class="s10">TabbedView</span>.newRGBLabels(<span class="s10">nil</span>,<span class="s10">nil</span>,<span class="s10">Array</span>.fill(25,{<span class="s10">|i|</span> <span class="s9">"tab"</span>++i.asString})).tabPosition_(<span class="s12">\right</span>);</p>
+<p class="p8"><span class="s10">TabbedView</span>.newColorLabels(<span class="s10">nil</span>,<span class="s10">nil</span>,<span class="s10">Array</span>.fill(25,{<span class="s10">|i|</span> <span class="s9">"tab"</span>++i.asString})).tabPosition_(<span class="s12">\right</span>);</p>
 <p class="p7"><br></p>
 <p class="p8"><span class="s10">TabbedView</span>.newTall(<span class="s10">nil</span>,<span class="s10">nil</span>,<span class="s10">Array</span>.fill(5,{<span class="s10">|i|</span> <span class="s9">"tab"</span>++i.asString})).tabPosition_(<span class="s12">\left</span>);</p>
 <p class="p7"><br></p>
@@ -175,7 +175,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p3"><b>Drag objects from one tab to another (</b><span class="s13"><b>under cocoa only</b></span><b> at the moment):</b></p>
 <p class="p8">(</p>
-<p class="p8">v=<span class="s8">TabbedView</span>.newRGBLabels;</p>
+<p class="p8">v=<span class="s8">TabbedView</span>.newColorLabels;</p>
 <p class="p8">n = <span class="s8">GUI</span>.dragSource.new(v.views[0], <span class="s8">Rect</span>(50, 50, 140, 24));</p>
 <p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>n.object = </span>"Drag me to Tab2"<span class="s7">;</span></p>
 <p class="p8"><span class="Apple-converted-space"> </span><span class="s14">GUI</span><span class="s15">.textView.new </span>(v.views[1], <span class="s8">Rect</span>(50, 50, 140, 80));</p>
@@ -184,7 +184,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>add, removeAt, insert<span class="Apple-converted-space">  </span>tabs</b></p>
 <p class="p3">defaults on *new, but other thems use fixedwidths:</p>
 <p class="p4"><br></p>
-<p class="p11"><span class="s7">v=</span>TabbedView<span class="s7">.newRGB</span></p>
+<p class="p8">v=<span class="s10">TabbedView</span>.newColor</p>
 <p class="p14"><br></p>
 <p class="p9"><span class="s7">v.add(</span>"I am last"<span class="s7">)</span></p>
 <p class="p7"><br></p>
@@ -195,9 +195,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>resize_()</b></p>
 <p class="p8">(<span class="Apple-converted-space"> </span></p>
 <p class="p8">w=<span class="s8">GUI</span>.window.new.front;</p>
-<p class="p8">v=<span class="s8">TabbedView</span>.newRGBLabels(w,<span class="s8">Rect</span>(40,40,280,280),<span class="s8">Array</span>.fill(12,{<span class="s8">|i|</span> <span class="s9">"tab"</span>++i.asString}),relativeOrigin:true).tabPosition_(<span class="s12">\right</span>);</p>
+<p class="p8">v=<span class="s8">TabbedView</span>.newColorLabels(w,<span class="s8">Rect</span>(40,40,280,280),<span class="s8">Array</span>.fill(12,{<span class="s8">|i|</span> <span class="s9">"tab"</span>++i.asString}),relativeOrigin:true).tabPosition_(<span class="s12">\right</span>);</p>
 <p class="p8">v.resize_(5);</p>
-<p class="p8"><span class="s8">GUI</span>.slider.new(v.views[0],Rect(40,40,200,30));</p>
+<p class="p8"><span class="s8">GUI</span>.slider.new(v.views[0],Rect(45,80,200,30)).resize_(2);</p>
 <p class="p8">)<span class="Apple-converted-space"> </span></p>
 <p class="p4"><br></p>
 <p class="p3"><b>nest TabbedViews &amp; use scrolling</b></p>
@@ -206,7 +206,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8">v=<span class="s8">TabbedView</span>.newPacked(<span class="s8">nil</span>,<span class="s8">Rect</span>(200,200,600,400).insetBy(20,20),[<span class="s9">"1"</span>,<span class="s9">"2"</span>,<span class="s9">"3"</span>])</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.tabHeight_(40).tabPosition_(<span class="s12">\right</span>);</p>
 <p class="p7"><br></p>
-<p class="p8">q=<span class="s8">TabbedView</span>.newRGBLabels(v.views[0],<span class="s8">nil</span>,[<span class="s9">"tab1.1"</span>,<span class="s9">"tab1.2"</span>,<span class="s9">"tab1.3"</span>], scroll: <span class="s8">true</span>)</p>
+<p class="p8">q=<span class="s8">TabbedView</span>.newColorLabels(v.views[0],<span class="s8">nil</span>,[<span class="s9">"tab1.1"</span>,<span class="s9">"tab1.2"</span>,<span class="s9">"tab1.3"</span>], scroll: <span class="s8">true</span>)</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.tabPosition_(<span class="s12">\right</span>).resize_(5);</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p8">q.views[0].flow({ <span class="s8">arg</span> w;</p>
@@ -316,5 +316,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Tabs can switch during drags(cocoa only);<span class="Apple-converted-space"> </span></p>
 <p class="p3">Feb 12, 2008 :<span class="Apple-converted-space">  </span>relativeOrigin variable added to adjust to new SCCompositeView behavior. Swing compatibility. Version 1.10;</p>
 <p class="p7"><br></p>
+<p class="p3">Feb 16, 2008 :<span class="Apple-converted-space">  </span>Version 1.11;<span class="Apple-converted-space">  </span>Swing themes adjusted to use no transparency. <span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>deprecated: newRGB and newRGBLabels ;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>use new methodes: newColor and newColorLabels instead.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>swingFactor defaults to 7 (integers work better than floats,</p>
 </body>
 </html>

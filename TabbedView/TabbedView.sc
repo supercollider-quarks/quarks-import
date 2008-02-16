@@ -1,4 +1,4 @@
-/******* by jostM Feb 12, 2008 version 1.10 *******/
+/******* by jostM Feb 16, 2008 version 1.11 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -23,7 +23,7 @@ TabbedView {
 		<relativeOrigin=false,
 		left=0,
 		top=0,
-		swingFactor=6.5,
+		swingFactor=7,
 		<view;
 	
 	*new{ arg w, bounds, labels, colors, name=" ", scroll=false;
@@ -49,12 +49,17 @@ TabbedView {
 		unfocusActions = [];
 		stringColor = Color.black;
 		stringFocussedColor = Color.white;
-		
-		labelColors = colors ? [Color.grey.alpha_(0.2)];
+		if( GUI.id === \cocoa)  {
+			labelColors = colors ? [Color.grey.alpha_(0.2)];
+			}{
+			labelColors = colors ? [Color(0.85,0.85,0.85)];
+			};
 		unfocussedColors = Array.fill(labelColors.size,{arg i;
 			var col;
 			col = labelColors[i%labelColors.size].asArray;
-			col = col*[0.7,0.7,0.7,1];
+			if( GUI.id === \cocoa)  
+				{col = col*[0.7,0.7,0.7,1];}
+				{col = col*[0.9,0.9,0.9,1];};
 			col = Color(*col);
 				});
 				
@@ -575,28 +580,59 @@ TabbedView {
 		if( GUI.id === \cocoa)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 			q.backgrounds_([Color.white.alpha_(0.3)]);
+		}{
+			q.labelColors_([Color(0.9,0.9,0.9)]);
+			q.backgrounds_([Color(0.9,0.9,0.9)]);
+			q.unfocussedColors_([Color(0.8,0.8,0.8)]);
 		};
 		^q;
 	}
 	
 	*newRGBLabels{ arg w, bounds, labels, colors, name=" ", scroll=false;
+		"\nWarning: TabbedView.newRGBLabels deprecated. Use .newColorLabels instead".postln;
+		^this.newColorLabels(w, bounds, labels, colors, name, scroll);
+		}
+		
+	*newColorLabels{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.newBasic(w, bounds, labels, colors, name, scroll);
 		q.labelColors_([Color.red,Color.blue,Color.yellow]);
-		q.backgrounds_([Color.white.alpha_(0.3)]);
+		if( GUI.id === \cocoa)  {
+			q.backgrounds_([Color.white.alpha_(0.3)]);
+		}{
+			q.backgrounds_([Color(0.9,0.9,0.9)]);
+			q.unfocussedColors_([Color(0.9,0.75,0.75),
+							Color(0.75,0.75,0.9),
+							Color(0.9,0.9,0.75)]);
+		};
 		^q;
 	}
 	
 	*newRGB{ arg w, bounds, labels, colors, name=" ", scroll=false;
+		"\nWarning: TabbedView.newRGB  deprecated. Use .newColor instead".postln;
+		^this.newColor(w, bounds, labels, colors, name, scroll);
+		}
+		
+	*newColor{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(w, bounds, labels, colors, name, scroll);
 		q.labelColors_([Color.red,Color.blue,Color.yellow]);
-		q.backgrounds_([Color.red.alpha_(0.1),
-							Color.blue.alpha_(0.1),
-							Color.yellow.alpha_(0.1)]);
-		q.unfocussedColors_([Color.red.alpha_(0.2),
-							Color.blue.alpha_(0.2),
-							Color.yellow.alpha_(0.2)]);
+		if( GUI.id === \cocoa)  {
+			q.backgrounds_([Color.red.alpha_(0.1),
+								Color.blue.alpha_(0.1),
+								Color.yellow.alpha_(0.1)]);
+			q.unfocussedColors_([Color.red.alpha_(0.2),
+								Color.blue.alpha_(0.2),
+								Color.yellow.alpha_(0.2)]);
+		}{
+			q.backgrounds_([Color(0.9,0.85,0.85),
+								Color(0.85,0.85,0.9),
+								Color(0.9,0.9,0.85)]);
+			q.unfocussedColors_([Color(0.9,0.75,0.75),
+								Color(0.75,0.75,0.9),
+								Color(0.9,0.9,0.75)]);
+		};
+
 		^q;
 	}
 	
@@ -623,6 +659,9 @@ TabbedView {
 		q=this.new(w, bounds, labels, colors, name, scroll);
 		if( GUI.id === \cocoa)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
+		}{	
+			q.labelColors_([Color(0.9,0.9,0.9)]);
+			q.unfocussedColors_([Color(0.8,0.8,0.8)]);
 		};
 		q.backgrounds_([Color.clear]);
 		^q;
@@ -634,7 +673,11 @@ TabbedView {
 		if( GUI.id === \cocoa)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 			q.backgrounds_([Color.white.alpha_(0.3)]);
-			};
+			}{
+			q.labelColors_([Color(0.85,0.85,0.85)]);
+			q.backgrounds_([Color(0.85,0.85,0.85)]);
+			q.unfocussedColors_([Color(0.8,0.8,0.8)]);
+		};
 		q.tabCurve=3;
 		q.labelPadding=8;
 		q.tabHeight=14;
