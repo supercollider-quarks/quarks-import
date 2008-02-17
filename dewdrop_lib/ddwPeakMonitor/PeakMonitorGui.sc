@@ -7,8 +7,7 @@ PeakMonitorGui : ObjectGui {
 	guiBody { arg lay;
 		lay.startRow;
 		leftFlow = FlowView(lay, Rect(0, 0, model.numChannels * 13 + 10, 210));
-		multiSl = GUI.multiSliderView.new(leftFlow, Rect(0, 0, model.numChannels * 13 + 2, 200))
-			.size_(model.numChannels);
+		multiSl = GUI.multiSliderView.new(leftFlow, Rect(0, 0, model.numChannels * 13 + 2, 200));
 		
 		rightFlow = FlowView(lay, Rect(0, 0,
 				// ax + b(x-1) = ax + bx - b = (a+b)x - b
