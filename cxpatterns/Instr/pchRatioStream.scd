@@ -15,7 +15,7 @@ Instr([\pchRatioStream,\degree],{ arg degreeStream,scaleStream;
 	
 },
 	[
-		StreamSpec.new(StaticIntegerSpec(-100,100,\linear,1)),
+		StreamSpec.new(StaticIntegerSpec(-100,100,default:1.0)),
 		\scaleStream
 	],
 	StreamSpec(\pchRatio)

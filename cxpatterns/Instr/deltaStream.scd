@@ -78,7 +78,7 @@ Instr([\deltaStream,\resetingFixLooseRand],{ arg minDiv = -4, maxDiv = -1, cycle
 	},{
 		item = 2 ** rrand(minDiv.asFloat,maxDiv.asFloat);
 		if(sum + item >= cycleLength,{
-			//[sum + item, ">",cycleLength,":",sum,cycleLength - sum].debug;
+			//[item,sum + item, ">",cycleLength,":",sum,cycleLength - sum].debug;
 			item = cycleLength - sum;
 			cyclesDone = cyclesDone + 1;
 			sum = 0;
@@ -101,90 +101,14 @@ Instr([\deltaStream,\resetingFixLooseRand],{ arg minDiv = -4, maxDiv = -1, cycle
 Instr("deltaStream.swung",{ arg swing;
 	Pseq([swing,1 - swing] ,inf)
 },[
-	StaticSpec(0,1)
+	StaticSpec(0.1,0.9,default: 0.57)
 ],
 	\deltaStream
 );
 
 
 /*
-Instr([\deltaStream,\XOX],{ arg cycleLength=16;
-	XOX(cycleLength)
-},[
-	StaticIntegerSpec(4,64)
-],\deltaStream);
 
-Instr([\deltaStream,\XOXfuzzy],{ arg cycleLength=16;
-	XOXfuzzy(cycleLength)
-},[	
-	StaticIntegerSpec(4,64)
-],\deltaStream);
-
-
-
-
-Instr([\deltaStream,\simpleStutterXOX],{ arg cycleLength=16,stutters=2;
-	Pstutter(stutters,XOX(cycleLength))
-},[\cycleLength,StaticIntegerSpec(2,16)],\deltaStream);
-
-Instr([\deltaStream,\simpleStutterXOXfuzzy],{ arg cycleLength=16,stutters=2;
-	Pstutter(stutters,XOXfuzzy(cycleLength))
-},[\cycleLength,StaticIntegerSpec(2,16)],\deltaStream);
-
-
-
-Instr([\deltaStream,\StutterXOX],{ arg cycleLength=16,stutterCycleLength=16;
-
-	PdurStutter(
-		PseqLive(Array.fill(stutterCycleLength,1),0,5,1),
-		XOX(cycleLength)
-	)
-},[
-	\cycleLength,
-	\cycleLength
-],\deltaStream);
-
-Instr([\deltaStream,\StutterXOXfuzzy],{ arg cycleLength=16,stutterCycleLength=16;
-
-	PdurStutter(
-		PseqLive(Array.fill(stutterCycleLength,1),0,5,1),
-		XOXfuzzy(cycleLength)
-	)
-},[
-	\cycleLength,
-	\cycleLength
-],\deltaStream);
-
-
-
-Instr([\deltaStream,\RandStutterXOX],{ arg cycleLength=16,minStutter=0,maxStutter=5;
-
-	PdurStutter(
-		Prand(Array.series((maxStutter - minStutter).max(2),minStutter),inf),
-		XOX(cycleLength)
-	)
-},[
-	\cycleLength,
-	StaticIntegerSpec(1,5),
-	StaticIntegerSpec(1,5)
-],\deltaStream);
-
-Instr([\deltaStream,\RandStutterXOXfuzzy],{ arg cycleLength=16,minStutter=0,maxStutter=5;
-
-	PdurStutter(
-		Prand(Array.series((maxStutter - minStutter).max(2),minStutter),inf),
-		XOXfuzzy(cycleLength)
-	)
-},[
-	\cycleLength,
-	StaticIntegerSpec(1,5),
-	StaticIntegerSpec(1,5)
-],\deltaStream);
-
-
-Instr([\deltaStream,\NumberEditor],{
-	NumberEditor(0.25,[0.125,32.0,\linear,0.125])
-},nil,\deltaStream);
 
 */
 
