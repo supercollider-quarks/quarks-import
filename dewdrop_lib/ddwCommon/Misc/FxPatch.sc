@@ -63,6 +63,7 @@ FxPatch : PatchNoDep {
 
 		synthDef = nil;	// clear synthdef so it's rebuilt with new args
 		
-		this.play(m.effectgroup, atTime, m.inbus, callback);
+		this.play(m.effectgroup, atTime,
+			SharedBus(def.rate, m.inbus.index, numChannels, m.server), callback);
 	}
 }
