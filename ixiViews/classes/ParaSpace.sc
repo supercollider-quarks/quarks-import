@@ -61,6 +61,7 @@ ParaSpace {
 		// tracking the delete button
 		keytracker = GUI.userView.new(win, Rect(-10, -10, 5, 5))
 			.canFocus_(true)
+			.relativeOrigin_(false)
 			.keyDownAction_({ |me, key, modifiers, unicode | // not = keyDownAction_ (as sciss says)
 				if(unicode == 127, {
 					selNodes.do({arg box; 

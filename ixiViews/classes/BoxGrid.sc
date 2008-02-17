@@ -65,6 +65,7 @@ BoxGrid {
 				
 		mouseTracker = GUI.userView.new(win, Rect(bounds.left+1, bounds.top+1, bounds.width, bounds.height))
 			.canFocus_(false)
+			.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 					chosennode = this.findNode(x, y);
 					if( (mod & 262144) != 0, { // right mouse down (ctrl pressed)

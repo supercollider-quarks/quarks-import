@@ -69,6 +69,7 @@ Grid {
 				
 		mouseTracker = GUI.userView.new(win, bounds)
 			.canFocus_(false)
+			.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 					chosennode = this.findNode(x, y);
 					if(chosennode !=nil, {  

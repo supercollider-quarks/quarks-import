@@ -53,6 +53,7 @@ MIDIKeyboard {
 
 		mouseTracker = GUI.userView.new(win, bounds)
 			.canFocus_(false)
+			.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 				chosenkey = this.findNote(x, y);
 				trackKey = chosenkey;
