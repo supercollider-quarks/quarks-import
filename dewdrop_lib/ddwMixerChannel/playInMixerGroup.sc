@@ -62,7 +62,7 @@
 + AbstractPlayer {
 	playInMixerGroup { |mixer, target, patchType, args|
 		mixer.addPatch(this);
-		this.play(target, nil, mixer.inbus.index);
+		this.playToMixer(mixer)
 	}
 	playOnGlobalControl { |gc, target|
 		this.play((target ?? { gc.server }).asTarget, nil, gc.bus)

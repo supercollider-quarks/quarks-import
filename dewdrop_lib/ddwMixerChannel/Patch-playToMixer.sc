@@ -1,7 +1,23 @@
 
 + Patch {
 	playToMixer { arg m, atTime = nil, callback;
-		this.play(m.synthgroup, atTime, m.inbus, callback);
+		var	bundle = MixedBundle.new,
+			timeOfRequest = Main.elapsedTime;
+		this.group = m.synthgroup;
+		this.loadDefFileToBundle(bundle, m.server);
+		this.prPlayToBundle(atTime,
+			SharedBus(this.rate, m.inbus.index, synthDef.numChannels, m.server),
+			timeOfRequest, bundle);
+		callback !? { bundle.addFunction(callback) };
+		bundle.sendAtTime(this.server, atTime, timeOfRequest);
+	}
+}
+
++ AbstractPlayer {
+	prPlayToBundle { arg atTime, bus, timeOfRequest, bundle;
+		if(status !== \readyForPlay,{ this.prepareToBundle(group, bundle, false, bus) });
+		this.makePatchOut(group,false,bus,bundle);
+		this.spawnToBundle(bundle);
 	}
 }
 
