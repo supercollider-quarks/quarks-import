@@ -17,6 +17,17 @@ TestInstr : UnitTest {
 		l = Instr.leaves;
 		this.assertEquals( l.size, 0, "should be nothing in leaves after clearAll");
 	}
+
+	/*test_noOverwriteSubnode {
+		var q,n;
+		Instr.clearAll;
+		q = Instr("test_noOverwriteSubnode.inner",{SinOsc.ar});
+		// should raise an exception
+		n = Instr("test_noOverwriteSubnode",{ SinOsc.ar });
+
+		//because there is already a directory named "test"
+		//you cannot overwrite that
+	}*/
 		
 	test_putat_dotnotation {
 		Instr("TestInstr.test_putat",{ SinOsc.ar });
@@ -98,6 +109,26 @@ TestInstr : UnitTest {
 		instr = Instr([\allBands,'threes-gated']);
 		this.assert( instr.path.notNil,"path should be set on instr loaded via Instr.loadAll");
 	}
+	test_at { // with loading from disk
+
+// THIS Is because I have a folder called subfolder which is empty in my own dir
+// without it there I get the behavior below : nil the first time
+
+		var i;
+		Instr.clearAll;
+		i = Instr.at("subfolder.subinstr.one");
+		this.assert(i.notNil,"should load subfolder.subinstr.one");
+
+		Instr.clearAll;
+		i = Instr.at("subfolder.leaf");
+		this.assert(i.notNil,"should load subfolder.leaf");
+	}
+	/*	
+		nil the first time, then it loads
+		Instr.clearAll
+		Instr.at("builders.audioPatch")
+	*/
+
 }
 
 

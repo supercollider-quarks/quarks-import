@@ -11,10 +11,11 @@ TestPatch : UnitTest {
 		p = Patch(i,[ 500,	0.3 ]);
 		
 		AbstractPlayer.bundleClass = MixedBundleTester;
+		MixedBundleTester.reset;
+		InstrSynthDef.clearCache(Server.default);
 	}
 
 	test_play {
-
 		p.play;
 		this.wait( {p.isPlaying},"wait for patch to play");
 		
@@ -26,6 +27,8 @@ TestPatch : UnitTest {
 		
 		p.free;
 		this.wait( {p.isPrepared.not},"after free, patch should not be ready for play");
+		
+		this.assertEquals(MixedBundleTester.bundlesSent.size,3,"should be only three bundles sent: prepare, play and stop");
 	}
 	
 	test_prepare {
