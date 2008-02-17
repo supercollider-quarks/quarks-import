@@ -8,7 +8,7 @@
 var scales, pentatonics;
 
 // setting \scale Spec on demand
-var checkSpec;
+/*var checkSpec;
 checkSpec = Spec.specs.at(\scale);
 if(checkSpec.isNil,{
 	Spec.specs.put(\scale , ArraySpec.new(StaticSpec(-100,100,\linear)));
@@ -16,7 +16,7 @@ if(checkSpec.isNil,{
 	if(checkSpec.isKindOf(ArraySpec).not,{
 		("scaleStream Instr trying to init \scale Spec:  \scale is previously defined as a spec other than as an ArraySpec.  this is a conflict").error;
 	})
-});
+});*/
 
 scales = Scale.scales.values;
 /* #[ 
@@ -196,8 +196,6 @@ Instr("scaleStream.bluesprog",{ arg notesPerChord=16,root=0;
 //2 5 1
 //coltrane changes
 //Scale.degrees(['bb',	'f#',	'd#',	'b',	'd'])
-
-
 
 
 
