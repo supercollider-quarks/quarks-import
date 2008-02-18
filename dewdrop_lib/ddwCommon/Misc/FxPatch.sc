@@ -48,6 +48,12 @@ FxPatch : PatchNoDep {
 		var def, busArgIndex;
 			// find bus arg and set to mixer's bus
 		def = this.asSynthDef;
+
+		if(synthDef.numChannels > m.inChannels) {
+			"Playing a %-channel patch on a %-input mixer. Output may be incorrect."
+				.format(synthDef.numChannels, m.inChannels).warn;
+		};
+
 			// is it a kr argument?
 		busArgIndex = instr.argsAndIndices[\bus];
 

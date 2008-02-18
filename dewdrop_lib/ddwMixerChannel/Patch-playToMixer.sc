@@ -4,7 +4,12 @@
 		var	bundle = MixedBundle.new,
 			timeOfRequest = Main.elapsedTime;
 		this.group = m.synthgroup;
+			// generate synthdef to check numChannels
 		this.loadDefFileToBundle(bundle, m.server);
+		if(synthDef.numChannels > m.inChannels) {
+			"Playing a %-channel patch on a %-input mixer. Output may be incorrect."
+				.format(synthDef.numChannels, m.inChannels).warn;
+		};
 		this.prPlayToBundle(atTime,
 			SharedBus(this.rate, m.inbus.index, synthDef.numChannels, m.server),
 			timeOfRequest, bundle);
