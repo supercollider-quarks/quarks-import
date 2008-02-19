@@ -6,7 +6,10 @@
 
 RedDefault {
 	*initClass {
+		Class.initClassTree(Event);
 		StartUp.add{
+		
+			//overwrites the def that *makeDefaultSynthDef created in Event.sc
 			SynthDef(\default, {|out= 9, freq= 9, amp= 9, pan= 9, gate= 9, dur= 9|
 				var d, f, e, a, z;
 				d= dur*LinRand(0.9, 9);
@@ -21,6 +24,11 @@ RedDefault {
 		"".postln;
 		" redDefault hack just replaced the file default.scsyndef in your synthdefs directory.\n to get back to boring normal, delete this file (ie default.scsyndef), uninstall redDefault\n with the command Quarks.uninstall(\"redDefault\"), and recompile.\n thank you for choosing red inc systems.".warn;
 		}
+	}
+	
+	//recreate the true default synthdef.  (then uninstall this class to make it permanent)
+	*revert {
+		Event.makeDefaultSynthDef;
 	}
 }
 
