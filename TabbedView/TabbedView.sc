@@ -1,4 +1,4 @@
-/******* by jostM Feb 19, 2008 version 1.12 *******/
+/******* by jostM Feb 19, 2008 version 1.13 *******/
 TabbedView {
 	var labels,
 		labelColors,
