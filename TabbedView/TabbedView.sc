@@ -1,4 +1,4 @@
-/******* by jostM Feb 16, 2008 version 1.11 *******/
+/******* by jostM Feb 19, 2008 version 1.12 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -17,7 +17,7 @@ TabbedView {
 		<views,
 		<resize = 1,
 		<tabPosition = \top,
-		focus = 0,
+		<focussed = 0,
 		focusHistory = 0,
 		<labelPadding = 25,
 		<relativeOrigin=false,
@@ -73,6 +73,7 @@ TabbedView {
 		lbls.do{arg label,i;
 			this.add(label);
 		};
+		this.focus(0);
 		^this;
 	}
 	
@@ -90,17 +91,17 @@ TabbedView {
 //			{ calcTabWidth=label.bounds.width + labelPadding }
 //			{ calcTabWidth = tabWidth };
 			
-		tabWidths=tabWidths.insert(i,calcTabWidth);	
+		tabWidths=tabWidths.insert(i,50);	
 		
 		tab = GUI.userView.new(view); //bounds are set later
 		if( GUI.id === \cocoa)  {tab.relativeOrigin_(relativeOrigin)};
 		tab.enabled = true;
 		tab.mouseDownAction_({
-			this.focus_(i);
+			this.focus(i);
 			tab.focus(false); 
 		});
 		tab.canReceiveDragHandler_({
-			this.focus_(i);
+			this.focus(i);
 			tab.focus(false); 
 		});
 		tabViews = tabViews.insert(i, tab);
@@ -277,7 +278,7 @@ TabbedView {
 	updateFocus{
 		
 		tabViews.do{ arg tab,i;
-			if (focus == i){
+			if (focussed == i){
 				this.paintTab( tab, labels[i], 
 					labelColors[ i%labelColors.size ], 
 					stringFocussedColor ); // focus colors 
@@ -294,7 +295,7 @@ TabbedView {
 					{ unfocusActions[ focusHistory ].value };
 			};
 		};
-		focusHistory = focus;
+		focusHistory = focussed;
 	}
 	
 	updateViewSizes{
@@ -489,7 +490,12 @@ TabbedView {
 	}
 	
 	focus_{arg index;
-		focus = index;
+		focussed = index;
+		"focus_(index) deprecated. pleas use focus(index)".postln;
+		this.updateFocus();
+	}
+	focus{arg index;
+		focussed = index;
 		this.updateFocus();
 	}
 	
@@ -561,12 +567,12 @@ TabbedView {
 		
 		tabViews.do{ arg tab, i;
 			tab.mouseDownAction_({
-				this.focus_(i);
+				this.focus(i);
 				tab.focus(false); 
 			});
 		};
 		
-		focus=0;
+		this.focus(0);
 		focusHistory=0;
 		this.updateViewSizes();
 		view.refresh;
