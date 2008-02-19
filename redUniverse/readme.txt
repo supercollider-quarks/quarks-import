@@ -7,6 +7,10 @@ some of the examples require additional classes like RedGA, RedLSystem etc.  the
 
 
 //--
+080219 - updated for sc3.2 and swingosc0.59
+	fixed all pendulum examples to draw line on swingosc (added a GUI.pen.stroke)
+	changed from mouseover to mousemove so now it's required to click&drag to update mouse position.
+	fixed 150-track_synth.scd and took away RedTrack.  now using only standard ugens for audio tracking.
 080116 - changed from 25 to 40 fps for RedWindow and RedJWindow .play
 	some small corrections to match Pen changes to width_
 071205 - converted all help.rtf to .html and the examples to .scd

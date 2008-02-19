@@ -18,7 +18,18 @@ s.waitForBoot{
 		Out.ar(out, Pan2.ar(z, pan));
 	}).send(s);
 	buf= Buffer.alloc(s, 2048, 1);
-	SynthDef(\human, {|out, bufnum| Out.kr(out, RedTrack.kr(AudioIn.ar, bufnum))}).send(s);
+	SynthDef(\human, {|out, bufnum, in= 0|
+		var input, chain, event, delta, freq, amp, timbre, centroid, hasFreq;
+		input= SoundIn.ar(in);
+		chain= FFT(bufnum, input);
+		event= A2K.kr(PV_JensenAndersen.ar(chain));
+		delta= Timer.kr(event);
+		#freq, hasFreq= Pitch.kr(input);
+		freq= freq*hasFreq;
+		amp= Amplitude.kr(input);
+		timbre= SpecFlatness.kr(chain);
+		centroid= SpecPcile.kr(chain, 0.5);
+		Out.kr(out, [event, delta, freq, amp, timbre, centroid])}).send(s);
 	1.wait;
 	syn= Synth(\human, [\out, 10, \bufnum, buf.bufnum]);//output 6 ch control data from tracker
 	bus= Bus(\control, 10, 6);						//access control data at ch 10-15

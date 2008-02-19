@@ -14,9 +14,8 @@ RedWindow : SCWindow {
 		this.prInit(name, argBounds, resizable, border, false, view);
 		
 		this.background_(Color.black);
-		this.acceptsMouseOver= true;
 		mouse= RedVector2D[view.bounds.width/2, view.bounds.height/2];
-		SCUserView(this, view.bounds).mouseOverAction_({|v, x, y| mouse= RedVector2D[x, y]});
+		SCUserView(this, view.bounds).mouseMoveAction_({|v, x, y| mouse= RedVector2D[x, y]});
 	}
 	draw {|func| this.drawHook_(func)}
 	play {|fps= 40|
