@@ -2,10 +2,10 @@
 TabbedView {
 	var labels,
 		labelColors,
-		unfocussedColors,
+		unfocusedColors,
 		backgrounds,
 		stringColor,
-		stringFocussedColor,
+		stringFocusedColor,
 		<>focusActions,
 		<>unfocusActions,
 		tabWidth = \auto,
@@ -17,7 +17,7 @@ TabbedView {
 		<views,
 		<resize = 1,
 		<tabPosition = \top,
-		<focussed = 0,
+		<activeTab = 0,
 		focusHistory = 0,
 		<labelPadding = 25,
 		<relativeOrigin=false,
@@ -48,13 +48,13 @@ TabbedView {
 		focusActions = [];
 		unfocusActions = [];
 		stringColor = Color.black;
-		stringFocussedColor = Color.white;
+		stringFocusedColor = Color.white;
 		if( GUI.id === \cocoa)  {
 			labelColors = colors ? [Color.grey.alpha_(0.2)];
 			}{
 			labelColors = colors ? [Color(0.85,0.85,0.85)];
 			};
-		unfocussedColors = Array.fill(labelColors.size,{arg i;
+		unfocusedColors = Array.fill(labelColors.size,{arg i;
 			var col;
 			col = labelColors[i%labelColors.size].asArray;
 			if( GUI.id === \cocoa)  
@@ -278,16 +278,16 @@ TabbedView {
 	updateFocus{
 		
 		tabViews.do{ arg tab,i;
-			if (focussed == i){
+			if (activeTab == i){
 				this.paintTab( tab, labels[i], 
 					labelColors[ i%labelColors.size ], 
-					stringFocussedColor ); // focus colors 
+					stringFocusedColor ); // focus colors 
 				views[i].visible_(true);
 				// do the user focusAction only on focus
 				if (focusHistory!= i){ focusActions[i].value; };
 			}{
 				this.paintTab( tab, labels[i], 
-					unfocussedColors[ i%unfocussedColors.size ], 
+					unfocusedColors[ i%unfocusedColors.size ], 
 					stringColor );// unfocus colors
 				views[i].visible_(false);
 						if (focusHistory == i)
@@ -295,7 +295,7 @@ TabbedView {
 					{ unfocusActions[ focusHistory ].value };
 			};
 		};
-		focusHistory = focussed;
+		focusHistory = activeTab;
 	}
 	
 	updateViewSizes{
@@ -490,12 +490,12 @@ TabbedView {
 	}
 	
 	focus_{arg index;
-		focussed = index;
+		activeTab = index;
 		"focus_(index) deprecated. pleas use focus(index)".postln;
 		this.updateFocus();
 	}
 	focus{arg index;
-		focussed = index;
+		activeTab = index;
 		this.updateFocus();
 	}
 	
@@ -504,8 +504,8 @@ TabbedView {
 		this.updateViewSizes();
 	}
 	
- 	unfocussedColors_{arg colorArray; 
- 		unfocussedColors = colorArray; 
+ 	unfocusedColors_{arg colorArray; 
+ 		unfocusedColors = colorArray; 
  		this.updateViewSizes();
  	}
  	
@@ -518,8 +518,8 @@ TabbedView {
 		stringColor = color; 
 		this.updateViewSizes()
 	}
-	stringFocussedColor_{arg color; 
-		stringFocussedColor = color; 
+	stringFocusedColor_{arg color; 
+		stringFocusedColor = color; 
 		this.updateViewSizes()
 	}
 	labelPadding_{arg int; 
@@ -589,7 +589,7 @@ TabbedView {
 		}{
 			q.labelColors_([Color(0.9,0.9,0.9)]);
 			q.backgrounds_([Color(0.9,0.9,0.9)]);
-			q.unfocussedColors_([Color(0.8,0.8,0.8)]);
+			q.unfocusedColors_([Color(0.8,0.8,0.8)]);
 		};
 		^q;
 	}
@@ -607,7 +607,7 @@ TabbedView {
 			q.backgrounds_([Color.white.alpha_(0.3)]);
 		}{
 			q.backgrounds_([Color(0.9,0.9,0.9)]);
-			q.unfocussedColors_([Color(0.9,0.75,0.75),
+			q.unfocusedColors_([Color(0.9,0.75,0.75),
 							Color(0.75,0.75,0.9),
 							Color(0.9,0.9,0.75)]);
 		};
@@ -627,14 +627,14 @@ TabbedView {
 			q.backgrounds_([Color.red.alpha_(0.1),
 								Color.blue.alpha_(0.1),
 								Color.yellow.alpha_(0.1)]);
-			q.unfocussedColors_([Color.red.alpha_(0.2),
+			q.unfocusedColors_([Color.red.alpha_(0.2),
 								Color.blue.alpha_(0.2),
 								Color.yellow.alpha_(0.2)]);
 		}{
 			q.backgrounds_([Color(0.9,0.85,0.85),
 								Color(0.85,0.85,0.9),
 								Color(0.9,0.9,0.85)]);
-			q.unfocussedColors_([Color(0.9,0.75,0.75),
+			q.unfocusedColors_([Color(0.9,0.75,0.75),
 								Color(0.75,0.75,0.9),
 								Color(0.9,0.9,0.75)]);
 		};
@@ -667,7 +667,7 @@ TabbedView {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 		}{	
 			q.labelColors_([Color(0.9,0.9,0.9)]);
-			q.unfocussedColors_([Color(0.8,0.8,0.8)]);
+			q.unfocusedColors_([Color(0.8,0.8,0.8)]);
 		};
 		q.backgrounds_([Color.clear]);
 		^q;
@@ -682,7 +682,7 @@ TabbedView {
 			}{
 			q.labelColors_([Color(0.85,0.85,0.85)]);
 			q.backgrounds_([Color(0.85,0.85,0.85)]);
-			q.unfocussedColors_([Color(0.8,0.8,0.8)]);
+			q.unfocusedColors_([Color(0.8,0.8,0.8)]);
 		};
 		q.tabCurve=3;
 		q.labelPadding=8;
