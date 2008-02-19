@@ -7,18 +7,18 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.41">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001bb9}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; color: #000000; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #001bb9}
+span.s3 {color: #0000bf}
 span.s4 {text-decoration: underline}
-span.s5 {color: #ad140d}
+span.s5 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -48,7 +48,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span></p>
 <p class="p3"><span class="s4">instance variables:</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><b>&lt;mouse</b></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns a <span class="s3">RedVector</span> for mouse x and y position</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns a <span class="s3">RedVector</span> for mouse x and y position.<span class="Apple-converted-space">  </span>click&amp;drag in window to set position.</p>
 <p class="p3"><span class="Apple-tab-span">	</span><b>&lt;isPlaying</b></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if the window is updating</p>
 <p class="p5"><br></p>
@@ -58,7 +58,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p7">//or better - for platform independet code...</p>
 <p class="p6"><span class="s3">GUI</span>.cocoa;</p>
-<p class="p6">w= <span class="s3">GUI</span>.redWindow.new(scroll:true).front;</p>
+<p class="p6">w= <span class="s3">GUI</span>.redWindow.new(scroll:<span class="s3">true</span>).front;</p>
 <p class="p5"><br></p>
 <p class="p6">w.resize(<span class="s3">RedVector2D</span>[200, 200])</p>
 <p class="p6">w.background_(<span class="s3">Color</span>.red)</p>
