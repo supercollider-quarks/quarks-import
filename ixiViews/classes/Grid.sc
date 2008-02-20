@@ -52,6 +52,9 @@ Grid {
 
 		gridNodes = Array.newClear(columns) ! rows;
 
+		mouseTracker = GUI.userView.new(win, bounds);
+ 		bounds = mouseTracker.bounds;
+
 		pen	= GUI.pen;
 
 		columns.do({arg c;
@@ -67,7 +70,7 @@ Grid {
 			});
 		});
 				
-		mouseTracker = GUI.userView.new(win, bounds)
+		mouseTracker
 			.canFocus_(false)
 			.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
