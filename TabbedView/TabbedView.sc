@@ -91,7 +91,7 @@ TabbedView {
 //			{ calcTabWidth=label.bounds.width + labelPadding }
 //			{ calcTabWidth = tabWidth };
 			
-		tabWidths=tabWidths.insert(i,50);	
+		tabWidths=tabWidths.insert(index,50);	
 		
 		tab = GUI.userView.new(view); //bounds are set later
 		if( GUI.id === \cocoa)  {tab.relativeOrigin_(relativeOrigin)};
@@ -104,20 +104,25 @@ TabbedView {
 			this.focus(i);
 			tab.focus(false); 
 		});
-		tabViews = tabViews.insert(i, tab);
+		tabViews = tabViews.insert(index, tab);
 		
 		scroll.if{container = GUI.scrollView.new(view).resize_(5)}
 		{container = GUI.compositeView.new(view).resize_(5)}; //bounds are set later
 		
-		container.background = backgrounds[i];
+		container.background = backgrounds[i%backgrounds.size];
 		
 		if( GUI.id === \cocoa)  {container.relativeOrigin_(relativeOrigin)};
 		
-		views = views.insert(i,container);
+		views = views.insert(index,container);
 		
-		focusActions = focusActions.insert(i,{});
-		unfocusActions = unfocusActions.insert(i,{});
-
+		focusActions = focusActions.insert(index,{});
+		unfocusActions = unfocusActions.insert(index,{});
+		tabViews.do{ arg tab, i;
+			tab.mouseDownAction_({
+				this.focus(i);
+				tab.focus(false); 
+			});
+		};
 		this.updateViewSizes();
 		^this.views[index];
 
