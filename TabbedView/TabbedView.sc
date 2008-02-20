@@ -21,7 +21,7 @@ TabbedView {
 		<tabPosition = \top,
 		<activeTab = 0,
 		focusHistory = 0,
-		<labelPadding = 25,
+		<labelPadding = 20,
 		<relativeOrigin=false,
 		left=0,
 		top=0,
