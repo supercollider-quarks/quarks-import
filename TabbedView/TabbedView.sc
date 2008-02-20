@@ -1,4 +1,4 @@
-/******* by jostM Feb 19, 2008 version 1.13 *******/
+/******* by jostM Feb 20, 2008 version 1.14 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -119,7 +119,7 @@ TabbedView {
 		unfocusActions = unfocusActions.insert(i,{});
 
 		this.updateViewSizes();
-		^container;
+		^this.views[index];
 
 	}
 		
