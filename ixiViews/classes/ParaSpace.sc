@@ -1,4 +1,4 @@
-// (c) 2006, Thor Magnusson - www.ixi-software.net
+// (c) 2006-2008, Thor Magnusson - www.ixi-software.net
 // GNU licence - google it.
 
 
@@ -36,10 +36,10 @@ ParaSpace {
 				Rect(10, 250, bounds.left + bounds.width + 40, bounds.top + bounds.height+30));
 			win.front;
 		});
-		
-		// if w is not a scrollview but a scwindow
-		if(w.isKindOf(SCScrollView).not, {win.acceptsMouseOver = false}); 
 
+		mouseTracker = GUI.userView.new(win, Rect(bounds.left, bounds.top, bounds.width, bounds.height));
+ 		bounds = mouseTracker.bounds; // thanks ron!
+ 		
 		background = Color.white;
 		fillcolor = Color.new255(103, 148, 103);
 		outlinecolor = Color.red;
@@ -58,29 +58,11 @@ ParaSpace {
 		fontColor = Color.black;
 		pen	= GUI.pen;
 
-		// tracking the delete button
-		keytracker = GUI.userView.new(win, Rect(-10, -10, 5, 5))
+
+		mouseTracker
 			.canFocus_(true)
+			.focusColor_(Color.clear.alpha_(0.0))
 			.relativeOrigin_(false)
-			.keyDownAction_({ |me, key, modifiers, unicode | // not = keyDownAction_ (as sciss says)
-				if(unicode == 127, {
-					selNodes.do({arg box; 
-						paraNodes.copy.do({arg node, i; 
-							if(box === node, {this.deleteNode(i)});
-						})
-					});
-				});
-				if(unicode == 99, {conFlag = true;}); // c is for connecting
-				keyDownAction.value(key, modifiers, unicode);
-				this.refresh;
-			})
-			.keyUpAction_({ |me, key, modifiers, unicode |
-				if(unicode == 99, {conFlag = false;}); // c is for connecting
-
-			});
-
-		mouseTracker = GUI.userView.new(win, Rect(bounds.left, bounds.top, bounds.width, bounds.height))
-			.canFocus_(false)
 			.mouseDownAction_({|me, x, y, mod|
 				chosennode = this.findNode(x, y);
 				if( (mod & 0x00040000) != 0, {	// == 262401
@@ -262,8 +244,23 @@ ParaSpace {
 				pen.color = Color.black;
 
 				pen.strokeRect(bounds); // background frame
+			})
+			.keyDownAction_({ |me, key, modifiers, unicode |
+				if(unicode == 127, {
+					selNodes.do({arg box; 
+						paraNodes.copy.do({arg node, i; 
+							if(box === node, {this.deleteNode(i)});
+						})
+					});
+				});
+				if(unicode == 99, {conFlag = true;}); // c is for connecting
+				keyDownAction.value(key, modifiers, unicode);
+				this.refresh;
+			})
+			.keyUpAction_({ |me, key, modifiers, unicode |
+				if(unicode == 99, {conFlag = false;}); // c is for connecting
+
 			});
-	keytracker.focus(true);
 	}
 	
 	clearSpace {
@@ -529,7 +526,6 @@ ParaSpace {
 	}
 	
 	keyDownAction_ {arg func;
-		//mouseTracker.canFocus_(true); // in order to detect keys the view has to be focusable
 		keyDownAction = func;
 	}
 	

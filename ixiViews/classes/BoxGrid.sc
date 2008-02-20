@@ -27,7 +27,7 @@ BoxGrid {
 		var p, rect, pen;
 
 		lazyRefreshFunc = { this.refresh; refreshDeferred = false; };
-
+		
 		bounds = argbounds ? Rect(20, 20, 400, 200);
 		bounds = Rect(bounds.left + 0.5, bounds.top + 0.5, bounds.width, bounds.height);
 		
@@ -50,6 +50,9 @@ BoxGrid {
 		
 		gridNodes = Array.newClear(columns) ! rows;
 		
+		mouseTracker = GUI.userView.new(win, Rect(bounds.left+1, bounds.top+1, bounds.width, bounds.height));
+ 		bounds = mouseTracker.bounds;
+		
 		pen	= GUI.pen;
 		columns.do({arg c;
 			rows.do({arg r;
@@ -63,7 +66,7 @@ BoxGrid {
 			});
 		});
 				
-		mouseTracker = GUI.userView.new(win, Rect(bounds.left+1, bounds.top+1, bounds.width, bounds.height))
+		mouseTracker
 			.canFocus_(false)
 			.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|

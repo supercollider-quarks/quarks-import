@@ -23,6 +23,9 @@ MIDIKeyboard {
 			win.front
 		});
 
+ 		mouseTracker = GUI.userView.new(win, bounds); // thanks ron!
+ 		bounds = mouseTracker.bounds;
+
 		pen	= GUI.pen;
 
 		startnote = argstartnote ? 48;
@@ -51,7 +54,7 @@ MIDIKeyboard {
 			});
 		});
 
-		mouseTracker = GUI.userView.new(win, bounds)
+		mouseTracker
 			.canFocus_(false)
 			.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
