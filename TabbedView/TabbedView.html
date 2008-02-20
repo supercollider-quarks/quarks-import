@@ -38,7 +38,7 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><span class="s1"><b>TabbedView<span class="Apple-converted-space">  </span></b></span><b>An array of CompositeViews (or ScrollViews) with tabs for switching<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
-<p class="p3">by jostM, <span class="Apple-converted-space">  </span>Feb 20, 2008 version 1.14</p>
+<p class="p3">by jostM, <span class="Apple-converted-space">  </span>Feb 20, 2008 version 1.15</p>
 <p class="p3">Change history at bottom.</p>
 <p class="p4"><span class="Apple-converted-space">  </span></p>
 <p class="p1"><b>Class Methods</b></p>
@@ -67,7 +67,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b><span class="Apple-converted-space"> </span>*newPacked</b></p>
 <p class="p4"><span class="s3"><b><span class="Apple-converted-space"> </span></b></span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">   </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">   </span></p>
-<p class="p1"><b>Methods:</b></p>
+<p class="p1"><b>Methods/Variables:</b></p>
 <p class="p2"><br></p>
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>view<span class="Apple-converted-space"> </span></b> returns the container for all the views</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>views<span class="Apple-converted-space">  </span></b>returns<span class="Apple-converted-space">  </span>an array of Composite/Scroll Views</p>
@@ -92,8 +92,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>stringFocusColor_ ( col ) a Color</b></p>
 <p class="p4"><b><span class="Apple-tab-span">	</span><span class="Apple-converted-space">   </span></b></p>
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>labelPadding_ ( int ) <span class="Apple-converted-space">  </span></b>if autosizing is on, then this determines left and right padding from th label text</p>
-<p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabWidth_ (int )<span class="Apple-converted-space">  </span>int</b> or<span class="Apple-converted-space">  </span><b>\auto </b>;<b><span class="Apple-converted-space">  </span></b>a fixed tab width, or "auto" for automatic tab width (default "auto")</p>
-<p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabHeight_ ( int )<span class="Apple-converted-space">  </span></b>guess ...</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabWidth_ (int )<span class="Apple-converted-space">  </span>int</b> or<span class="Apple-converted-space">  </span><b>\auto </b>;<b><span class="Apple-converted-space">  </span></b>a fixed tab width, or "auto" for automatic tab width (default "auto", unless using themes)</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabHeight_ ( int )<span class="Apple-converted-space">  </span>int</b> or<span class="Apple-converted-space">  </span><b>\auto </b>;<b><span class="Apple-converted-space">  </span></b>a fixed tab height, or "auto" for automatic tab height (default "auto", unless using themes)</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>tabCurve_ ( int ) <span class="Apple-converted-space"> </span></b> ; the radius in pixels of the rounded tab corners</p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">   </span></p>
 <p class="p3"><b><span class="Apple-tab-span">	</span> <span class="Apple-converted-space">  </span>swingFactor_( float )<span class="Apple-converted-space">  </span>float</b> ;<span class="Apple-converted-space">  </span>a multiplication factor for a string/tab width for GUI.swing only. default<span class="Apple-converted-space">  </span>7.0</p>
@@ -244,6 +244,24 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="s8">TabbedView</span>(<span class="s8">nil</span>,<span class="s8">nil</span>,[<span class="s9">"1"</span>,<span class="s9">"two"</span>,<span class="s9">"e"</span>,<span class="s9">"four"</span>,<span class="s9">"5"</span>]).tabWidth_(70); <span class="Apple-converted-space"> </span></p>
 <p class="p6">)</p>
 <p class="p5"><br></p>
+<p class="p3"><b>set font<span class="Apple-converted-space"> </span></b></p>
+<p class="p4"><br></p>
+<p class="p3">Swing fonts only work within certain limits for now.</p>
+<p class="p6">(</p>
+<p class="p6">v=TabbedView.newBasic.font_(GUI.font.new("Monaco",9)).tabHeight_(18);</p>
+<p class="p11"><br></p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
+<p class="p6">(</p>
+<p class="p6">v=TabbedView.newBasic.font_(GUI.font.new("Helvetica",14)).tabHeight_(\auto);</p>
+<p class="p11"><br></p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
+<p class="p6">(</p>
+<p class="p6">v=TabbedView.newTall.font_(GUI.font.new("Helvetica",18)).tabPosition_(\left);</p>
+<p class="p11"><br></p>
+<p class="p6">)</p>
+<p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p3"><b>set colors with an argument to .new</b></p>
 <p class="p4"><br></p>
@@ -324,6 +342,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>focused removed and changed to activeTab.</p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>All variables that had a double s in "focussed", changed to singel s;</p>
 <p class="p3">Feb 20, 2008 :<span class="Apple-converted-space">  </span>Version 1.14;<span class="Apple-converted-space">  </span>Fixed returned tab on add and insert methods <span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p3">Feb 20, 2008 :<span class="Apple-converted-space">  </span>Version 1.15;<span class="Apple-converted-space">  </span>added font variable. other bug fixes <span class="Apple-converted-space"> </span></p>
 <p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 </body>
 </html>
