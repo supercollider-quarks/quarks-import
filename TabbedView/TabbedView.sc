@@ -1,4 +1,4 @@
-/******* by jostM Feb 20, 2008 version 1.14 *******/
+/******* by jostM Feb 20, 2008 version 1.15 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -11,9 +11,11 @@ TabbedView {
 		tabWidth = \auto,
 		tabWidths,
 		scroll=false,
-		<tabHeight=16,
+		<tabHeight=\auto,
+		tbht,
 		tabCurve = 8,
 		<tabViews,
+		<font,
 		<views,
 		<resize = 1,
 		<tabPosition = \top,
@@ -23,7 +25,7 @@ TabbedView {
 		<relativeOrigin=false,
 		left=0,
 		top=0,
-		swingFactor=7,
+		<>swingFactor=7,
 		<view;
 	
 	*new{ arg w, bounds, labels, colors, name=" ", scroll=false;
@@ -47,6 +49,7 @@ TabbedView {
 		labels = [];
 		focusActions = [];
 		unfocusActions = [];
+		font=GUI.font.default;		
 		stringColor = Color.black;
 		stringFocusedColor = Color.white;
 		if( GUI.id === \cocoa)  {
@@ -62,16 +65,17 @@ TabbedView {
 				{col = col*[0.9,0.9,0.9,1];};
 			col = Color(*col);
 				});
-				
 		backgrounds = labelColors;
 		
 		tabViews = [];
 		views = [];
 		
 		tabWidths = []; 
+		
 
 		lbls.do{arg label,i;
 			this.add(label);
+			
 		};
 		this.focus(0);
 		^this;
@@ -168,8 +172,9 @@ TabbedView {
 							drawRect.height-tabCurve)
 						);
 				GUI.pen.fill;
+				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
- 				GUI.pen.stringCenteredIn(label, drawRect);
+ 				GUI.pen.stringCenteredIn(label, drawRect.moveBy(0,1));
 			};
 		
 		};
@@ -201,8 +206,9 @@ TabbedView {
 							drawRect.height)
 						);
 				GUI.pen.fill;
+				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
- 				GUI.pen.stringLeftJustIn(label, drawRect.insetAll((labelPadding/2)-2,0,0,0));
+ 				GUI.pen.stringLeftJustIn(label, drawRect.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
 			};
 		
 		};
@@ -234,9 +240,9 @@ TabbedView {
 							drawRect.height-tabCurve)
 						);
 				GUI.pen.fill;
-		
+				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
- 				GUI.pen.stringCenteredIn(label, drawRect.bounds);
+ 				GUI.pen.stringCenteredIn(label, drawRect.moveBy(0,1));
 			};
 		
 		};
@@ -270,9 +276,9 @@ TabbedView {
 							drawRect.height)
 						);
 				GUI.pen.fill;
-		
+				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
- 				GUI.pen.stringLeftJustIn(label, drawRect.insetAll((labelPadding/2)-2,0,0,0));
+ 				GUI.pen.stringLeftJustIn(label, drawRect.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
 			};
 		
 		};
@@ -305,18 +311,23 @@ TabbedView {
 	
 	updateViewSizes{
 	
+		
 		left = if( relativeOrigin, 0, view.bounds.left);
 		top  = if( relativeOrigin, 0, view.bounds.top);
+		
 		if( GUI.id === \cocoa)  {
+			if ( tabHeight == \auto ){ tbht = ("A".bounds(font).height+1 )}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 				if ( tabWidth.asSymbol == \auto )
-					{ tabWidths[i] = labels[i].bounds.width + labelPadding }
+					{ tabWidths[i] = labels[i].bounds(font).width + labelPadding }
 					{ tabWidths[i] = tabWidth };
+					
 			};
 		} {
+			if ( tabHeight == \auto ){ tbht = (font.size+6)}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 				if ( tabWidth.asSymbol == \auto )
-					{ tabWidths[i] = (labels[i].size * swingFactor)+ labelPadding }
+					{ tabWidths[i] = (labels[i].size * swingFactor*font.size*0.09)+ labelPadding }
 					{ tabWidths[i] = tabWidth };
 			};
 		};
@@ -338,7 +349,6 @@ TabbedView {
 				};
 			};
 		};
-
 	}
 	
 	
@@ -350,7 +360,7 @@ TabbedView {
 					left + ( ([0]++tabWidths).integrate.at(i) ) + i,
 					top,
 					tabWidths[i],
-					tabHeight) 
+					tbht) 
 				);
 			tab.resize = switch(resize)
 				{1}{1}
@@ -367,9 +377,9 @@ TabbedView {
 		views.do{ arg v, i; 
 			v.bounds = Rect(
 				left,
-				top + tabHeight,
+				top + tbht,
 				view.bounds.width,
-				view.bounds.height-tabHeight);
+				view.bounds.height-tbht);
 				v.background_( backgrounds[ i%backgrounds.size ] );
 				
 		};
@@ -383,9 +393,9 @@ TabbedView {
 
 			tab.bounds_( Rect(
 					left,
-					top + (i*tabHeight) + i,
+					top + (i*tbht) + i,
 					tabWidths.maxItem,
-					tabHeight) 
+					tbht) 
 				);
 				
 			tab.resize = switch(resize)
@@ -417,9 +427,9 @@ TabbedView {
 		tabViews.do{ arg tab, i; 
 			tab.bounds_( Rect(
 					left + ( ([0]++tabWidths).integrate.at(i) ) + i,
-					top+view.bounds.height-tabHeight,
+					top+view.bounds.height-tbht,
 					tabWidths[i],
-					tabHeight) 
+					tbht) 
 				);
 			tab.resize = switch(resize)
 				{1}{1}
@@ -438,7 +448,7 @@ TabbedView {
 				left,
 				top,
 				view.bounds.width,
-				view.bounds.height-tabHeight);
+				view.bounds.height-tbht);
 				v.background_( backgrounds[ i%backgrounds.size ] );
 		};
 		
@@ -450,9 +460,9 @@ TabbedView {
 		tabViews.do{ arg tab, i; 
 			tab.bounds_( Rect(
 					view.bounds.width + left - tabWidths.maxItem,
-					top + (i*tabHeight) + i,
+					top + (i*tbht) + i,
 					tabWidths.maxItem,
-					tabHeight) 
+					tbht) 
 				);
 			tab.resize = switch(resize)
 				{1}{1}
@@ -537,8 +547,8 @@ TabbedView {
 		this.updateViewSizes();
 	}
 	
-	tabHeight_{arg int; 
-		tabHeight = int;
+	tabHeight_{arg val; 
+		tabHeight = val;
 		this.updateViewSizes();
 	}
 	
@@ -546,7 +556,12 @@ TabbedView {
 		tabCurve = int;
 		this.updateViewSizes();
 	}
-	
+
+	font_{arg fnt; 	
+		 font = fnt;
+		 this.updateViewSizes();
+		 
+	}
 	
 	relativeOrigin_{arg bool;
 		relativeOrigin=bool;
@@ -554,10 +569,6 @@ TabbedView {
 		this.updateViewSizes();
 	}
 	
-	swingFactor_{arg float;
-		this.swingFactor = float;
-		this.updateViewSizes();
-	}
 	
 	removeAt{ arg index;
 	
@@ -654,7 +665,7 @@ TabbedView {
 	*newFlat{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.newBasic(w, bounds, labels, colors, name, scroll);
-		q.tabHeight= 14;
+		q.tabHeight=14;
 		q.tabWidth= 70;
 		q.tabCurve=3;
 		^q;
