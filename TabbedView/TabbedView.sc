@@ -100,10 +100,6 @@ TabbedView {
 			this.focus(i);
 			tab.focus(false); 
 		});
-		tab.canReceiveDragHandler_({
-			this.focus(i);
-			tab.focus(false); 
-		});
 		tabViews = tabViews.insert(index, tab);
 		
 		scroll.if{container = GUI.scrollView.new(view).resize_(5)}
@@ -119,6 +115,10 @@ TabbedView {
 		unfocusActions = unfocusActions.insert(index,{});
 		tabViews.do{ arg tab, i;
 			tab.mouseDownAction_({
+				this.focus(i);
+				tab.focus(false); 
+			});
+			tab.canReceiveDragHandler_({
 				this.focus(i);
 				tab.focus(false); 
 			});
@@ -572,6 +572,10 @@ TabbedView {
 		
 		tabViews.do{ arg tab, i;
 			tab.mouseDownAction_({
+				this.focus(i);
+				tab.focus(false); 
+			});
+			tab.canReceiveDragHandler_({
 				this.focus(i);
 				tab.focus(false); 
 			});
