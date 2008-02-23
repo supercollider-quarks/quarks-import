@@ -1,9 +1,0 @@
-(
-	name:		"ddwRational",
-	path:		"dewdrop_lib/ddwRational",
-	summary:		"An extension (wrapper class) for floating-point numbers, which displays as a fraction of integers when possible.",
-	author:		"James Harkins",
-	version:		1.0,
-	helpdoc:		"Help/Rational.html",
-	url:			"http://www.dewdrop-world.net/sc3"
-)
