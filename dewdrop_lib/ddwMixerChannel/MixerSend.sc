@@ -31,7 +31,7 @@ MixerSend {
 
 			// create levelControl if it doesn't exist
 		levelControl.isNil.if({
-			levelControl = GenericGlobalControl("send level", nil, level);
+			levelControl = GenericGlobalControl("send level", nil, level, \amp);
 		});
 
 		levelSynth = levelControl.play(synthdef, args, inMixer.fadergroup);

@@ -29,7 +29,7 @@ MixerChannelDef {
 						ReplaceOut.ar(busin, in);
 						Out.ar(busout, in);
 					}), 
-			controls: (level: { |name| MixerControl(name, nil, 0.75, \amp) })
+			controls: (level: (spec: \amp, value: 0.75))
 		);
 		
 		MixerChannelDef(\mix1x2, 1, 2,
@@ -42,8 +42,8 @@ MixerChannelDef {
 						ReplaceOut.ar(busin, out);
 						Out.ar(busout, out);
 					}), 
-			controls: (level: { |name| MixerControl(name, nil, 0.75, \amp) },
-						pan: { |name| MixerControl(name, nil, 0, \bipolar) }
+			controls: (level: (spec: \amp, value: 0.75),
+						pan: \bipolar
 			)
 		);
 		
@@ -56,8 +56,8 @@ MixerChannelDef {
 						ReplaceOut.ar(busin, out);
 						Out.ar(busout, out);
 					}), 
-			controls: (level: { |name| MixerControl(name, nil, 0.75, \amp) },
-						pan: { |name| MixerControl(name, nil, 0, \bipolar) }
+			controls: (level: (spec: \amp, value: 0.75),
+						pan: \bipolar
 			)
 		);
 
@@ -102,10 +102,28 @@ MixerChannelDef {
 		^fader.name
 	}
 
-	makeControlArray { |mixerName|
-		var out = IdentityDictionary.new;
-		controls.keysValuesDo({ |key, gcfunc|
-			out.put(key, gcfunc.value("% %".format(mixerName, key)));
+	makeControlArray { |mixer|
+		var out = IdentityDictionary.new, name = mixer.name, gc, gcname;
+		controls.keysValuesDo({ |key, gcspec|
+			gcname = "% %".format(name, key);
+			case
+					// (spec: ControlSpec, value: initial value)
+				{ gcspec.respondsTo(\keysValuesDo) } {
+					gc = gcspec[\spec].asSpec;
+					gc = MixerControl(gcname, BusDict.control(mixer.server, 1, gcname),
+						gcspec[\value] ?? { gc.default }, gc);
+				}
+				{ gcspec.isNumber } {
+					gc = MixerControl(gcname, BusDict.control(mixer.server, 1, gcname),
+						gcspec, \unipolar);
+				}
+					// default: use asSpec
+				{
+					gcspec = gcspec.asSpec;
+					gc = MixerControl(gcname, BusDict.control(mixer.server, 1, gcname),
+						gcspec.default, gcspec);
+				};
+			out.put(key, gc);
 		});
 		^out
 	}
