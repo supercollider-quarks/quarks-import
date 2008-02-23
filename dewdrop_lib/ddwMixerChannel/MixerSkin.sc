@@ -375,7 +375,7 @@ MixerPanWidget : MixerWidgetBase {
 	makeView { |layout, bounds|
 		view = GUI.slider.new(layout, bounds);
 		this.restoreView;
-		spec = \bipolar.asSpec;
+		spec = mixer.controls[\pan].spec ?? { \bipolar.asSpec };
 	}
 	doAction { |view|
 		mixer.setControl(\pan, spec.map(view.value), false);
@@ -402,7 +402,7 @@ MixerLevelSlider : MixerWidgetBase {
 	makeView { |layout, bounds|
 		view = GUI.slider.new(layout, bounds);
 		this.restoreView;
-		spec = \amp.asSpec;
+		spec = mixer.controls[\level].spec ?? { \bipolar.asSpec };
 	}
 	doAction { |view|
 		mixer.setControl(\level, spec.map(view.value));
@@ -439,7 +439,7 @@ MixerLevelNumber : MixerWidgetBase {
 		view = GUI.numberBox.new(layout, bounds)
 			.font_(this.class.font)
 			.align_(\center);
-		spec = \amp.asSpec;
+		spec = mixer.controls[\level].spec ?? { \bipolar.asSpec };
 	}
 	doAction { |view|
 		mixer.setControl(\level, view.value.dbamp);
@@ -508,17 +508,19 @@ MixerOutbusWidget : MixerWidgetBase {
 }
 
 Mixer2DPanWidget : MixerWidgetBase {
+	var	yspec;
 	makeView { |layout, bounds|
 		view = GUI.slider2D.new(layout, bounds);
-		spec = \bipolar.asSpec;
+		spec = mixer.controls[\xpos].spec ?? { \bipolar.asSpec };
+		yspec = mixer.controls[\ypos].spec ?? { \bipolar.asSpec };
 	}
 	doAction {
 		mixer.setControl(\xpos, spec.map(view.x), updateGUI:false);
-		mixer.setControl(\ypos, spec.map(view.y), updateGUI:false);
+		mixer.setControl(\ypos, yspec.map(view.y), updateGUI:false);
 	}
 	updateView {
 		view.x = spec.unmap(mixer.getControl(\xpos));
-		view.y = spec.unmap(mixer.getControl(\ypos));
+		view.y = yspec.unmap(mixer.getControl(\ypos));
 	}
 	clearView {
 		view.x_(0.5).y_(0.5);

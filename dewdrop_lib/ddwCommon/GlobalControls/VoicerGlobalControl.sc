@@ -44,9 +44,9 @@ GlobalControlBase : AbstractFunction {
 		voicerIndex = indexForSorting = indexForSorting + 1;
 		spec = sp.asSpec;
 		name = n.asSymbol;
-		server = bus.tryPerform(\server) ? Server.default;
+		server = b.tryPerform(\server) ? Server.default;
 		server.waitForBoot({	// these steps must not occur until server is running
-			bus = b ? BusDict.control(server, 1, name ++ " control");
+			bus = b ?? { BusDict.control(server, 1, name ++ " control") };
 			this.set(val ? spec.default);
 		});
 		lag = defaultLag;

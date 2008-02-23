@@ -157,7 +157,7 @@ MixerChannel {
 		lineRoutines = IdentityDictionary.new;
 		autoSynths = IdentityDictionary.new;
 
-		controls = def.makeControlArray(name);
+		controls = def.makeControlArray(this);
 		this.setControls(initValues);
 		
 		MixerChannelReconstructor.add(this);

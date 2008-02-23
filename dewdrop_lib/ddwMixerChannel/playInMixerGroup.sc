@@ -96,6 +96,7 @@
 		protoEvent.proto ?? { protoEvent.proto = () };
 		protoEvent.proto.putAll((
 			chan: mixer,
+			server: mixer.server,
 			group: target,
 			bus: mixer.inbus,
 			outbus: mixer.inbus.index,
