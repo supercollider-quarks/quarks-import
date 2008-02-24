@@ -3,7 +3,7 @@
 (
 // a must:
 	\name: 		"Conductor",
-	\path: 		"Conductor/classes",
+	\path: 		"Conductor",
 	\summary:		"An Environment based GUI and control package",
 	\author: 		"Ron Kuivila",
 
