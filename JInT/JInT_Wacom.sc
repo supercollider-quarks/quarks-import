@@ -23,8 +23,8 @@ JInT_Wacom : JInT {
 				ControlSpec(0, 1, default: 0), // posX
 			]).short_(\pos), 
 			JInTC_PenTilt("Pen Tilt", server, [
-				ControlSpec(0, 1, default: 0), // tiltX
-				ControlSpec(0, 1, default: 0), // tiltY
+				ControlSpec(-1, 1, default: 0), // tiltX
+				ControlSpec(-1, 1, default: 0), // tiltY
 			]).short_(\tilt), 
 			JInTC_PenPressure("Pen Pressure", server, 
 				ControlSpec(0, 1, default: 0) // pressure
@@ -45,10 +45,10 @@ JInT_Wacom : JInT {
 	}
 	initialize {
 		view = view ?? {	
-			window = SCWindow.new("JInT Wacom", Rect(20,20, 120, 120)).front;
+			window = SCWindow.new("JInT Wacom", Rect(1000,0, 440, 370)).front;
 			window.onClose({notInitialized = true});
 
-			view = SC2DTabletSlider(window, Rect(10,10,100,100)).resize_(5);
+			view = SC2DTabletSlider(window, Rect(10,10,420, 350)).resize_(5);
 		};
 		view.background = Color.white;
 		view.mouseUpAction = {arg 
