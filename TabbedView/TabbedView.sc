@@ -1,4 +1,4 @@
-/******* by jostM Feb 20, 2008 version 1.15 *******/
+/******* by jostM Feb 25, 2008 version 1.20 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -19,6 +19,7 @@ TabbedView {
 		<views,
 		<resize = 1,
 		<tabPosition = \top,
+		<followEdges=true,
 		<activeTab = 0,
 		focusHistory = 0,
 		<labelPadding = 20,
@@ -139,153 +140,104 @@ TabbedView {
 	
 	
 	/** this paints the tabs with rounded edges **/
-	
 	paintTab{ arg tabLabelView,label = "label", background, strColor;
-		switch(tabPosition)
-		{\top}{this.paintTabTop(tabLabelView,label, background, strColor)}
-		{\left}{this.paintTabLeft(tabLabelView,label, background, strColor)}
-		{\bottom}{this.paintTabBottom(tabLabelView,label, background, strColor)}
-		{\right}{this.paintTabRight(tabLabelView,label, background, strColor)};
-	}
+			var drawCenter,drawLeft,drawTop,drawRect,drawRight,
+					drawBottom,rotPoint,moveBy,rotPointText,drawRectText,
+					drawRectText2,rot1=pi/2,rot2=0;	
+		followEdges.if{
+			switch(tabPosition)
+				{\top}{rot1=0;rot2=0}
+				{\left}{rot1=pi;rot2=pi/2}
+				{\bottom}{rot1=pi;rot2=pi}
+				{\right}{rot1=0;rot2=pi/2};
+			}{
+			switch(tabPosition)
+				{\top}{rot1=0;rot2=pi/2.neg}
+				{\left}{rot1=pi;rot2=pi}
+				{\bottom}{rot1=pi;rot2=pi/2}
+				{\right}{rot1=0;rot2=0};
+			};
+		
+	
+		tabLabelView.drawFunc = { arg tview;
+			var drawCenter,drawLeft,drawTop,drawRect,drawRight,
+					drawBottom,rotPoint,moveBy,rotPointText,drawRectText,drawRectText2;	
+			drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
+			drawCenter=Point(drawRect.left+(drawRect.width/2),drawRect.top+(drawRect.height/2));
+			
+			([\top,\bottom].occurrencesOf(tabPosition)>0).if{
+				drawRectText=Rect(drawRect.left-((drawRect.height-drawRect.width)/2),
+					drawRect.top+((drawRect.height-drawRect.width)/2),drawRect.height,drawRect.width);
+			}{drawRectText=drawRect};
+			
+			([\right,\left].occurrencesOf(tabPosition)>0).if{
+				drawRectText2=Rect(drawRect.left-((drawRect.height-drawRect.width)/2),
+					drawRect.top+((drawRect.height-drawRect.width)/2),drawRect.height,drawRect.width);
+			}{drawRectText2=drawRect};
+			
+			drawLeft=drawCenter.x-(drawRect.width/2);
+			drawTop=drawCenter.y-(drawRect.height/2);
+			drawRight=drawCenter.x+(drawRect.width/2);
+			drawBottom=drawCenter.y+(drawRect.height/2);
+			
+			GUI.pen.use{
+				GUI.pen.rotate(rot1,drawCenter.x,drawCenter.y);
+					GUI.pen.width_(1);
+				GUI.pen.color_(background);
+				([\top,\bottom].occurrencesOf(tabPosition)>0).if{
+					GUI.pen.addWedge( (drawLeft + tabCurve)@(drawTop + tabCurve),
+						tabCurve, pi, pi/2);
+					GUI.pen.addWedge( (drawRight - tabCurve)@(drawTop + tabCurve),
+						tabCurve, 0, (pi/2).neg);
+						
+					GUI.pen.addRect( Rect(drawLeft + tabCurve, 
+								drawTop,
+								drawRect.width - tabCurve - tabCurve, 
+								tabCurve) 
+								);
+					GUI.pen.addRect( Rect(drawLeft, 
+								drawTop+tabCurve,
+								drawRect.width,
+								drawRect.height-tabCurve)
+							);
+				}{
+					GUI.pen.addWedge( (drawLeft+drawRect.width - tabCurve)
+						@(drawTop + tabCurve),
+						tabCurve, -pi/2, pi/2);
+					GUI.pen.addWedge( (drawLeft+drawRect.width - tabCurve)
+						@(drawTop + drawRect.height - tabCurve),
+						tabCurve, 0, pi/2);
+						
+					GUI.pen.addRect( Rect(drawLeft+drawRect.width - tabCurve , 
+								drawTop + tabCurve,
+								tabCurve, 
+								drawRect.height - tabCurve - tabCurve) 
+								);
+					GUI.pen.addRect( Rect(drawLeft, 
+								drawTop,
+								drawRect.width-tabCurve,
+								drawRect.height)
+							);
+				};
+				GUI.pen.fill;
 
-	paintTabTop{	arg tabLabelView,label = "label", background, strColor; 
-		tabLabelView.drawFunc = { arg tview;
-			var drawRect;	
-			drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
-			GUI.pen.use{
-				GUI.pen.width_(1);
-				GUI.pen.color_(background);
-				
-				GUI.pen.addWedge( (drawRect.left + tabCurve)@(drawRect.top + tabCurve),
-					tabCurve, pi, pi/2);
-				GUI.pen.addWedge( (drawRect.right - tabCurve)@(drawRect.top + tabCurve),
-					tabCurve, 0, (pi/2).neg);
-					
-				GUI.pen.addRect( Rect(drawRect.left + tabCurve, 
-							drawRect.top,
-							drawRect.width - tabCurve - tabCurve, 
-							tabCurve) 
-							);
-				GUI.pen.addRect( Rect(drawRect.left, 
-							drawRect.top+tabCurve,
-							drawRect.width,
-							drawRect.height-tabCurve)
-						);
-				GUI.pen.fill;
+				GUI.pen.rotate(rot2,drawCenter.x,drawCenter.y);
 				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
- 				GUI.pen.stringCenteredIn(label, drawRect.moveBy(0,1));
+				followEdges.if{
+ 					GUI.pen.stringCenteredIn(label, drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
+ 					}{
+ 					GUI.pen.stringLeftJustIn(label, 
+ 						drawRectText.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
+ 				};
 			};
 		
 		};
 		tabLabelView.refresh;
 	}
 	
-	paintTabLeft{	arg tabLabelView,label = "label", background, strColor; 
-			
-		tabLabelView.drawFunc = { arg tview;
-			var drawRect;	
-			drawRect= if (relativeOrigin, tview.bounds.moveTo(0,0), tview.bounds);
-			GUI.pen.use{
-				GUI.pen.width_(1);
-				GUI.pen.color_(background);
-				
-				GUI.pen.addWedge( (drawRect.left + tabCurve)@(drawRect.top + tabCurve),
-					tabCurve, -pi/2,- pi/2);
-				GUI.pen.addWedge( (drawRect.left + tabCurve)@(drawRect.top + drawRect.height - tabCurve),
-					tabCurve, -pi,- pi/2);
-					
-				GUI.pen.addRect( Rect(drawRect.left , 
-							drawRect.top + tabCurve,
-							tabCurve, 
-							drawRect.height - tabCurve - tabCurve) 
-							);
-				GUI.pen.addRect( Rect(drawRect.left + tabCurve, 
-							drawRect.top,
-							drawRect.width-tabCurve,
-							drawRect.height)
-						);
-				GUI.pen.fill;
-				GUI.pen.font_(font);
-				GUI.pen.color_(strColor);
- 				GUI.pen.stringLeftJustIn(label, drawRect.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
-			};
-		
-		};
-		tabLabelView.refresh;
-	}
 	
-	paintTabBottom{ arg tabLabelView,label = "label", background, strColor; 
-			
-		tabLabelView.drawFunc = { arg tview;
-			var drawRect;	
-			drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
-			GUI.pen.use{
-				GUI.pen.width_(1);
-				GUI.pen.color_(background);
-				
-				GUI.pen.addWedge( (drawRect.left + tabCurve)@(drawRect.top+drawRect.height - tabCurve),
-					tabCurve, pi, -pi/2);
-				GUI.pen.addWedge( (drawRect.right - tabCurve)@(drawRect.top+drawRect.height - tabCurve),
-					tabCurve, 0, (pi/2));
-					
-				GUI.pen.addRect( Rect(drawRect.left + tabCurve, 
-							drawRect.top+drawRect.height - tabCurve,
-							drawRect.width - tabCurve - tabCurve, 
-							tabCurve) 
-							);
-				GUI.pen.addRect( Rect(drawRect.left, 
-							drawRect.top,
-							drawRect.width,
-							drawRect.height-tabCurve)
-						);
-				GUI.pen.fill;
-				GUI.pen.font_(font);
-				GUI.pen.color_(strColor);
- 				GUI.pen.stringCenteredIn(label, drawRect.moveBy(0,1));
-			};
-		
-		};
-		tabLabelView.refresh;
-	}
-	
-	paintTabRight{ arg tabLabelView,label = "label", background, strColor; 
-			
-		tabLabelView.drawFunc = { arg tview;
-			var drawRect;	
-			drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
-			GUI.pen.use{
-				GUI.pen.width_(1);
-				GUI.pen.color_(background);
-				
-				GUI.pen.addWedge( (drawRect.left+drawRect.width - tabCurve)
-					@(drawRect.top + tabCurve),
-					tabCurve, -pi/2, pi/2);
-				GUI.pen.addWedge( (drawRect.left+drawRect.width - tabCurve)
-					@(drawRect.top + drawRect.height - tabCurve),
-					tabCurve, 0, pi/2);
-					
-				GUI.pen.addRect( Rect(drawRect.left+drawRect.width - tabCurve , 
-							drawRect.top + tabCurve,
-							tabCurve, 
-							drawRect.height - tabCurve - tabCurve) 
-							);
-				GUI.pen.addRect( Rect(drawRect.left, 
-							drawRect.top,
-							drawRect.width-tabCurve,
-							drawRect.height)
-						);
-				GUI.pen.fill;
-				GUI.pen.font_(font);
-				GUI.pen.color_(strColor);
- 				GUI.pen.stringLeftJustIn(label, drawRect.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
-			};
-		
-		};
-		tabLabelView.refresh;
 
-	}
-	
 	updateFocus{
 		
 		tabViews.do{ arg tab,i;
@@ -356,12 +308,21 @@ TabbedView {
 	updateViewSizesTop{
 			
 		tabViews.do{ arg tab, i; 
-			tab.bounds_( Rect(
-					left + ( ([0]++tabWidths).integrate.at(i) ) + i,
-					top,
-					tabWidths[i],
-					tbht) 
-				);
+			followEdges.if{
+				tab.bounds_( Rect(
+						left + ( ([0]++tabWidths).integrate.at(i) ) + i,
+						top,
+						tabWidths[i],
+						tbht) 
+					);
+			}{
+				tab.bounds_( Rect(
+						left + (i*tbht) + i,
+						top ,
+						tbht,
+						tabWidths.maxItem) 
+					);
+			};
 			tab.resize = switch(resize)
 				{1}{1}
 				{2}{1}
@@ -373,30 +334,48 @@ TabbedView {
 				{8}{7}
 				{9}{9};
 		};
-		
-		views.do{ arg v, i; 
-			v.bounds = Rect(
-				left,
-				top + tbht,
-				view.bounds.width,
-				view.bounds.height-tbht);
-				v.background_( backgrounds[ i%backgrounds.size ] );
-				
+		followEdges.if{
+			views.do{ arg v, i; 
+				v.bounds = Rect(
+					left,
+					top + tbht,
+					view.bounds.width,
+					view.bounds.height-tbht);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+					
+			};
+		}{
+			views.do{ arg v, i; 
+				v.bounds = Rect(
+					left,
+					top + tabWidths.maxItem,
+					view.bounds.width,
+					view.bounds.height-tabWidths.maxItem);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+					
+			};
 		};
-		
 		this.updateFocus;
 	}
 	
 	updateViewSizesLeft{
 		
 		tabViews.do{ arg tab, i; 
-
-			tab.bounds_( Rect(
-					left,
-					top + (i*tbht) + i,
-					tabWidths.maxItem,
-					tbht) 
-				);
+			followEdges.not.if{
+				tab.bounds_( Rect(
+						left,
+						top + (i*tbht) + i,
+						tabWidths.maxItem,
+						tbht) 
+					);
+			}{
+				tab.bounds_( Rect(
+						left,
+						top + ( ([0]++tabWidths).integrate.at(i) )  + i,
+						tbht,
+						tabWidths[i]) 
+					);
+			};
 				
 			tab.resize = switch(resize)
 				{1}{1}
@@ -409,28 +388,49 @@ TabbedView {
 				{8}{7}
 				{9}{9};
 		};
-		
+		followEdges.not.if{
+			views.do{arg v, i; 
+				v.bounds = Rect(
+					left + tabWidths.maxItem,
+					top,
+					view.bounds.width-tabWidths.maxItem,
+					view.bounds.height);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+			};
+		}{
 		views.do{arg v, i; 
 			v.bounds = Rect(
-				left + tabWidths.maxItem,
+				left + tbht,
 				top,
-				view.bounds.width-tabWidths.maxItem,
+				view.bounds.width-tbht,
 				view.bounds.height);
 				v.background_( backgrounds[ i%backgrounds.size ] );
+			};
 		};
 		
 		this.updateFocus();
-
 	}	
+	
 	updateViewSizesBottom{
 	
 		tabViews.do{ arg tab, i; 
-			tab.bounds_( Rect(
-					left + ( ([0]++tabWidths).integrate.at(i) ) + i,
-					top+view.bounds.height-tbht,
-					tabWidths[i],
-					tbht) 
-				);
+			followEdges.if{
+
+				tab.bounds_( Rect(
+						left + ( ([0]++tabWidths).integrate.at(i) ) + i,
+						top+view.bounds.height-tbht,
+						tabWidths[i],
+						tbht) 
+					);
+			}{
+				tab.bounds_( Rect(
+						left + (i*tbht) + i,
+						top+view.bounds.height-tabWidths.maxItem ,
+						tbht,
+						tabWidths.maxItem) 
+					);
+			};
+				
 			tab.resize = switch(resize)
 				{1}{1}
 				{2}{1}
@@ -443,27 +443,49 @@ TabbedView {
 				{9}{9};
 		};
 		
-		views.do{arg v, i; 
-			v.bounds = Rect(
-				left,
-				top,
-				view.bounds.width,
-				view.bounds.height-tbht);
-				v.background_( backgrounds[ i%backgrounds.size ] );
+		followEdges.if{
+			views.do{arg v, i; 
+				v.bounds = Rect(
+					left,
+					top,
+					view.bounds.width,
+					view.bounds.height-tbht);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+			};
+		}{
+			views.do{ arg v, i; 
+				v.bounds = Rect(
+					left,
+					top ,
+					view.bounds.width,
+					view.bounds.height-tabWidths.maxItem);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+					
+			};
 		};
+		
 		
 		this.updateFocus;
 	}	
 	
 	updateViewSizesRight{
-			
-		tabViews.do{ arg tab, i; 
-			tab.bounds_( Rect(
-					view.bounds.width + left - tabWidths.maxItem,
-					top + (i*tbht) + i,
-					tabWidths.maxItem,
-					tbht) 
-				);
+			tabViews.do{ arg tab, i;
+		followEdges.not.if{
+				tab.bounds_( Rect(
+						view.bounds.width + left - tabWidths.maxItem,
+						top + (i*tbht) + i,
+						tabWidths.maxItem,
+						tbht) 
+					);
+			}{
+				tab.bounds_( Rect(
+						view.bounds.width + left - tbht,
+						top + ( ([0]++tabWidths).integrate.at(i) )  + i,
+						tbht,
+						tabWidths[i]) 
+					);
+			};
+		
 			tab.resize = switch(resize)
 				{1}{1}
 				{2}{3}
@@ -474,16 +496,26 @@ TabbedView {
 				{7}{9}
 				{8}{9}
 				{9}{9};
-			
-		};
-		
-		views.do{arg v, i; 
-			v.bounds = Rect(
-				left,
-				top,
-				view.bounds.width-tabWidths.maxItem,
-				view.bounds.height);
-				v.background_( backgrounds[ i%backgrounds.size ] );
+		};	
+		followEdges.not.if{
+			views.do{arg v, i; 
+				v.bounds = Rect(
+					left,
+					top,
+					view.bounds.width-tabWidths.maxItem,
+					view.bounds.height);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+			};
+		}{
+			views.do{arg v, i; 
+				v.bounds = Rect(
+					left,
+					top,
+					view.bounds.width-tbht,
+					view.bounds.height
+					);
+					v.background_( backgrounds[ i%backgrounds.size ] );
+			};
 		};
 		
 		this.updateFocus();
@@ -496,6 +528,11 @@ TabbedView {
 		
 	}
 	
+	followEdges_{arg bool; 
+	 	followEdges=bool;
+		this.updateViewSizes();
+		
+	}
 	
 	resize_{arg int;
 		resize = int;
