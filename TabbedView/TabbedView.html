@@ -152,7 +152,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10">If your objects are encased in FlowViews at every level (including the object contents itself), all should be OK. Otherwise, you have to set the tab position before you add objects</p>
 <p class="p2"><br></p>
 <p class="p3"><b>(</b></p>
-<p class="p6">v=<span class="s8">TabbedView2</span>.newColorLabels(<span class="s8">nil</span>,<span class="s8">nil</span>,<span class="s8">Array</span>.fill(5,{<span class="s8">arg i; var q="aa";</span> i.do{q=<span class="s9">q</span>++"a"}; q })); <span class="s10">//default</span></p>
+<p class="p6">v=<span class="s8">TabbedView</span>.newColorLabels(<span class="s8">nil</span>,<span class="s8">nil</span>,<span class="s8">Array</span>.fill(5,{<span class="s8">arg i; var q="aa";</span> i.do{q=<span class="s9">q</span>++"a"}; q })); <span class="s10">//default</span></p>
 <p class="p6">v.views[0].flow({<span class="s8">arg</span> w;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s8">ActionButton</span>(w,<span class="s9">"tabs top"</span>,{v.tabPosition_(<span class="s11">\top</span>)},300,50);</p>
 <p class="p6"><span class="Apple-tab-span">	</span>w.startRow;</p>
