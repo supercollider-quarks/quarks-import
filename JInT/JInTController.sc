@@ -340,15 +340,15 @@ JInTC_PenPos : JInTC_composite {
 JInTC_PenTilt : JInTC_composite {
 	*new {|desc, server, specs|
 		specs = specs ? [
-			ControlSpec(0, 1, default: 0), // tiltX
-			ControlSpec(0, 1, default: 0)  // tiltY
+			ControlSpec(-1, 1, default: 0), // tiltX
+			ControlSpec(-1, 1, default: 0)  // tiltY
 		];
 		^super.new(desc ? 
 			"Tilting of a pen.",
 			server, 
 			[
-				JInTC_linear.new(spec: specs[3]),  // tiltX
-				JInTC_linear.new(spec: specs[4])  // tiltY
+				JInTC_linear.new(spec: specs[0]),  // tiltX
+				JInTC_linear.new(spec: specs[1])  // tiltY
 			]
 		);
 	}
