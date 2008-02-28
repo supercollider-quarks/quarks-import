@@ -410,4 +410,19 @@ highestUniqueId {
 		and:{this.label      == that.label}
 }
 
+// Entropy estimate of distribution via nearest-neighbour distances.
+// See Beirlant et al (1997), "Nonparametric entropy estimation: An overview", sec 2.4
+// The estimate is calculated in nats but converted to bits before being returned (in keeping with my other entropy methods)
+entropyNN {
+	var n, nats;
+	n = this.size.asFloat;
+	
+	// for each entry, res.value[1] is the NN distance
+	nats = this.allNearest.sumF{|res| log(n * res.value[1])} 
+			/ n
+			+ 1.2703628454615 // == log(2) + the Euler constant
+	
+	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
+}
+
 } // End class
