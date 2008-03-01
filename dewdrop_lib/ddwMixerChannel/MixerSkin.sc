@@ -402,7 +402,7 @@ MixerLevelSlider : MixerWidgetBase {
 	makeView { |layout, bounds|
 		view = GUI.slider.new(layout, bounds);
 		this.restoreView;
-		spec = try { mixer.controls[\level].spec } ?? { \bipolar.asSpec };
+		spec = try { mixer.controls[\level].spec } ?? { \amp.asSpec };
 	}
 	doAction { |view|
 		mixer.setControl(\level, spec.map(view.value));
@@ -439,7 +439,7 @@ MixerLevelNumber : MixerWidgetBase {
 		view = GUI.numberBox.new(layout, bounds)
 			.font_(this.class.font)
 			.align_(\center);
-		spec = try { mixer.controls[\level].spec } ?? { \bipolar.asSpec };
+		spec = try { mixer.controls[\level].spec } ?? { \amp.asSpec };
 	}
 	doAction { |view|
 		mixer.setControl(\level, view.value.dbamp);
