@@ -36,30 +36,30 @@ SETO_GUIObj{
 		obj.relativeOrigin_(true).clearOnRefresh_(true);
 		this.updateBounds;
 		obj.drawFunc_({|me|
+			GUI.pen.use{
 				setObj.isEuler.if({
 //					GUI.pen.color = Color.hsv(setObj.rotEuler[0]*2pi.reciprocal % 1, 0.43, 0.87);
 					GUI.pen.color = Color.hsv(setObj.classID+1 * 0.2, 1, 1, alpha: 0.5);
 					setObj.rotEuler[0].notNil.if({
+						
 						GUI.pen.rotate(
 							setObj.rotEuler[0], 
-							0,
-							0
+							oExtent*0.5,
+							oExtent*0.5
 						);
 					})
 				},{
 					GUI.pen.color = Color.hsv(setObj.classID+1 * 0.2, 1, 1, alpha: 0.25);
 				});
-				GUI.pen.fillRect(Rect(0, 0, 400, 400));
-				GUI.pen.use{
-					GUI.pen.color = Color.black;
-					GUI.pen.string(setObj.id.asString);
-				};
-				/*GUI.pen.color = Color.yellow(0.3, 0.2);
-				GUI.pen.fillRect(Rect(0, 0, 400, 400));
-				*/
-				
-				
-
+				GUI.pen.fillRect(Rect(oExtent*0.15, oExtent*0.15, oExtent*0.7, oExtent*0.7));
+			};
+			GUI.pen.use{
+				GUI.pen.color = Color.black;
+				GUI.pen.string(setObj.id.asString);
+			};
+			/*GUI.pen.color = Color.yellow(0.3, 0.2);
+			GUI.pen.fillRect(Rect(0, 0, 400, 400));
+			*/
 		});
 		obj.mouseMoveAction_({|me, x, y|
 				var bounds;
