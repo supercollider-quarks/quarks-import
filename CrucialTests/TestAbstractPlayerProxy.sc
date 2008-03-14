@@ -104,18 +104,24 @@ TestAbstractPlayerProxy : UnitTest {
 		app = AbstractPlayerProxy.new;
 		app.source = p;
 
+
 		// prepareToBundle { arg agroup,bundle,private = false, bus, defWasLoaded = false;
 		app.prepareToBundle(g,n,true,b,false);
 
 		this.assert( p.synthDef.notNil,"patch should have its synthDef there and built");
-
+		this.assert( n.includesDefName( p.defName ), "patch's defName should be in the bundle");
+		
 		po = app.patchOut;
+
 		this.assert( po.notNil,"should have a patchOut");
 		this.assert( po.rate === \audio,"audio rate patchOut");
-		this.assert( po.group === g,"group g");
-		this.assert( po.bus === b,"bus b");
+		this.assert( po.group === g,"patch out group === g");
+		this.assert( po.group == g,"patch out group == g");
+
+		this.assert( po.bus === b,"patch out should have bus b");
 		this.assert( app.group === g,"AbstractPlayerProxy should have group g");
-		this.assert( app.bus === b,"AbstractPlayerProxy should have group g");
+		this.assert( app.bus === b,"AbstractPlayerProxy should have bus b");
+
 		this.assert( app.bus.isKindOf(SharedBus), "bus is now a shared bus");
 		this.assert( app.bus.index == b.index, "bus is now a shared bus");
 		this.assert( p.group === g,"patch should have group g");

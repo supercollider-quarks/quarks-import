@@ -38,10 +38,15 @@ TestPlayerSocket : UnitTest {
 		ps.source = p;
 		
 		ps.loadDefFileToBundle(n,s);
+		// not any more.  it gets loaded at prepareChildren to bundle
 		// should have one bundle, the def file of p
-		this.assertEquals( n.preparationMessages.size,3,"should be 3 bundle, the def file + EnvelopedPlayer + a placeholder");
+		
+		//this.assertEquals( n.preparationMessages.size,2,"should be 2 bundle, the def file + EnvelopedPlayer");
+		
 		// shouldnt the source be loaded as well if its non-nil ?
-		this.assert( p.synthDef.notNil,"patch should have its synthDef there and built");		
+		//this.assert( n.defNames.includes( ps.envdSource.defName ),"bundle should have envdSource def in there");
+		
+		//this.assert( p.synthDef.notNil,"patch should have its synthDef there and built");		
 	}
 	test_makePatchOut {
 		var ps,po;
@@ -102,7 +107,6 @@ TestPlayerSocket : UnitTest {
 		
 		ps.prepareChildrenToBundle(n);
 		
-		ps.insp("prep child");
 		// patch 
 		this.assertEquals( p.group ,ps.socketGroup ,"patch should be set into the socket group");
 		this.assertEquals( p.bus,  ps.bus,"patch should have the same bus as the ps");
@@ -135,7 +139,7 @@ TestPlayerSocket : UnitTest {
 			this.wait( { e.isPlaying },"waiting for patch "+e+" to play in socket");
 			// is it in the socket group ?
 			this.assertEquals( e.group , p.socketGroup,""+e+" should be playing in the player socket's socket group");
-			0.5.wait;// catch breath
+			1.0.wait;// catch breath
 			// socket's envd player = q's synth
 			this.assertEquals( s.numSynths, 2,"with "+e+" playing there should be 2 synths on the server");
 			0.1.wait;
@@ -160,5 +164,7 @@ TestPlayerSocket : UnitTest {
 		
 		this.assertEquals( s.numSynths,0,"voice released, no synths should be on the server");
 	}
+
+
 
 }
