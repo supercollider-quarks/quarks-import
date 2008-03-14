@@ -15,7 +15,9 @@ Instr([\subfolder,\subinstr,\one],{ arg stereo=0.0,mix=0.0;
 );
 
 
-Instr([\subfolder,\leaf],{ arg stereo=0.0,mix=0.0;
+// this is improperly named
+// should post a warning ?  it can't really
+/*Instr([\subfolder,\leaf],{ arg stereo=0.0,mix=0.0;
 
 	var l,r,center,sides;
 	
@@ -28,6 +30,6 @@ Instr([\subfolder,\leaf],{ arg stereo=0.0,mix=0.0;
 	nil,
 	\stereoEffect
 );
-
+*/
 
 

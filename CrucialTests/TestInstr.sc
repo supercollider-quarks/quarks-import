@@ -111,24 +111,32 @@ TestInstr : UnitTest {
 	}
 	test_at { // with loading from disk
 
-// THIS Is because I have a folder called subfolder which is empty in my own dir
-// without it there I get the behavior below : nil the first time
+		// THIS Is because I have a folder called subfolder which is empty in my own dir
+		// without it there I get the behavior below : nil the first time
 
 		var i;
 		Instr.clearAll;
 		i = Instr.at("subfolder.subinstr.one");
 		this.assert(i.notNil,"should load subfolder.subinstr.one");
 
-		Instr.clearAll;
+/*		Instr.clearAll;
 		i = Instr.at("subfolder.leaf");
-		this.assert(i.notNil,"should load subfolder.leaf");
+		this.assert(i.isNil,"should not find the improperly named subfolder.leaf");
+*/
 	}
-	/*	
-		nil the first time, then it loads
-		Instr.clearAll
-		Instr.at("builders.audioPatch")
-	*/
-
+	test_findFileFor {
+		var find;
+		find = Instr.findFileFor(Instr.symbolizeName("subfolder.subinstr.one"));
+		this.assert(find.notNil,"should find the file for subfolder.subinstr.one");
+	}
+	test_findFileInDir {
+		var find,dir;
+		// this was a weird bug.
+		dir = (Platform.userExtensionDir ++ "/quarks/CrucialTests/Instr/");
+		find = Instr.findFileInDir(Instr.symbolizeName("subfolder.subinstr.one"),dir);
+		// its in quarks/CrucialTests/Instr/subfolder/subinstr.scd
+		this.assert(find.notNil,"should find the file for subfolder.subinstr.one");
+	}
 }
 
 

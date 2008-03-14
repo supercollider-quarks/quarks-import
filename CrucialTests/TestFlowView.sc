@@ -45,6 +45,32 @@ TestFlowView : UnitTest {
 		g.close;
 	}
 	
+	test_flow { 
+		// this is a minor change in  behavior that would affect the swing method too
+		var w;
+		var comp,innerFlow;
+		w = Sheet({ |f|
+
+			f.comp({ |comp|
+
+				innerFlow = comp.flow({ arg layout;
+
+					//ActionButton(layout,"yo");
+				},Rect(100,100,100,100))
+				.background = Color.blue;
+		
+			},Rect(0,0,500,500))
+			.background_(Color.red)
+	
+		});
+
+
+		this.assertEquals( innerFlow.absoluteBounds,Rect(100 + GUI.skin.margin.x, 100, 100, 100),
+					" flow should not resizeToFit if the bounds passed to it were explicit");
+		// w.close
+	}
+	
+	
 	/*
 
 w = GUI.window.new;

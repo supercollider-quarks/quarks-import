@@ -2,6 +2,8 @@
 TestAudioSpec : UnitTest {
 	
 	test_specs {
+		Instr.clearAll;
+		Instr.loadAll;
 		Instr.leaves.do({ |instr|
 			var f,d,c;
 			this.assert( instr.outSpec.notNil,"(" + instr.asCompileString ++ ".path.openDocument ) " + Char.nl + "outSpec is nil.  This is guessable by the patch, but it isn't safe to assume that it is an audio spec" );
