@@ -157,6 +157,8 @@ Instr([\minmax,\PseqLiveSwitch],{ arg cycleLength=8,numSeqs=4,switchCycleLength=
 );
 
 
+	
+	
 /*  needs PFork
 // switch to change
 Instr([\minmax,\PForkInertia],{ arg cycleLength=8,cycleLength2=8,min=0.0,max=1.0;

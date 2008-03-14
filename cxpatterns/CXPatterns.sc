@@ -2,12 +2,14 @@
 CXPatterns {
 
 	*initClass {
-
+		var scale;
 		Class.initClassTree(Spec);
-
+		Class.initClassTree(Crucial);
+		Crucial.initSpecs;
+		
 		Spec.specs.addAll([
 
-			\scale -> ArraySpec.new(StaticSpec(-100,100,\linear),12),
+			\scale -> scale = ArraySpec.new(StaticSpec(-100,100,\linear),12),
 
 			\freqStream -> StreamSpec(\freq.asSpec.as(StaticIntegerSpec)),
 
@@ -22,14 +24,14 @@ CXPatterns {
 
 			\playerFreq -> PlayerSpec(\freq),
 
-			\scaleStream -> StreamSpec(\scale),
+			\scaleStream -> StreamSpec(scale),
 
 			// chord changes are an array of float arrays
 			// TwoDArraySpec works
 			// but it has to accept patterns
 			// or maybe always doing chord changes as a stream is best.
 			// you can always return a Pseq that returns each chord array.
-			//\chordChanges -> ArraySpec( ArraySpec( \degree ) )
+			//\chordChanges -> ArraySpec( ArraySpec( \degree.asSpec.as(StaticIntegerSpec) ) )
 
 		]);
 	}
