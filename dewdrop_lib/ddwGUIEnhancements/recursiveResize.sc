@@ -32,9 +32,7 @@
 + MultiPageLayout {
 	recursiveResize {
 		this.checkNotClosed.if({
-			views.do({ arg v;
-				v.recursiveResize;
-			});
+			this.view.recursiveResize;
 			this.resizeToFit;
 		});
 	}

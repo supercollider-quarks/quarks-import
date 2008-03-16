@@ -19,12 +19,26 @@ FixedWidthMultiPageLayout : MultiPageLayout {
 			w.view.background_(bgcolor);
 		});
 		isClosed = false;
-		v = FixedWidthFlowView(w);
+		v =  FixedWidthFlowView( w );
 		margin = argmargin;
 		if(margin.notNil,{
 			v.decorator.margin_(margin);
 		});
 		views = views.add(v );
+		autoRemoves = [];
+	}
+
+	initon { arg parent,bounds,argmargin,argmetal=true;
+		var r,v;
+		windows = []; // first window not under my control
+		v = FixedWidthFlowView(parent,bounds);
+		margin = argmargin;
+		if(margin.notNil,{
+			v.decorator.margin_(margin);
+		});
+		views = [v];
+		metal = argmetal;
+		onBoundsExceeded = \warnError;
 		autoRemoves = [];
 	}
 }
