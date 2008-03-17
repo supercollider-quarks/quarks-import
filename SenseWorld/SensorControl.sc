@@ -12,9 +12,32 @@ SensorControl{
 	var <>defaultRetAction;
 	var <>weights;
 	var <>dataArray;
+	
+	var <task, <>waitTime = 0.05;
 
 	*new{ |data,name|
 		^super.new.init(data,name);
+	}
+	
+	longshort_{ |long|
+	
+		if ( long, {
+			updateValues = { var val;
+				val = 0;
+				dataArray.do{ |it,i|
+					val = val + (weights[i]*it.longStdDev);
+					};
+				val;
+				};
+			},{
+			updateValues = { var val;
+				val = 0;
+				dataArray.do{ |it,i|
+					val = val + (weights[i]*it.shortStdDev);
+					};
+				val;
+				};
+			});
 	}
 
 	init{ |data,nm|
@@ -38,7 +61,7 @@ SensorControl{
 		updateValues = { var val;
 			val = 0;
 				dataArray.do{ |it,i|
-				val = val + (weights[i]*it.longStdDev);
+					val = val + (weights[i]*it.longStdDev);
 			};
 			val;
 		};
@@ -62,13 +85,23 @@ SensorControl{
 							if ( onAction.notNil, { returnAction = onAction; });
 						},{  // turning off
 							if ( turn == 0,
-								{turningoff.reset.play; });
-							if ( onoffAction.notNil, { returnAction = onoffAction; } );
+								{
+								turningoff.reset.play; 
+								if ( onoffAction.notNil, { returnAction = onoffAction; } );
+								});
 						});
 				});
 			if ( returnAction.isNil, { returnAction = defaultRetAction; } );
 			returnAction.value( val );
 		};
-
+		task = Task.new( { loop{ (this.updateFunc).value; this.waitTime.wait; } } );
+	}
+	
+	start{
+		task.start;
+	}
+	
+	stop{
+		task.stop;
 	}
 }
