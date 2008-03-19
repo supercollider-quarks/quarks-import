@@ -3,6 +3,10 @@
 // inside the window is fixed
 
 FixedWidthMultiPageLayout : MultiPageLayout {
+
+	*flowViewClass { ^FixedWidthFlowView }
+
+/*
 	init { arg title,bounds,argmargin,argmetal=true;
 		var w,v;
 		bounds = if(bounds.notNil,{  bounds.asRect },{GUI.window.screenBounds.insetAll(10,20,0,25)});
@@ -41,4 +45,5 @@ FixedWidthMultiPageLayout : MultiPageLayout {
 		onBoundsExceeded = \warnError;
 		autoRemoves = [];
 	}
+*/
 }
