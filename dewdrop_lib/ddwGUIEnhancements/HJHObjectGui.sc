@@ -4,6 +4,24 @@ HJHObjectGui : ObjectGui {
 	var	<masterLayout, <layout, <iMadeMasterLayout = false,
 		<argBounds;
 
+	*initClass {
+		StartUp.add {
+			GUI.skins.put(\dewdrop,
+				(
+					fontSpecs: 	["Helvetica", 12.0],
+					fontColor: 	Color.black,
+					background: 	Color.white,
+					foreground:	Color.grey(0.95),
+					onColor:		Color.new255(255, 250, 250),
+					offColor:		Color.clear,
+					gap:			4 @ 4,
+					margin: 		2@0,
+					buttonHeight:	20
+				));
+			GUI.setSkin(\dewdrop);
+		}
+	}
+
 	guify { arg lay,bounds,title;
 		argBounds = bounds;	// some of my gui's need to know this
 		if(lay.isNil,{

@@ -66,8 +66,11 @@ VoicerProxyGui : ObjectGui {
 			panicButton = ActionButton(layout, "panic", {
 				model.voicer.panic
 			});
+				// ActionButton.defaultHeight is deprecated for future sc versions
+				// but needed for backward (i.e., 3.2) compatibility here
 			runButton = GUI.button.new(layout, Rect(0, 0, 31, ActionButton.defaultHeight))
 				.states_([["run"], ["idle"]])
+				.font_(GUI.font.new(*GUI.skin.fontSpecs))
 				.action_({ |v|
 					model.run(v.value == 0);
 				});
@@ -104,6 +107,7 @@ VoicerProxyGui : ObjectGui {
 			});
 			runButton = GUI.button.new(layout, Rect(0, 0, 31, ActionButton.defaultHeight))
 				.states_([["run"], ["idle"]])
+				.font_(GUI.font.new(*GUI.skin.fontSpecs))
 				.action_({ |v|
 					model.run(v.value == 0);
 				});
