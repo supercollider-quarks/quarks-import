@@ -16,7 +16,7 @@ HJHObjectGui : ObjectGui {
 					offColor:		Color.clear,
 					gap:			4 @ 4,
 					margin: 		2@0,
-					buttonHeight:	20
+					buttonHeight:	18
 				));
 			GUI.setSkin(\dewdrop);
 		}
