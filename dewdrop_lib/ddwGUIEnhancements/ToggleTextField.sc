@@ -17,7 +17,8 @@ ToggleTextField : SCViewAdapter {
 	}
 
 	init { arg argParent, argBounds;
-		view = GUI.compositeView.new(argParent, argBounds);
+		view = GUI.compositeView.new(argParent, argBounds)
+			.relativeOrigin_(try { argParent.relativeOrigin } { false });
 		bounds = view.bounds;
 		enabledButton = GUI.button.new(view, this.buttonBounds)
 			.states_([
