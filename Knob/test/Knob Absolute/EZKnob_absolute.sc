@@ -1,5 +1,4 @@
 // blackrain at realizedsound dot net - 0106
-//	03.10.2008 - Relative origin mods. Knob is a subclass of SCViewHolder now.
 
 EZKnob	{
 	var <>labelView, <>knobView, <>numberView, <value, <>round = 0.0001, <>action, <>controlSpec;
@@ -19,27 +18,27 @@ EZKnob	{
 		dimensions = dimensions ?? ( 32 @ 16 );
 	
 		b = b ? Color.blue(0.2, alpha:0.1);
-		width = labelWidth = numberWidth = max(dimensions.x, labelWidth).max(numberWidth) - 2;
-		height = (dimensions.y * 2) + dimensions.x + 6;
+		width = max(numberWidth, labelWidth) + 4;
+		height = (dimensions.y * 2 + 4) + dimensions.x + 8;
 
 		bounds = Point.new(width, height);
 		
-		cv = GUI.compositeView.new(window, Rect(0,0,width+4, height+4))
-			.relativeOrigin_(true)
+		cv = GUI.compositeView.new(window, bounds)
+			.relativeOrigin_(false)
 			.background_(b);
 			
-		cv.decorator = FlowLayout.new(Rect(0,0,width+4, height+4), 2@0, 0@4);
+		cv.decorator = FlowLayout.new(cv.bounds, 2@2, 4@4);
 	
 		enabled = true;
 		controlSpec = argControlSpec.asSpec;
 		initVal = initVal ? controlSpec.default;
 		action = argAction;
 
-		labelView = GUI.staticText.new(cv, Rect(0, 0, labelWidth, dimensions.y));
+		labelView = GUI.staticText.new(cv, labelWidth @ dimensions.y);
 		labelView.string = label;
 		labelView.align = \center;
 
-		knobView = GUI.knob.new(cv, Rect(0, 0, dimensions.x, dimensions.x));
+		knobView = GUI.knob.new(cv, dimensions.x @ dimensions.x);
 		knobView.action = {
 			value = controlSpec.map(knobView.value);
 			numberView.value = value.round(round);
@@ -57,7 +56,7 @@ EZKnob	{
 		
 		knobView.beginDragAction = { value };
 
-		numberView = GUI.numberBox.new(cv, Rect(0, 0, numberWidth, dimensions.y));
+		numberView = GUI.numberBox.new(cv, numberWidth @ dimensions.y);
 		numberView.action = {
 			numberView.value = value = controlSpec.constrain(numberView.value);
 			knobView.value = controlSpec.unmap(value);
