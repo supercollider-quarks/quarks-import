@@ -13,15 +13,18 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande; min-height: 15.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d50007}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000b7}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000b7; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
 span.s1 {font: 12.0px Lucida Grande}
 span.s2 {font: 12.0px Helvetica}
-span.s3 {color: #006400}
-span.s4 {color: #0000b7}
-span.s5 {color: #000000}
+span.s3 {color: #001a00}
+span.s4 {color: #0000bf}
+span.s5 {color: #007300}
+span.s6 {color: #000000}
+span.s7 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -32,7 +35,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="s1"><b>IrKnobEditor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>A Instrument rate control object with a Knob and a NumberBox GUI controls.</p>
 <p class="p3"><span class="s1"><b>KrKnobEditor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span>A control rate control object with a Knob and a NumberBox GUI controls.</p>
 <p class="p4"><br></p>
-<p class="p5"><b>KnobEditor:new</b><span class="s2">(0.1, \amp)</span></p>
+<p class="p3"><span class="s1"><b>KnobEditor:new</b></span>(initVal, spec)</p>
 <p class="p5"><b>KnobEditor:value_</b><span class="s2">(val)</span></p>
 <p class="p3"><span class="s1"><b>KnobEditor:action_</b></span>({ arg this; actionFunc })</p>
 <p class="p3"><span class="s1"><b>KnobEditor:changed - </b></span>notify dependants from a value change in the object. ie, the gui.</p>
@@ -61,18 +64,18 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p3">see also: [<b>Knob</b>], [<b>EZKnob</b>], [<b>NumberEditor</b>], [<b>IrNumberEditor</b>], [<b>KrNumberEditor</b>]</p>
 <p class="p6"><br></p>
-<p class="p7">k = <span class="s4">KnobEditor</span>(0.1, <span class="s3">\pan</span>);</p>
+<p class="p7">k = <span class="s4">KnobEditor</span>(0.0, <span class="s5">\pan</span>);</p>
 <p class="p7">k.action_({ <span class="s4">arg</span> v; v.value.postln });</p>
-<p class="p7">g = k.gui.centered_(<span class="s4">true</span>)</p>
-<p class="p7">g.centered_(<span class="s4">false</span>)</p>
+<p class="p7">g = k.gui;</p>
+<p class="p7">g.centered_(<span class="s4">true</span>)</p>
 <p class="p7">g.insp</p>
-<p class="p4"><br></p>
-<p class="p8">// layout, bounds,<span class="Apple-converted-space">  </span>knobSize=28, numWidth=40, numHeight=14, hasBox=true, background</p>
-<p class="p7">g=k.gui(<span class="s4">nil</span>, <span class="s4">Rect</span>(100, 400, 200, 200), 38, 50, 14, <span class="s4">true</span>, <span class="s4">Color</span>.blue(0,0)).centered_(<span class="s4">true</span>)</p>
-<p class="p7">g.knob.color[0] = Color.green(0.5,0.4);</p>
+<p class="p8"><br></p>
+<p class="p9">// layout, bounds,<span class="Apple-converted-space">  </span>knobSize=28, numWidth=40, numHeight=14, hasBox=true, background</p>
+<p class="p7">g=k.gui(<span class="s4">nil</span>, <span class="s4">Rect</span>(100, 400, 200, 200), 38, 50, 14, <span class="s4">true</span>, <span class="s4">Color</span>.blue(0.2,0.1));</p>
+<p class="p7">g.knob.color[0] = <span class="s4">Color</span>.green(0.5,0.4);</p>
 <p class="p7">g.knob.refresh;</p>
-<p class="p4"><br></p>
-<p class="p7">k = <span class="s4">KrKnobEditor</span>.new(880.0,<span class="s3">\freq</span>)</p>
+<p class="p8"><br></p>
+<p class="p7">k = <span class="s4">KrKnobEditor</span>.new(880.0,<span class="s5">\freq</span>)</p>
 <p class="p7">k.gui</p>
 <p class="p7">k.value = 1200</p>
 <p class="p7">k.value</p>
@@ -80,36 +83,47 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">k.set(220.0)</p>
 <p class="p7">k.changed</p>
 <p class="p7">k.state_(80)</p>
-<p class="p4"><br></p>
+<p class="p8"><br></p>
+<p class="p9">//</p>
+<p class="p7">(</p>
+<p class="p10">Sheet<span class="s6">({ </span>arg<span class="s6"> l;</span></p>
+<p class="p11"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s4">var</span><span class="s6"> specs = [</span>\boostcut<span class="s6">, </span>\freq<span class="s6">, </span>\pan<span class="s6">, </span>\amp<span class="s6">, </span>\amp<span class="s6">, </span>\freq<span class="s6">, </span>\pos<span class="s6">, </span>\amp<span class="s6">];</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>a = <span class="s4">Array</span>.fill(8, { <span class="s4">arg</span> i; <span class="s4">KnobEditor</span>.new(0.1, specs.at(i)) });</p>
+<p class="p7"><span class="Apple-tab-span">	</span>a.do(<span class="s4">_</span>.gui(l, <span class="s4">nil</span>, 36));</p>
+<p class="p7">}, <span class="s7">"Knob Editors"</span>, <span class="s4">Rect</span>(100,400,380,80));</p>
+<p class="p7">)</p>
+<p class="p7">a.collect(<span class="s4">_</span>.value);</p>
+<p class="p8"><br></p>
+<p class="p8"><br></p>
 <p class="p7">s.boot;</p>
-<p class="p4"><br></p>
+<p class="p8"><br></p>
 <p class="p7">z = { <span class="s4">arg</span> amp=0.25; <span class="s4">AudioIn</span>.ar([1,2], amp) }.play</p>
-<p class="p4"><br></p>
-<p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s3">\amp</span>);</p>
-<p class="p7">k.action = { <span class="s4">arg</span> v; z.set(<span class="s3">\amp</span>, v.value) };</p>
+<p class="p8"><br></p>
+<p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s5">\amp</span>);</p>
+<p class="p7">k.action = { <span class="s4">arg</span> v; z.set(<span class="s5">\amp</span>, v.value) };</p>
 <p class="p7">g = k.gui(<span class="s4">nil</span>, <span class="s4">nil</span>, 100,110).roundVal_(1e-8)</p>
-<p class="p4"><br></p>
+<p class="p8"><br></p>
 <p class="p7">z.release</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
-<p class="p8">// KnobEditor using the event framework</p>
+<p class="p8"><br></p>
+<p class="p8"><br></p>
+<p class="p9">// KnobEditor using the event framework</p>
 <p class="p7"><span class="s4">SynthDescLib</span>.global.read</p>
-<p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s3">\amp</span>);</p>
+<p class="p7">k = <span class="s4">KnobEditor</span>(0.25, <span class="s5">\amp</span>);</p>
 <p class="p7">k.gui</p>
-<p class="p7">p = <span class="s4">Pbind</span>(<span class="s3">\amp</span>, k, <span class="s3">\dur</span>, 0.25).play</p>
+<p class="p7">p = <span class="s4">Pbind</span>(<span class="s5">\amp</span>, k, <span class="s5">\dur</span>, 0.25).play</p>
 <p class="p7">p.stop</p>
-<p class="p4"><br></p>
-<p class="p8">// KrKnobEditor in a crucial library patch gui</p>
+<p class="p8"><br></p>
+<p class="p9">// KrKnobEditor in a crucial library patch gui</p>
 <p class="p7">(</p>
 <p class="p7"><span class="s4">Patch</span>({ <span class="s4">arg</span> freq=110.0, amp=0.1;</p>
-<p class="p4"><br></p>
+<p class="p8"><br></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s4">LFCub</span>.ar(freq, 0, amp)</p>
-<p class="p4"><br></p>
+<p class="p8"><br></p>
 <p class="p7">}, [</p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s5">(110.0, </span><span class="s3">\freq</span><span class="s5">),</span></p>
-<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s5">(0.1, </span><span class="s3">\amp</span><span class="s5">),</span></p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s6">(110.0, </span><span class="s5">\freq</span><span class="s6">),</span></p>
+<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s6">(0.1, </span><span class="s5">\amp</span><span class="s6">),</span></p>
 <p class="p7">]).gui;</p>
 <p class="p7">)</p>
-<p class="p10"><br></p>
+<p class="p8"><br></p>
 </body>
 </html>

@@ -11,8 +11,9 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 span.s1 {color: #0000bf}
 span.s2 {color: #606060}
 span.s3 {color: #007300}
@@ -42,11 +43,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="s1">Knob</span>(w, 32@32)</p>
 <p class="p5"><span class="Apple-tab-span">	</span>.action = {<span class="s1">|v|</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>m.value = <span class="s3">\amp</span>.asSpec.map(v.value);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>txt.string = format(<span class="s2">"val: %dB",</span> m.value.ampdb.round(0.01));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>txt.string = format(<span class="s2">"val: % dB"</span>, m.value.ampdb.round(0.01));</p>
 <p class="p5"><span class="Apple-tab-span">	</span>};</p>
 <p class="p5">txt = <span class="s1">SCStaticText</span>(w, 200@14);</p>
 <p class="p5">)</p>
-<p class="p1"><br></p>
+<p class="p6"><br></p>
 <p class="p5">s.boot;</p>
 <p class="p5">(</p>
 <p class="p5">o = <span class="s1">OSCresponderNode</span>(s.addr,<span class="s3">'/tr'</span>,{ <span class="s1">arg</span> time,responder,msg;</p>
@@ -55,7 +56,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>});</p>
 <p class="p5">}).add;</p>
 <p class="p5">)</p>
-<p class="p1"><br></p>
+<p class="p6"><br></p>
 <p class="p5">(</p>
 <p class="p5"><span class="s1">SynthDef</span>(<span class="s3">\meter</span>, {<span class="s1">arg</span> bus = 0, rate = 15, rel = 1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">var</span> signal, amplitude;</p>
@@ -64,15 +65,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">SendTrig</span>.kr(<span class="s1">Impulse</span>.kr(rate), 1200, amplitude);</p>
 <p class="p5">}).send(s);</p>
 <p class="p5">)</p>
-<p class="p1"><br></p>
-<p class="p6">// start the meter synth</p>
+<p class="p6"><br></p>
+<p class="p7">// start the meter synth</p>
 <p class="p5">z = <span class="s1">Synth</span>.tail(1, <span class="s2">"meter"</span>);</p>
 <p class="p5">z.set(<span class="s3">\rate</span>, 15)</p>
 <p class="p5">z.set(<span class="s3">\rel</span>, 0.1)</p>
 <p class="p5">z.set(<span class="s3">\rel</span>, 2)</p>
-<p class="p1"><br></p>
-<p class="p1"><br></p>
-<p class="p6">// a click synth</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">// a click synth</p>
 <p class="p5">(</p>
 <p class="p5">a = { <span class="s1">arg</span> amp=0.1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">Decay2</span>.ar(<span class="s1">Impulse</span>.ar(1.0), 0.1, 0.4, <span class="s1">SinOsc</span>.ar(1200,0,amp))</p>
@@ -80,8 +81,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">)</p>
 <p class="p5">a.set(<span class="s3">\amp</span>, 0.5)</p>
 <p class="p5">a.free</p>
-<p class="p1"><br></p>
-<p class="p6">// read audio inputs</p>
+<p class="p6"><br></p>
+<p class="p7">// read audio inputs</p>
 <p class="p5">(</p>
 <p class="p5">a = { <span class="s1">arg</span> amp=0.1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">AudioIn</span>.ar([1,2]) * amp</p>
@@ -89,9 +90,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">)</p>
 <p class="p5">a.set(<span class="s3">\amp</span>, 1.0)</p>
 <p class="p5">a.free</p>
-<p class="p1"><br></p>
-<p class="p1"><br></p>
-<p class="p6"><span class="s4">z.free;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// free meter synth</p>
-<p class="p6"><span class="s4">o.remove;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// remove responder</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s4">z.free;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// free meter synth</p>
+<p class="p7"><span class="s4">o.remove;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// remove responder</p>
 </body>
 </html>

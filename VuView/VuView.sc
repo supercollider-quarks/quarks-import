@@ -1,5 +1,68 @@
 // 06/2006 blackrain at realizedsound dot net
+// 03.10.2008:
+//	- relative origin
+//	- A subclass of SCViewHolder
 
+VuView : SCViewHolder {
+	var <value=0;
+	*new { arg parent, bounds;
+		^super.new.init(parent, bounds);
+	}
+	init { arg parent, bounds;
+		var area;
+		
+		this.view_(GUI.userView.new(parent, bounds))
+			.relativeOrigin_(true);
+		
+		this.view.drawFunc_({
+			var bounds;
+			bounds = Rect(0, 0, this.view.bounds.width, this.view.bounds.height);
+			// frame
+			Color.black.alpha_(0.4).set;
+			GUI.pen.width = 2;
+			GUI.pen.moveTo(bounds.left @ (bounds.top + bounds.height));
+			GUI.pen.lineTo(bounds.left @ bounds.top);
+			GUI.pen.lineTo((bounds.left + bounds.width) @ bounds.top);
+			GUI.pen.stroke;
+	
+			Color.white.alpha_(0.4).set;
+			GUI.pen.moveTo(bounds.left @ (bounds.top + bounds.height));
+			GUI.pen.lineTo((bounds.left + bounds.width) @ (bounds.top +
+				bounds.height));
+			GUI.pen.lineTo((bounds.left + bounds.width) @ bounds.top);
+			GUI.pen.stroke;
+	
+			// center
+			Color.black.alpha_(0.2).set;
+			GUI.pen.addWedge(bounds.center.x @ (bounds.top + bounds.height - 1), 
+				bounds.height * 0.20, 0, -pi);
+			GUI.pen.perform(\fill);
+	
+			// scale
+			Color.black.alpha_(0.2).set;
+			GUI.pen.addAnnularWedge(bounds.center.x @
+				(bounds.top + bounds.height - 1), 
+				bounds.height * 0.8, bounds.height * 0.95, -0.75pi, 0.5pi);
+			GUI.pen.perform(\fill);
+	
+			// dial
+			Color.black(0.8, 0.8).set;
+			GUI.pen.width = 1;
+			GUI.pen.moveTo(bounds.center.x @ (bounds.top + bounds.height - 1));
+			GUI.pen.lineTo(Polar.new(bounds.height * 0.95, 
+				[-0.75pi, -0.25pi, \linear].asSpec.map(value)).asPoint +
+					(bounds.center.x @ (bounds.top + bounds.height)));
+			GUI.pen.stroke;
+		});
+	}
+
+	value_ { arg val;
+		value = val;
+		this.refresh;
+	}
+}
+
+/*
 VuView : SCUserView  {
 	var <value=0;
 
@@ -11,40 +74,40 @@ VuView : SCUserView  {
 	draw {
 		// frame
 		Color.black.alpha_(0.4).set;
-		Pen.width = 2;
-		Pen.moveTo(this.bounds.left @ (this.bounds.top + this.bounds.height));
-		Pen.lineTo(this.bounds.left @ this.bounds.top);
-		Pen.lineTo((this.bounds.left + this.bounds.width) @ this.bounds.top);
-		Pen.stroke;
+		GUI.pen.width = 2;
+		GUI.pen.moveTo(bounds.left @ (bounds.top + bounds.height));
+		GUI.pen.lineTo(bounds.left @ bounds.top);
+		GUI.pen.lineTo((bounds.left + bounds.width) @ bounds.top);
+		GUI.pen.stroke;
 
 		Color.white.alpha_(0.4).set;
-		Pen.moveTo(this.bounds.left @ (this.bounds.top + this.bounds.height));
-		Pen.lineTo((this.bounds.left + this.bounds.width) @ (this.bounds.top +
-			this.bounds.height));
-		Pen.lineTo((this.bounds.left + this.bounds.width) @ this.bounds.top);
-		Pen.stroke;
+		GUI.pen.moveTo(bounds.left @ (bounds.top + bounds.height));
+		GUI.pen.lineTo((bounds.left + bounds.width) @ (bounds.top +
+			bounds.height));
+		GUI.pen.lineTo((bounds.left + bounds.width) @ bounds.top);
+		GUI.pen.stroke;
 
 		// center
 		Color.black.alpha_(0.2).set;
-		Pen.addWedge(this.bounds.center.x @ (this.bounds.top + this.bounds.height - 1), 
-			this.bounds.height * 0.20, 0, -pi);
-		Pen.perform(\fill);
+		GUI.pen.addWedge(bounds.center.x @ (bounds.top + bounds.height - 1), 
+			bounds.height * 0.20, 0, -pi);
+		GUI.pen.perform(\fill);
 
 		// scale
 		Color.black.alpha_(0.2).set;
-		Pen.addAnnularWedge(this.bounds.center.x @
-			(this.bounds.top + this.bounds.height - 1), 
-			this.bounds.height * 0.8, this.bounds.height * 0.95, -0.75pi, 0.5pi);
-		Pen.perform(\fill);
+		GUI.pen.addAnnularWedge(bounds.center.x @
+			(bounds.top + bounds.height - 1), 
+			bounds.height * 0.8, bounds.height * 0.95, -0.75pi, 0.5pi);
+		GUI.pen.perform(\fill);
 
 		// dial
 		Color.black(0.8, 0.8).set;
-		Pen.width = 1;
-		Pen.moveTo(this.bounds.center.x @ (this.bounds.top + this.bounds.height - 1));
-		Pen.lineTo(Polar.new(this.bounds.height * 0.95, 
+		GUI.pen.width = 1;
+		GUI.pen.moveTo(bounds.center.x @ (bounds.top + bounds.height - 1));
+		GUI.pen.lineTo(Polar.new(bounds.height * 0.95, 
 			[-0.75pi, -0.25pi, \linear].asSpec.map(value)).asPoint +
-				(this.bounds.center.x @ (this.bounds.top + this.bounds.height)));
-		Pen.stroke;
+				(bounds.center.x @ (bounds.top + bounds.height)));
+		GUI.pen.stroke;
 	}
 
 	value_ { arg val;
@@ -52,3 +115,5 @@ VuView : SCUserView  {
 		this.refresh;
 	}
 }
+*/
+
