@@ -16,11 +16,11 @@ p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Lucida Grande; min-height: 1
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 12.0px Lucida Grande}
 span.s2 {font: 12.0px Helvetica}
-span.s3 {color: #001a00}
+span.s3 {color: #001000}
 span.s4 {color: #0000bf}
 span.s5 {color: #007300}
 span.s6 {color: #000000}
@@ -86,9 +86,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><br></p>
 <p class="p9">//</p>
 <p class="p7">(</p>
-<p class="p10">Sheet<span class="s6">({ </span>arg<span class="s6"> l;</span></p>
-<p class="p11"><span class="s6"><span class="Apple-tab-span">	</span></span><span class="s4">var</span><span class="s6"> specs = [</span>\boostcut<span class="s6">, </span>\freq<span class="s6">, </span>\pan<span class="s6">, </span>\amp<span class="s6">, </span>\amp<span class="s6">, </span>\freq<span class="s6">, </span>\pos<span class="s6">, </span>\amp<span class="s6">];</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span>a = <span class="s4">Array</span>.fill(8, { <span class="s4">arg</span> i; <span class="s4">KnobEditor</span>.new(0.1, specs.at(i)) });</p>
+<p class="p10"><span class="s4">var</span><span class="s6"> specs = [</span>\boostcut<span class="s6">, </span>\freq<span class="s6">, </span>\pan<span class="s6">, </span>\amp<span class="s6">, </span>\amp<span class="s6">, </span>\freq<span class="s6">, </span>\pos<span class="s6">, </span>\amp<span class="s6">];</span></p>
+<p class="p7">a = <span class="s4">Array</span>.fill(8, { <span class="s4">arg</span> i; <span class="s4">KnobEditor</span>.new(0.1, specs.at(i)) });</p>
+<p class="p7">)</p>
+<p class="p7">(</p>
+<p class="p11">Sheet<span class="s6">({ </span>arg<span class="s6"> l;</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span>a.do(<span class="s4">_</span>.gui(l, <span class="s4">nil</span>, 36));</p>
 <p class="p7">}, <span class="s7">"Knob Editors"</span>, <span class="s4">Rect</span>(100,400,380,80));</p>
 <p class="p7">)</p>
@@ -115,15 +117,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><br></p>
 <p class="p9">// KrKnobEditor in a crucial library patch gui</p>
 <p class="p7">(</p>
-<p class="p7"><span class="s4">Patch</span>({ <span class="s4">arg</span> freq=110.0, amp=0.1;</p>
+<p class="p7">p = <span class="s4">Patch</span>({ <span class="s4">arg</span> freq=110.0, amp=0.1;</p>
 <p class="p8"><br></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s4">LFCub</span>.ar(freq, 0, amp)</p>
 <p class="p8"><br></p>
 <p class="p7">}, [</p>
-<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s6">(110.0, </span><span class="s5">\freq</span><span class="s6">),</span></p>
-<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s6">(0.1, </span><span class="s5">\amp</span><span class="s6">),</span></p>
-<p class="p7">]).gui;</p>
+<p class="p11"><span class="s6"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s6">(110.0, </span><span class="s5">\freq</span><span class="s6">),</span></p>
+<p class="p11"><span class="s6"><span class="Apple-tab-span">	</span></span>KrKnobEditor<span class="s6">(0.1, </span><span class="s5">\amp</span><span class="s6">),</span></p>
+<p class="p7">])</p>
 <p class="p7">)</p>
+<p class="p7">p.gui;</p>
 <p class="p8"><br></p>
 </body>
 </html>
