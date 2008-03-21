@@ -24,6 +24,7 @@ Knob : SCViewHolder {
 			kit = GUI.schemes[ \swing ];
 			if( kit.notNil, { kit.knob = Knob });
 
+			GUI.skins.isNil({ GUI.put(\skins) });
 			GUI.skins.put('knob', (
 				default: (
 					scale:	Color.black.alpha_(0.3),

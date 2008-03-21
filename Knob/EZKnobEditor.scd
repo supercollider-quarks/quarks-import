@@ -8,7 +8,8 @@
 			EZKnobEditor("knob 5", 0.0, \boostcut)
 			
 		];
-
+)
+(
 	Sheet({ arg layout;
 		g = a.collect({ arg k; k.gui(layout) });
 	}, "EZKnobEditor Cluster")
