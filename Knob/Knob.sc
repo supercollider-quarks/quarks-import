@@ -9,16 +9,23 @@
 //		- Relative origin
 
 Knob : SCViewHolder {
-	classvar <>defaultMode;
+	classvar <useRelativeOrigin=false, <>defaultMode;
 	var <>color, <>action, <value, last, <>step, hit, <>keystep, <>mode, isCentered = false;
 	var <skin;
 	var <>mouseOverAction;
 
 	*initClass {
+		var version;
+		
 		defaultMode='round';
 
 		StartUp.add({ var kit;
 			
+			version = Main.tryPerform(\version);
+			if ( version.notNil and: { version >= "3.2" } ) {
+				useRelativeOrigin = true;
+			};
+				
 			kit = GUI.schemes[ \cocoa ];
 			if( kit.notNil, { kit.knob = Knob });
 			kit = GUI.schemes[ \swing ];
@@ -43,8 +50,8 @@ Knob : SCViewHolder {
 	init { arg parent, bounds;
 		var size, widthDiv2, center;
 		bounds = bounds.asRect.bounds.height_( bounds.asRect.bounds.width);
-		this.view_(GUI.userView.new(parent, bounds))
-			.relativeOrigin_(true);
+		this.view_(GUI.userView.new(parent, bounds));
+		this.view.tryPerform(\relativeOrigin_, useRelativeOrigin);
 		
 		value = 0.0;
 		mode = defaultMode;
@@ -58,7 +65,11 @@ Knob : SCViewHolder {
 		size = this.view.bounds.width;
 		widthDiv2 = size * 0.5;
 		center = Point(widthDiv2, widthDiv2);
-			
+		
+		if (useRelativeOrigin.not) {
+			center = center + (this.view.bounds.left @ this.view.bounds.top);
+		};
+		
 		this.view.drawFunc_({
 			var startAngle, arcAngle, aw;
 
@@ -103,15 +114,21 @@ Knob : SCViewHolder {
 		});
 
 		this.view.mouseDownAction_({ arg view, x, y, modifiers, buttonNumber, clickCount;
-			hit = view.mousePosition;
+			if (useRelativeOrigin.not) {
+				hit = x @ y;
+			}{
+				hit = view.mousePosition;
+			};
 			view.mouseMoveAction.value(view, x, y, modifiers);
 		});
 		
 		this.view.mouseMoveAction_({ arg view, x, y, modifiers;
 			var mp, pt, angle, inc = 0;
 			
-			mp = view.mousePosition;
-			x = mp.x; y = mp.y;
+			if (useRelativeOrigin) {
+				mp = view.mousePosition;
+				x = mp.x; y = mp.y;
+			};
 			
 			if (modifiers & 1048576 != 1048576) { // we are not dragging out - apple key
 				case

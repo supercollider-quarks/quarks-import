@@ -4,7 +4,7 @@
 EZKnob	{
 	var <>labelView, <>knobView, <>numberView, <value, <>round = 0.0001, <>action, <>controlSpec;
 	var <enabled, <cv;
-
+	
 	*new { arg window, dimensions, label, controlSpec, action, initVal, 
 			initAction=false, labelWidth=40, numberWidth = 40, centered=false, back;
 			
@@ -14,7 +14,7 @@ EZKnob	{
 
 	init { arg window, dimensions, label, argControlSpec, argAction, initVal, 
 			initAction, labelWidth, numberWidth, centered, b;
-		var width, height, bounds;
+		var left, top, width, height, bounds, flowBounds;
 
 		dimensions = dimensions ?? ( 32 @ 16 );
 	
@@ -22,13 +22,23 @@ EZKnob	{
 		width = labelWidth = numberWidth = max(dimensions.x, labelWidth).max(numberWidth) - 2;
 		height = (dimensions.y * 2) + dimensions.x + 6;
 
-		bounds = Point.new(width, height);
+		bounds = Point.new(width + 4, height + 4);
 		
-		cv = GUI.compositeView.new(window, Rect(0,0,width+4, height+4))
-			.relativeOrigin_(true)
+		if ( Knob.useRelativeOrigin ) {
+			bounds = bounds.asRect;
+		};
+		
+		cv = GUI.compositeView.new(window, bounds)
+			.relativeOrigin_(Knob.useRelativeOrigin)
 			.background_(b);
 			
-		cv.decorator = FlowLayout.new(Rect(0,0,width+4, height+4), 2@0, 0@4);
+		if ( Knob.useRelativeOrigin ) {
+			flowBounds = bounds
+		}{
+			flowBounds = cv.bounds
+		};
+
+		cv.decorator = FlowLayout.new(flowBounds, 2@0, 0@4);
 	
 		enabled = true;
 		controlSpec = argControlSpec.asSpec;
