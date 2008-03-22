@@ -3,17 +3,26 @@
 //	03.10.2008 - Relative origin mods. Knob is a subclass of SCViewHolder now.
 
 KnobEditorGui : EditorGui {
-	var <>knob, <>numv, <>roundVal = 0.0001, size, <enabled=true, backColor;
+	var <>knob, <>numv, <>roundVal = 0.0001, size, <enabled=true, backColor, <>font;
 
-	guiBody { arg layout, knobSize=28, numWidth=48, numHeight=14, hasBox=true, background;
-		var cv;
-		layout.bounds = layout.bounds.width_(numWidth - 8);
-		layout.bounds = layout.bounds.height_(knobSize + numHeight + 8);
+	guiBody { arg layout, knobSize=32, numWidth=48, numHeight=14, hasBox=true, background;
+		var cv, fontName, fontSize;
+		layout.bounds = layout.bounds.width_(numWidth - 4);
+		layout.bounds = layout.bounds.height_(knobSize + numHeight + 10);
 		backColor = background ? Color.blue(0.1, 0.1);
+
+		if (GUI.skins.notNil and:{ GUI.skins.crucial.notNil } ) {
+			fontName = GUI.skins.crucial.fontSpecs[0];
+			fontSize = GUI.skins.crucial.fontSpecs[1];
+		}{
+			fontName = "Helvetica";
+			fontSize = 11;
+		};
+		font = GUI.font.new(fontName, fontSize);
 		
 		cv = GUI.compositeView.new(layout, layout.bounds)
-			.relativeOrigin_(true);
-		cv.decorator = FlowLayout.new(Rect(0,0,cv.bounds.width,cv.bounds.height), 0@0, 0@4);
+			.relativeOrigin_(Knob.useRelativeOrigin);
+		cv.decorator = FlowLayout.new(cv.bounds, 0@0, 0@4);
 
 		this.kn(cv, knobSize);
 		if(hasBox,{
@@ -37,6 +46,7 @@ KnobEditorGui : EditorGui {
 
 	box { arg layout, x, y=14;
 		numv = GUI.numberBox.new(layout, Rect(0,0,x.max(40),y))
+			.font_(font)
 			.object_(model.poll)
 			.action_({ arg nb;
 				model.activeValue_(nb.value).changed(numv);
