@@ -184,10 +184,29 @@ Knob : SCViewHolder {
 			this.mouseOverAction.value(this, x, y);
 		});
 
+		this.view.keyDownAction_({ arg view, char, modifiers, unicode, keycode;
+			// standard keydown
+			if (char == $r, { this.valueAction = 1.0.rand; });
+			if (char == $n, { this.valueAction = 0.0; });
+			if (char == $x, { this.valueAction = 1.0; });
+			if (char == $c, { this.valueAction = 0.5; });
+			if (char == $[, { this.decrement; this});
+			if (char == $], { this.increment; this });
+			if (unicode == 16rF700, { this.increment; this });
+			if (unicode == 16rF703, { this.increment; this });
+			if (unicode == 16rF701, { this.decrement; this });
+			if (unicode == 16rF702, { this.decrement; this });
+		});
+
 		this.view.receiveDragHandler = { this.valueAction_(SCView.currentDrag); };
 		this.view.beginDragAction = { value.asFloat; };
 		this.view.canReceiveDragHandler = { SCView.currentDrag.isNumber };
 	}
+
+	increment { ^this.valueAction = (this.value + keystep).min(1) }
+
+	decrement { ^this.valueAction = (this.value - keystep).max(0) }
+
 	value_ { arg val;
 		value = val.clip(0.0, 1.0);
 		this.refresh;
