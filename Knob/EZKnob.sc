@@ -29,8 +29,9 @@ EZKnob	{
 		};
 		
 		cv = GUI.compositeView.new(window, bounds)
-			.relativeOrigin_(Knob.useRelativeOrigin)
 			.background_(b);
+			
+		cv.tryPerform(\relativeOrigin_, Knob.useRelativeOrigin);
 			
 		if ( Knob.useRelativeOrigin ) {
 			flowBounds = bounds
@@ -49,7 +50,11 @@ EZKnob	{
 		labelView.string = label;
 		labelView.align = \center;
 
+//		cv.decorator.nextLine;
+//		cv.decorator.shift(((flowBounds.width - dimensions.x) / 2), 0);
 		knobView = GUI.knob.new(cv, Rect(0, 0, dimensions.x, dimensions.x));
+//		cv.decorator.shift(((flowBounds.width - dimensions.x) / 2).neg, 0);
+
 		knobView.action = {
 			value = controlSpec.map(knobView.value);
 			numberView.value = value.round(round);
