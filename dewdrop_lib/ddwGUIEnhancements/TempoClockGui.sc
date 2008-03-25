@@ -1,10 +1,9 @@
 
 TempoClockGui : ObjectGui {
 		// displays current status of a tempoclock; updates every beat
-	classvar 		namewidth = 100, nameheight = 20,
+	classvar 		namewidth = 100, nameheight = 18,
 				numheight = 40, numwidth = 70,
-				height = 50, width = 500,
-				<font;
+				height = 50, width = 500;
 
 	var	<w, <name, <namev, <bars, <beats, updater;	// counter guis
 	var	<mainFlow, <tempoEditor, <tempoFlow, <mainLayout, <tempoEditGui;
@@ -12,9 +11,9 @@ TempoClockGui : ObjectGui {
 		<>latency = 0,
 		<metro;
 	
-	*initClass {
-		StartUp.add({ font = GUI.font.new("Helvetica", 24) });
-	}
+//	*initClass {
+//		StartUp.add({ font = GUI.font.new("Helvetica", 24).boldVariant });
+//	}
 	
 	gui { arg lay, bounds ... args;	// must do some things felix doesn't
 		var layout;
@@ -110,6 +109,7 @@ TempoClockGui : ObjectGui {
 	}
 	
 	makeCounter {
+		var	font = GUI.font.new("Helvetica", 24).boldVariant;
 		bars = GUI.numberBox.new(mainFlow, Rect.new(0, 0, numwidth, numheight))
 			.font_(font)
 			.align_(\right)
