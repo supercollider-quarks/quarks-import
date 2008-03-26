@@ -49,13 +49,14 @@
 			{ ^this[index] } { ^nil }
 	}
 
-	minIndex {
-		^this.indexOf(this.minItem);
-	}
-	
-	maxIndex {
-		^this.indexOf(this.maxItem);
-	}
+		// more efficient implementations in Collection
+//	minIndex {
+//		^this.indexOf(this.minItem);
+//	}
+//	
+//	maxIndex {
+//		^this.indexOf(this.maxItem);
+//	}
 	
 	oneOfTop { arg num;
 		^this.at(num.min(this.size).rand)
