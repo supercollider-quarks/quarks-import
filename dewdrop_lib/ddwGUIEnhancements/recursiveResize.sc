@@ -142,3 +142,12 @@
 + SCView {
 	isView { ^true }
 }
+
+
++ GUI {
+	*skins { ^skins }
+	*setSkin { |name|
+		skin = skins[name];
+		scheme.font.new(*GUI.skin.fontSpecs).setDefault;
+	}
+}
