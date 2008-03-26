@@ -102,7 +102,7 @@ ModalSpec {
 	}
 	
 	includes { arg key;	// does this midinote belong to the scale?
-		^scale.includes((key - root) % stepsPerOctave)
+		^scale.includesEqual((key - root) % stepsPerOctave)
 	}
 	
 	== { |that|
