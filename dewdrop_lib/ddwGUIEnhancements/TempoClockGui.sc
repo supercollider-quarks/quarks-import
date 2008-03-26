@@ -3,7 +3,8 @@ TempoClockGui : ObjectGui {
 		// displays current status of a tempoclock; updates every beat
 	classvar 		namewidth = 100, nameheight = 18,
 				numheight = 40, numwidth = 70,
-				height = 50, width = 500;
+				height = 50, width = 500,
+				spec;
 
 	var	<w, <name, <namev, <bars, <beats, updater;	// counter guis
 	var	<mainFlow, <tempoEditor, <tempoFlow, <mainLayout, <tempoEditGui;
@@ -11,9 +12,9 @@ TempoClockGui : ObjectGui {
 		<>latency = 0,
 		<metro;
 	
-//	*initClass {
-//		StartUp.add({ font = GUI.font.new("Helvetica", 24).boldVariant });
-//	}
+	*initClass {
+		StartUp.add({ spec = ControlSpec(0, 0.74, \amp) });
+	}
 	
 	gui { arg lay, bounds ... args;	// must do some things felix doesn't
 		var layout;
@@ -72,11 +73,11 @@ TempoClockGui : ObjectGui {
 				.action_({ |view|
 					this.runMetronome(view.value > 0);
 				});
-			metroLevel = 1;
+			metroLevel = spec.map(1);
 			levelSlider = GUI.slider.new(tempoFlow, Rect(0, 0, 100, nameheight))
 				.value_(metroLevel)
 				.action_({ |view|
-					metroLevel = \amp.asSpec.map(view.value);
+					metroLevel = spec.map(view.value);
 					if(metro.notNil) {
 						metro.amp = metroLevel;
 					};
@@ -96,7 +97,7 @@ TempoClockGui : ObjectGui {
 			updater = Routine.new({ 	// routine to update every beat
 				{ model.isRunning }.while({
 					this.updateCounter;
-					if(metro.notNil) {
+					if(metro.notNil and: { metro.synth.notNil }) {
 						currentServer.sendBundle(latency,
 							metro.synth.setMsg(\t_trig, metroLevel));
 					};
@@ -167,7 +168,7 @@ TempoClockGui : ObjectGui {
 	runMetronome { |on = true|
 		if(on and: { metro.isNil }) {
 			if(currentServer.serverRunning) {
-				metro = DDWMetronome(model, currentServer, \amp.asSpec.map(metroLevel),
+				metro = DDWMetronome(model, currentServer, spec.map(metroLevel),
 					run: false);
 			} {
 				"Server % is not running - can't start metronome.".format(currentServer.name).warn;
