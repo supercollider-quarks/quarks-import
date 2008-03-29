@@ -175,7 +175,9 @@ VoicerProxyGui : ObjectGui {
 											// just break connections--why?
 				gc.gui = nil;					// -- view.remove removes all its children
 			});
-			view.notClosed.if({
+				// in SwingOSC, closing the window causes this to run at a time when view is nil
+				// causing an error -- tryPerform should prevent
+			(view.tryPerform(\notClosed) ? false).if({
 				view.remove;
 			});
 			model.editor = nil;
