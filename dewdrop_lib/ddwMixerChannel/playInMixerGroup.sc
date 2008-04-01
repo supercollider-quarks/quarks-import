@@ -71,12 +71,20 @@
 
 + Function {
 	playInMixerGroup { |mixer, target, patchType, args|
-		var result;
+		var result, def, updateFunc;
 		mixer.queueBundle({
-			result = this.asSynthDef(
-				outClass: (target == mixer.effectgroup).if({ \ReplaceOut }, { \Out }))
-				.play(target, args ++ [\i_out, mixer.inbus.index, \out, mixer.inbus.index,
+			def = this.asSynthDef(
+				outClass: (target == mixer.effectgroup).if({ \ReplaceOut }, { \Out }));
+			result = def.play(target, args ++ [\i_out, mixer.inbus.index, \out, mixer.inbus.index,
 					\outbus, mixer.inbus.index], \addToTail);
+			updateFunc = { |node, msg|
+				if(msg == \n_end) {
+					node.removeDependant(updateFunc);
+					target.server.sendMsg(\d_free, def.name);
+				};
+			};
+			NodeWatcher.register(result);
+			result.addDependant(updateFunc);
 		});
 		^result
 	}
