@@ -11,11 +11,12 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d50007}
-span.s1 {color: #0000b7}
-span.s2 {color: #4d4d4d}
-span.s3 {color: #006400}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+span.s1 {color: #0000bf}
+span.s2 {color: #606060}
+span.s3 {color: #007300}
 span.s4 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -54,7 +55,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>};</p>
 <p class="p5">txt = <span class="s1">SCStaticText</span>(w, 200@14);</p>
 <p class="p5">)</p>
-<p class="p1"><br></p>
+<p class="p6"><br></p>
 <p class="p5">s.boot;</p>
 <p class="p5">(</p>
 <p class="p5">o = <span class="s1">OSCresponderNode</span>(s.addr,<span class="s3">'/tr'</span>,{ <span class="s1">arg</span> time,responder,msg;</p>
@@ -63,7 +64,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>});</p>
 <p class="p5">}).add;</p>
 <p class="p5">)</p>
-<p class="p1"><br></p>
+<p class="p6"><br></p>
 <p class="p5">(</p>
 <p class="p5"><span class="s1">SynthDef</span>(<span class="s3">\meter</span>, {<span class="s1">arg</span> bus = 0, rate = 15, rel = 1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">var</span> signal, amplitude;</p>
@@ -72,15 +73,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">SendTrig</span>.kr(<span class="s1">Impulse</span>.kr(rate), 1200, amplitude);</p>
 <p class="p5">}).send(s);</p>
 <p class="p5">)</p>
-<p class="p1"><br></p>
-<p class="p6">// start the meter synth</p>
+<p class="p6"><br></p>
+<p class="p7">// start the meter synth</p>
 <p class="p5">z = <span class="s1">Synth</span>.tail(1, <span class="s2">"meter"</span>);</p>
 <p class="p5">z.set(<span class="s3">\rate</span>, 15)</p>
 <p class="p5">z.set(<span class="s3">\rel</span>, 0.1)</p>
 <p class="p5">z.set(<span class="s3">\rel</span>, 2)</p>
-<p class="p1"><br></p>
-<p class="p1"><br></p>
-<p class="p6">// a click synth</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">// a click synth</p>
 <p class="p5">(</p>
 <p class="p5">a = { <span class="s1">arg</span> amp=0.1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">Decay2</span>.ar(<span class="s1">Impulse</span>.ar(1.0), 0.1, 0.4, <span class="s1">SinOsc</span>.ar(1200,0,amp))</p>
@@ -88,8 +89,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">)</p>
 <p class="p5">a.set(<span class="s3">\amp</span>, 0.5)</p>
 <p class="p5">a.free</p>
-<p class="p1"><br></p>
-<p class="p6">// read audio inputs</p>
+<p class="p6"><br></p>
+<p class="p7">// read audio inputs</p>
 <p class="p5">(</p>
 <p class="p5">a = { <span class="s1">arg</span> amp=0.1;</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="s1">AudioIn</span>.ar([1,2]) * amp</p>
@@ -97,9 +98,40 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">)</p>
 <p class="p5">a.set(<span class="s3">\amp</span>, 1.0)</p>
 <p class="p5">a.free</p>
-<p class="p1"><br></p>
-<p class="p1"><br></p>
-<p class="p6"><span class="s4">z.free;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// free meter synth</p>
-<p class="p6"><span class="s4">o.remove;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// remove responder</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s4">z.free;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// free meter synth</p>
+<p class="p7"><span class="s4">o.remove;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// remove responder</p>
+<p class="p6"><br></p>
+<p class="p7">//</p>
+<p class="p5">(</p>
+<p class="p5"><span class="s1">var</span> txt;</p>
+<p class="p5">w = <span class="s1">SCWindow</span>(<span class="s2">"Meter"</span>, <span class="s1">Rect</span>(300,400,300,120));</p>
+<p class="p5">w.view.decorator = <span class="s1">FlowLayout</span>(w.view.bounds);</p>
+<p class="p5">w.front;</p>
+<p class="p5">m = <span class="s1">VuView</span>(w, 120@80);</p>
+<p class="p5">k = <span class="s1">Knob</span>(w, 32@32)</p>
+<p class="p5"><span class="Apple-converted-space">       </span>.action = {<span class="s1">|v|</span></p>
+<p class="p5"><span class="Apple-converted-space">               </span>m.value = <span class="s3">\amp</span>.asSpec.map(v.value);</p>
+<p class="p5"><span class="Apple-converted-space">               </span>txt.string = format(<span class="s2">"val: % dB"</span>, m.value.ampdb.round(0.01));</p>
+<p class="p5"><span class="Apple-converted-space">       </span>};</p>
+<p class="p5">txt = <span class="s1">SCStaticText</span>(w, 200@14);</p>
+<p class="p5">)</p>
+<p class="p6"><br></p>
+<p class="p7">// needle color changes, evaluate a few times</p>
+<p class="p5">(</p>
+<p class="p5"><span class="s1">var</span> signal, needleColor;</p>
+<p class="p7"><span class="s4">signal = rrand(0.3, 1.6); </span>// possibly distorted signal</p>
+<p class="p5">if(signal&gt; 1.0, {</p>
+<p class="p5"><span class="Apple-converted-space">       </span>needleColor=<span class="s1">Color</span>.red(1.0, 0.8);</p>
+<p class="p5"><span class="Apple-converted-space">       </span>format(<span class="s2">"Signal value distorted: %"</span>, signal).postln;</p>
+<p class="p5">}, {</p>
+<p class="p5"><span class="Apple-converted-space">       </span>needleColor=<span class="s1">Color</span>.black(0.8, 0.8);</p>
+<p class="p5">});</p>
+<p class="p7"><span class="s4">m.needleColor_(needleColor); </span>// doesn't update until VuView value changes</p>
+<p class="p5">k.valueAction_(signal);</p>
+<p class="p5">signal</p>
+<p class="p5">)</p>
+<p class="p6"><br></p>
 </body>
 </html>
