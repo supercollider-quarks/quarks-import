@@ -109,10 +109,7 @@ GlobalControlBase : AbstractFunction {
 
 	update { |bus, msg|
 		value = msg[0];
-		(proxy.notNil).if({
-			proxy.updateGUI(false);
-		});
-//		this.changed((what: \value, updateGUI: updateGUI, resync: resync));
+		this.changed((what: \value, updateGUI: true, resync: true));
 	}
 	
 	watch {
