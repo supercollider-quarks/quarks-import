@@ -25,7 +25,7 @@ HJHObjectGui : ObjectGui {
 	guify { arg lay,bounds,title;
 		argBounds = bounds;	// some of my gui's need to know this
 		if(lay.isNil,{
-			masterLayout = lay = FixedWidthMultiPageLayout
+			masterLayout = lay = this.class.windowClass.new
 				(title ?? { model.asString.copyRange(0,50) },
 				bounds);
 			iMadeMasterLayout = true;	// now when I'm removed, I'll close the window too
@@ -51,5 +51,10 @@ HJHObjectGui : ObjectGui {
 			});
 		});
 	}
+	
+	*windowClass { ^ResizeFlowWindow }
+}
 
+HJHFixedWidthObjectGui : HJHObjectGui {
+	*windowClass { ^ResizeHeightFlowWindow }
 }

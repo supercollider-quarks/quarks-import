@@ -32,7 +32,7 @@ TempoClockGui : ObjectGui {
 		
 		lay.isNil.if({	// if no window given...
 				// use the previously opened TempoClock window or make a new one if needed
-			lay = w ?? { w = FixedWidthMultiPageLayout.new("TempoClock", 
+			lay = w ?? { w = ResizeHeightFlowWindow.new("TempoClock", 
 				Rect(0, 20, width + 150, height))
 			};
 		}, {
@@ -136,10 +136,10 @@ TempoClockGui : ObjectGui {
 	updateCounter {
 		(bars.notNil).if({
 			{
-				model.isRunning.if({
+				if(model.isRunning and: { view.notClosed }) {
 					bars.value = (model.elapsedBeats / model.beatsPerBar).trunc;
 					beats.value = (model.elapsedBeats % model.beatsPerBar).trunc;
-				});
+				};
 			}.defer(latency);
 		});
 	}
@@ -148,10 +148,12 @@ TempoClockGui : ObjectGui {
 		updater.stop;
 		model.removeDependant(this);
 		this.runMetronome(false);
+
 		view.notClosed.if({
 			view.remove;
 			mainLayout.recursiveResize;
 		});
+
 		namev = bars = beats = updater = nil;
 	}
 	

@@ -237,6 +237,7 @@ MixerChannel {
 				});
 			});
 			recProxy.notNil.if({ this.stopRecord });
+			scopeSupport.notNil.if({ scopeSupport.free });
 				// remove from mc dictionary
 			inbus.notNil.if({ servers.at(server).removeAt(inbus.index) });
 			this.freePatches; 		// stop all processes -- Patches first
@@ -907,7 +908,6 @@ MixerScope {
 			// because of confusion when closing the window, this method may actually
 			// be called more than once, in which case channel will be nil
 		channel.notNil.if({
-			channel.removeClient(this);
 			channel.server.sendMsg(\n_free, synthID);
 			channel.server.nodeAllocator.freePerm(synthID);
 			buffer.free;
