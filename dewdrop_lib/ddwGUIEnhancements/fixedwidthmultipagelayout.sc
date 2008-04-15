@@ -3,8 +3,13 @@
 // inside the window is fixed
 
 FixedWidthMultiPageLayout : MultiPageLayout {
-
-	*flowViewClass { ^FixedWidthFlowView }
+	*new { arg title,bounds,margin,background,scroll=true,front=true;
+		var	new;
+		"FixedWidthMultiPageLayout is deprecated. Use ResizeHeightFlowWindow instead.".warn;
+		new = ResizeHeightFlowWindow(title, bounds, true, true, scroll: true);
+		if(front) { new.front };
+		^new
+	}
 
 /*
 	init { arg title,bounds,argmargin,argmetal=true;

@@ -38,7 +38,7 @@ VoicerProxyGui : ObjectGui {
 
 	guify { arg lay,bounds,title, small=false;
 		if(lay.isNil,{
-			masterLayout = lay = FixedWidthMultiPageLayout
+			masterLayout = lay = ResizeHeightFlowWindow
 				(title ?? { model.asString.copyRange(0,50) },
 				Rect(0, 0, width1 + if(small, 10, width2 + 30), height));
 			iMadeMasterLayout = true;	// now when I'm removed, I'll close the window too
@@ -175,9 +175,7 @@ VoicerProxyGui : ObjectGui {
 											// just break connections--why?
 				gc.gui = nil;					// -- view.remove removes all its children
 			});
-				// in SwingOSC, closing the window causes this to run at a time when view is nil
-				// causing an error -- tryPerform should prevent
-			(view.tryPerform(\notClosed) ? false).if({
+			view.notClosed.if({
 				view.remove;
 			});
 			model.editor = nil;

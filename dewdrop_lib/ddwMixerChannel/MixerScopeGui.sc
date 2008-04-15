@@ -5,7 +5,7 @@ MixerScopeGui : ObjectGui {
 
 	guify { arg lay,bounds,title;
 		if(lay.isNil,{
-			masterLayout = lay = FixedWidthMultiPageLayout
+			masterLayout = lay = ResizeHeightFlowWindow
 				(title ?? { model.asString.copyRange(0,50) },
 				bounds ?? { Rect(0, 0, defaultWidth, 
 					defaultHeight * model.channel.outChannels) });
@@ -27,17 +27,20 @@ MixerScopeGui : ObjectGui {
 	
 	remove { arg dummy, freeModel = true;	// when model frees programmatically, this is false
 		model.dependants.remove(this);	// to avoid recursion with model.free below
-		
-		view.notClosed.if({	
-			view.remove;
-		});
 
-		iMadeMasterLayout.if({
-			masterLayout.close;
-		});
-		
-		freeModel.if({ model.free; });
-		
-		layout = masterLayout = view = iMadeMasterLayout = nil;
+			// view is nil if remove has been called before
+		if(view.notNil) {
+			view.notClosed.if({
+				view.remove;
+			});
+	
+			if(iMadeMasterLayout and: { masterLayout.isClosed.not }) {
+				masterLayout.prClose;
+			};
+			
+			freeModel.if({ model.free; });
+	
+			layout = masterLayout = view = iMadeMasterLayout = nil;
+		};
 	}
 }
