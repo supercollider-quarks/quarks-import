@@ -1,7 +1,7 @@
 (
 	\name: 			"SenseWorld",
 	\path: 			"SenseWorld",
-	\summary:		"Classes to work with sensor data.",
+	\summary:		"Classes to work with sensor data. These are still in an experimental state.",
 	\author: 		"Marije Baalman",
 	\organization:	"Concordia University, Montreal",
 	\country: 		"Canada",
