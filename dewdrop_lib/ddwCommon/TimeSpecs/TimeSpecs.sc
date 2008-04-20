@@ -79,17 +79,34 @@ AbsoluteTimeSpecLeadTime : AbsoluteTimeSpec {
 // BasicTimeSpec is standard scheduling model: quant, phase, offset
 
 BasicTimeSpec : AbsoluteTimeSpecLeadTime {
-	var	<>phase, <>offset;
+	var	<phase, <offset;
+	var	qstream, pstream, ostream;	// so they can change on successive invocations
 	*new { arg quant, phase, offset;
 		^super.new(quant).phase_(phase).offset_(offset).clock_(TempoClock.default)
 	}
+	quant_ { |q|
+		qstream = q.asPattern.asStream;
+		quant = q;
+	}
+	phase_ { |p|
+		pstream = p.asPattern.asStream;
+		phase = p;
+	}
+	offset_ { |o|
+		ostream = o.asPattern.asStream;
+		offset = o;
+	}
 	applyLatency { |latency| ^this.copy.offset_(latency) }
 	nextTimeOnGrid { arg argClock;
-		^(argClock ? clock).nextTimeOnGrid(quant ? 0, phase ? 0) - (offset ? 0);
+		var	schedclock = argClock ? clock ? TempoClock.default;
+		^schedclock.nextTimeOnGrid(qstream.next(schedclock) ? 0, pstream.next(schedclock) ? 0)
+			- (ostream.next(schedclock) ? 0);
 	}
 		// BP's leadTime overrides BasicTimeSpec's offset
 	bpSchedTime { |bp|
-		^this.nextTimeOnGrid(bp.clock) + (offset ? 0) - (bp.leadTime ? 0)
+		var	schedclock = bp.clock ? clock ? TempoClock.default;
+		^schedclock.nextTimeOnGrid(qstream.next(schedclock) ? 0, pstream.next(schedclock) ? 0)
+			- (bp.leadTime ? 0)
 	}
 }
 
