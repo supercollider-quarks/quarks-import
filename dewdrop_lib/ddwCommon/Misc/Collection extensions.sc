@@ -231,6 +231,7 @@
 + Object {
 	isSymbol { ^false }
 	shallowCopyItems { ^this.shallowCopy }
+	<!! { ^this }
 }
 
 + Dictionary {
