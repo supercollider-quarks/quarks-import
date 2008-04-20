@@ -98,8 +98,10 @@ TempoClockGui : ObjectGui {
 				{ model.isRunning }.while({
 					this.updateCounter;
 					if(metro.notNil and: { metro.synth.notNil }) {
-						currentServer.sendBundle(latency,
-							metro.synth.setMsg(\t_trig, metroLevel));
+						currentServer.listSendBundle(latency, [
+							#[error, -1],	// prevent node not found when metro stops
+							metro.synth.setMsg(\t_trig, metroLevel)
+						]);
 					};
 					1.wait
 				});
@@ -134,11 +136,11 @@ TempoClockGui : ObjectGui {
 	}
 	
 	updateCounter {
+		var	barnum;
 		(bars.notNil).if({
-			{
-				if(model.isRunning and: { view.notClosed }) {
-					bars.value = (model.elapsedBeats / model.beatsPerBar).trunc;
-					beats.value = (model.elapsedBeats % model.beatsPerBar).trunc;
+			{	if(model.isRunning and: { view.notClosed }) {
+					bars.value = (barnum = model.bar);
+					beats.value = (model.beats - model.bars2beats(barnum)).trunc;
 				};
 			}.defer(latency);
 		});
