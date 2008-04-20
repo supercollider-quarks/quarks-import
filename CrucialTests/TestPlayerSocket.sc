@@ -73,7 +73,6 @@ TestPlayerSocket : UnitTest {
 		
 		// these in makeResources
 		// no socketGroup in this class
-		// sharedBus not yet created
 	}
 	test_makeResourcesToBundle {
 		var ps,po;
@@ -84,10 +83,8 @@ TestPlayerSocket : UnitTest {
 		ps.makePatchOut(g,true,b,n);
 		
 		ps.makeResourcesToBundle(n);
-		// make the bus into a  sharedBus
 		
-		this.assert( ps.bus.isKindOf(SharedBus), "bus is now a shared bus");
-		this.assert( ps.bus.index == b.index, "bus is now a shared bus");
+		this.assert( ps.bus.index == b.index, "bus should be same as the bus I gave you");
 		
 		// socketGroup
 		this.assert( ps.socketGroup.notNil,"socketGroup should exist");
@@ -110,7 +107,7 @@ TestPlayerSocket : UnitTest {
 		// patch 
 		this.assertEquals( p.group ,ps.socketGroup ,"patch should be set into the socket group");
 		this.assertEquals( p.bus,  ps.bus,"patch should have the same bus as the ps");
-		this.assert( p.bus.isKindOf(SharedBus),"patch should have shared bus");
+		//this.assert( p.bus.isKindOf(SharedBus),"patch should have shared bus");
 	}
 	test_loadBuffersToBundle {
 		var ps,po;
@@ -129,7 +126,7 @@ TestPlayerSocket : UnitTest {
 		q = Patch({ Saw.ar(40.midicps) * 0.05 });
 		r = Patch({ Saw.ar(52.midicps) * 0.05 });
 		p = PlayerSocket.new(\audio,1);
-		p.play;
+		p.play(nil,nil,b);
 
 		this.wait( { p.isPlaying },"waiting for player socket to play");
 		
@@ -163,6 +160,20 @@ TestPlayerSocket : UnitTest {
 		2.0.wait;
 		
 		this.assertEquals( s.numSynths,0,"voice released, no synths should be on the server");
+		
+		/*this.assertEquals( BusPool.busses.size,1,"should be the one bus still allocated",true,{
+			BusPool.gui;
+		});*/
+		//this.assertEquals( BusPool.getAnnotations(b).size, 3,"should be no voice still using the bus, but 3 clients still on it");
+		
+		p.free;
+		1.0.wait;
+		
+		this.assertEquals( BusPool.busses.size,0,"should be no bus still allocated",true,{
+			BusPool.gui;
+		});
+		this.assertEquals( BusPool.itemCount(b), 0,"should be no clients still on the bus");
+		
 	}
 
 

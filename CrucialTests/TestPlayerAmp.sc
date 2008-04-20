@@ -3,7 +3,7 @@
 TestPlayerAmp : TestAbstractPlayer {
 
 	makePlayer {
-		^PlayerAmp(PlayerInputProxy(AudioSpec(2)),KrNumberEditor(1.0,\amp));
+		^PlayerAmp(PlayerInputProxy(AudioSpec(2)),1.0);
 	}
 	makeBus {
 		^Bus.audio(s,2)

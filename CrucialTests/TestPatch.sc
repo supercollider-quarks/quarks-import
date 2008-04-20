@@ -34,7 +34,7 @@ TestPatch : TestAbstractPlayer {
 		this.wait( {p.isPrepared.not},"after free, patch should not be ready for play");
 
 		0.2.wait;// grr, have to wait for the bundles to be really sent, and they still aren't ?
-		this.assertEquals(MixedBundleTester.bundlesSent.size,3,"should be only three bundles sent: prepare, play and stop");
+		this.assertEquals(MixedBundleTester.bundlesSent.size,2,"should be only two bundles sent: prepare/play and stop");
 	}
 	
 	test_prepare {

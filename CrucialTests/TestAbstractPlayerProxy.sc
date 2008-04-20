@@ -60,7 +60,6 @@ TestAbstractPlayerProxy : UnitTest {
 		
 		// these in makeResources
 		// no socketGroup in this class
-		// sharedBus not yet created
 	}
 	test_makeResourcesToBundle {
 		var app,po;
@@ -71,10 +70,8 @@ TestAbstractPlayerProxy : UnitTest {
 		app.makePatchOut(g,true,b,n);
 		
 		app.makeResourcesToBundle(n);
-		// make the bus into a  sharedBus
 		
-		this.assert( app.bus.isKindOf(SharedBus), "bus is now a shared bus");
-		this.assert( app.bus.index == b.index, "bus is now a shared bus");
+		this.assert( app.bus.index == b.index, "bus should now be the bus that we gave it");
 
 	}
 	test_prepareChildrenToBundle {
@@ -89,8 +86,7 @@ TestAbstractPlayerProxy : UnitTest {
 		app.prepareChildrenToBundle(n);
 		
 		this.assert( p.group === g,"patch should have group g");
-		this.assert( p.bus === app.bus,"patch should have shared bus");
-		this.assert( p.bus.isKindOf(SharedBus),"patch should have shared bus");
+		this.assert( p.bus === app.bus,"patch should have the bus of the player proxy");
 	}
 	test_loadBuffersToBundle {
 		var app,po;
@@ -118,15 +114,13 @@ TestAbstractPlayerProxy : UnitTest {
 		this.assert( po.group === g,"patch out group === g");
 		this.assert( po.group == g,"patch out group == g");
 
-		this.assert( po.bus === b,"patch out should have bus b");
-		this.assert( app.group === g,"AbstractPlayerProxy should have group g");
-		this.assert( app.bus === b,"AbstractPlayerProxy should have bus b");
+		this.assertEquals( po.bus.index, b.index,"patch out should have bus b");
 
-		this.assert( app.bus.isKindOf(SharedBus), "bus is now a shared bus");
-		this.assert( app.bus.index == b.index, "bus is now a shared bus");
+		this.assert( app.group === g,"AbstractPlayerProxy should have group g");
+		this.assert( app.bus.index == b.index,"AbstractPlayerProxy should have bus b");
+
 		this.assert( p.group === g,"patch should have group g");
-		this.assert( p.bus === app.bus,"patch should have shared bus");
-		this.assert( p.bus.isKindOf(SharedBus),"patch should have shared bus");
+		this.assert( p.bus === app.bus,"patch should have the same buss as the player proxy");
 	}
 
 
@@ -153,7 +147,7 @@ TestAbstractPlayerProxy : UnitTest {
 		// bus should be freed
 		
 		// a is nil ????
-		// something in the language is fucked
+		// something in the language is broken ?
 		//a.bus.debug("a bus");
 		
 		0.4.wait;

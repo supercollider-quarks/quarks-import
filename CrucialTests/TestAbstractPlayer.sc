@@ -7,8 +7,8 @@ TestAbstractPlayer : UnitTest {
 		^SynthlessPlayer.new
 	}
 	makeBus {
-		//^nil //Bus.audio(s,1);
-		^this.subclassResponsibility
+		^Bus.alloc(\audio,s,player.numChannels);
+		//^this.subclassResponsibility(thisMethod)
 	}
 	setUp {
 		Instr.clearAll;
@@ -23,6 +23,10 @@ TestAbstractPlayer : UnitTest {
 		bundle = MixedBundleTester.new;
 		group = bus = nil; // you must make these yourself
 	}
+	tearDown {
+		AbstractPlayer.bundleClass = MixedBundle;
+	}
+
 	startPlayer {
 		this.bootServer;
 		0.1.wait;
@@ -44,6 +48,7 @@ TestAbstractPlayer : UnitTest {
 		// player may be stopped but notifications to its node are still going to come
 		this.wait({ player.synth.isPlaying.not },"waiting for the player's synth to get notififed stopped");
 		1.0.wait;
+		this.assert( player.patchOut.isNil,"player should have discarded its patchOut");
 		// and a group.free will get there before the bundle already on its way !
 
 		group.free;
@@ -88,14 +93,14 @@ TestAbstractPlayer : UnitTest {
 		bundle = MixedBundleTester.new;
 		player.prepareToBundle(group,bundle,true, bus, false);
 		this.assertEquals(player.status,\isPreparing);
-		this.assertEquals(player.group, group, "group is set");
-		this.assertEquals(player.server, s, "server is set");
+		this.assertEquals(player.group, group, "group should be set");
+		this.assertEquals(player.server, s, "server should be set");
 
 		// patchOut
 		this.assert(player.patchOut.notNil,"should make patch out");
 		if(bus.notNil,{
-			this.assertEquals( player.patchOut.bus, bus,"bus is set from passed in");
-			this.assertEquals( player.bus, bus,"bus is set from passed in");
+			this.assertEquals( player.patchOut.bus, bus,"bus should be set from passed in");
+			this.assertEquals( player.bus, bus,"bus should be set from passed in");
 		});
 		
 	}

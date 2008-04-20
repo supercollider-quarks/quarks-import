@@ -34,7 +34,7 @@ TestPlayerSocket2 : TestAbstractPlayer {
 
 	}
 	test_prepareToBundle {
-		// group exists?
+		group = Group.basicNew(s);
 		bus = this.makeBus;
 		player.prepareToBundle(group,bundle,true,bus);
 		this.assertEquals(player.group,group);
