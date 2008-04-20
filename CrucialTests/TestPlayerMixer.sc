@@ -16,7 +16,18 @@ TestPlayerMixer : TestAbstractPlayer {
 		this.startStopStart;
 	}
 
+	test_childrenPatchOuts {
+		this.startPlayer;
+		1.0.wait;
+		
+		this.assert( player.children[0].patchOut.bus.index != bus.index,
+				"children should get their own busses, not use bus of the PlayerMixer");
+		this.stopPlayer;
+		1.0.wait;
+	}
 }
+
+
 
 /*
 )
