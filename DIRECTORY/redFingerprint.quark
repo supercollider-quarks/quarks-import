@@ -1,9 +1,8 @@
 (
-	\name: "redFingerprint",
-	\path: "redFingerprint",
-	\summary: "a different plot\n
-		see RedFingerprint.help",
-	\author: "redFrik",
-	\helpdoc: "RedFingerprint.html",
-	\url: "http://www.fredrikolofsson.com/"
+	\name:		"redFingerprint",
+	\path:		"redFingerprint",
+	\summary:	"a different plot",
+	\author:		"redFrik",
+	\helpdoc:		"RedFingerprint.html",
+	\url:			"http://www.fredrikolofsson.com/"
 )
