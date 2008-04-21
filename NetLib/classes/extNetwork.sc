@@ -1,10 +1,10 @@
 
-
 +NetAddr {
 	// check this again!!
-	*myIP {
+	*myIP { |prefix=""|
 		var j, k, res, bc;
-		res = Pipe.findValuesForKey("ifconfig", "inet");
+		// prefix argument, since on Linux ifconfig does not lie in the user's path, but in /sbin/, so it can be passed as an argument (nescivi, April 2008)
+		res = Pipe.findValuesForKey(prefix++"ifconfig", "inet");
 		bc = this.broadcastIP;
 		if(bc.notNil) {
 			bc = bc.keep(7);
@@ -17,11 +17,22 @@
 		
 		if(res.size > 1) { postln("the first of those devices was chosen: " ++ res) };
 		res = res.first;
+
+		// fix for Linux output: (nescivi, April 2008)
+		res = res.replace("addr:","");
+		
 		^res ?? { 
 			"chosen loopback IP, no other ip available".warn; 
 			"127.0.0.1"
 		}
 	}
+
+	// convenience method (added by nescivi, April 2008)
+	*atMyIP { |port=57110,prefix=""|
+		var hostname = this.myIP(prefix);
+		^NetAddr(hostname, port )
+	}
+
 	*broadcastIP {
 		var  res;
 		res = Pipe.findValuesForKey("ifconfig", "broadcast");
