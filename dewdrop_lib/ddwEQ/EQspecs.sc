@@ -23,7 +23,7 @@ MultiEQ {	// container for specifications for an EQ bank
 		isPlaying.if({
 			newbands.do({ arg b, i;
 				b.play(target, bus, addAction, 
-					((spec.size == 1) && (i == 0)).if(mul, 1).postln
+					((spec.size == 1) && (i == 0)).if(mul, 1)
 				);
 			});
 		});

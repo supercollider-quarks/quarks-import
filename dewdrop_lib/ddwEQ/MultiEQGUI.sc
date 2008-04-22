@@ -97,7 +97,7 @@ EQBandGUI {
 			<rqSlBounds, <rqTxBounds,
 			<bypassBounds,
 			<removeBounds,
-			<textFont,
+			<fontSpecs,
 			<typesArray,
 			<freqSpec, <kSpec, <rqSpec;
 	
@@ -127,7 +127,7 @@ EQBandGUI {
 		freqSpec = [20, 20000, \exponential].asSpec;
 		kSpec = [0.1, 10, \exponential].asSpec;
 		rqSpec = [0.01, 2, \linear].asSpec;
-		StartUp.add({ textFont = GUI.font.new("Helvetica", 10) });
+		fontSpecs = #["Helvetica", 10];
 	}
 	
 	*new { arg org, bnd, par;
@@ -138,7 +138,7 @@ EQBandGUI {
 		band = bnd.gui_(this);
 		parent = par;
 		{ typeMenu = GUI.popUpMenu.new(parent.w, typeBounds)			.items_(typesArray)
-			.font_(textFont)
+			.font_(GUI.font.new(*fontSpecs))
 			.action_(this.typeMenuAction);
 		freqSlider = GUI.slider.new(parent.w, freqSlBounds)
 			.action_(this.freqSlAction);
@@ -150,11 +150,11 @@ EQBandGUI {
 			.action_(this.rqSlAction);
 		rqText = GUI.staticText.new(parent.w, rqTxBounds);
 		bypassButton = GUI.button.new(parent.w, bypassBounds)
-			.font_(textFont)
+			.font_(GUI.font.new(*fontSpecs))
 			.states_([["on", Color.black, Color.grey], ["off", Color.black, Color.grey]])
 			.action_(this.bypassAction);
 		removeButton = GUI.button.new(parent.w, removeBounds)
-			.font_(textFont)
+			.font_(GUI.font.new(*fontSpecs))
 			.states_([["remove", Color.black, Color.grey]])
 			.action_(this.removeAction);
 		nil }.defer;
