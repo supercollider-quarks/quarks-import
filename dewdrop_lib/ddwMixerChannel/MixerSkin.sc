@@ -76,10 +76,17 @@ MixerSkin {
 		<>maxAcross = inf;		// maximum channels across screen
 
 	*initClass {
+			// should not need to reevaluate this when changing scheme
+			// because all schemes should (in theory) report the same screenbounds
+			// but in some environments, the scheme might be nil
+			// in that case you shouldn't make a mixer GUI anyway!
 		StartUp.add({
-			var	bounds = GUI.window.screenBounds;
-			screenHeight = bounds.height;
-			screenWidth = bounds.width;
+			var	bounds;
+			if(GUI.scheme.notNil) {
+				bounds = GUI.window.screenBounds;
+				screenHeight = bounds.height;
+				screenWidth = bounds.width;
+			};
 		});
 	}
 	
@@ -100,14 +107,14 @@ MixerWidgetBase {
 	classvar	>font;
 	var	<>mixer, <>gui, <>view, <>spec;
 
-	*initClass {
-		StartUp.add({ font = GUI.font.new("Helvetica", 9) });
-	}
+//	*initClass {
+//		StartUp.add({ font = GUI.font.new("Helvetica", 9) });
+//	}
 	
 		// you might have switched to a different gui scheme since initializing the class library
 	*font {
 		(GUI.font === font.class).if({ ^font }, {
-			^(font = GUI.font.new(font.name, font.size))
+			^(font = GUI.font.new("Helvetica", 9))
 		});
 	}
 
@@ -199,12 +206,12 @@ MixerPresendWidget {
 	*initClass {
 		defaultSliderBounds = Rect(0, 0, 50, 5);
 		defaultMenuBounds = Rect(0, 10, 50, 20);
-		StartUp.add({ font = GUI.font.new("Helvetica", 9) });
+//		StartUp.add({ font = GUI.font.new("Helvetica", 9) });
 	}
 
 	*font {
 		(GUI.font === font.class).if({ ^font }, {
-			^(font = GUI.font.new(font.name, font.size))
+			^(font = GUI.font.new("Helvetica", 9))
 		});
 	}
 
