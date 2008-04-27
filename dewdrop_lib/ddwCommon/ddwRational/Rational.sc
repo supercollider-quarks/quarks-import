@@ -50,6 +50,16 @@ Rational : AbstractFunction {
 	
 	asUGenInput { ^value }
 	synthArg { ^value }
+	
+	numerator {
+		var	d = this.denominator;
+		^if(d.notNil) { value * d }
+	}
+	
+	denominator {
+		var	d = value.fuzzygcd(1, 0.0001, 100);
+		^if(d.notNil) { d.reciprocal.round }
+	}
 
 	asString { 
 		var	denom; 
