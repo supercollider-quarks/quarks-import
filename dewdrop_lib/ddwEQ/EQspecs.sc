@@ -83,7 +83,8 @@ StaticEQ {
 		<target, <bus,
 		<mul,		// volume scaling after eq
 		<synth,
-		<readyForPlay = false;
+		<readyForPlay = false,
+		<mixer;
 	
 	*initClass {
 			// each func takes "in" and outputs eq'ed signal (1 band)
@@ -159,6 +160,10 @@ StaticEQ {
 			this.asSynthDef.send(target.server, bundle.at(0));
 		});
 		
+			// add this to the list of patches to free when mixerchannel frees
+		if(mixer.notNil) {
+			mixer.addPatch(this);
+		}	
 	}
 	
 	mul_ { arg amp;
@@ -173,6 +178,8 @@ StaticEQ {
 		target.server.sendMsg(\d_free, defname);
 		readyForPlay = false;
 	}
+	
+	stop { this.free }	// mixerchannel auto-free needs this synonym
 	
 	move { arg targ, moveAction = \moveAfter;
 		synth.notNil.if({
@@ -192,6 +199,7 @@ StaticEQ {
 				addAction = \addAfter;	// if a synth, place imm. after target
 			});
 			(groupbus = target.tryPerform(\groupBusInfo, \effect)).notNil.if({
+				mixer = target;
 				bus = groupbus[1];	// must use mc bus
 				target = groupbus[0];	// place where effects should go
 			});
