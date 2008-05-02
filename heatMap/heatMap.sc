@@ -65,6 +65,12 @@ See heatMap.html for examples of usage.
 					  (0.01, 0.02 .. 1).collect{|hot| Color(1, hot, hot)};
 				maptotextcolour = {|val| if(val.linlin(min, max, -1, 1) < -0.85){Color.grey(0.15)}{Color.black} };
 			},
+			\bw,
+			{
+				// Black as low, white as high
+				cols = (1, 0.99 .. 0).collect{|cold| Color(1-cold, 1-cold, 1-cold)};
+				maptotextcolour = {|val| if(val.linlin(min, max, -1, 1) < 0){Color.grey(0.2)}{Color.black} };
+			},
 			\coals,
 			{
 				// Black->red->yellow->white
