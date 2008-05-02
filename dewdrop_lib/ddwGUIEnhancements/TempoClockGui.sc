@@ -61,13 +61,14 @@ TempoClockGui : ObjectGui {
 			tempoFlow.startRow;
 
 			serverNames = Server.named.keys.asArray;
-			this.currentServer = Server.named[serverNames.first];
+			this.currentServer = Server.default;
 			serverMenu = GUI.popUpMenu.new(tempoFlow, Rect(0, 0, namewidth, nameheight))
 				.items_(serverNames)
 				.action_({ |view|
 					this.currentServer = Server.named[serverNames[view.value]];
 					this.latency = currentServer.latency;
-				});
+				})
+				.value_(serverNames.indexOfEqual(currentServer.name));
 			metroButton = GUI.button.new(tempoFlow, Rect(0, 0, 40, nameheight))
 				.states_([["takt"], ["shh"]])
 				.action_({ |view|
