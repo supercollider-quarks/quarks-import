@@ -57,6 +57,18 @@ SensorLog{
 		^super.new.init(input,length,server);
 	}
 
+	*newFromPack{ |path,server|
+		^super.new.initFromPack( path,server );
+	}
+
+	initFromPack{ |path,s|
+		logfiles = Array.new;
+		server = s ? Server.local;
+		this.class.loadSynthDefs( server );
+		this.class.makeLogFolder;
+		this.unpack( path );
+	}
+
 	init{ |in,length,s|
 		logfiles = Array.new;
 		id = nsensors;
@@ -129,7 +141,7 @@ SensorLog{
 		var oldtime, olddata;
 		oldtime = timebuffer;
 		olddata = databuffer;
-		if ( playid < logfiles.size - 1, {
+		if ( playid < (logfiles.size - 1), {
 			path = logfiles[playid];
 			timebuffer = Buffer.readChannel( server, path, channels: [0] );
 			databuffer = Buffer.readChannel( server, path, channels: [1], 
