@@ -36,8 +36,26 @@ SkewUGen{
 		skew = RunningSum.kr( ( input - mean ).cubed, length ) / (length * stddev.cubed );
 		// get rid of NaN's in output
 		good = BinaryOpUGen('==', CheckBadValues.kr(skew, 0, 0), 0);
-		skew = skew * good;
+		skew = Gate.kr( skew, good );
 		^skew;
+	}
+
+	*categories { ^ #["UGens>Analysis>Statistics"] }
+}
+
+KurtosisUGen{
+	*kr{ arg input, length=40, mean;
+		var kurtosis,variance,good;
+		if ( mean.isNil,
+			{
+			mean = RunningSum.kr( input, length )/length;
+			});
+		variance = VarianceUGen.kr( input, length, mean );
+		kurtosis = RunningSum.kr( ( input - mean ).abs.squared.squared, length ) / (length * variance.squared ) - 3;
+		// get rid of NaN's in output
+		good = BinaryOpUGen('==', CheckBadValues.kr(kurtosis, 0, 0), 0);
+		kurtosis = Gate.kr( kurtosis, good );
+		^kurtosis;
 	}
 
 	*categories { ^ #["UGens>Analysis>Statistics"] }
@@ -45,10 +63,20 @@ SkewUGen{
 
 FluctuationUGen{
 
-	*kr{ arg input, llength=40, slength=20;
-		var sdev, ldev, fluct, good;
-		sdev = StdDevUGen.kr( input, slength );
-		ldev = StdDevUGen.kr( input, llength );
+	*kr{ arg input, mean, length=20, levels=1;
+		var sdev, ldev, fluct, good, pmean, meanl, clength;
+		if ( mean.isNil,
+			{
+			mean = RunningSum.kr( input, length )/ length;
+			});
+		sdev = StdDevUGen.kr( input, length, mean );
+		meanl = mean;
+		levels.do{
+			pmean = meanl;
+			clength = length*length;
+			meanl = RunningSum.kr( pmean, clength ) / clength;
+			ldev = StdDevUGen.kr( pmean, clength, meanl );
+		};
 		fluct = sdev / ldev;
 		// get rid of NaN's in output
 		good = BinaryOpUGen('==', CheckBadValues.kr(fluct, 0, 0), 0);
