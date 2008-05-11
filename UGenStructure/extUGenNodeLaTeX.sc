@@ -87,6 +87,14 @@
 	asLaTeX {
 		^this.asCompileString
 	}
+	asLaTexNodeDoc {
+		^"\\documentclass[12pt,a4paper]{article}"
+		"\\begin{document}"
+		"\\begin{displaymath}"
+		++ this.asLaTeX ++
+		"\n\\end{displaymath}"
+		"\\end{document}"
+	}
 }
 
 + Symbol {
