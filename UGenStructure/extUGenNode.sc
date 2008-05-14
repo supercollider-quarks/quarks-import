@@ -35,6 +35,12 @@
 		if(args[2] == 1 and: { args[3] == 0 }) { ^args[1] };
 		^super.asUGenNode(args)
 	}
+	*ar { arg in, mul = 1.0, add = 0.0;
+		^this.multiNew('audio', in, mul, add)
+	}
+	*kr { arg in, mul = 1.0, add = 0.0;
+		^this.multiNew('control', in, mul, add)
+	}
 }
 
 + Control {
