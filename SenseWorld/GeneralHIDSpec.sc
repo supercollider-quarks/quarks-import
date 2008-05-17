@@ -1,11 +1,27 @@
 GeneralHIDSpec{
-	classvar <>all;
+	classvar <>all,<folder;
 
-	var <map, <device;
+	var <map, <device, <info;
 
 	*initClass { 
 		// not yet used
-		//all	= IdentityDictionary.new;
+		this.makeSaveFolder;
+		this.loadSavedInfo;
+		all	= all ? IdentityDictionary.new;
+	}
+
+	*loadSavedInfo{
+		all = (folder++"allspecs.info").load;
+	}
+	
+	*makeSaveFolder { 
+		var testfile, testname = "zzz_generalhid_test_delete_me.txt"; 
+		folder = Platform.userAppSupportDir ++ "/GeneralHIDSpecs/";
+		testfile = File(folder ++ testname, "w");
+
+		if (testfile.isOpen.not) 
+			{ unixCmd("mkdir" + folder) }
+			{ testfile.close;  unixCmd("rm" + folder ++ testname) }
 	}
 
 	*new { |dev|
@@ -15,7 +31,22 @@ GeneralHIDSpec{
 	init{ |dev|
 		device = dev;
 		map = IdentityDictionary.new;
-		
+		info = IdentityDictionary.new;
+		info.put( \vendor, device.info.vendor );
+		info.put( \name, device.info.name );
+		info.put( \product, device.info.product );
+		info.put( \version, device.info.version );
+		info.put( \scheme, GeneralHID.scheme );
+	}
+
+	find{
+		^all.select{ |thisspec,key|
+			( thisspec[\vendor] == device.info.vendor ) and:
+			( thisspec[\name] == device.info.name ) and:
+			( thisspec[\product] == device.info.product ) and:
+			( thisspec[\version] == device.info.version ) and:
+			( thisspec[\scheme] == GeneralHID.current )	
+		}.keys.asArray;
 	}
 
 	add{ |key, slot|
@@ -69,4 +100,35 @@ GeneralHIDSpec{
 			device.slots.at( it[0] ).at( it[1] ).freeBus;
 		};
 	}
+
+	save{ |name|
+		var file, res = false;
+		var filename;
+		all.put( name.asSymbol, info );
+		filename = folder ++ name ++ ".spec";
+		file = File(filename, "w"); 
+		if (file.isOpen) { 
+			res = file.write(map.asCompileString);
+			file.close;
+		};
+		this.class.saveAll;
+		^res;
+	}
+
+	*saveAll{
+		var file, res = false;
+		var filename;
+		filename = folder ++ "allspecs.info";
+		file = File(filename, "w"); 
+		if (file.isOpen) { 
+			res = file.write(all.asCompileString);
+			file.close;
+		};
+		^res;
+	}
+
+	fromFile { |name| 
+		map = (folder++name++".spec").load;
+	} 
+
 }
