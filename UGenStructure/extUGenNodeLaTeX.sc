@@ -2,6 +2,7 @@
 
 	asLaTeX {
 		if(ugenClass == MulAdd) { ^this.maddLaTeX };
+		if(ugenClass == Integrator) { ^this.integLaTeX };
 		^ugenClass.name ++ "_{" ++ selector 
 			++ "}\\left(" 
 			++ arguments.collect(_.asLaTeX).join(", ")
@@ -11,12 +12,17 @@
 	maddLaTeX {
 		var res = arguments[0].asLaTeX;
 		if(arguments[1] != 1) {
-			res = res ++ " * " ++ arguments[1].asLaTeX;
+			res = res ++ " \cdot " ++ arguments[1].asLaTeX;
 		};
 		if(arguments[2] != 0) {
 			res = res ++ " + " ++ arguments[2].asLaTeX;
 		};
 		^res
+	}
+	
+	integLaTeX {
+		^"\\int_{" ++ selector ++ "}^{" ++ arguments[1].asLaTeX 
+			++ "} {" ++ arguments[0].asLaTeX ++ "} dt"
 	}
 }
 
@@ -25,9 +31,17 @@
 		var op = arguments[0];
 		var x = arguments[1].asLaTeX;
 		if(op == 'sqrt') { ^"\\sqrt{" ++ x ++ "}"};
+		if(op == 'squared') { ^x ++ "^2 "};
+		if(op == 'cubed') { ^x ++ "^3 "};
 		if(op == 'reciprocal') { ^"\\frac{1}{" ++ x ++ "}"};
 		if(op == 'abs') { ^"\\left|{" ++ x ++ "}\\right|"};
 		if(op == 'exp') { ^"e^{" ++ x ++ "}"};
+		if(op == 'log10') { ^"\\log_{10}{" ++ x ++ "}"};
+		if(op == 'log2') { ^"\\log_{2}{" ++ x ++ "}"};
+		if(op == 'log') { ^"\\log_{e}{" ++ x ++ "}"};
+		if(op == 'floor') { ^"\\lfloor{" ++ x ++ "}\\rfloor"};
+		if(op == 'ceil') { ^"\\lceil{" ++ x ++ "}\\rceil"};
+		
 		^op  ++ " \\left(" ++ x ++ " \\right)"
 	}
 	
@@ -41,6 +55,9 @@
 				^"\\frac{1}{" ++ arguments[2].asLaTeX ++ "} " + arguments[1].asLaTeX 
 			};
 			^"\\frac {" ++ arguments[1].asLaTeX ++ "}{" ++ arguments[2].asLaTeX ++ "}"
+		};
+		if(op == '*') {
+			^arguments[1].asLaTeX ++ " \\cdot " ++ arguments[2].asLaTeX 
 		};
 		if(op == 'pow') {
 			^"{" ++ arguments[1].asLaTeX ++ "}^{" ++ arguments[2].asLaTeX ++ "}"
@@ -158,11 +175,11 @@
 	asLaTeX {
 		var keys = envir.keys.asArray.sort;
 		var res = "";
-		res = res ++ " \\begin{array}{ll}\n";
+		res = res ++ "\\begin{array}{ll}\n";
 		keys.do { |key|
 			var proxy = this.envir.at(key);
 			if(proxy.source.notNil) {
-				res = res ++ proxy.keyAsLaTeX(key) + " = " + proxy.sourceAsLaTeX + "\\\\\n"
+				res = res ++ proxy.keyAsLaTeX(key) + "& = " + proxy.sourceAsLaTeX + "\\\\\n"
 			};
 		};
 		res = res ++ "\\end{array}\n";
