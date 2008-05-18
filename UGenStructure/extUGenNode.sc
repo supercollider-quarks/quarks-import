@@ -5,7 +5,7 @@
 		var size = 0, newArgs, results;
 		
 		/////////////////////
-		if(buildSynthDef.isNil) { ^this.asUGenNode(args) };
+		if(this.outsideSynthDef) { ^this.asUGenNode(args) };
 		/////////////////////
 		
 		args = args.asUGenInput;
@@ -28,6 +28,10 @@
 	*asUGenNode { arg args = #[];
 		^UGenNode.new(this, this.methodSelectorForRate(args[0]), args[1..])
 	}
+	
+	*outsideSynthDef {
+		^buildSynthDef.isNil
+	}
 }
 
 + MulAdd {
@@ -41,6 +45,7 @@
 	*kr { arg in, mul = 1.0, add = 0.0;
 		^this.multiNew('control', in, mul, add)
 	}
+	
 }
 
 + Control {
@@ -49,7 +54,7 @@
 		synthDef = UGen.buildSynthDef;
 		
 		/////////////////////
-		if(synthDef.isNil) {
+		if(UGen.outsideSynthDef) {
 			^this.asUGenNode.names_(names)
 		};
 		/////////////////////
@@ -64,7 +69,42 @@
 		};
 	}
 	*asUGenNode { arg args = #[];
-		^ControlUGenNode.new(this, this.methodSelectorForRate(args[0]), args[1..])
+		^ControlUGenNode.new(this, UGen.methodSelectorForRate(args[0]), args[1..])
 	}
 
 }
+
+
+
++ NodeProxy {
+	value { arg something; 
+		var n;
+		if(UGen.outsideSynthDef) { 
+			^NodeProxyUGenNode.new(this, \value, something) 
+		};
+		something !? {  n = something.numChannels };
+		^if(something.rate == 'audio') { this.ar(n) } { this.kr(n) }  
+	}
+	ar { arg numChannels, offset=0;
+		if(UGen.outsideSynthDef) { 
+			^NodeProxyUGenNode.new(this, \ar, [numChannels, offset]) 
+		};
+		if(this.isNeutral) { 
+			this.defineBus(\audio, numChannels) 
+		};
+		this.prepareOutput;
+		^InBus.ar(bus, numChannels ? bus.numChannels, offset)
+	}
+	
+	kr { arg numChannels, offset=0;
+		if(UGen.outsideSynthDef) { 
+			^NodeProxyUGenNode.new(this, \kr, [numChannels, offset]) 
+		};
+		if(this.isNeutral) { 
+			this.defineBus(\control, numChannels) 
+		};
+		this.prepareOutput;
+		^InBus.kr(bus, numChannels ? bus.numChannels, offset)
+	}
+}
+
