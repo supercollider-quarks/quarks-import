@@ -46,8 +46,19 @@ UGenNode : UGen {
 		"no method found".postln;
 		^arguments
 	}*/
-	storeArgs { ^[ugenClass, selector, arguments] }
+	// storeArgs { ^[ugenClass, selector, arguments] }
 	
+	storeOn { arg stream; 
+		if(ugenClass == MulAdd) { this.storeOnMulAdd(stream); ^this };
+		stream << ugenClass.name << "." << selector << "(" <<<* arguments << ")"
+	}
+	storeOnMulAdd { arg stream;
+		var in, mul, add;
+		#in, mul, add = arguments;
+		stream <<< in;
+		if(mul != 1) { stream << " * (" <<< mul << ")" };
+		if(add != 0) { stream << " + (" <<< add << ")" };
+	}
 }
 
 UnaryOpUGenNode : UGenNode {
@@ -87,3 +98,6 @@ ControlUGenNode : UGenNode {
 		^ugenClass.perform(selector, arguments)
 	}
 }
+
+NodeProxyUGenNode : UGenNode {}
+

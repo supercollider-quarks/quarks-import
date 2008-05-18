@@ -124,4 +124,48 @@
 	}
 }
 
++ NodeProxyUGenNode {
+	asLaTeX {
+		^ugenClass.keyAsLaTeX
+	}
+}
 
++ NodeProxy {
+	sourceAsLaTeX {
+		var ctl, defArgs, argNames, obj = this.source; // for now only return first object
+		^if(obj.isFunction) { 
+			argNames = obj.def.argNames;
+			defArgs = obj.def.prototypeFrame;
+			ctl = Control.names(argNames).kr(defArgs);
+			obj.valueArray(ctl).asLaTeX
+		} {
+			obj.asLaTeX
+		}
+	}
+	
+	keyAsLaTeX { |key|
+		var rateSym = "", chanSym = "";
+		if(this.isNeutral.not) {
+				chanSym = this.numChannels;
+				rateSym = if(this.rate == \audio) { "ar" } { "kr" };
+		};
+		key = key ?? { this.key } ? "{}";
+		^key ++ "^{" ++ rateSym  ++ "}_{" ++ chanSym ++ "}"
+	}
+}
+
++ ProxySpace {
+	asLaTeX {
+		var keys = envir.keys.asArray.sort;
+		var res = "";
+		res = res ++ " \\begin{array}{ll}\n";
+		keys.do { |key|
+			var proxy = this.envir.at(key);
+			if(proxy.source.notNil) {
+				res = res ++ proxy.keyAsLaTeX(key) + " = " + proxy.sourceAsLaTeX + "\\\\\n"
+			};
+		};
+		res = res ++ "\\end{array}\n";
+		^res
+	}
+}
