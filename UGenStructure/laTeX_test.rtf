@@ -1,56 +1,57 @@
 {\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf470
 {\fonttbl\f0\fnil\fcharset77 Monaco;}
-{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
 \red0\green115\blue0;\red96\green96\blue96;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs18 \cf2 \
-// the message asLaTeX returns a string of LaTeX code that can be converted to pdf\cf3 \
-\cf2 // pdflatex - this needs to be installed first (see LaTex installers online).\cf3 \
+\cf3 // the message asLaTeX returns a string of LaTeX code that can be converted to pdf\cf2 \
+\cf3 // pdflatex - this needs to be installed first (see LaTex installers online).\cf2 \
 \
 \
 (\
-a = \cf4 SinOsc\cf3 .ar([71, \cf4 LFPulse\cf3 .kr(2).range(34, 45), 45, 34]).abs;\
+a = \cf4 SinOsc\cf2 .ar([71, \cf4 LFPulse\cf2 .kr(2).range(34, 45), 45, 34]).abs;\
 a = a / 2;\
 a = a.sqrt;\
 a.asLaTeX;\
 )\
 \
 (\
-a = (\cf4 Pulse\cf3 .ar ** \cf4 Pulse\cf3 .ar);\
+a = (\cf4 Pulse\cf2 .ar ** \cf4 Pulse\cf2 .ar);\
 a.asLaTeX;\
 )\
 \
 (\
-a = \cf4 Control\cf3 .names([\cf5 \\freq\cf3 , \cf5 \\amp\cf3 ]).kr([300, 0.1, 550, 0.3])\
+a = \cf4 Control\cf2 .names([\cf5 \\freq\cf2 , \cf5 \\amp\cf2 ]).kr([300, 0.1, 550, 0.3])\
 a.asLaTeX;\
 );\
 \
 \
-(\cf4 SinOsc\cf3 .ar(\cf4 Control\cf3 .names(\cf5 \\freq\cf3 ).kr(440), 0.5pi, \cf4 Control\cf3 .names(\cf5 \\amps\cf3 ).kr(0.2.dup)) * 0.125).asLaTeX;\
+(\cf4 SinOsc\cf2 .ar(\cf4 Control\cf2 .names(\cf5 \\freq\cf2 ).kr(440), 0.5pi, \cf4 Control\cf2 .names(\cf5 \\amps\cf2 ).kr(0.2.dup)) * 0.125).asLaTeX;\
 \
 0.5pi.asLaTeX\
 \
 (\
 a = 0;\
-3.do \{ a = \cf4 Blip\cf3 .ar(a * 30.rand + 30.rand) \};\
-a = \cf4 SinOsc\cf3 .ar(a) * 0.1;\
+3.do \{ a = \cf4 Blip\cf2 .ar(a * 30.rand + 30.rand) \};\
+a = \cf4 SinOsc\cf2 .ar(a) * 0.1;\
 a.asLaTeX;\
 )\
 \
 \
 (\
-a = (\cf4 SinOsc\cf3 .ar(\cf4 Control\cf3 .names(\cf5 \\freq\cf3 ).kr([440, 550]), 0.5pi, \cf4 Control\cf3 .names(\cf5 \\amps\cf3 ).kr(0.2.dup)) * 0.135);\
+a = (\cf4 SinOsc\cf2 .ar(\cf4 Control\cf2 .names(\cf5 \\freq\cf2 ).kr([440, 550]), 0.5pi, \cf4 Control\cf2 .names(\cf5 \\amps\cf2 ).kr(0.2.dup)) * 0.135);\
 x = a.asLaTexNodeDoc.postln;\
-f = \cf4 File\cf3 (\cf6 "~/textex_test"\cf3 .standardizePath, \cf6 "w"\cf3 );\
+f = \cf4 File\cf2 (\cf6 "~/textex_test"\cf2 .standardizePath, \cf6 "w"\cf2 );\
 f.write(x);\
 \pard\pardeftab560\ql\qnatural
-\cf3 f.close;\
-runInTerminal(\cf6 "pdflatex"\cf3  + \cf6 "~/textex_test"\cf3 .standardizePath);\
+\cf2 f.close;\
+unixCmd(\cf6 "rm"\cf2  + \cf6 "~/textex_test.*"\cf2 .standardizePath); \cf3 // remove all older latex files\cf2 \
+runInTerminal(\cf6 "pdflatex"\cf2  + \cf6 "~/textex_test"\cf2 .standardizePath);\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf3 )\
+\cf2 )\
 \
-unixCmd(\cf6 "open"\cf3  +  \cf6 "~/textex_test.pdf"\cf3 .standardizePath);\
+unixCmd(\cf6 "open -a safari.app"\cf2  +  \cf6 "~/textex_test.pdf"\cf2 .standardizePath);\
 \
 \
 }

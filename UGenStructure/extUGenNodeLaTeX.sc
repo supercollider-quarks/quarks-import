@@ -12,7 +12,7 @@
 	maddLaTeX {
 		var res = arguments[0].asLaTeX;
 		if(arguments[1] != 1) {
-			res = res ++ " \cdot " ++ arguments[1].asLaTeX;
+			res = res ++ " \\cdot " ++ arguments[1].asLaTeX;
 		};
 		if(arguments[2] != 0) {
 			res = res ++ " + " ++ arguments[2].asLaTeX;
@@ -41,6 +41,7 @@
 		if(op == 'log') { ^"\\log_{e}{" ++ x ++ "}"};
 		if(op == 'floor') { ^"\\lfloor{" ++ x ++ "}\\rfloor"};
 		if(op == 'ceil') { ^"\\lceil{" ++ x ++ "}\\rceil"};
+		if(op == 'neg') { ^"- " ++ x };
 		
 		^op  ++ " \\left(" ++ x ++ " \\right)"
 	}
@@ -61,6 +62,9 @@
 		};
 		if(op == 'pow') {
 			^"{" ++ arguments[1].asLaTeX ++ "}^{" ++ arguments[2].asLaTeX ++ "}"
+		};
+		if(op == 'absdif') {
+			^"\\left|{" ++ arguments[1].asLaTeX ++ "-" ++  arguments[2].asLaTeX ++ "}\\right|"
 		};
 		if(op.isBasicOperator) {
 			^" \\left(" ++ 
@@ -105,12 +109,12 @@
 		^this.asCompileString
 	}
 	asLaTexNodeDoc {
-		^"\\documentclass[12pt,a4paper]{article}"
-		"\\begin{document}"
-		"\\begin{displaymath}"
+		^"\\documentclass[12pt,a4paper]{article}\n"
+		"\\begin{document}\n"
+		"\\begin{displaymath}\n"
 		++ this.asLaTeX ++
-		"\n\\end{displaymath}"
-		"\\end{document}"
+		"\n\\end{displaymath}\n"
+		"\\end{document}\n"
 	}
 }
 
@@ -134,6 +138,7 @@
 			^frac.asFracLaTeX ++ " \\pi"
 		};
 		frac = this.asFraction;
+		if(frac[0] == frac[1]) { ^"1" };
 		if(frac[0] <= 100 and: { frac[1] <= 100 }) {
 			^frac.asFracLaTeX
 		};
