@@ -16,6 +16,8 @@
 					Post << $\\ << gc.name << ", " << gc.value << ", \n";
 				});
 				gctemp.reverseDo({ |gc| gc.midiControl.free });
+					// prevent infinite recursion
+				layout.onClose = nil;
 				layout.close;
 				socket.free;	// clear and garbage objects
 				voicer.free;
@@ -142,7 +144,9 @@
 					Post << $\\ << gc.name << ", " << gc.value << ", \n";
 				});
 				gctemp.reverseDo({ |gc| gc.midiControl.free });
-	
+
+					// prevent infinite recursion
+				layout.onClose = nil;
 				layout.close;
 				socket.free;	// clear and garbage objects
 				voicer.free;
