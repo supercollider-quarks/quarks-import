@@ -12,11 +12,10 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d50007; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {color: #0000bf}
 span.s2 {color: #606060}
 span.s3 {color: #000000}
@@ -25,7 +24,7 @@ span.Apple-tab-span {white-space:pre}
 </head>
 <body>
 <p class="p1"><br></p>
-<p class="p2"><b>TriggerView, ToggleView <span class="Apple-converted-space">  </span>a gui button / toggle</b></p>
+<p class="p2"><b>TriggerView, ToggleView, FlatButtonView <span class="Apple-converted-space">  </span>a gui button / toggle</b></p>
 <p class="p1"><br></p>
 <p class="p3"><b><span class="Apple-tab-span">	</span>*new(parent, bounds);</b></p>
 <p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
@@ -76,67 +75,80 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>------------------<span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">    </span>|<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>|</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>----<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> --------------</p>
-<p class="p6"><br></p>
-<p class="p7">//example</p>
-<p class="p8">(</p>
-<p class="p8"><span class="Apple-tab-span">	</span>w = <span class="s1">SCWindow</span>(<span class="s2">"TriggerView"</span>, <span class="s1">Rect</span>(200, 440, 344, 160)).front;</p>
-<p class="p8"><span class="Apple-tab-span">	</span>w.view.decorator = <span class="s1">FlowLayout</span>(w.view.bounds);</p>
-<p class="p9"><br></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">TriggerView</span>.new(w, <span class="s1">Rect</span>(0,0,80,60))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Hit me"</span> + (i+1))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"hit % %"</span>, (i+1), v.value).postln });</p>
-<p class="p8"><span class="Apple-tab-span">	</span>});</p>
-<p class="p9"><br></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v = <span class="s1">ToggleView</span>.new(w, 80@60)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Toggle"</span> + (i+1))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">true</span>)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"Toggle % %"</span>, i+1, v.value).postln });</p>
-<p class="p8"><span class="Apple-tab-span">	</span>});</p>
-<p class="p9"><br></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">ToggleView</span>.new(w, 10@10)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.colorOn_(<span class="s1">Color</span>.red(alpha:0.7))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span><span class="Apple-converted-space">  </span>format(<span class="s2">"Toggle % %"</span>, i+5, v.value).postln<span class="Apple-converted-space">  </span>});</p>
-<p class="p8"><span class="Apple-tab-span">	</span>});</p>
-<p class="p8">)</p>
-<p class="p8">v.value = <span class="s1">true</span></p>
-<p class="p8">v.value = <span class="s1">false</span></p>
-<p class="p8">v.valueAction = <span class="s1">true</span></p>
-<p class="p9"><br></p>
-<p class="p8">(</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="s1">Sheet</span>({ <span class="s1">arg</span> layout;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>layout.flow({ <span class="s1">arg</span> layout;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>layout.bounds = layout.bounds.width_(344);</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">TriggerView</span>.new(layout, 80@60)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Hit me"</span> + (i+1))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"hit % %"</span>, (i+1), v.value).postln });</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v = <span class="s1">ToggleView</span>.new(layout, 80@60)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Toggle"</span> + (i+1))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"Toggle % %"</span>, i+1, v.value).postln });</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">ToggleView</span>.new(layout, 10@10)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.colorOn_(<span class="s1">Color</span>.red(alpha:0.7))</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span><span class="Apple-converted-space">  </span>format(<span class="s2">"Toggle % %"</span>, i+5, v.value).postln<span class="Apple-converted-space">  </span>});</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).background_(<span class="s1">Color</span>.blue(0.1,0.1));</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">SCTextField</span>(layout, 100@17);</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span>}, </span>"TriggerView"<span class="s3">);</span></p>
-<p class="p8">)</p>
-<p class="p9"><br></p>
+<p class="p1"><br></p>
+<p class="p6">//example</p>
+<p class="p7">(</p>
+<p class="p7"><span class="Apple-tab-span">	</span>w = <span class="s1">SCWindow</span>(<span class="s2">"TriggerView"</span>, <span class="s1">Rect</span>(200, 440, 344, 160)).front;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>w.view.decorator = <span class="s1">FlowLayout</span>(w.view.bounds);</p>
+<p class="p8"><br></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">TriggerView</span>.new(w, <span class="s1">Rect</span>(0,0,80,60))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Hit me"</span> + (i+1))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"hit % %"</span>, (i+1), v.value).postln });</p>
+<p class="p7"><span class="Apple-tab-span">	</span>});</p>
+<p class="p8"><br></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v = <span class="s1">ToggleView</span>.new(w, 80@60)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Toggle"</span> + (i+1))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">true</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"Toggle % %"</span>, i+1, v.value).postln });</p>
+<p class="p7"><span class="Apple-tab-span">	</span>});</p>
+<p class="p8"><br></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">ToggleView</span>.new(w, 10@10)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.colorOn_(<span class="s1">Color</span>.red(alpha:0.7))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span><span class="Apple-converted-space">  </span>format(<span class="s2">"Toggle % %"</span>, i+5, v.value).postln<span class="Apple-converted-space">  </span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span>});</p>
+<p class="p7">)</p>
+<p class="p7">v.value = <span class="s1">true</span></p>
+<p class="p7">v.value = <span class="s1">false</span></p>
+<p class="p7">v.valueAction = <span class="s1">true</span></p>
+<p class="p8"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">Sheet</span>({ <span class="s1">arg</span> layout;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>layout.flow({ <span class="s1">arg</span> layout;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>layout.bounds = layout.bounds.width_(344);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">TriggerView</span>.new(layout, 80@60)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Hit me"</span> + (i+1))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"hit % %"</span>, (i+1), v.value).postln });</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>v = <span class="s1">ToggleView</span>.new(layout, 80@60)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Toggle"</span> + (i+1))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span> format(<span class="s2">"Toggle % %"</span>, i+1, v.value).postln });</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Array</span>.fill(4, { <span class="s1">arg</span> i;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">ToggleView</span>.new(layout, 10@10)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.colorOn_(<span class="s1">Color</span>.red(alpha:0.7))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({<span class="s1">|v|</span><span class="Apple-converted-space">  </span>format(<span class="s2">"Toggle % %"</span>, i+5, v.value).postln<span class="Apple-converted-space">  </span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}).background_(<span class="s1">Color</span>.blue(0.1,0.1));</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">SCTextField</span>(layout, 100@17);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span>}, </span>"TriggerView"<span class="s3">);</span></p>
+<p class="p7">)</p>
+<p class="p8"><br></p>
+<p class="p6">// a flat button view</p>
+<p class="p7">(</p>
+<p class="p7"><span class="Apple-tab-span">	</span>w = <span class="s1">SCWindow</span>.new(<span class="s2">"FlatButtonView"</span>, <span class="s1">Rect</span>(195,200,200,100)).front;</p>
+<p class="p8"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">FlatButtonView</span>.new(w, <span class="s1">Rect</span>(10,5,50,16))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.font_(<span class="s1">Font</span>.new(<span class="s2">"Helvetica"</span>, 9))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.colorOff_(<span class="s1">Color</span>.clear)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.canFocus_(<span class="s1">false</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.string_(<span class="s2">"Button"</span>)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.action_({ <span class="s1">arg</span> btn;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">"action"</span>.postln;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7">)</p>
 </body>
 </html>
