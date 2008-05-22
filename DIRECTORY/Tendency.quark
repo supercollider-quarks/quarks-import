@@ -1,0 +1,7 @@
+(
+// a must:
+	\name: 		"Tendency",
+	\path: 		"Tendency",
+	\summary:	"Tendency masks for the language side, with Pattern support",
+	\author: 		"Joshua Parmenter"
+)
