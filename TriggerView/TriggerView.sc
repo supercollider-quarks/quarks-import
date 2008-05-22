@@ -5,7 +5,7 @@
 //	- A subclass of SCViewHolder
 // 04.2008:
 //	- build a class hierarchy
-/	- FlatButtonView addition 
+//	- FlatButtonView addition 
 
 ToggleBaseView : SCViewHolder {
 	var <value, <string, <hasBorder, <colorOn, <colorOff, <fontColorOn, <fontColorOff, font,
