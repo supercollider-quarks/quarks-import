@@ -3,6 +3,9 @@
 // 03.10.2008:
 //	- relative origin
 //	- A subclass of SCViewHolder
+// 04.2008:
+//	- build a class hierarchy
+/	- FlatButtonView addition 
 
 ToggleBaseView : SCViewHolder {
 	var <value, <string, <hasBorder, <colorOn, <colorOff, <fontColorOn, <fontColorOff, font,
@@ -28,6 +31,7 @@ ToggleBaseView : SCViewHolder {
 		this.view.drawFunc_({
 			var bounds;
 			bounds = Rect(0,0,this.view.bounds.width, this.view.bounds.height);
+			color = [colorOff, colorOn].at(this.value.binaryValue);
 			area = bounds.insetBy(2,2);
 			if (hasBorder) {
 				Color.black.set;
@@ -45,17 +49,19 @@ ToggleBaseView : SCViewHolder {
 	}
 	
 	value_ { arg val;
-		value = val;
-		fontColor = [fontColorOff, fontColorOn].at(this.value.binaryValue);
-		color = [colorOff, colorOn].at(this.value.binaryValue);
-		this.refresh;
+		if (val != value) {
+			value = val;
+			fontColor = [fontColorOff, fontColorOn].at(this.value.binaryValue);
+			this.refresh;
+		}
 	}
 	valueAction_ { arg val;
-		value = val;
-		fontColor = [fontColorOff, fontColorOn].at(this.value.binaryValue);
-		color = [colorOff, colorOn].at(this.value.binaryValue);
-		this.refresh;
-		action.value(this);
+		if (val != value) {
+			value = val;
+			fontColor = [fontColorOff, fontColorOn].at(this.value.binaryValue);
+			this.refresh;
+			action.value(this);
+		}
 	}
 	string_ { arg text; string = text; this.refresh }
 	font_ { arg newfont; font = newfont; this.refresh }
@@ -70,7 +76,7 @@ ToggleView : ToggleBaseView {
 	init { arg parent, bounds;
 		super.init(parent,bounds);
 
-		this.view.mouseDownAction_({ arg x, y, modifiers, buttonNumber, clickCount;
+		this.view.mouseDownAction_({ arg view, x, y, modifiers, buttonNumber, clickCount;
 			this.value_(this.value.not);
 			action.value(this, x, y, modifiers, buttonNumber, clickCount);
 		});
@@ -81,14 +87,39 @@ TriggerView : ToggleBaseView {
 	init { arg parent, bounds;
 		super.init(parent,bounds);
 
-		this.view.mouseDownAction_({ arg x, y, modifiers, buttonNumber, clickCount;
+		this.view.mouseDownAction_({ arg view, x, y, modifiers, buttonNumber, clickCount;
 			this.value_(true);
 			action.value(this, x, y, modifiers, buttonNumber, clickCount);
 		});
 
-		this.view.mouseUpAction_({ arg x, y, modifiers;
+		this.view.mouseUpAction_({ arg view, x, y, modifiers;
 			this.value_(false);
 			action.value(this, x, y, modifiers);
+		});
+	}
+}
+
+FlatButtonView : ToggleBaseView {
+	init { arg parent, bounds;
+		super.init(parent,bounds);
+
+		this.view.mouseDownAction_({ arg view, x, y, modifiers, buttonNumber, clickCount;
+			value = true;
+			fontColor = fontColorOn;
+			this.refresh;
+		});
+		this.view.mouseUpAction_({ arg view, x, y, modifiers;
+			this.value_(false);
+			if (this.view.bounds.containsPoint( Point(x,y) )) {
+				action.value(this, x, y, modifiers);
+			}
+		});
+		this.mouseMoveAction_({ arg view, x, y, modifiers;
+			if ( this.view.bounds.containsPoint( Point(x,y) ) ) {
+				this.value_(true)
+			}{
+				this.value_(false)
+			}
 		});
 	}
 }
