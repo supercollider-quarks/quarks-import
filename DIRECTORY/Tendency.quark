@@ -3,5 +3,5 @@
 	\name: 		"Tendency",
 	\path: 		"Tendency",
 	\summary:	"Tendency masks for the language side, with Pattern support",
-	\author: 		"Joshua Parmenter"
+	\author: 		"Joshua Parmenter and Juan Pampin"
 )
