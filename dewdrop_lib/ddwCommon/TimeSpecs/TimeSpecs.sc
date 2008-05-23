@@ -97,84 +97,43 @@ BasicTimeSpec : AbsoluteTimeSpecLeadTime {
 		offset = o;
 	}
 	applyLatency { |latency| ^this.copy.offset_(latency) }
+	
+		// breaking dependency on TempoClock nextTimeOnGrid
+		// because I don't like how it handles phase
+		// if it's fixed in TempoClock, I'll revert this change
 	nextTimeOnGrid { arg argClock;
-		var	schedclock = argClock ? clock ? TempoClock.default;
-		^schedclock.nextTimeOnGrid(qstream.next(schedclock) ? 0, pstream.next(schedclock) ? 0)
-			- (ostream.next(schedclock) ? 0);
+		var	schedclock = argClock ? clock ? TempoClock.default,
+			q = qstream.next(schedclock) ? 0, p = pstream.next(schedclock) ? 0;
+		if(q < 0) { q = q.neg * schedclock.beatsPerBar };
+		^roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
+			+ p - (ostream.next(schedclock) ? 0)
 	}
 		// BP's leadTime overrides BasicTimeSpec's offset
 	bpSchedTime { |bp|
-		var	schedclock = bp.clock ? clock ? TempoClock.default;
-		^schedclock.nextTimeOnGrid(qstream.next(schedclock) ? 0, pstream.next(schedclock) ? 0)
-			- (bp.leadTime ? 0)
+		var	schedclock = bp.clock ? clock ? TempoClock.default,
+			q = qstream.next(schedclock) ? 0, p = pstream.next(schedclock) ? 0;
+		if(q < 0) { q = q.neg * schedclock.beatsPerBar };
+		^roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
+			+ p - (bp.leadTime ? 0)
 	}
 }
 
+
+// retaining stubs for backward compatibility
+
 QuantOffsetTimeSpec : BasicTimeSpec {
-//	var <>offset;
 	*new { arg quant, offset;
 		this.deprecated(thisMethod, Meta_BasicTimeSpec.findRespondingMethodFor(\new));
 		^super.new(quant, offset)
 	}
-//	applyLatency { |latency| ^QuantOffsetLatencyWrapTimeSpec(quant, offset, latency ? 0) }
-//	nextTimeOnGrid { arg argClock, argQuant, argOffset;
-//		var time, tempClock;
-//		time = (tempClock = argClock ? clock).elapsedBeats.roundUp(argQuant ? quant)
-//			+ (argOffset ? offset);
-//		(time < tempClock.elapsedBeats).if({
-//			^time + quant
-//		}, {
-//			^time
-//		});
-//	}
-////	adjustQuantForPhaseAndOffset { |phase = 0, offset = 0|
-////		^QuantOffsetLatencyWrapTimeSpec(quant, this.offset + phase, offset)
-////	}
 }
 
-	// scheduling will fail if latency window is passed
 QuantOffsetLatencyTimeSpec : QuantOffsetTimeSpec {
-//	var <>latency;
 	*new { arg quant, offset, latency;
 		this.deprecated(thisMethod, Meta_BasicTimeSpec.findRespondingMethodFor(\new));
 		^super.new(quant, offset, latency)
 	}
-//	applyLatency { |argLatency|
-//		(latency == argLatency).if({
-//			^this
-//		}, {
-//			^this.copy.latency_(argLatency ? 0)
-//		});
-//	}
-//	nextTimeOnGrid { arg argClock, argQuant, argOffset, argLatency;
-//		var time;
-//		time = (argClock ? clock).elapsedBeats.roundUp(argQuant ? quant)
-//			+ (argOffset ? offset) - (argLatency ? latency);
-//		^time
-//	}
-//	adjustTimeForLatency { |time, argLatency| ^(time - (argLatency ? latency)) }
-////	adjustQuantForPhaseAndOffset { |phase = 0, offset = 0|
-////		^this.copy.offset_(phase + this.offset, latency + offset)
-////	}
 }
 
-	// scheduling will always succeed
-	// provided that quant > latency
 QuantOffsetLatencyWrapTimeSpec : QuantOffsetLatencyTimeSpec {
-//	nextTimeOnGrid { arg argClock, argQuant, argOffset, argLatency;
-//		var time, tempClock = argClock ? clock;
-//		time = super.nextTimeOnGrid(tempClock, argQuant, argOffset, argLatency);
-//		(time < tempClock.elapsedBeats).if({
-//			^time + quant
-//		}, {
-//			^time
-//		});
-//	}
-//	adjustTimeForLatency { |time, argLatency|
-//		((time = time - (argLatency ? latency)) < clock.elapsedBeats).if({
-//			^time + quant
-//		}, {
-//			^time
-//		});
-//	}
 }
