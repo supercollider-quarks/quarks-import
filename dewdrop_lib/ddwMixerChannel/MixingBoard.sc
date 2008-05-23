@@ -80,8 +80,8 @@ MixingBoard {
 		
 			// get indices
 		ind = mxs.collect({ arg m; 
-			m.respondsTo(\binaryValue).if({ m },	// leave Booleans alone
-				{ mxtemp.indexOf(m) });		// others, get index of m_chan
+			if(m.isKindOf(MixerChannel)) { mxtemp.indexOf(m) }
+				{ m };
 		});
 		
 		^this.removeAt(ind);
