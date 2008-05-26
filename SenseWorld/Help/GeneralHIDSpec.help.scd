@@ -5,46 +5,44 @@
 GeneralHIDSpec is a class to create access by names to slots of a GeneralHIDDevice.
 
 
-
 // Look for the devices that are attached:
-
 GeneralHID.buildDeviceList;
 
 // Get the list of devices:
-
 d = GeneralHID.deviceList;
 
 // Check which devices have been found:
-
 GeneralHID.postDevices;
 
 // Pick the 6th device and open it and create an instance of it:
-
-a = GeneralHID.open( d[6] )
+a = GeneralHID.open( d[5] )
 
 // Get info on the device to see if it is the right one:
-
 a.info;
 
 // Start eventloop:
-
 GeneralHID.startEventLoop
 
 // Get the capabilities of the device in a readable format:
-
 a.caps;
 
 // See if data is coming in:
 a.debug_( true );
 
+// make an instance of a spec:
 b = GeneralHIDSpec.new( a );
 
 ( // defining the spec.
 // trick: look at the debug output, by using each input thing on the gamepad and use the first two numbers posted as indexes
-b.add( \rx, [3,0] );
-b.add( \ry, [3,1] );
-b.add( \lx, [3,2] );
-b.add( \ly, [3,5] );
+// example output of debug: [ 3, 2, 0.49803921568627, nil ]
+// as a result of moving the y-axis of the right joystick.
+// so we create this slot:
+b.add( \ry, [3,2] );
+
+// and so on...
+b.add( \lx, [3,0] );
+b.add( \ly, [3,1] );
+b.add( \rx, [3,5] );
 
 b.add( \b1, [1,288] );
 b.add( \b2, [1,289] );
@@ -76,9 +74,42 @@ a.debug_( false );
 // look at the map
 b.map.postcs;
 
+// store it with a name:
+b.save( "Impact" );
+
+// find matching, previously stored specs:
+c = b.find;
+
+// load from file:
+b.fromFile( "Impact" );
+
+// the loading and storing mechanism works across SC sessions, as they are stored to file, and GeneralHIDSpec loads the device info of all stored specs at startup of the language. 
+
+/// A GeneralHIDDevice automatically has a spec, so we can access it even faster:
+
+a.spec;
+
+// there are shortcuts for the methods:
+add( key, slotids ) // define a key to a slot
+at( key ) // get the slot
+value( key ) // get the value
+value_( key, value ) // set the value 
+action_( key, action ) // set the action
+bus( key ) // get the bus
+createBus( key, server ) // create the bus
+freeBus( key ) // free the bus
+createAllBuses( server ) // create buses for all defined slots
+freeAllBuses // free all buses
+
+// to find and set a spec:
+a.findSpec;
+a.setSpec( "Impact" );
+
+// post the mapping
+a.spec.map
+
 // examples of use:
 s = Server.local.boot;
-
 
 // create a bus
 b.createBus( \rx, s );
@@ -121,18 +152,18 @@ b.createAllBuses( s );
 
 (
 x = [ Synth.new( \hidbus_help ), Synth.new( \hidbus_help ) ];
-x[0].map( \freqadd, b.at( \ly ).bus );
-x[0].map( \amp, b.at( \b8 ).bus );
+x[0].map( \freqadd, b.bus( \ly ) );
+x[0].map( \amp, b.bus( \b6 ) );
 
-x[1].map( \freqadd, b.at( \lx ).bus );
-x[1].map( \amp, b.at( \b7 ).bus );
+x[1].map( \freqadd, b.bus( \lx ) );
+x[1].map( \amp, b.bus( \b7 ) );
 
 y = [ Synth.new( \hidbus_help, [\fmmul,400] ), Synth.new( \hidbus_help, [\fmmul,400] ) ];
-y[0].map( \freqadd, b.at( \ry ).bus );
-y[0].map( \amp, b.at( \b5 ).bus );
+y[0].map( \freqadd, b.bus( \ry ) );
+y[0].map( \amp, b.bus( \b5 ) );
 
-y[1].map( \freqadd, b.at( \rx ).bus );
-y[1].map( \amp, b.at( \b6 ).bus );
+y[1].map( \freqadd, b.bus( \rx ) );
+y[1].map( \amp, b.bus( \b6 ) );
 )
 
 // see what's going on on the server

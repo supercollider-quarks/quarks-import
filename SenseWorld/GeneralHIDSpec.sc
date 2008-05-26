@@ -51,6 +51,7 @@ GeneralHIDSpec{
 
 	add{ |key, slot|
 		map.put( key, slot );
+		this.at( key ).key = key;
 	}
 	
 	// returns the slot
@@ -80,6 +81,10 @@ GeneralHIDSpec{
 		^slot;		
 	}
 
+	bus{ |key|
+		^this.at(key).bus;
+	}
+
 	createBus{ |name,server|
 		this.at( name ).createBus( server );
 	}
@@ -88,8 +93,13 @@ GeneralHIDSpec{
 		this.at( name ).freeBus;
 	}
 
+	/*	setAllActions{ |action|
+		map.do{ |it|
+			device.slots.at( it[0] ).at( it[1] ).action_( action );
+		};
+		}*/
+
 	createAllBuses{ |server|
-		this.freeAllBuses;
 		map.do{ |it|
 			device.slots.at( it[0] ).at( it[1] ).createBus( server );
 		};
@@ -129,6 +139,9 @@ GeneralHIDSpec{
 
 	fromFile { |name| 
 		map = (folder++name++".spec").load;
+		map.keysValuesDo{ |key,it|
+			this.at( key ).key = key;
+		}
 	} 
 
 }
