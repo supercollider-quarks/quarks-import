@@ -11,7 +11,7 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 				bundle = this.releaseMsg(-1.02);		// quick release
 			});
 				// triggerMsg() sets the synth instance var
-			bundle = bundle ++ this.triggerMsg(freq, gate, [\freqlag, voicer.portaTime] ++ args);
+			bundle = bundle ++ this.triggerMsg(freq, gate, args ++ [\freqlag, voicer.portaTime]);
 			NodeWatcher.register(synth);
 				// when the synth node dies, I need to set my flags
 			Updater(synth, { |syn, msg|
@@ -47,13 +47,13 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 		var bundle;
 
 		this.shouldSteal.if({
-			bundle = this.setMsg([\freqlag, voicer.portaTime, \freq, freq,
-				\gate, gate, \t_gate, gate] ++ args);
+			bundle = this.setMsg(args ++ [\freqlag, voicer.portaTime, \freq, freq,
+				\gate, gate, \t_gate, gate]);
 		}, {
 			isReleasing.if({
 				bundle = this.releaseMsg(-1.02);		// quick release
 			});
-			bundle = bundle ++ this.triggerMsg(freq, gate, [\freqlag, voicer.portaTime] ++ args);
+			bundle = bundle ++ this.triggerMsg(freq, gate, args ++ [\freqlag, voicer.portaTime]);
 			NodeWatcher.register(synth);
 				// when the synth node dies, I need to set my flags
 			Updater(synth, { |syn, msg|
