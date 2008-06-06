@@ -270,12 +270,12 @@ Voicer {		// collect and manage voicer nodes
 		(freq.size > 0).not.if({
 			this.release1(freq, lat)
 		}, {
-			freq.collect({ arg f; this.release1(f, lat) });
+			freq.do({ arg f; this.release1(f, lat) });
 		});
 	}
 	
-	releaseAll {
-		nodes.do({ arg n; n.release });
+	releaseAll { |lat|
+		nodes.do({ arg n; n.release(latency: lat) });
 		susPedalNodes = IdentitySet.new;
 	}
 	
