@@ -32,3 +32,6 @@
 	isView { ^true }
 }
 
++ JSCDragView {
+	silentObject_ { |obj| object = obj }
+}
