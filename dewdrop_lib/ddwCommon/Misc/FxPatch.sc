@@ -21,15 +21,16 @@ PatchNoDep : Patch {
 FxPatch : PatchNoDep {
 
 	*initClass {
-		Class.initClassTree(Spec);
-		Spec.specs.putAll(IdentityDictionary[
-			\gain2 -> [0.000001, 10, \exponential, 0, 1].asSpec,
-			\slope -> [0.1, 10, \exponential, 0, 1].asSpec,
-			\myrq -> [1, 0.05].asSpec,
-			\mydetune -> [0.95, 0.95.reciprocal, \exponential, 0, 1].asSpec,
-			\mybuf -> [0, 128, \linear, 1, 0].asSpec,
-			\freqlag -> [0.00001, 20, \exponential].asSpec
-		]);
+		StartUp.add({
+			Spec.specs.putAll(IdentityDictionary[
+				\gain2 -> [0.000001, 10, \exponential, 0, 1].asSpec,
+				\slope -> [0.1, 10, \exponential, 0, 1].asSpec,
+				\myrq -> [1, 0.05].asSpec,
+				\mydetune -> [0.95, 0.95.reciprocal, \exponential, 0, 1].asSpec,
+				\mybuf -> [0, 128, \linear, 1, 0].asSpec,
+				\freqlag -> [0.00001, 20, \exponential].asSpec
+			]);
+		});
 	}
 
 	asSynthDef {
