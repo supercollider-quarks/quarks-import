@@ -144,6 +144,17 @@ GlobalControlBase : AbstractFunction {
 	asPattern { ^Pfunc({ this.value }) }
 	asStream { ^this.asPattern.asStream }
 
+		// patch support: use like KrNumberEditor
+	instrArgFromControl { |control|
+		^lag.notNil.if({ Lag.kr(In.kr(control, 1), lag) },
+			{ In.kr(control, 1) });
+	}
+	addToSynthDef { |synthDef, name|
+		synthDef.addIr(name, bus.index)
+	}
+		// protect against the bus number being changed (not sure if it really works)
+	rate { ^\scalar }
+	synthArg { ^this.index }
 }
 
 
@@ -196,21 +207,6 @@ GenericGlobalControl : GlobalControlBase {
 	}
 	
 	bindClassName { ^\GenericGlobalControl }
-	
-		// patch support: use like KrNumberEditor
-		// experimental, might break
-		// currently if you gui the Patch you created, it could mess up the bus number
-		// use PatchNoDep for now until I figure out how to massage it
-		// I think this is fixed by making it an ir control, not kr
-	instrArgFromControl { |control|
-		^lag.notNil.if({ Lag.kr(In.kr(control, 1), lag) },
-			{ In.kr(control, 1) });
-	}
-	addToSynthDef { |synthDef, name|
-		synthDef.addIr(name, bus.index)
-	}
-		// protect against the bus number being changed (not sure if it really works)
-	rate { ^\scalar }
 
 		// hardcode into a synthdef
 		// should be used only for quick and dirty testing! better to use .asMapArg
