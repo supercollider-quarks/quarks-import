@@ -56,7 +56,7 @@ if(debug) { [result, check].debug("<< " ++ this.class.name ++ ":doesNotUnderstan
 	
 		// match window bounds to flowview bounds
 	synchWindowBounds {
-		window.bounds = view.bounds.resizeBy(15, 15)
+		window.bounds = view.bounds.resizeBy(15, 15).moveTo(window.bounds.left, window.bounds.top)
 	}
 
 	*viewClass { ^FlowView }
