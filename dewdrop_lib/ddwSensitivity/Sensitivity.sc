@@ -1,5 +1,5 @@
 
-Sensitivity {		// a macro ugen - jamshark70@yahoo.com
+Sensitivity {		// a macro ugen - jamshark70@dewdrop-world.net
 
 	// if value ranges from 0..1:
 	//		sense == 0: function always returns 1
