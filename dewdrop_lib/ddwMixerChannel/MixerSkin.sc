@@ -66,7 +66,7 @@ MixerSkin {
 	// holds display parameters for a MixingBoard
 	// currently allows changing sizes of controls
 	// will allow custom colors etc.
-	// H. James Harkins - jamshark70@yahoo.com
+	// H. James Harkins - jamshark70@dewdrop-world.net
 
 	classvar <>screenHeight,	// if default height is wrong, you can change it for
 			<>screenWidth;	// all skins
