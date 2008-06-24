@@ -3,6 +3,6 @@
 	\name: 		"Ctk",
 	\path: 		"Ctk",
 	\summary:	"Composer's Tool Kit - objects for real-time and NRT composition",
-	\author: 		"Joshua Parmenter"
-	\dependencies: [("XML" -> 0.21)],
+	\author: 		"Joshua Parmenter",
+	\dependencies: [("XML" -> 0.21)]
 )
