@@ -100,6 +100,7 @@ GlobalControlBase : AbstractFunction {
 	asMapArg { ^this.asMap }
 	asNodeArg { ^this.asMap }
 	asUGenInput { ^In.kr(bus.index, 1) }
+	asControlInput { ^this.asMap }
 	
 	active { ^bus.notNil }
 
