@@ -36,6 +36,10 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 		^super.shouldSteal and: { isReleasing.not }
 	}
 	
+	release { |gate = 0, latency, freq|
+		voicer.lastFreqs.remove(freq);
+		super.release(gate, latency, freq);
+	}
 }
 
 
@@ -78,5 +82,10 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 
 	shouldSteal {
 		^super.shouldSteal and: { isReleasing.not }
+	}
+
+	release { |gate = 0, latency, freq|
+		voicer.lastFreqs.remove(freq);
+		super.release(gate, latency, freq);
 	}
 }
