@@ -105,7 +105,7 @@
 		protoEvent.proto.putAll((
 			chan: mixer,
 			server: mixer.server,
-			group: target,
+			group: target.tryPerform(\nodeID) ?? { target },
 			bus: mixer.inbus,
 			outbus: mixer.inbus.index,
 			out: mixer.inbus.index,
