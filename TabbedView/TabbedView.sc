@@ -1,4 +1,4 @@
-/******* by jostM Feb 25, 2008 version 1.20 *******/
+/******* by jostM July9, 2008 version 1.21 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -20,14 +20,15 @@ TabbedView {
 		<resize = 1,
 		<tabPosition = \top,
 		<followEdges=true,
+		<relativeOrigin=true,
 		<activeTab = 0,
 		focusHistory = 0,
 		<labelPadding = 20,
-		<relativeOrigin=false,
 		left=0,
 		top=0,
 		<>swingFactor=7,
 		<view;
+		
 	
 	*new{ arg w, bounds, labels, colors, name=" ", scroll=false;
 		^super.new.init(w, bounds, labels, colors, name, scroll );
@@ -40,11 +41,23 @@ TabbedView {
 			resize = 5};
 			
 		//must be written this way, or nested views don't work with a nil bounds.
-		bounds.isNil.if{ bounds = w.asView.bounds }; 
+		bounds.isNil.if{
+			w.respondsTo(\relativeOrigin).if{
+				(w.asView.relativeOrigin).if{
+					bounds = w.asView.bounds.moveTo(0,0);
+				}
+				{bounds = w.asView.bounds};
+			}{
+			w.respondsTo(\absoluteBounds).if{
+				 bounds = w.asView.absoluteBounds 
+				 }{
+				 bounds = w.asView.bounds}; 
+			};
+		};
 		
+		//try{relativeOrigin=FlowView.relativeOrigin};
 		view = GUI.compositeView.new(w,bounds).resize_(resize);
-		if( GUI.id === \cocoa)  {this.relativeOrigin=view.relativeOrigin};
-		
+		view.respondsTo(\relativeOrigin_).if{view.relativeOrigin_(true)};
 		lbls= lbls ? ["tab1","tab2","tab3"];
 		scroll=scr;
 		labels = [];
@@ -73,7 +86,6 @@ TabbedView {
 		
 		tabWidths = []; 
 		
-
 		lbls.do{arg label,i;
 			this.add(label);
 			
@@ -99,7 +111,7 @@ TabbedView {
 		tabWidths=tabWidths.insert(index,50);	
 		
 		tab = GUI.userView.new(view); //bounds are set later
-		if( GUI.id === \cocoa)  {tab.relativeOrigin_(relativeOrigin)};
+		tab.respondsTo(\relativeOrigin_).if{tab.relativeOrigin_(false)};
 		tab.enabled = true;
 		tab.mouseDownAction_({
 			this.focus(i);
@@ -108,11 +120,10 @@ TabbedView {
 		tabViews = tabViews.insert(index, tab);
 		
 		scroll.if{container = GUI.scrollView.new(view).resize_(5)}
-		{container = GUI.compositeView.new(view).resize_(5)}; //bounds are set later
-		
+		{container = GUI.compositeView.new(view,view.bounds).resize_(5)}; //bounds are set later
+		container.respondsTo(\relativeOrigin_).if{container.relativeOrigin_(relativeOrigin)};
 		container.background = backgrounds[i%backgrounds.size];
 		
-		if( GUI.id === \cocoa)  {container.relativeOrigin_(relativeOrigin)};
 		
 		views = views.insert(index,container);
 		
@@ -162,7 +173,10 @@ TabbedView {
 		tabLabelView.drawFunc = { arg tview;
 			var drawCenter,drawLeft,drawTop,drawRect,drawRight,
 					drawBottom,rotPoint,moveBy,rotPointText,drawRectText,drawRectText2;	
-			drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
+		//	drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
+			if (tview.respondsTo(\absoluteBounds))
+				{drawRect= tview.absoluteBounds}
+				{drawRect= tview.bounds};
 			drawCenter=Point(drawRect.left+(drawRect.width/2),drawRect.top+(drawRect.height/2));
 			
 			([\top,\bottom].occurrencesOf(tabPosition)>0).if{
@@ -225,7 +239,8 @@ TabbedView {
 				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
 				followEdges.if{
- 					GUI.pen.stringCenteredIn(label, drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
+ 					GUI.pen.stringCenteredIn(label, 
+ 						drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
  					}{
  					GUI.pen.stringLeftJustIn(label, 
  						drawRectText.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
@@ -263,9 +278,13 @@ TabbedView {
 	
 	updateViewSizes{
 	
-		
-		left = if( relativeOrigin, 0, view.bounds.left);
-		top  = if( relativeOrigin, 0, view.bounds.top);
+		( GUI.id === \cocoa).if{
+				left = 0;
+				top  = 0;
+		}{
+			left = view.bounds.left;
+			top  = view.bounds.top;
+		};
 		
 		if( GUI.id === \cocoa)  {
 			if ( tabHeight == \auto ){ tbht = ("A".bounds(font).height+1 )}{tbht=tabHeight};
@@ -275,7 +294,7 @@ TabbedView {
 					{ tabWidths[i] = tabWidth };
 					
 			};
-		} {
+		} { /////This is a sloppy swing font width calculation
 			if ( tabHeight == \auto ){ tbht = (font.size+6)}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 				if ( tabWidth.asSymbol == \auto )
@@ -295,9 +314,10 @@ TabbedView {
 		views.do{arg v;
 			v.children.notNil.if{
 				if (v.children[0].class.name==\FlowView){
-					v.children[0].bounds_(v.bounds);
+					//v.children[0].bounds_(v.bounds);
 					//this is redundant, but fixes strange behavior for some reason
-					v.children[0].bounds_(v.children[0].bounds.moveBy(2,2));
+					//v.children[0].bounds_(v.children[0].bounds.moveBy(2,2));
+					v.children[0].reflowAll;
 				};
 			};
 		};
@@ -600,10 +620,10 @@ TabbedView {
 		 
 	}
 	
-	relativeOrigin_{arg bool;
-		relativeOrigin=bool;
-		if( GUI.id === \cocoa)  {view.relativeOrigin_(relativeOrigin)};
-		this.updateViewSizes();
+	relativeOrigin_{arg ro; 	
+		 relativeOrigin = ro;
+		 this.updateViewSizes();
+		 
 	}
 	
 	
