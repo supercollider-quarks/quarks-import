@@ -99,26 +99,30 @@ SynthVoicerNode {
 
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
-		this.shouldSteal.if({
-			this.stealNode(synth, latency);
-		});
-		bundle = this.triggerMsg(freq, gate, args);
-		target.server.listSendBundle(myLastLatency = latency, bundle);
-		NodeWatcher.register(synth);
-			// when the synth node dies, I need to set my flags
-		Updater(synth, { |syn, msg|
-			(msg == \n_end).if({
-					// synth may have changed
-				(syn == synth).if({
-					reserved = isPlaying = isReleasing = false;
-				});
-				syn.releaseDependants;	// remove node and Updater from dependants dictionary
+		if(freq.isNumber) {
+			this.shouldSteal.if({
+				this.stealNode(synth, latency);
 			});
-		});
-		frequency = freq;	// save frequency for Voicer.release
-		lastTrigger = Main.elapsedTime;	// save time
-		this.isPlaying = true;
-		isReleasing = false;
+			bundle = this.triggerMsg(freq, gate, args);
+			target.server.listSendBundle(myLastLatency = latency, bundle);
+			NodeWatcher.register(synth);
+				// when the synth node dies, I need to set my flags
+			Updater(synth, { |syn, msg|
+				(msg == \n_end).if({
+						// synth may have changed
+					(syn == synth).if({
+						reserved = isPlaying = isReleasing = false;
+					});
+					syn.releaseDependants;	// remove node and Updater from dependants dictionary
+				});
+			});
+			frequency = freq;	// save frequency for Voicer.release
+			lastTrigger = Main.elapsedTime;	// save time
+			this.isPlaying = true;
+			isReleasing = false;
+		} {
+			reserved = false;
+		}
 	}
 	
 	shouldSteal {
@@ -302,14 +306,18 @@ InstrVoicerNode : SynthVoicerNode {
 		// does trigger et al. need to hit the children?
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
-		this.shouldSteal.if({
-			this.stealNode(synth, latency);
-		});
-		bundle = bundle ++ this.triggerMsg(freq, gate, args);
-		target.server.listSendBundle(myLastLatency = latency, bundle);
-		
-		frequency = freq;
-		lastTrigger = Main.elapsedTime;
+		if(freq.isNumber) {
+			this.shouldSteal.if({
+				this.stealNode(synth, latency);
+			});
+			bundle = bundle ++ this.triggerMsg(freq, gate, args);
+			target.server.listSendBundle(myLastLatency = latency, bundle);
+			
+			frequency = freq;
+			lastTrigger = Main.elapsedTime;
+		} {
+			reserved = false;
+		}
 	}
 	
 	triggerMsg { arg freq, gate = 1, args;
