@@ -66,37 +66,45 @@ MixerSkin {
 	// holds display parameters for a MixingBoard
 	// currently allows changing sizes of controls
 	// will allow custom colors etc.
+	
+	// eventually this class will go away
+	
 	// H. James Harkins - jamshark70@dewdrop-world.net
 
-	classvar <>screenHeight,	// if default height is wrong, you can change it for
-			<>screenWidth;	// all skins
+		// deprecated
+//	classvar <>screenHeight,	// if default height is wrong, you can change it for
+//			<>screenWidth;	// all skins
 	
 	var	<>gap,				// window margins
-		<>maxSize,			// of whole window
+		>maxSize,			// of whole window
 		<>maxAcross = inf;		// maximum channels across screen
 
-	*initClass {
-			// should not need to reevaluate this when changing scheme
-			// because all schemes should (in theory) report the same screenbounds
-			// but in some environments, the scheme might be nil
-			// in that case you shouldn't make a mixer GUI anyway!
-		StartUp.add({
-			var	bounds;
-			if(GUI.scheme.notNil) {
-				bounds = GUI.window.screenBounds;
-				screenHeight = bounds.height;
-				screenWidth = bounds.width;
-			};
-		});
-	}
-	
 	*new {
 		^super.new.init;	// design your skin using setters
 	}
 	
 	init {
 		gap = Point(4, 4);
-		maxSize = Point(screenWidth, screenHeight);
+	}
+	
+		// this is necessary for SwingOSC only environments
+		// screen bounds are not known until after SwingOSC is started
+		// so, wait until a MixingBoard asks for the bounds
+		// to get them from the GUI scheme
+	maxSize {
+		^maxSize ?? {
+			maxSize = GUI.window.screenBounds.rightBottom;
+		}
+	}
+	
+	*screenWidth {
+		"MixerSkin.screenWidth is deprecated -- use aMixerSkin.maxSize.x instead.".warn;
+		^GUI.window.screenBounds.width
+	}
+	
+	*screenHeight {
+		"MixerSkin.screenHeight is deprecated -- use aMixerSkin.maxSize.y instead.".warn;
+		^GUI.window.screenBounds.height
 	}
 }
 
