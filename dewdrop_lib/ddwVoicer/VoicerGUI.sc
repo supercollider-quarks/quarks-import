@@ -175,11 +175,11 @@ VoicerProxyGui : ObjectGui {
 											// just break connections--why?
 				gc.gui = nil;					// -- view.remove removes all its children
 			});
+			model.editor = nil;
+			model = nil;
 			view.notClosed.if({
 				view.remove;
 			});
-			model.editor = nil;
-			model = nil;
 
 			iMadeMasterLayout.if({
 				masterLayout.close;
