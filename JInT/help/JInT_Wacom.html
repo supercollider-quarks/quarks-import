@@ -5,34 +5,32 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949">
+<meta name="CocoaVersion" content="949.27">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #841b19}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #6e1916; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #00417a}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 span.s1 {color: #0000ff}
 span.s2 {font: 12.0px Helvetica}
-span.s3 {color: #00417a}
+span.s3 {color: #0000bf}
 span.s4 {color: #000000}
-span.s5 {color: #1a2911}
-span.s6 {color: #00304d}
-span.s7 {color: #0b0e07}
+span.s5 {color: #007300}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><b>JInT_Wacom</b></p>
 <p class="p2"><b>superclass: JInT</b></p>
-<p class="p3">/**</p>
-<p class="p3"><span class="Apple-tab-span">	</span>2007<span class="Apple-converted-space">  </span>Till Bovermann (Bielefeld University)</p>
-<p class="p3">*/</p>
+<p class="p3"><br></p>
+<p class="p2">2007, 2008<span class="Apple-converted-space">  </span>Till Bovermann (Bielefeld University)</p>
 <p class="p4"><br></p>
-<p class="p2">implements <a href="JustInTerface.html"><span class="s1">JustInTerface</span></a> for a Wacom Tablet (supported: Intuos, Graphire, Bamboo)</p>
+<p class="p2">implements <a href="JInT.html"><span class="s1">JInT</span></a> for a Wacom Tablet (supported: Intuos, Graphire, Bamboo)</p>
 <p class="p4"><br></p>
 <p class="p5"><span class="s2"><img src="attachments/JInT_Wacom/Pasted Graphic 4.png" alt="attachments/JInT_Wacom/Pasted Graphic 4.png"></span></p>
 <p class="p4"><br></p>
@@ -42,7 +40,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="s4">k = </span>JInT_Wacom<span class="s4">.new;</span></p>
 <p class="p6">k.start;</p>
 <p class="p7"><br></p>
-<p class="p3">// get information on device</p>
+<p class="p9">// get information on device</p>
 <p class="p6">k.info</p>
 <p class="p7"><br></p>
 <p class="p6">k[<span class="s5">\pos</span>].action = {<span class="s3">|me|</span> me.value.postln}</p>
@@ -59,16 +57,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">k[<span class="s5">\t</span>].action = {<span class="s3">|me|</span> me.value.postln};</p>
 <p class="p6">k[<span class="s5">\z</span>].action = {<span class="s3">|me|</span> me.value.postln};</p>
 <p class="p7"><br></p>
-<p class="p6">k[<span class="s5">\y</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\x</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\g</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\h</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\u</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\d</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\r</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\l</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\t</span>].action = <span class="s3">nil;</span></p>
-<p class="p6">k[<span class="s5">\z</span>].action = <span class="s3">nil;</span></p>
+<p class="p6">k[<span class="s5">\y</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\x</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\g</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\h</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\u</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\d</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\r</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\l</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\t</span>].action = <span class="s3">nil</span>;</p>
+<p class="p6">k[<span class="s5">\z</span>].action = <span class="s3">nil</span>;</p>
 <p class="p7"><br></p>
 <p class="p6">k[<span class="s5">\z</span>].inspect;</p>
 <p class="p6">k[<span class="s5">\t</span>].inspect;</p>
@@ -89,8 +87,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p7"><br></p>
 <p class="p6">~a = {</p>
-<p class="p6"><span class="Apple-tab-span">	</span>k[\pos].kr.poll;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>SinOsc.ar!2;</p>
+<p class="p6"><span class="Apple-tab-span">	</span>k[<span class="s5">\pos</span>].kr.poll;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">SinOsc</span>.ar!2;</p>
 <p class="p6">}</p>
 <p class="p7"><br></p>
 <p class="p6">(</p>
@@ -105,10 +103,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">~a.stop</p>
 <p class="p6">(</p>
 <p class="p6">~a = {</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">var</span> ctl = k[<span class="s7">\pos</span>].kr;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">var</span> pFreq = k[<span class="s7">\press</span>].kr.range(0, 10).poll;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">var</span> ctl = k[<span class="s5">\pos</span>].kr;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">var</span> pFreq = k[<span class="s5">\press</span>].kr.range(0, 10).poll;</p>
 <p class="p7"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s6">Splay</span>.ar(({<span class="s6">|i|</span> <span class="s6">SinOsc</span>.ar(ctl.exprange((10 - (i+1)) * 50, (10 - (i+1)) * 100).lag(i*1), mul: 0.05)}!20).scramble) * <span class="s6">LFPulse</span>.ar(pFreq).lag(0.01) * k[<span class="s7">\press</span>].kr.range(0,1);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="s3">Splay</span>.ar(({<span class="s3">|i|</span> <span class="s3">SinOsc</span>.ar(ctl.exprange((10 - (i+1)) * 50, (10 - (i+1)) * 100).lag(i*1), mul: 0.05)}!20).scramble) * <span class="s3">LFPulse</span>.ar(pFreq).lag(0.01) * k[<span class="s5">\press</span>].kr.range(0,1);</p>
 <p class="p6">}</p>
 <p class="p6">)</p>
 <p class="p6">~a.play</p>
