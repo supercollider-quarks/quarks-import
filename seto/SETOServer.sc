@@ -32,13 +32,36 @@ SETOServer {
 	var objectIDs;
 	var <format;
 	var <realFormat;
+
 	var setoClass;
+	/**
+	  function defining how to construct a SETObject. 
+	  @param format 
+	  @param id
+	  @param setoClass 
+	  
+	  @return instance of setoClass
+	 */
+	var <>setoConstructorFunc;
+	
 	var >setFunc;
 	var >aliveFunc;
+
+
 	var iClass;	/// interaction class
+	/**
+	  function defining how to construct an interaction. 
+	  @param setObj1 
+	  @param setObj2 
+	  @param iClass 
+	  
+	  @return instance of iClass
+	 */
+	var <>iClassConstructorFunc; 
+
+
 	var isEuler;	/// determines if using Euler or Axis Notation. standard is true.
 	var <interactions;
-	
 	
 	// gui support
 	var hasGUI, <window, <view;
@@ -60,7 +83,7 @@ SETOServer {
 		iClass !? {
 			knownObjs.do {|obj|
 				(obj == anObject).not.if{
-					interactions = interactions.add(iClass.new(anObject, obj));
+					interactions = interactions.add(this.pr_newInteraction(anObject, obj));
 				}
 			};
 		}
@@ -79,7 +102,7 @@ SETOServer {
 			// create new interactions
 			knownObjs.do {|obj|
 				(obj == anObj).not.if{
-					interactions = interactions.add(iClass.new(anObj, obj));
+					interactions = interactions.add(this.pr_newInteraction(anObj, obj));
 				}
 			};
 		}
@@ -187,8 +210,6 @@ SETOServer {
 		
 		objectIDs.remove(id);
 		
-		//knownObjs.removeAt(this.class.pr_hashValue(id, format)).clear;
-//		setObj = knownObjs[this.class.pr_hashValue(id, format)];
 		setObj = knownObjs[id];
 		setObj !? {setObj.visible = false;}
 	}
@@ -208,25 +229,15 @@ SETOServer {
 		hasGUI.if{{
 			view.alive(argObjectIDs);
 			view.refresh;
-			//window.refresh;
 		}.defer};
 		deadObjectIDs = argObjectIDs.asSet -- objectIDs;
 		deadObjectIDs.do{|id|
 			this.pr_removeAt(id);
 		};
-		//knownObjs.do{|item| item.id.postln};
 		
 		// interaction support
 		interactions.do{|int| int.update};
 
-/*deadObjectIDs.isEmpty.not.if{
-	objectIDs.postln;
-};
-deadObjectIDs.isEmpty.not.if{
-	deadObjectIDs.postln;
-	deadObjectIDs.collect{|id| knownObjs[id].isUpdated.postln};
-};
-*/
 		// update setObj representations.
 		objectIDs.do{|id|
 			setObj = knownObjs[id];
@@ -249,13 +260,11 @@ deadObjectIDs.isEmpty.not.if{
 		now = SystemClock.seconds;
 		
 		// get related object; add it, if it is not in the list
-		//setObj = knownObjs.at(this.class.pr_hashValue(id, format));
 		setObj = knownObjs.at(id);
 		setObj ?? {
-			setObj = setoClass.new(format, id);
+			setObj = this.pr_newSETObj(format, id);
 			setObj.tServer = this;
 			this.add(setObj);
-//				"func in SETOServer:setWithFormat : added an object". ;
 			setObj.isEuler = isEuler;				// set euler flag
 		};
 		
@@ -276,7 +285,21 @@ deadObjectIDs.isEmpty.not.if{
 			{view.setObj(setObj)}.defer;
 		};
 	}
-	
+	// creators
+	pr_newInteraction{|obj1, obj2|
+		iClassConstructorFunc.isNil.if({
+			^iClass.new(obj1, obj2);
+		}, {
+			^iClassConstructorFunc.value(obj1, obj2, iClass);
+		});
+	}
+	pr_newSETObj{|format, id|
+		setoConstructorFunc.isNil.if({
+			^setoClass.new(format, id);
+		},{
+			^setoConstructorFunc.value(format, id, setoClass);
+		});
+	}
 }
 
 /**

@@ -5,23 +5,25 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
+<meta name="CocoaVersion" content="949.27">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #571412}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ac1c17}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Helvetica; min-height: 19.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0b0e07}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #00304d}
-span.s1 {color: #00304d}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+span.s1 {color: #001a26}
 span.s2 {text-decoration: underline}
 span.s3 {font: 12.0px Helvetica}
-span.s4 {color: #000000}
-span.s5 {color: #0b0e07}
-span.s6 {color: #121212}
+span.s4 {color: #0000bf}
+span.s5 {color: #007300}
+span.s6 {color: #000000}
+span.s7 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -29,7 +31,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b>SETObject</b></p>
 <p class="p2">/*</p>
 <p class="p2">Author</p>
-<p class="p2"><span class="Apple-tab-span">	</span>2004 - 2007</p>
+<p class="p2"><span class="Apple-tab-span">	</span>2004 - 2008</p>
 <p class="p2"><span class="Apple-tab-span">	</span>Till Bovermann<span class="Apple-converted-space"> </span></p>
 <p class="p2"><span class="Apple-tab-span">	</span>Neuroinformatics Group<span class="Apple-converted-space"> </span></p>
 <p class="p2"><span class="Apple-tab-span">	</span>Faculty of Technology<span class="Apple-converted-space"> </span></p>
@@ -73,35 +75,35 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span>r<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rot. acceleration</p>
 <p class="p4"><span class="Apple-tab-span">	</span>P<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>freely definable</p>
 <p class="p6"><br></p>
-<p class="p2">// create a TUIObject, and use it to store messages coming from an [<span class="s2">OSCReceiver</span>]</p>
-<p class="p7"><span class="s4">t = </span><span class="s1">SETObject</span><span class="s4">(</span>'2DObj', 4711<span class="s4">);</span></p>
-<p class="p8"><br></p>
-<p class="p9"><span class="s4">r = </span>OSCReceiver<span class="s4">(</span><span class="s5">'/tuio/2Dobj'</span><span class="s4">, </span>nil<span class="s4">);</span></p>
-<p class="p2">/*</p>
-<p class="p2">r = OSCReceiver('/tuio/2Dobj', NetAddr("127.0.0.1", 57120));</p>
-<p class="p2">*/</p>
-<p class="p5">r.start;</p>
-<p class="p9">OSCReceiverFunction<span class="s4">(r, </span><span class="s5">\set</span><span class="s4">, {</span>|sessionID, i, x, y, a, dX, dY, dA, m, r|<span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>[sessionID, i, x, y, a, dX, dY, dA, m, r].postln;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>// t.id <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= sessionID; // not possible; id only settable at instantiation.</p>
-<p class="p5"><span class="Apple-tab-span">	</span>t.classID <span class="Apple-tab-span">	</span>= i;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>t.pos <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= [x,y,a];</p>
-<p class="p5"><span class="Apple-tab-span">	</span>t.velocity <span class="Apple-tab-span">	</span>= [dX, dY, dA];</p>
-<p class="p5"><span class="Apple-tab-span">	</span>t.acceleration = [m,r];</p>
-<p class="p5">});</p>
-<p class="p8"><br></p>
-<p class="p2">// send some update messages</p>
-<p class="p5">a = <span class="s1">NetAddr</span>(<span class="s6">"127.0.0.1"</span>, 57120);</p>
-<p class="p5">a.sendMsg(<span class="s5">'/tuio/2Dobj'</span>, <span class="s5">\set</span>, 4711, 42, 0, 1, 2, 3, 4, 5, 6, 7);</p>
-<p class="p8"><br></p>
-<p class="p5">(</p>
-<p class="p5">(</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s6">"ID:\t"</span>+t.id)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ <span class="s6">"\n"</span> ++</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s6">"Class:\t"</span>+t.classID)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ <span class="s6">"\n"</span> ++</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s6">"Position:\t"</span>+t.pos) <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ <span class="s6">"\n"</span> ++</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s6">"Velocity:\t"</span>+t.velocity) <span class="Apple-tab-span">	</span>+ <span class="s6">"\n"</span> ++</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s6">"Acceleration:\t"</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+t.acceleration)</p>
-<p class="p5">).postln;</p>
-<p class="p5">)</p>
+<p class="p7">// create a TUIObject, and use it to store messages coming from an [<span class="s2">OSCReceiver</span>]</p>
+<p class="p8">t = <span class="s4">SETObject</span>(<span class="s5">'2DObj'</span>, 4711);</p>
+<p class="p9"><br></p>
+<p class="p10"><span class="s6">r = </span>OSCReceiver<span class="s6">(</span><span class="s5">'/tuio/2Dobj'</span><span class="s6">, </span>nil<span class="s6">);</span></p>
+<p class="p7">/*</p>
+<p class="p7">r = OSCReceiver('/tuio/2Dobj', NetAddr("127.0.0.1", 57120));</p>
+<p class="p7">*/</p>
+<p class="p8">r.start;</p>
+<p class="p10">OSCReceiverFunction<span class="s6">(r, </span><span class="s5">\set</span><span class="s6">, {</span>|sessionID, i, x, y, a, dX, dY, dA, m, r|<span class="s6"><span class="Apple-converted-space"> </span></span></p>
+<p class="p8"><span class="Apple-tab-span">	</span>[sessionID, i, x, y, a, dX, dY, dA, m, r].postln;</p>
+<p class="p7"><span class="s6"><span class="Apple-tab-span">	</span></span>// t.id <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= sessionID; // not possible; id only settable at instantiation.</p>
+<p class="p8"><span class="Apple-tab-span">	</span>t.classID <span class="Apple-tab-span">	</span>= i;</p>
+<p class="p8"><span class="Apple-tab-span">	</span>t.pos <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>= [x,y,a];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>t.velocity <span class="Apple-tab-span">	</span>= [dX, dY, dA];</p>
+<p class="p8"><span class="Apple-tab-span">	</span>t.acceleration = [m,r];</p>
+<p class="p8">});</p>
+<p class="p9"><br></p>
+<p class="p7">// send some update messages</p>
+<p class="p8">a = <span class="s4">NetAddr</span>(<span class="s7">"127.0.0.1"</span>, 57120);</p>
+<p class="p8">a.sendMsg(<span class="s5">'/tuio/2Dobj'</span>, <span class="s5">\set</span>, 4711, 42, 0, 1, 2, 3, 4, 5, 6, 7);</p>
+<p class="p9"><br></p>
+<p class="p8">(</p>
+<p class="p8">(</p>
+<p class="p8"><span class="Apple-tab-span">	</span>(<span class="s7">"ID:\t"</span>+t.id)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ <span class="s7">"\n"</span> ++</p>
+<p class="p8"><span class="Apple-tab-span">	</span>(<span class="s7">"Class:\t"</span>+t.classID)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ <span class="s7">"\n"</span> ++</p>
+<p class="p8"><span class="Apple-tab-span">	</span>(<span class="s7">"Position:\t"</span>+t.pos) <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+ <span class="s7">"\n"</span> ++</p>
+<p class="p8"><span class="Apple-tab-span">	</span>(<span class="s7">"Velocity:\t"</span>+t.velocity) <span class="Apple-tab-span">	</span>+ <span class="s7">"\n"</span> ++</p>
+<p class="p8"><span class="Apple-tab-span">	</span>(<span class="s7">"Acceleration:\t"</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>+t.acceleration)</p>
+<p class="p8">).postln;</p>
+<p class="p8">)</p>
 </body>
 </html>

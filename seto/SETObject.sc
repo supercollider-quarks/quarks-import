@@ -4,7 +4,7 @@ Implementing a general style of SETObjects
 	http://modin.yuri.at/publications/tuio_gw2005.pdf
 
 Author: 
-	2004, 2005, 2006, 2007
+	2004, 2005, 2006, 2007, 2008
 	Till Bovermann 
 	Neuroinformatics Group 
 	Faculty of Technology 
@@ -90,7 +90,8 @@ SETObject { 	// abstract class
 			'25Dcurs'	->"ixyzabcXYZABCmr",
 			'tDObj' 	->"ixya",
 			'tDobj' 	->"ixya", 
-			'tdObj' 	->"ixya" 
+			'tdObj' 	->"ixya",
+			'grain'	->"ixy" 
 		]);
 		
 		
@@ -324,7 +325,6 @@ SETOdump : SETObject {
 			"\tVel:\t%\n" ++
 			"\tAcc:\t%\n", id, classID, pos, this.rotMat, velocity, acceleration);
 	}	
-
 }
 
 SETOdumpWin : SETObject {
