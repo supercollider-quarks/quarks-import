@@ -32,8 +32,8 @@ JInTController {
 	var <>endAction;		/// a function evaluated on stop  of a continuous action. param: this
 	
 	var isRunning;
-	var nodeProxy;
-	var server;
+	var <nodeProxy;
+	var <server;
 	
 	/** array of arrays containing symbols for each DOF:
 	
@@ -45,9 +45,12 @@ JInTController {
 		\snapBack		[snaps back into a predefined state]
 		\sticky		[remains in last state]
 		
-			[]
+		\autoOff		[automatically snaps back into default state after a given time]
+
+			[are the values in a ring or not?]
 		\range		[m .. n]
 		\ring		[modulo ring]
+		
 			[active or passive?]
 		\passive
 		\settable
@@ -97,6 +100,12 @@ JInTController {
 		action.value(this);
 		nodeProxy !? {nodeProxy.set(which, this.value(which)*2-1);};
 	}
+	setWithoutProxy {|which = 0, val = 0|
+		rawVals[which] = val;
+		// set values to be in [-1, 1]
+		action.value(this);
+	}
+	
 	setAll {|vals|
 		rawVals = vals;
 		// set values to be in [-1, 1]
@@ -131,6 +140,9 @@ JInTController {
 	kr {|numChans|
 		^nodeProxy.kr(numChans);
 	}
+	ar {|numChans|
+		^nodeProxy.ar(numChans);
+	}
 
 }
 
@@ -164,6 +176,49 @@ JInTC_Button : JInTC_onoff{
 		theSpec !? { specs = [theSpec];}
 	}
 }
+
+/// Knocking on a surface
+JInTC_Knock : JInTC_onoff{
+	var <>audioInBus, <>sensitivity, <>dt;
+	
+	*new {|desc, server, spec, audioInBus = 0|
+		^super.new(desc ? "Knocking on a surface (on; dt.wait; off)", server).initKnock(spec, audioInBus);
+	}
+	initKnock {|theSpec, argAudioInBus|
+		audioInBus = argAudioInBus;
+		semantics[0] = semantics[0].add(\snapBack);
+		semantics[0] = semantics[0].add(\autoOff);
+		theSpec !? { specs = [theSpec];}
+	}
+	initNodeProxy {
+		var n;
+		nodeProxy = nodeProxy ?? {
+			n = NodeProxy(server);
+			n.set(
+				\audioInBus, audioInBus, 
+				\sensitivity, sensitivity, 
+				\dt, dt
+			);
+			n.source = {|audioInBus = 1, sensitivity = 0.025, dt = 0.1, trigID = 1000|
+				var in, trig;
+				in = AudioIn.ar(audioInBus).abs - sensitivity;
+				//in.poll;
+				trig = Trig.ar(
+					Trig.ar(
+						K2A.ar(in)>0, 
+						dt
+					), 
+					(SampleRate.ir).reciprocal
+				);
+				SendTrig.ar(trig, trigID, trig);
+				SendTrig.ar(DelayN.ar(trig, 1, dt), trigID, 0);
+				trig!numDOF;
+			};
+			n;
+		};
+	}
+}
+
 
 
 /// simple one-DOF continuous controller

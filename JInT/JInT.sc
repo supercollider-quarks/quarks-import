@@ -1,5 +1,6 @@
 /**
-	2006  Till Bovermann (IEM)
+	2006  		Till Bovermann (IEM)
+	2007, 2008  	Till Bovermann (Uni Bielefeld)
 
 	base class for Just InTerface 
 */

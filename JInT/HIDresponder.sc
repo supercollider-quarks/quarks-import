@@ -1,5 +1,5 @@
 /**
-	2006  Till Bovermann, AdC 
+	2006  Till Bovermann, Alberto de Campo 
 	(IEM)
 */
 
