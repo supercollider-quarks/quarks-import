@@ -28,11 +28,16 @@ GlobalControlBase : AbstractFunction {
 		<autoSynth;
 	
 		// ctlPoint will be used for line automation
+		// however it isn't used in the library so it's your responsibility
+		// to get the synth out of SynthDescLib.global and send it,
+		// e.g., SynthDescLib.global[\ctlPoint].send(s)
 	*initClass {
-		SynthDef.writeOnce(\ctlPoint, { |outbus, value, time, curve|
-			var	start = In.kr(outbus, 1);
-			ReplaceOut.kr(outbus, EnvGen.kr(Env([start, value], [time], curve), doneAction: 2));
-		});
+		StartUp.add {
+			SynthDef(\ctlPoint, { |outbus, value, time, curve|
+				var	start = In.kr(outbus, 1);
+				ReplaceOut.kr(outbus, EnvGen.kr(Env([start, value], [time], curve), doneAction: 2));
+			}).memStore;
+		};
 	}
 	
 	*new { arg name, bus, value, spec, allowGUI = true ... extraArgs;
