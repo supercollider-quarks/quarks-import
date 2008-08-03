@@ -7,16 +7,6 @@ TempoClick {
 	var	<server, <clock, <bus, <subdiv, <nodeID, nodeIDBounce;
 	var	aliveThread;
 	
-	*initClass {
-		StartUp.add({
-			SynthDef.writeOnce("TempoClick", { arg tempo = 1, subd = 1, bus = 0;
-					// kill the synth every beat - this helps the client enforce sync
-				Line.kr(0, 1, tempo.reciprocal, doneAction:2);
-				Out.kr(bus, Impulse.kr(tempo * subd));
-			});
-		});
-	}
-	
 	*new { arg server, clock, bus, subdiv = 1;
 		^super.newCopyArgs(server ?? { Server.default }, clock ? TempoClock.default,
 			bus, subdiv).init;
@@ -43,6 +33,16 @@ TempoClick {
 	
 	startAliveThread {
 		var	time;
+			// synthdef sending is asynchronous
+			// however s_new messages are sent with latency,
+			// which in most cases should avoid synthdef not found errors
+			// even if the clock is superfast you should get only one failure
+		SynthDef("TempoClick", { arg tempo = 1, subd = 1, bus = 0;
+				// kill the synth every beat - this helps the client enforce sync
+			Line.kr(0, 1, tempo.reciprocal, doneAction:2);
+			Out.kr(bus, Impulse.kr(tempo * subd));
+		}).send(server);
+		
 		aliveThread = Routine({
 			{	nodeID = nodeIDBounce - nodeID;
 					// schedule the onset using latency to coincide with the clock

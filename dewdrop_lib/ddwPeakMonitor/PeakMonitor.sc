@@ -15,14 +15,6 @@ PeakMonitor {
 		<mixer;	// used only when PM is hitting a mixerchannel
 		
 	*initClass {
-		8.do({ arg i;
-			SynthDef.writeOnce("sys-PeakMon" ++ (i+1), {
-				arg bus, kbus, t_trig;  // t_trig lets client control timing/reset of Peak
-				var sig;
-				sig = Peak.ar(In.ar(bus, i+1), t_trig);
-				Out.kr(kbus, sig);
-			});
-		});
 		all = IdentityDictionary.new;
 		CmdPeriod.add(this);
 	}
@@ -45,25 +37,22 @@ PeakMonitor {
 			synthTarget = Group.basicNew(target.server, 0);
 		});
 		
-		this.prInit;
-		
 		bus = Bus.control(target.server, target.numChannels);
 		peaks = Array.fill(target.numChannels, 0);
-		synth = Synth.tail(synthTarget, "sys-PeakMon" ++ (target.numChannels),
-			[\bus, target.index, \kbus, bus.index, \freq, freq]);
+
+		this.prInit;
 		
 		all.put(bus.index, this);	// so OSCresponder can find me
 		updater = Routine({
 					// first get the results from the last period
 					// then reset the Peak ugen immediately after -- bundling ensures timing
-			{	target.server.sendBundle(nil, [\c_getn, bus.index, bus.numChannels], 
+			{	freq.reciprocal.wait;
+				target.server.sendBundle(nil, [\c_getn, bus.index, bus.numChannels], 
 					[\n_set, synth.nodeID, \t_trig, 1]);
-				freq.reciprocal.wait;
 			}.loop
 		}).play(SystemClock);
 		
 		this.gui(layout);
-
 	}
 	
 	freq_ { arg f;
@@ -98,13 +87,22 @@ PeakMonitor {
 	asString { ^"PeakMonitor(" ++ target.asString ++ ", " ++ freq ++ ")" }
 
 
-/// private	
-	prInit {	// called first time
-			// target should already be set
-
-				// make my responder
-		resp = OSCresponderNode(synthTarget.server.addr, "/c_setn", { arg t, r, m;
-			PeakMonitor.all.at(m.at(1)).tryPerform(\peaks_, m.copyRange(3, m.size-1)).changed;
+/// private -- set synth and osc responder
+	prInit {
+		var	defname = "ddw_peakmon" ++ bus.numChannels;
+		synth = Synth.basicNew(defname, target.server);
+		
+		SynthDef(defname, {
+			arg bus, kbus, t_trig;  // t_trig lets client control timing/reset of Peak
+			var sig;
+			sig = Peak.ar(In.ar(bus, target.numChannels), t_trig);
+			Out.kr(kbus, sig);
+		}).send(target.server, 
+			synth.newMsg(synthTarget, [\bus, target.index, \kbus, bus.index, \freq, freq],
+				\addToTail));
+	
+		resp = OSCpathResponder(synthTarget.server.addr, ['/c_setn', bus.index], { arg t, r, m;
+			PeakMonitor.all[m[1]].tryPerform(\peaks_, m[3..]).changed;
 		}).add;
 	}
 }
