@@ -2,7 +2,7 @@
 
 RedTrk {
 	classvar	<>playDict, <>stopDict, <>clearDict;
-	var	<>key, <>item, <>sections,
+	var	<key, <>item, <>sections,
 		<player, <isPlaying= false;
 	*initClass {
 		playDict= (
