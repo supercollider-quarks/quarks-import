@@ -7,6 +7,6 @@ NOTE: This code is still somewhat experimental.",
 	author:		"James Harkins",
 	version:		1.0,
 	helpdoc:		"timeline-overview.html",
-	dependencies:	#["ddwCommon", "ddwPrototype"],
+	dependencies:	#["ddwCommon", "ddwPrototype", "ddwChucklib"],
 	url:			"http://www.dewdrop-world.net/sc3"
 )
