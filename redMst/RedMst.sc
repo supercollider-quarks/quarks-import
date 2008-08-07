@@ -1,6 +1,7 @@
 //redFrik - released under gnu gpl license
 
 //--changes 080807:
+//fixed serious bug when 3rd party classes not installed
 //fixed duration overlap bug.  added stopAheadTime
 //made into a quark
 //now works with more items (NodeProxy, BBCut2, RedMOD, RedXM, Function, SynthDef)
