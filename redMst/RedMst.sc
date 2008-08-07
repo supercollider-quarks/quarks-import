@@ -1,6 +1,7 @@
 //redFrik - released under gnu gpl license
 
 //--changes 080807:
+//fixed duration overlap bug.  added stopAheadTime
 //made into a quark
 //now works with more items (NodeProxy, BBCut2, RedMOD, RedXM, Function, SynthDef)
 //quite a few internal changes - no big changes to the interface
@@ -17,11 +18,12 @@
 //--notes:
 //redxm and redmod can change redmst clock tempo!
 //events with long duration does not get cut off
-//some times 
 
 RedMst {
 	classvar	<tracks, <>clock, <>quant= 4,
-			<section= 0, <maxSection= 0;
+			<section= 0, <maxSection= 0,
+			<>stopAheadTime= 0.05,
+			alreadyJumping= false;
 	*initClass {
 		tracks= ();
 		clock= TempoClock.default;
@@ -52,7 +54,7 @@ RedMst {
 	}
 	*stop {
 		if(clock.notNil, {
-			clock.schedAbs(clock.nextTimeOnGrid(quant), {
+			clock.schedAbs(clock.nextTimeOnGrid(quant)-stopAheadTime, {
 				tracks.do{|x| x.stop};
 				nil;
 			});
@@ -69,25 +71,33 @@ RedMst {
 			clock= TempoClock.default;
 			"RedMst: clock is nil - using TempoClock.default".warn;
 		});
-		clock.schedAbs(clock.nextTimeOnGrid(quant), {
-			section= jumpSection;
-			if(section>maxSection, {
-				"RedMst: reached the end".postln;
-			}, {
-				("RedMst: new section:"+section+"of"+maxSection).postln;
-			});
-			tracks.do{|x|
-				if(x.sections.includes(section), {
-					if(x.isPlaying.not, {
-						x.play;
-					});
-				}, {
-					if(x.isPlaying, {
+		if(alreadyJumping, {
+			"RedMst: already jumping somewhere - goto ignored".warn;
+		}, {
+			clock.schedAbs(clock.nextTimeOnGrid(quant)-stopAheadTime, {
+				tracks.do{|x|
+					if(x.sections.includes(jumpSection).not and:{x.isPlaying}, {
 						x.stop;
 					});
+				};
+				nil;
+			});
+			clock.schedAbs(clock.nextTimeOnGrid(quant), {
+				section= jumpSection;
+				if(section>maxSection, {
+					"RedMst: reached the end".postln;
+				}, {
+					("RedMst: new section:"+section+"of"+maxSection).postln;
 				});
-			};
-			nil;
+				tracks.do{|x|
+					if(x.sections.includes(section) and:{x.isPlaying.not}, {
+						x.play;
+					});
+				};
+				alreadyJumping= false;
+				nil;
+			});
+			alreadyJumping= true;
 		});
 	}
 	*next {
