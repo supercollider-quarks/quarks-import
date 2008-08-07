@@ -7,7 +7,7 @@ RedTrk {
 	*initClass {
 		playDict= (
 			\Pattern: {|item| item.play(RedMst.clock, quant:0)},
-			\Stream: {|item| item.play(RedMst.clock, quant:0)},
+			\Stream: {|item| item.reset; item.play(RedMst.clock, quant:0)},
 			\BBCut2: {|item| item.play(RedMst.clock)},
 			\RedMOD: {|item| item.play(clock:RedMst.clock, quant:0)},
 			\RedXM: {|item| item.play(clock:RedMst.clock, quant:0)}
