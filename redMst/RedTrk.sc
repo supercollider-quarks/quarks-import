@@ -10,7 +10,8 @@ RedTrk {
 			\Stream: {|item| item.reset; item.play(RedMst.clock, quant:0)},
 			\BBCut2: {|item| item.play(RedMst.clock)},
 			\RedMOD: {|item| item.play(clock:RedMst.clock, quant:0)},
-			\RedXM: {|item| item.play(clock:RedMst.clock, quant:0)}
+			\RedXM: {|item| item.play(clock:RedMst.clock, quant:0)},
+			\RedWindow: {|item| {item.play}.defer; item}
 		);
 		stopDict= (
 			\Synth: {|player|
@@ -22,7 +23,9 @@ RedTrk {
 				});
 			}
 		);
-		clearDict= ();
+		clearDict= (
+			\RedWindow: {|player| player.close}
+		);
 	}
 	*new {|key, item, sections|
 		var trk= RedMst.at(key);
@@ -48,7 +51,7 @@ RedTrk {
 		var func;
 		if(isPlaying.not, {
 			playDict.keysValuesDo{|key, val|
-				if(item.isKindOf(key.asClass), {
+				if(key.asClass.notNil and:{item.isKindOf(key.asClass)}, {
 					func= val;
 				});
 			};
@@ -64,7 +67,7 @@ RedTrk {
 		var func;
 		if(isPlaying, {
 			stopDict.keysValuesDo{|key, val|
-				if(player.isKindOf(key.asClass), {
+				if(key.asClass.notNil and:{player.isKindOf(key.asClass)}, {
 					func= val;
 				});
 			};
@@ -82,7 +85,7 @@ RedTrk {
 			this.stop;
 		});
 		clearDict.keysValuesDo{|key, val|
-			if(player.isKindOf(key.asClass), {
+			if(key.asClass.notNil and:{player.isKindOf(key.asClass)}, {
 				func= val;
 			});
 		};
