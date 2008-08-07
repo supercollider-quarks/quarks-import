@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.48">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {text-decoration: underline}
+span.s4 {color: #0000bf}
+span.s5 {color: #007300}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedTrk2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>a sort of timeline - slave track</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>superclass: RedTrk</b></p>
+<p class="p3"><br></p>
+<p class="p1">very similar to RedTrk but can do abrupt swaps between sections.<span class="Apple-converted-space">  </span>it cuts off events with long durations.</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s2">see also [</span><span class="s3">RedMst</span><span class="s2">] [</span><span class="s3">RedSeq</span><span class="s2">] [</span><span class="s3">RedTrk</span><span class="s2">]</span></p>
+<p class="p5"><br></p>
+<p class="p6"><br></p>
+<p class="p7">//--</p>
+<p class="p7"><span class="s4">RedTrk2</span><span class="s2">(</span><span class="s5">\t1</span><span class="s2">, </span><span class="s4">Pbind</span><span class="s2">(</span><span class="s5">\degree</span><span class="s2">, 0, </span><span class="s5">\dur</span><span class="s2">, 8), [0])<span class="Apple-tab-span">	</span></span>//create a track with long duration events</p>
+<p class="p8"><span class="s4">RedTrk2</span>(<span class="s5">\t2</span>, <span class="s4">Pbind</span>(<span class="s5">\degree</span>, 1, <span class="s5">\dur</span>, 8), [1])</p>
+<p class="p6"><br></p>
+<p class="p8">s.boot</p>
+<p class="p7"><span class="s4">RedMst</span><span class="s2">.quant= 2;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//relatively short quant</p>
+<p class="p9">RedMst<span class="s2">.play</span></p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s4">RedMst</span><span class="s2">.goto(1)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//with RedTrk long durations and short quant gives overlaps</p>
+<p class="p7"><span class="s4">RedMst</span><span class="s2">.goto(0)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//while RedTrk2 forces events to stop</p>
+<p class="p6"><br></p>
+<p class="p9">RedMst<span class="s2">.stop</span></p>
+<p class="p8"><span class="s4">RedMst</span>.clear</p>
+</body>
+</html>

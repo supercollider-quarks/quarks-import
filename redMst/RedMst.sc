@@ -1,5 +1,8 @@
 //redFrik - released under gnu gpl license
 
+//--changed 080808:
+//took out setters for key in RedTrk
+//added the RedTrk2 class - thanks julian for hint about Pbus
 //--changes 080807:
 //fixed serious bug when 3rd party classes not installed
 //fixed duration overlap bug.  added stopAheadTime
@@ -7,17 +10,16 @@
 //now works with more items (NodeProxy, BBCut2, RedMOD, RedXM, Function, SynthDef)
 //quite a few internal changes - no big changes to the interface
 //--071102:
-//first release
+//first release on the mailinglist
 
 //--todo:
-//empty section example (index 0, 1, 2, 5)
-//RedSeq.  also extra gui class with esc key for next, section data, playung tracks etc
-//special redtrk subclass that can force stop for long duration events. using Pbus?
+//RedSeq.  also extra gui class with esc key for next, section data, playing tracks etc
+//test RedTrk and RedTrk2 with Pbindf, Pmono and Pfx
 
 //--notes:
-//redxm and redmod can change redmst clock tempo!
-//events with long duration does not get cut off
-//don't use CutBuf1 as it will not stop correctly.  replace with CutBuf2
+//RedXM and RedMod can change RedMst's clock tempo!
+//events with long duration does not get cut off when switching section.  use RedTrk2
+//don't use BBCut2's CutBuf1 as it will not stop correctly.  replace with CutBuf2 or CutBuf3.
 
 RedMst {
 	classvar	<tracks, <>clock, <>quant= 4,
