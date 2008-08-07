@@ -10,9 +10,8 @@
 
 //--todo:
 //empty section example (index 0, 1, 2, 5)
-//post comment /function asRoutine example
-//RedSeq: gui class with esc key for next
-//special redtrk subclass that can force stop for long duration events
+//RedSeq.  also extra gui class with esc key for next, section data, playung tracks etc
+//special redtrk subclass that can force stop for long duration events. using Pbus?
 
 //--notes:
 //redxm and redmod can change redmst clock tempo!
