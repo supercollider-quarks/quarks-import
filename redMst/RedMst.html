@@ -11,28 +11,32 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #902f20; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #843424; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #9d281b}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2b6f11}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024b5}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #3b6c19}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {text-decoration: underline ; color: #062cb0}
-span.s3 {color: #0019ba}
+span.s2 {text-decoration: underline ; color: #0d32ac}
+span.s3 {color: #0024b5}
 span.s4 {color: #000000}
-span.s5 {color: #ad1d13}
-span.s6 {color: #2b6f11}
+span.s5 {color: #9d281b}
+span.s6 {color: #3b6c19}
 span.s7 {color: #0000bf}
 span.s8 {color: #007300}
 span.s9 {color: #606060}
 span.s10 {color: #bf0000}
+span.s11 {color: #0019ba}
+span.s12 {color: #ad1d13}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -228,13 +232,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><br></p>
 <p class="p6">//--example with some different items</p>
 <p class="p10">(</p>
-<p class="p13"><span class="s7">var</span> a, b, c, d, e, f, g, h, i, j, k, l;</p>
+<p class="p13"><span class="s7">var</span> a, b, c, d, e, f, g, h, i, j, k, l, m;</p>
 <p class="p13">s.waitForBoot{</p>
 <p class="p13"><span class="s7">RedMst</span>.clear;</p>
 <p class="p13"><span class="s7">RedMst</span>.clock= <span class="s7">TempoClock</span>(150/60);</p>
 <p class="p13"><span class="s7">RedMst</span>.quant= 4;</p>
 <p class="p14"><br></p>
-<p class="p15">//--items</p>
+<p class="p15">//--items (just comment out any 3rd party classes you don't have installed)</p>
 <p class="p13">a= <span class="s7">Pbind</span>(<span class="s8">\freq</span>, <span class="s7">Pseq</span>([500, 600], <span class="s7">inf</span>));</p>
 <p class="p13">b= <span class="s7">Pdef</span>(<span class="s8">\pdef</span>, <span class="s7">Pbind</span>(<span class="s8">\degree</span>, <span class="s7">Pseq</span>([0, 1, 2, 3, 5], <span class="s7">inf</span>)));</p>
 <p class="p13">c= <span class="s7">Tdef</span>(<span class="s8">\tdef</span>, {<span class="s7">inf</span>.do{<span class="s7">|i|</span> i.postln; 1.wait}});</p>
@@ -245,11 +249,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13">h= <span class="s7">SynthDef</span>(<span class="s8">\def</span>, {<span class="s7">|gate= 1|</span> <span class="s7">Out</span>.ar(0, <span class="s7">SinOsc</span>.ar([700, 707], 0, 0.1*<span class="s7">EnvGen</span>.kr(<span class="s7">Env</span>.asr, gate, doneAction:2)))}).store;</p>
 <p class="p15"><span class="s4">i= {</span><span class="s9">"testing, testing"</span><span class="s4">.postln}.asRoutine;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//wrap functions in routines to play them</p>
 <p class="p16"><span class="s4">j= </span>BBCut2<span class="s4">(</span>CutStream1<span class="s4">.new, </span>BBCutProc11<span class="s4">.new);</span></p>
-<p class="p13">k= <span class="s7">RedMOD</span>.read(<span class="s9">"~/mods/lukas/eva.mod"</span>).prepareForPlay;</p>
-<p class="p13">l= <span class="s7">RedXM</span>.read(<span class="s9">"~/mods/4-mat_-_rose.xm"</span>).prepareForPlay;</p>
+<p class="p16"><span class="s4">k= </span>BBCut2<span class="s4">(</span>CutBuf2<span class="s4">(</span>BBCutBuffer<span class="s4">(</span><span class="s9">"sounds/break"</span><span class="s4">)), </span>BBCPPermute<span class="s4">.new);<span class="Apple-tab-span">	</span></span><span class="s10">//bad style as buffer not freed</span></p>
+<p class="p13">l= <span class="s7">RedMOD</span>.read(<span class="s9">"~/mods/lukas/eva.mod"</span>).prepareForPlay;</p>
+<p class="p13">m= <span class="s7">RedXM</span>.read(<span class="s9">"~/mods/4-mat_-_rose.xm"</span>).prepareForPlay;</p>
 <p class="p14"><br></p>
 <p class="p15">//--tracks</p>
-<p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\steady</span>, <span class="s7">Pbind</span>(<span class="s8">\legato</span>, 0.1, <span class="s8">\freq</span>, 800), #[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);</p>
+<p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\steady</span>, <span class="s7">Pbind</span>(<span class="s8">\legato</span>, 0.1, <span class="s8">\freq</span>, 800), #[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);</p>
 <p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\test01</span>, a, [1]);</p>
 <p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\test02</span>, b, [2]);</p>
 <p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\test03</span>, c, [3]);</p>
@@ -262,24 +267,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\test10</span>, j, [10]);</p>
 <p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\test11</span>, k, [11]);</p>
 <p class="p13"><span class="s7">RedTrk</span>(<span class="s8">\test12</span>, l, [12]);</p>
+<p class="p10"><span class="s7">RedTrk</span>(<span class="s8">\test13</span>, m, [13]);</p>
 <p class="p13">}</p>
 <p class="p10">)</p>
-<p class="p14"><br></p>
-<p class="p15"><span class="s7">RedMst</span><span class="s4">.play(0)<span class="Apple-tab-span">	</span></span>//section 0 - only steady</p>
-<p class="p13"><span class="s7">RedMst</span>.goto(1)<span class="Apple-tab-span">	</span><span class="s10">//pbind</span></p>
-<p class="p13"><span class="s7">RedMst</span>.goto(2)<span class="Apple-tab-span">	</span><span class="s10">//pdef</span></p>
-<p class="p13"><span class="s7">RedMst</span>.goto(3)<span class="Apple-tab-span">	</span><span class="s10">//tdef</span></p>
-<p class="p13"><span class="s7">RedMst</span>.goto(4)<span class="Apple-tab-span">	</span><span class="s10">//routine</span></p>
-<p class="p13"><span class="s7">RedMst</span>.goto(5)<span class="Apple-tab-span">	</span><span class="s10">//patch</span></p>
-<p class="p15"><span class="s7">RedMst</span><span class="s4">.goto(6)<span class="Apple-tab-span">	</span></span>//nodeproxy</p>
-<p class="p13"><span class="s7">RedMst</span>.goto(7)<span class="Apple-tab-span">	</span><span class="s10">//{}.play</span></p>
-<p class="p15"><span class="s7">RedMst</span><span class="s4">.goto(8)<span class="Apple-tab-span">	</span></span>//synthdef</p>
-<p class="p15"><span class="s7">RedMst</span><span class="s4">.goto(9)<span class="Apple-tab-span">	</span></span>//just posting</p>
-<p class="p13"><span class="s7">RedMst</span>.goto(10)<span class="Apple-tab-span">	</span><span class="s10">//bbcut2</span></p>
-<p class="p13"><span class="s7">RedMst</span>.goto(11)<span class="Apple-tab-span">	</span><span class="s10">//redmod</span></p>
-<p class="p13"><span class="s7">RedMst</span>.goto(12)<span class="Apple-tab-span">	</span><span class="s10">//redxm</span></p>
-<p class="p16">RedMst<span class="s4">.stop</span></p>
-<p class="p13"><span class="s7">RedMst</span>.clear</p>
-<p class="p14"><br></p>
+<p class="p7"><br></p>
+<p class="p17"><span class="s11">RedMst</span><span class="s4">.play(0)<span class="Apple-tab-span">	</span></span>//section 0 - only steady</p>
+<p class="p10"><span class="s11">RedMst</span>.goto(1)<span class="Apple-tab-span">	</span><span class="s12">//pbind</span></p>
+<p class="p10"><span class="s11">RedMst</span>.goto(2)<span class="Apple-tab-span">	</span><span class="s12">//pdef</span></p>
+<p class="p10"><span class="s11">RedMst</span>.goto(3)<span class="Apple-tab-span">	</span><span class="s12">//tdef</span></p>
+<p class="p10"><span class="s11">RedMst</span>.goto(4)<span class="Apple-tab-span">	</span><span class="s12">//routine</span></p>
+<p class="p10"><span class="s11">RedMst</span>.goto(5)<span class="Apple-tab-span">	</span><span class="s12">//patch</span></p>
+<p class="p17"><span class="s11">RedMst</span><span class="s4">.goto(6)<span class="Apple-tab-span">	</span></span>//nodeproxy</p>
+<p class="p10"><span class="s11">RedMst</span>.goto(7)<span class="Apple-tab-span">	</span><span class="s12">//{}.play</span></p>
+<p class="p17"><span class="s11">RedMst</span><span class="s4">.goto(8)<span class="Apple-tab-span">	</span></span>//synthdef</p>
+<p class="p17"><span class="s11">RedMst</span><span class="s4">.goto(9)<span class="Apple-tab-span">	</span></span>//just posting</p>
+<p class="p17"><span class="s11">RedMst</span><span class="s4">.goto(10)<span class="Apple-tab-span">	</span></span>//bbcut2 stream</p>
+<p class="p17"><span class="s11">RedMst</span><span class="s4">.goto(11)<span class="Apple-tab-span">	</span></span>//bbcut2 buffer</p>
+<p class="p10"><span class="s11">RedMst</span>.goto(12)<span class="Apple-tab-span">	</span><span class="s12">//redmod</span></p>
+<p class="p10"><span class="s11">RedMst</span>.goto(13)<span class="Apple-tab-span">	</span><span class="s12">//redxm</span></p>
+<p class="p18">RedMst<span class="s4">.stop</span></p>
+<p class="p10"><span class="s11">RedMst</span>.clear</p>
+<p class="p7"><br></p>
 </body>
 </html>

@@ -11,13 +11,13 @@
 //--todo:
 //empty section example (index 0, 1, 2, 5)
 //post comment /function asRoutine example
-//hack for bbcut2 with cutbuf?
 //RedSeq: gui class with esc key for next
 //special redtrk subclass that can force stop for long duration events
 
 //--notes:
 //redxm and redmod can change redmst clock tempo!
 //events with long duration does not get cut off
+//don't use CutBuf1 as it will not stop correctly.  replace with CutBuf2
 
 RedMst {
 	classvar	<tracks, <>clock, <>quant= 4,
