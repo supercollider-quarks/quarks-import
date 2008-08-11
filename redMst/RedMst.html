@@ -9,23 +9,23 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0019ba}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #062cb0}
 p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #653f2e; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #5b4132; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #9d281b}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #843424}
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024b5}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #3b6c19}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0d32ac}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #4c6724}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline}
-span.s4 {color: #0024b5}
-span.s5 {color: #9d281b}
-span.s6 {color: #3b6c19}
+span.s4 {color: #0d32ac}
+span.s5 {color: #843424}
+span.s6 {color: #4c6724}
 span.s7 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -34,7 +34,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="s1"><b>RedMst<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>a sort of timeline - master controller</b></p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
-<p class="p1">RedMst controls track objects (RedTrk).<span class="Apple-converted-space">  </span>it does so by sending play and stop messages to them synced to a clock.<span class="Apple-converted-space">  </span>RedMst also has a global counter for sections.<span class="Apple-converted-space">  </span>if a track is activated to play for a section, then it gets sent a play message when RedMst reaches that section, else the track is stopped.</p>
+<p class="p1">RedMst controls track objects (RedTrk).<span class="Apple-converted-space">  </span>it does so by sending play and stop messages to them synced to a clock.<span class="Apple-converted-space">  </span>RedMst also has a global counter for sections.<span class="Apple-converted-space">  </span>if a track is activated to play for a section, it gets sent a play message when RedMst reaches that section, else the track is stopped.</p>
 <p class="p1">The counter is driven by user input (*next, *goto, etc) or RedSeq.<span class="Apple-converted-space">  </span>all messages controlling playback (*next, *previous, *goto, *play, *stop) are scheduled to happen on the next quant beat.</p>
 <p class="p2"><br></p>
 <p class="p3"><span class="s2">see also [</span><span class="s3">RedTrk</span><span class="s2">] [</span><span class="s3">RedTrk2</span><span class="s2">] [</span><span class="s3">RedSeq</span><span class="s2">]</span></p>
@@ -253,7 +253,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test06</span>, f, #[6]);</p>
 <p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test07</span>, g, #[7]);</p>
 <p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test08</span>, h, #[8]);</p>
-<p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test09</span>, i, [9]);</p>
+<p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test09</span>, i, #[9]);</p>
 <p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test10</span>, j, #[10]);</p>
 <p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test11</span>, k, #[11]);</p>
 <p class="p11"><span class="s4">RedTrk</span>(<span class="s6">\test12</span>, l, #[12]);</p>

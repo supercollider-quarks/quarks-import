@@ -71,10 +71,10 @@ RedMst {
 	*goto {|jumpSection|
 		if(clock.isNil, {
 			clock= TempoClock.default;
-			"RedMst: clock is nil - using TempoClock.default".warn;
+			"RedMst: clock is nil - using TempoClock.default".inform;
 		});
 		if(alreadyJumping, {
-			//"RedMst: already jumping somewhere - goto ignored".warn;
+			"RedMst: already jumping somewhere - goto ignored".inform;
 		}, {
 			clock.schedAbs(clock.nextTimeOnGrid(quant)-stopAheadTime, {
 				tracks.do{|x|

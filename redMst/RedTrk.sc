@@ -35,6 +35,7 @@ RedTrk {
 			if(item.isNil, {
 				^trk
 			}, {
+				("RedTrk: replacing track"+key).inform;
 				trk.stop;							//stop previous item
 				trk.item= item;					//swap items
 				trk.sections= sections.asSequenceableCollection;
