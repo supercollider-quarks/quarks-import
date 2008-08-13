@@ -1,6 +1,7 @@
 //redFrik - released under gnu gpl license
 
 RedTrk2 : RedTrk {
+	var <fadeTime= 0.02;
 	initRedTrk {|argKey, argItem, argSections|
 		var channels, rate;
 		key= argKey;
@@ -15,11 +16,14 @@ RedTrk2 : RedTrk {
 					});
 				});
 			};
-			item= Pbus(argItem, 0, 0.02, channels ? 2, rate ? \audio);
+			item= Pbus(argItem, 0, fadeTime, channels ? 2, rate ? \audio);
 		}, {
 			item= argItem;
 		});
 		sections= argSections.asSequenceableCollection;
 		RedMst.add(this);
+	}
+	fadeTime_ {|time|
+		item.fadeTime_(time);
 	}
 }
