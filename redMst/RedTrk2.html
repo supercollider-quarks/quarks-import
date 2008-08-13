@@ -10,17 +10,22 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0019ba}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0019ba}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline}
-span.s4 {color: #0000bf}
-span.s5 {color: #007300}
+span.s4 {color: #0019ba}
+span.s5 {color: #2b6f11}
+span.s6 {color: #0000bf}
+span.s7 {color: #007300}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -30,22 +35,31 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b>superclass: RedTrk</b></p>
 <p class="p3"><br></p>
 <p class="p1">very similar to RedTrk but can do abrupt swaps between sections.<span class="Apple-converted-space">  </span>it cuts off events with long durations.</p>
+<p class="p1">also does cross-fade on demand.<span class="Apple-converted-space">  </span>please ignore the "FAILURE n_set Node not found" that gets posted.</p>
 <p class="p2"><br></p>
 <p class="p4"><span class="s2">see also [</span><span class="s3">RedMst</span><span class="s2">] [</span><span class="s3">RedSeq</span><span class="s2">] [</span><span class="s3">RedTrk</span><span class="s2">]</span></p>
 <p class="p5"><br></p>
-<p class="p6"><br></p>
-<p class="p7">//--</p>
-<p class="p7"><span class="s4">RedTrk2</span><span class="s2">(</span><span class="s5">\t1</span><span class="s2">, </span><span class="s4">Pbind</span><span class="s2">(</span><span class="s5">\degree</span><span class="s2">, 0, </span><span class="s5">\dur</span><span class="s2">, 8), [0])<span class="Apple-tab-span">	</span></span>//create a track with long duration events</p>
-<p class="p8"><span class="s4">RedTrk2</span>(<span class="s5">\t2</span>, <span class="s4">Pbind</span>(<span class="s5">\degree</span>, 1, <span class="s5">\dur</span>, 8), [1])</p>
-<p class="p6"><br></p>
-<p class="p8">s.boot</p>
-<p class="p7"><span class="s4">RedMst</span><span class="s2">.quant= 2;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//relatively short quant</p>
-<p class="p9">RedMst<span class="s2">.play</span></p>
-<p class="p6"><br></p>
-<p class="p7"><span class="s4">RedMst</span><span class="s2">.goto(1)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//with RedTrk long durations and short quant gives overlaps</p>
-<p class="p7"><span class="s4">RedMst</span><span class="s2">.goto(0)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//while RedTrk2 forces events to stop</p>
-<p class="p6"><br></p>
-<p class="p9">RedMst<span class="s2">.stop</span></p>
-<p class="p8"><span class="s4">RedMst</span>.clear</p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>&lt;&gt;fadeTime</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>time to fade in/out.<span class="Apple-converted-space">  </span>(default= 0.02 seconds)</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8">//--</p>
+<p class="p8"><span class="s4">RedTrk2</span><span class="s2">(</span><span class="s5">\t1</span><span class="s2">, </span><span class="s4">Pbind</span><span class="s2">(</span><span class="s5">\degree</span><span class="s2">, 0, </span><span class="s5">\dur</span><span class="s2">, 8), [0])<span class="Apple-tab-span">	</span></span>//create a track with long duration events</p>
+<p class="p9"><span class="s4">RedTrk2</span>(<span class="s5">\t2</span>, <span class="s4">Pbind</span>(<span class="s5">\degree</span>, 1, <span class="s5">\dur</span>, 8), [1])</p>
+<p class="p7"><br></p>
+<p class="p9">s.boot</p>
+<p class="p8"><span class="s4">RedMst</span><span class="s2">.quant= 2;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//relatively short quant</p>
+<p class="p10">RedMst<span class="s2">.play</span></p>
+<p class="p7"><br></p>
+<p class="p8"><span class="s4">RedMst</span><span class="s2">.goto(1)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//with RedTrk long durations and short quant gives overlaps</p>
+<p class="p8"><span class="s4">RedMst</span><span class="s2">.goto(0)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//while RedTrk2 forces events to stop</p>
+<p class="p11"><br></p>
+<p class="p12"><span class="s6">RedTrk2</span><span class="s2">(</span><span class="s7">\t1</span><span class="s2">).fadeTime= 3;<span class="Apple-tab-span">	</span></span>//set long fadeTime to do crossfades</p>
+<p class="p9"><span class="s6">RedTrk2</span>(<span class="s7">\t2</span>).fadeTime= 3;</p>
+<p class="p9"><span class="s4">RedMst</span>.goto(1)</p>
+<p class="p9"><span class="s4">RedMst</span>.goto(0)</p>
+<p class="p7"><br></p>
+<p class="p10">RedMst<span class="s2">.stop</span></p>
+<p class="p9"><span class="s4">RedMst</span>.clear</p>
 </body>
 </html>
