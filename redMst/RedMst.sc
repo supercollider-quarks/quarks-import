@@ -1,6 +1,8 @@
 //redFrik - released under gnu gpl license
 
-//--changed 080808:
+//--changes 080814:
+//added skipEmpty flag to jump over empty sections
+//--changes 080808:
 //took out setters for key in RedTrk
 //added the RedTrk2 class - thanks julian for hint about Pbus
 //--changes 080807:
@@ -25,6 +27,7 @@ RedMst {
 	classvar	<tracks, <>clock, <>quant= 4,
 			<section= 0, <maxSection= 0,
 			<>stopAheadTime= 0.05,
+			<>skipEmpty= false,
 			alreadyJumping= false;
 	*initClass {
 		tracks= ();
@@ -103,9 +106,21 @@ RedMst {
 		});
 	}
 	*next {
-		this.goto(section+1);
+		var jump= section+1;
+		if(skipEmpty, {
+			while({jump<maxSection and:{tracks.any{|x| x.sections.includes(jump)}.not}}, {
+				jump= jump+1;
+			});
+		});
+		this.goto(jump);
 	}
 	*prev {
-		this.goto(section-1);
+		var jump= section-1;
+		if(skipEmpty, {
+			while({jump>=0 and:{tracks.any{|x| x.sections.includes(jump)}.not}}, {
+				jump= jump-1;
+			});
+		});
+		this.goto(jump);
 	}
 }
