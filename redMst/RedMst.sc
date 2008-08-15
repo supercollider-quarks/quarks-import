@@ -1,5 +1,8 @@
 //redFrik - released under gnu gpl license
 
+//--changes 080815:
+//added isPlaying flag
+//added RedMstGUI class and helpfile
 //--changes 080814:
 //added skipEmpty flag to jump over empty sections
 //--changes 080808:
@@ -28,6 +31,7 @@ RedMst {
 			<section= 0, <maxSection= 0,
 			<>stopAheadTime= 0.05,
 			<>skipEmpty= false,
+			<isPlaying= false,
 			alreadyJumping= false;
 	*initClass {
 		tracks= ();
@@ -47,6 +51,7 @@ RedMst {
 		tracks.put(trk.key, nil);
 	}
 	*clear {
+		isPlaying= false;
 		tracks.do{|x| x.clear};
 		tracks= ();
 		section= 0;
@@ -58,6 +63,7 @@ RedMst {
 		});
 	}
 	*stop {
+		isPlaying= false;
 		if(clock.notNil, {
 			clock.schedAbs(clock.nextTimeOnGrid(quant)-stopAheadTime, {
 				tracks.do{|x| x.stop};
@@ -72,6 +78,7 @@ RedMst {
 		this.goto(startSection);
 	}
 	*goto {|jumpSection|
+		isPlaying= true;
 		if(clock.isNil, {
 			clock= TempoClock.default;
 			"RedMst: clock is nil - using TempoClock.default".inform;
