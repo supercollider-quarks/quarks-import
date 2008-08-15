@@ -77,6 +77,7 @@ RedMstGUI {
 				if(RedMst.tracks.notEmpty, {
 					w= view.bounds.width/(RedMst.maxSection+1);
 					h= view.bounds.height/RedMst.tracks.size;
+					GUI.pen.font_(fnt2);
 					RedMst.tracks.do{|trk, y|
 						GUI.pen.color_(colFore);
 						GUI.pen.strokeRect(Rect(0, y*h, view.bounds.width, h*0.9));
@@ -84,7 +85,8 @@ RedMstGUI {
 							GUI.pen.fillRect(Rect(x*w, y*h, w, h*0.9));
 						};
 						str= trk.key.asString+"("++trk.item.class++")";
-						str.drawInRect(Rect(0, y*h, view.bounds.width, h), fnt2, colFore2);
+						GUI.pen.fillColor_(colFore2);
+						GUI.pen.stringAtPoint(str, Point(0, y*h));
 					};
 					GUI.pen.fillColor_(colBack2);
 					GUI.pen.fillRect(Rect(RedMst.section*w, 0, w, view.bounds.height-(h*0.1)));
