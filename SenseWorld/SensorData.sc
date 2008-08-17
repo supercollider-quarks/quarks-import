@@ -169,7 +169,7 @@ SensorDataGUI{
 
 		shortStd = GUI.numberBox.new( w, Rect( 10, 10, 40, 30 ) );
 		longStd = GUI.numberBox.new( w, Rect( 10, 10, 40, 30 ) );		
-		if ( GUI.scheme.id == \schwelle,
+		if ( GUI.scheme.id == \swingosc, // why did I put \schwelle here??
 			{ 
 				shortStd.maxDecimals_( 3 ).minDecimals_( 3 );
 				longStd.maxDecimals_( 3 ).minDecimals_( 3 );
