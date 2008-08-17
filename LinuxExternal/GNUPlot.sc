@@ -166,7 +166,7 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 	monitor{ |updateF,dt,length,ns=1,skip=1| // id: id of data to monitor, dt: time step, skip: stepsize
 		updateFunc = updateF;
 		hisdata = Array.fill( length, 0 );
-		monrout = Routine{ 
+		monrout = Task{ 
 			var cnt = 0;
 			inf.do{ 
 				hisdata.pop;
@@ -177,7 +177,7 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 						if ( ns > 1, {
 							this.plotd( hisdata.flop, ns );
 						},{
-							this.plotd( hisdata, ns );
+							this.plotd( hisdata.flatten, ns );
 						});
 						cnt = 0;
 					});
@@ -187,7 +187,7 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 	}
 
 	startMonitor{
-		monrout.play;
+		monrout.stop.play;
 	}
 
 	stopMonitor{ 
