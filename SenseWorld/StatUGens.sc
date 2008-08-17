@@ -26,13 +26,15 @@ StdDevUGen{
 }
 
 SkewUGen{ 
-	*kr{ arg input, length=40, mean;
-		var skew,stddev,good;
-		if ( mean.isNil,
-			{
-			mean = RunningSum.kr( input, length )/length;
-			});
-		stddev = StdDevUGen.kr( input, length, mean );
+	*kr{ arg input, length=40, stddev, mean;
+		var skew,good;
+		if ( stddev.isNil,{
+			if ( mean.isNil,
+				{
+					mean = RunningSum.kr( input, length )/length;
+				});
+			stddev = StdDevUGen.kr( input, length, mean );
+		});
 		skew = RunningSum.kr( ( input - mean ).cubed, length ) / (length * stddev.cubed );
 		// get rid of NaN's in output
 		good = BinaryOpUGen('==', CheckBadValues.kr(skew, 0, 0), 0);
