@@ -20,6 +20,7 @@
 //--todo:
 //RedSeq.  also extra gui class with esc key for next, section data, playing tracks etc
 //test RedTrk and RedTrk2 with Pbindf, Pmono and Pfx
+//possible bug with RedTrk2 and addAction.  it now differs from RedTrk
 
 //--notes:
 //RedXM and RedMod can change RedMst's clock tempo!
