@@ -23,7 +23,7 @@ RedMstGUI {
 		fnt2= fnt.copy.size_(9);
 		colBack2= colBack.complementary.alpha_(0.3);
 		colFore2= colFore.complementary.alpha_(0.7);
-		win= GUI.window.new("RedMst", Rect(300, 200, size*9.5+20, size*6+225), false)
+		win= GUI.window.new("RedMst", Rect(300, 16, size*9.5+20, size*6+225), false)
 			.alpha_(skin.unfocus ? 0.9)
 			.front;
 		win.view.background_(colBack);
