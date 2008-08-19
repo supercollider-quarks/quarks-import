@@ -1,5 +1,8 @@
 //redFrik - released under gnu gpl license
 
+//--changes 080819:
+//added metronome userview
+//changed fps to dur for update rate
 //--changes 080815:
 //added isPlaying flag
 //added RedMstGUI class and helpfile
