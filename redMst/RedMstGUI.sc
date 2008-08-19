@@ -1,12 +1,13 @@
 //redFrik - released under gnu gpl license
 
 RedMstGUI {
-	var	<win, <>fps= 2;
+	var	<win, <>dur= 0.25;
 	*new {|size= 24, skin|
 		^super.new.initRedMstGUI(size, skin);
 	}
 	initRedMstGUI {|size, skin|
-		var	guiPlay, guiPrev, guiNext, guiSection, guiMaxSection, guiTempo, guiQuant, guiUser,
+		var	guiPlay, guiPrev, guiNext, guiSection, guiMaxSection,
+			guiTempo, guiQuant, guiUser, guiMetro,
 			task, fnt, fnt2, colBack, colFore, colBack2, colFore2;
 		if(skin.isNil, {
 			GUI.skins.put(\redMstGUI, (
@@ -59,6 +60,40 @@ RedMstGUI {
 			.action_{|view|
 				RedMst.next;
 			};
+		guiMetro= GUI.userView.new(win, Rect(0, 0, size*1.5, size*1.5))
+			.relativeOrigin_(true)
+			.drawFunc_{|view|
+				var midPnt= Point(view.bounds.height, view.bounds.width)*0.5;
+				var inner= view.bounds.height*0.3;
+				var outer= view.bounds.height*0.5;
+				var slice= 2pi/RedMst.clock.beatsPerBar;
+				GUI.pen.color_(colFore);
+				RedMst.clock.beatsPerBar.do{|x|
+					GUI.pen.addAnnularWedge(
+						midPnt,
+						inner,
+						outer,
+						x*slice+1.5pi,
+						slice
+					)
+				};
+				GUI.pen.stroke;
+				GUI.pen.addAnnularWedge(
+					midPnt,
+					inner,
+					outer,
+					1.5pi,
+					RedMst.clock.beatInBar/RedMst.clock.beatsPerBar*2pi
+				);
+				GUI.pen.addAnnularWedge(
+					midPnt,
+					0,
+					inner*0.8,
+					1.5pi,
+					2pi*(RedMst.quant-(RedMst.clock.nextTimeOnGrid(RedMst.quant)-RedMst.clock.beats))/RedMst.quant;
+				);
+				GUI.pen.fill;
+			};
 		win.view.decorator.nextLine;
 		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("sect:");
 		guiSection= GUI.staticText.new(win, Rect(0, 0, size*2, size*1.5));
@@ -100,19 +135,22 @@ RedMstGUI {
 		
 		task= Routine{
 			inf.do{
-				guiPlay.value_(RedMst.isPlaying.binaryValue);
-				guiSection.string_(RedMst.section);
-				guiMaxSection.string_("/"++RedMst.maxSection);
-				try{
-					guiTempo.string_(RedMst.clock.tempo*60);
-				} {
-					guiTempo.string_("-");
-				};
-				guiQuant.string_(RedMst.quant);
-				guiUser.refresh;
-				fps.reciprocal.wait;
+				{
+					guiPlay.value_(RedMst.isPlaying.binaryValue);
+					guiSection.string_(RedMst.section);
+					guiMaxSection.string_("/"++RedMst.maxSection);
+					try{
+						guiTempo.string_(RedMst.clock.tempo*60);
+					} {
+						guiTempo.string_("-");
+					};
+					guiQuant.string_(RedMst.quant);
+					guiMetro.refresh;
+					guiUser.refresh;
+				}.defer;
+				dur.wait;
 			};
-		}.play(AppClock);
+		}.play(RedMst.clock);
 		CmdPeriod.doOnce({
 			if(win.isClosed.not, {
 				win.close;
