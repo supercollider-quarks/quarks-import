@@ -531,43 +531,90 @@ Voicer {		// collect and manage voicer nodes
 
 // drop in some events to use with voicers
 	*initClass {
-		Class.initClassTree(Event);
-		Event.parentEvents.put(\voicerMIDI, (args: [],
-			
-				// maybe you want to use non-equal-temperament. write it here
-			midiNoteToFreq: #{ |notenum|
-				notenum.midicps
-			},
-			
-			prepNote: #{
-				var i;
-				~freq = ~freq ?? { ~note.freq };
-				(~midi ? true).if({ ~freq = ~midiNoteToFreq.value(~freq).asArray },
-					{ ~freq = ~freq.asArray });
-				~delta = ~delta ? ~note.dur;
-				~length = (~length ? ~note.length).asArray;
-				~args = ~args ? ~note.args;
-				~gate = (~gate ?? {
-						// identify the \gate, xxx pair in the args array
-						// 2nd removeAt should return the value *wink*
-					(i = ~args.detectIndex({ |item| item == \gate })).notNil
-						.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
-				}).asArray;
-
-				~nodes = ~voicer.prGetNodes(max(~freq.size, max(~length.size, ~gate.size)));
-				~voicer.setArgsInEvent(currentEnvironment);
-			},
-			
-			play: #{
-				var	lag, timingOffset = ~timingOffset ? 0;
-				~voicer.notNil.if({
-					lag = ~latency;
-					~prepNote.value;
-					~finish.value;	// user-definable
-
+		StartUp.add {
+			Event.parentEvents.put(\voicerMIDI, (args: [],
+				
+					// maybe you want to use non-equal-temperament. write it here
+				midiNoteToFreq: #{ |notenum|
+					notenum.midicps
+				},
+				
+				prepNote: #{
+					var i;
+					~freq = ~freq ?? { ~note.freq };
+					(~midi ? true).if({ ~freq = ~midiNoteToFreq.value(~freq).asArray },
+						{ ~freq = ~freq.asArray });
+					~delta = ~delta ? ~note.dur;
+					~length = (~length ? ~note.length).asArray;
+					~args = ~args ? ~note.args;
+					~gate = (~gate ?? {
+							// identify the \gate, xxx pair in the args array
+							// 2nd removeAt should return the value *wink*
+						(i = ~args.detectIndex({ |item| item == \gate })).notNil
+							.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
+					}).asArray;
+	
+					~nodes = ~voicer.prGetNodes(max(~freq.size, max(~length.size, ~gate.size)));
+					~voicer.setArgsInEvent(currentEnvironment);
+				},
+				
+				play: #{
+					var	lag, timingOffset = ~timingOffset ? 0;
+					~voicer.notNil.if({
+						lag = ~latency;
+						~prepNote.value;
+						~finish.value;	// user-definable
+	
+						~nodes.do({ |node, i|
+							var	freq = ~freq.wrapAt(i), length = ~length.wrapAt(i);
+							~schedBundleArray.(~lag ? 0, ~timingOffset,
+								node.server,
+								node.server.makeBundle(false, {
+									node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
+								})
+							);
+							(length.notNil and: { length != inf }).if({
+								thisThread.clock.sched(length + timingOffset, {
+									node.release(0,
+										node.server.latency.notNil.if({
+											lag + node.server.latency
+										}),
+										freq);
+								});
+							});
+						});
+					});
+				}
+			));
+	
+			Event.default[\eventTypes].put(\voicerNote, #{|server|
+				var lag, strum, sustain, i, timingOffset = ~timingOffset ? 0;
+				
+				~freq = (~freq.value + ~detune).asArray;
+	
+				if (~freq.isSymbol.not) {
+					~amp = ~amp.value.asArray;
+					lag = ~lag;
+					strum = ~strum;
+					sustain = ~sustain = ~sustain.value.asArray;
+					~gate = (~gate ?? {
+							// identify the \gate, xxx pair in the args array
+							// 2nd removeAt should return the value *wink*
+						(i = ~args.detectIndex({ |item| item == \gate })).notNil
+							.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
+					}).asArray;
+					
+					~nodes = ~voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
+					~voicer.setArgsInEvent(currentEnvironment);
+					
 					~nodes.do({ |node, i|
-						var	freq = ~freq.wrapAt(i), length = ~length.wrapAt(i);
-						~schedBundleArray.(~lag ? 0, ~timingOffset,
+						var latency, freq, length;
+						
+						latency = i * strum + lag;
+						freq = ~freq.wrapAt(i);
+						length = ~sustain.wrapAt(i);
+	
+						~schedBundleArray.(~latency ? 0, ~timingOffset,
 							node.server,
 							node.server.makeBundle(false, {
 								node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
@@ -583,55 +630,9 @@ Voicer {		// collect and manage voicer nodes
 							});
 						});
 					});
-				});
-			}
-		));
-
-		Event.default[\eventTypes].put(\voicerNote, #{|server|
-			var lag, strum, sustain, i, timingOffset = ~timingOffset ? 0;
-			
-			~freq = (~freq.value + ~detune).asArray;
-
-			if (~freq.isSymbol.not) {
-				~amp = ~amp.value.asArray;
-				lag = ~lag;
-				strum = ~strum;
-				sustain = ~sustain = ~sustain.value.asArray;
-				~gate = (~gate ?? {
-						// identify the \gate, xxx pair in the args array
-						// 2nd removeAt should return the value *wink*
-					(i = ~args.detectIndex({ |item| item == \gate })).notNil
-						.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
-				}).asArray;
-				
-				~nodes = ~voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
-				~voicer.setArgsInEvent(currentEnvironment);
-				
-				~nodes.do({ |node, i|
-					var latency, freq, length;
-					
-					latency = i * strum + lag;
-					freq = ~freq.wrapAt(i);
-					length = ~sustain.wrapAt(i);
-
-					~schedBundleArray.(~latency ? 0, ~timingOffset,
-						node.server,
-						node.server.makeBundle(false, {
-							node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
-						})
-					);
-					(length.notNil and: { length != inf }).if({
-						thisThread.clock.sched(length + timingOffset, {
-							node.release(0,
-								node.server.latency.notNil.if({
-									lag + node.server.latency
-								}),
-								freq);
-						});
-					});
-				});
-			};
-		});
+				};
+			});
+		}
 	}
 }
 
