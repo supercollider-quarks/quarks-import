@@ -28,10 +28,10 @@
 					.format(bInfoCount, this.options.numBuffers,
 						(bInfoCount / this.options.numBuffers * 100).round(0.01), $%)
 					.warn;
-				returns.insp;
 			});
 			osc.remove;
 			nil;
 		});
+		^returns
 	}
 }
