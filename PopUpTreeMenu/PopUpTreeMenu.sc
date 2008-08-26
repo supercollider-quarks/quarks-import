@@ -1,36 +1,40 @@
 //redFrik
+
+//--changes080826
+//now using SCPopUpMenu instead of SCListView as base. strange mistake
+//added GUI.popUpTreeMenu for consistency
+//fixed bug in bounds getter
+//rewrote positioning. should now work inside views with flowlayout decorators, tabbedview etc
+//this also fixed the swingosc offset issues
+//--080825initial release
+
 PopUpTreeMenu : SCViewHolder {
 	var	<>tree, <value, <currentLeaf, <>action, <>openAction, <>closeAction,
-		<font, <bounds, <hiliteColor, <parentWindow,
-		pop, usr, hgt, lst,
+		<font, <bounds, <parentWindow,
+		pop, usr, hgt, lst, add,
 		lastSelected= 0, xIndexLast, yIndexLast, mouseMoved;
+	*initClass {
+		GUI.schemes.do{|z| z.popUpTreeMenu= PopUpTreeMenu}
+	}
 	*new {|parent, bounds|
 		^super.new.init(parent, bounds);
 	}
-	init {|parent, bounds|
-		var cnt= 0;								//safety
-		while({parentWindow.isNil or:{cnt>99}}, {
-			cnt= cnt+1;
-			if(parent.isKindOf(GUI.window), {
-				parentWindow= parent;
-			}, {
-				if(parent.respondsTo(\findWindow), {
-					parentWindow= parent.findWindow;
-				}, {
-					if(parent.isKindOf(GUI.compositeView) or:{parent.isKindOf(FlowView)}, {
-						parent= parent.parent;
-					});
-				});
-			});
-		});
+	init {|argParent, argBounds|
+		parentWindow= this.prFindWindow(argParent);
 		font= GUI.font.new("Monaco", 9);
-		hiliteColor= Color.black;
-		pop= GUI.listView.new(parent, bounds)
+		pop= GUI.popUpMenu.new(argParent, argBounds)
 			.font_(font)
 			.background_(Color.clear)
-			.hiliteColor_(hiliteColor)
 			.stringColor_(Color.black);
-		usr= GUI.userView.new(parent, bounds).relativeOrigin_(true);
+		bounds= pop.bounds;						//adapt if decorator changed position
+		try{										//test if decorator and then shift
+			argParent.view.decorator.shift(
+				bounds.left-argParent.view.decorator.left,
+				bounds.top-argParent.view.decorator.top
+			);
+		} {};
+		add= this.prFindAdditionalOffset(argParent);	//some containers add extra (TabbedView)
+		usr= GUI.userView.new(argParent, bounds).relativeOrigin_(true);
 		usr.mouseDownAction_({|v, x, y| mouseMoved= false; this.prUserAction(v, x, y)});
 		usr.mouseMoveAction_({|v, x, y| mouseMoved= true; this.prUserAction(v, x, y)});
 		usr.mouseUpAction_({|v, x, y| mouseMoved= false; this.prUserActionEnd(v, x, y)});
@@ -46,8 +50,7 @@ PopUpTreeMenu : SCViewHolder {
 	
 	//--overrides
 	bounds_ {|argRect| bounds= argRect; pop.bounds_(bounds); usr.bounds_(bounds)}
-	font_ {|argFont| font= argFont; pop.font_(font)}
-	hiliteColor_ {|argColor| hiliteColor= argColor; pop.hiliteColor_(hiliteColor)}
+	font_ {|argFont| font= argFont; pop.font_(font); /*pop.refresh*/}
 	
 	//--private
 	prUserAction {|v, x, y|
@@ -102,7 +105,6 @@ PopUpTreeMenu : SCViewHolder {
 				value= currentLeaf;
 				action.value(this, value);			//call action function
 				pop.items_([value.last.asString]);
-				pop.value= 0;
 			}, {									//mouse released on node with submenu
 				pop.items_([]);
 			});
@@ -146,7 +148,6 @@ PopUpTreeMenu : SCViewHolder {
 			listView= GUI.listView.new(window, Rect(0, 0, bounds.width, bounds.height))
 				.font_(pop.font)
 				.background_(pop.background)
-				.hiliteColor_(hiliteColor)
 				.stringColor_(pop.stringColor)
 				.items_(items);
 			//here later somehow test if in noclickmode and then track mouseposition from win
@@ -163,9 +164,44 @@ PopUpTreeMenu : SCViewHolder {
 	}
 	prToScreen {|bounds|
 		^bounds.moveTo(
-			parentWindow.bounds.left+bounds.left,
-			parentWindow.bounds.height+parentWindow.bounds.top-bounds.top-bounds.height
+			parentWindow.bounds.left+bounds.left-add.x,
+			parentWindow.bounds.height+parentWindow.bounds.top-bounds.top-bounds.height-add.y
 		)
+	}
+	prFindAdditionalOffset {|parent|					//search for additional x/y offset
+		var x= 0, y= 0;
+		var temp= parent;
+		while({temp.notNil}, {
+			if(temp.respondsTo(\parent), {
+				temp= temp.parent;
+				if(temp.notNil, {
+					x= x+temp.bounds.left;
+					y= y+temp.bounds.top;
+				});
+			}, {
+				temp= nil;
+			});
+		});
+		^Point(x, y);
+	}
+	prFindWindow {|parent|							//not so elegant search for top window
+		var cnt= 0;								//safety
+		var window;
+		while({window.isNil or:{cnt>99}}, {
+			cnt= cnt+1;
+			if(parent.isKindOf(GUI.window), {
+				window= parent;
+			}, {
+				if(parent.respondsTo(\findWindow), {	//must be topview
+					window= parent.findWindow;
+				}, {
+					if(parent.isKindOf(GUI.compositeView) or:{parent.isKindOf(FlowView)}, {
+						parent= parent.parent;
+					});
+				});
+			});
+		});
+		^window;
 	}
 	prLookup {|tree, addy|
 		^if(addy.size>1, {
