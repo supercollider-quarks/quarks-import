@@ -10,18 +10,18 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #3b6c19}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2b6f11}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {text-decoration: underline}
-span.s3 {color: #000000}
-span.s4 {color: #9d281b}
-span.s5 {color: #3b6c19}
-span.s6 {color: #0024b5}
+span.s3 {color: #2b6f11}
+span.s4 {color: #ad1d13}
+span.s5 {color: #000000}
+span.s6 {color: #0019ba}
 span.s7 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -33,11 +33,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">known problems / todo:</p>
 <p class="p1"><span class="Apple-tab-span">	</span>* the tree must must follow the structure described below.<span class="Apple-converted-space">  </span>later it might be possible to use e.g. Help.tree</p>
-<p class="p1"><span class="Apple-tab-span">	</span>* problems using it inside container views.</p>
 <p class="p1"><span class="Apple-tab-span">	</span>* screen width and height are not respected.<span class="Apple-converted-space">  </span>menus with many entries may be cut off at the borders.</p>
 <p class="p1"><span class="Apple-tab-span">	</span>* click once and menu should stay open so one can browse without keeping the mouse pressed.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>difficult due to mouseOverAction bug - it does not fire when already clicked somewhere else.</p>
-<p class="p1"><span class="Apple-tab-span">	</span>* swingosc: offset problem with the root node - root appears in top left corner.</p>
 <p class="p1"><span class="Apple-tab-span">	</span>* swingosc: scroll handles appear.<span class="Apple-converted-space">  </span>difficult to solve - something with font size calculation.</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
@@ -48,9 +46,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1">dictionary of dictionaries.<span class="Apple-converted-space">  </span>branches terminate if they have an empty dictionary as a value (= leaf).</p>
 <p class="p1">everything have to be symbols.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s3">( </span>'symbol1'<span class="s3">: (), </span>'symbol2'<span class="s3">: () )<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s4">//same level</span></p>
-<p class="p5">( <span class="s5">'symbol'</span>: ( <span class="s5">'symbol'</span>: () ) )<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//nested</span></p>
-<p class="p6"><span class="s3">( </span><span class="s5">'1'</span><span class="s3"> : (</span><span class="s5">'11'</span><span class="s3">: () ), </span><span class="s5">'2.2'</span><span class="s3">: (</span><span class="s5">'22'</span><span class="s3">: () ) )<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//numbers also have to be symbols</p>
+<p class="p4">( <span class="s3">'symbol1'</span>: (), <span class="s3">'symbol2'</span>: () )<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//same level</span></p>
+<p class="p4">( <span class="s3">'symbol'</span>: ( <span class="s3">'symbol'</span>: () ) )<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//nested</span></p>
+<p class="p5"><span class="s5">( </span><span class="s3">'1'</span><span class="s5"> : (</span><span class="s3">'11'</span><span class="s5">: () ), </span><span class="s3">'2.2'</span><span class="s5">: (</span><span class="s3">'22'</span><span class="s5">: () ) )<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//numbers also have to be symbols</p>
 <p class="p2"><br></p>
 <p class="p1"><b>&lt;value</b></p>
 <p class="p2"><br></p>
@@ -80,92 +78,91 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">array of symbols pointing to current selection.<span class="Apple-converted-space">  </span>array is empty if nothing selected.</p>
 <p class="p2"><br></p>
-<p class="p7"><br></p>
-<p class="p6">//--simple example</p>
-<p class="p5">(</p>
-<p class="p5"><span class="s6">var</span> w= <span class="s6">GUI</span>.window.new(<span class="s7">"popuptreemenu - simple"</span>, <span class="s6">Rect</span>(200, 400, 300, 100)).front;</p>
-<p class="p5"><span class="s6">var</span> a= <span class="s6">PopUpTreeMenu</span>.new(w, <span class="s6">Rect</span>(50, 30, 100, 20))</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.tree_(</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">'a drum'</span>: (),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">'bass'</span>: (</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">'funky'</span>: (),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>unhip: (</p>
-<p class="p4"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>'umpahTuba'<span class="s3">: (),</span></p>
-<p class="p4"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>'umpahUpright'<span class="s3">: ()</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">'melo'</span>: ()</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
-<p class="p5"><span class="Apple-tab-span">	</span>);</p>
-<p class="p5">a.action_{<span class="s6">|view, val|</span> (<span class="s7">"selected:"</span>+val).postln};</p>
-<p class="p5">)</p>
+<p class="p6"><br></p>
+<p class="p5">//--simple example</p>
+<p class="p4">(</p>
+<p class="p4"><span class="s6">var</span> w= <span class="s6">GUI</span>.window.new(<span class="s7">"popuptreemenu - simple"</span>, <span class="s6">Rect</span>(200, 400, 300, 100)).front;</p>
+<p class="p4"><span class="s6">var</span> a= <span class="s6">PopUpTreeMenu</span>.new(w, <span class="s6">Rect</span>(50, 30, 100, 20))</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.tree_(</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">'a drum'</span>: (),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">'bass'</span>: (</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">'funky'</span>: (),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>unhip: (</p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>'umpahTuba'<span class="s5">: (),</span></p>
+<p class="p7"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>'umpahUpright'<span class="s5">: ()</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>),</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">'melo'</span>: ()</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>)</p>
+<p class="p4"><span class="Apple-tab-span">	</span>);</p>
+<p class="p4">a.action_{<span class="s6">|view, val|</span> (<span class="s7">"selected:"</span>+val).postln};</p>
+<p class="p4">)</p>
 <p class="p8"><br></p>
 <p class="p8"><br></p>
-<p class="p6">//--polling state of the menu in use - example also show custom color/font settings</p>
-<p class="p5">(</p>
-<p class="p5"><span class="s6">var</span> w= <span class="s6">GUI</span>.window.new(<span class="s7">"popuptreemenu - state"</span>, <span class="s6">Rect</span>(400, 400, 300, 100)).front;</p>
-<p class="p5">a= <span class="s6">PopUpTreeMenu</span>.new(w, <span class="s6">Rect</span>(10, 20, 200, 34))</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.tree_((<span class="s5">'aaa'</span>: (), <span class="s5">'bbb'</span>: (), <span class="s5">'ccc'</span>: (<span class="s5">'123'</span>: (), <span class="s5">'456'</span>: (), <span class="s5">'789'</span>: (<span class="s5">'hier'</span>: ()))))</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.font_(<span class="s6">GUI</span>.font.new(<span class="s7">"Arial"</span>, 24))</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.background_(<span class="s6">Color</span>.red)</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.hiliteColor_(<span class="s6">Color</span>.red(0.7))</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.stringColor_(<span class="s6">Color</span>.red(0.5))</p>
-<p class="p5"><span class="Apple-tab-span">	</span>.selectedStringColor_(<span class="s6">Color</span>.yellow);</p>
-<p class="p5"><span class="s6">Routine</span>.run{while({w.isClosed.not}, {{</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s7">"path:"</span>++a.currentPath).post;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s7">" leaf:"</span>++a.currentLeaf).post;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>(<span class="s7">" value:"</span>++a.value).postln;</p>
-<p class="p5">}.defer; 0.4.wait})}</p>
-<p class="p5">)</p>
-<p class="p6">//--changing position and font while active</p>
-<p class="p5">a.bounds_(Rect(30, 30, 100, 20));</p>
-<p class="p5">a.font_(GUI.font.new("Geneva", 10));</p>
-<p class="p5">a.value;</p>
+<p class="p5">//--polling state of the menu in use - example also show custom color/font settings</p>
+<p class="p4">(</p>
+<p class="p4"><span class="s6">var</span> w= <span class="s6">GUI</span>.window.new(<span class="s7">"popuptreemenu - state"</span>, <span class="s6">Rect</span>(400, 400, 300, 100)).front;</p>
+<p class="p4">a= <span class="s6">PopUpTreeMenu</span>.new(w, <span class="s6">Rect</span>(10, 20, 200, 34))</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.tree_((<span class="s3">'aaa'</span>: (), <span class="s3">'bbb'</span>: (), <span class="s3">'ccc'</span>: (<span class="s3">'123'</span>: (), <span class="s3">'456'</span>: (), <span class="s3">'789'</span>: (<span class="s3">'hier'</span>: ()))))</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.font_(<span class="s6">GUI</span>.font.new(<span class="s7">"Arial"</span>, 24))</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.background_(<span class="s6">Color</span>.red)</p>
+<p class="p4"><span class="Apple-tab-span">	</span>.stringColor_(<span class="s6">Color</span>.red(0.5));</p>
+<p class="p4"><span class="s6">Routine</span>.run{while({w.isClosed.not}, {{</p>
+<p class="p4"><span class="Apple-tab-span">	</span>(<span class="s7">"path:"</span>++a.currentPath).post;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>(<span class="s7">" leaf:"</span>++a.currentLeaf).post;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>(<span class="s7">" value:"</span>++a.value).postln;</p>
+<p class="p4">}.defer; 0.4.wait})}</p>
+<p class="p4">)</p>
+<p class="p5">//--changing position and font while active</p>
+<p class="p4">a.bounds_(<span class="s6">Rect</span>(30, 30, 100, 20));</p>
+<p class="p4">a.font_(<span class="s6">GUI</span>.font.new(<span class="s7">"Geneva"</span>, 10));</p>
+<p class="p4">a.refresh</p>
+<p class="p4">a.value;</p>
 <p class="p8"><br></p>
 <p class="p8"><br></p>
-<p class="p6">//--scanning sound file folder each time menu is pressed.</p>
-<p class="p6">//--slightly inefficient but keeps menu/folder in sync</p>
-<p class="p5">(</p>
-<p class="p5"><span class="s6">var</span> w= <span class="s6">GUI</span>.window.new(<span class="s7">"popuptreemenu - scan"</span>, <span class="s6">Rect</span>(200, 400, 300, 100)).front;</p>
-<p class="p5"><span class="s6">var</span> a= <span class="s6">PopUpTreeMenu</span>.new(w, <span class="s6">Rect</span>(10, 20, 200, 20)).items_(["sounds"]);</p>
-<p class="p5"><span class="s6">var</span> buildTreeFunc= {<span class="s6">|path|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s6">var</span> deepPathMatch, syms, tree;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>deepPathMatch= {<span class="s6">|pn|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">var</span> arr= [];</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pn.pathMatch.do{<span class="s6">|x|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(x.last.isPathSeparator, {</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr= arr++deepPathMatch.value(<span class="s6">PathName</span>(x++<span class="s7">"*"</span>));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, {</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr= arr++<span class="s6">PathName</span>(x);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p5"><span class="Apple-tab-span">	</span>syms= deepPathMatch.value(<span class="s6">PathName</span>(path)).collect{<span class="s6">|x|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.fullPath.split($/).collect{<span class="s6">|y|</span> y.asSymbol}</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p5"><span class="Apple-tab-span">	</span>tree= ();</p>
-<p class="p5"><span class="Apple-tab-span">	</span>syms.do{<span class="s6">|x|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">var</span> parent= tree;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.do{<span class="s6">|y, i|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">var</span> node= parent[y];</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(node.isNil, {</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent.put(y, ());</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent= parent[y];</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, {</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent= node;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p5"><span class="Apple-tab-span">	</span>tree;</p>
-<p class="p5">};</p>
-<p class="p5">a.openAction_{<span class="s6">|view, x, y|</span></p>
-<p class="p9"><span class="s3"><span class="Apple-tab-span">	</span></span>"rebuilding tree of /sounds directory"<span class="s3">.postln;</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span>view.tree= buildTreeFunc.value(<span class="s7">"sounds"</span>);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//build and replace tree</span></p>
-<p class="p5">};</p>
-<p class="p5">a.closeAction_{<span class="s6">|view, x, y|</span> <span class="s7">"closing"</span>.postln};</p>
-<p class="p5">a.action_{<span class="s6">|view, val|</span> (<span class="s7">"selected:"</span>+val).postln};</p>
-<p class="p5">)</p>
+<p class="p5">//--scanning sound file folder each time menu is pressed.</p>
+<p class="p5">//--slightly inefficient but keeps menu/folder in sync</p>
+<p class="p4">(</p>
+<p class="p4"><span class="s6">var</span> w= <span class="s6">GUI</span>.window.new(<span class="s7">"popuptreemenu - scan"</span>, <span class="s6">Rect</span>(200, 400, 300, 100)).front;</p>
+<p class="p4"><span class="s6">var</span> a= <span class="s6">PopUpTreeMenu</span>.new(w, <span class="s6">Rect</span>(10, 20, 200, 20)).items_([<span class="s7">"sounds"</span>]);</p>
+<p class="p4"><span class="s6">var</span> buildTreeFunc= {<span class="s6">|path|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s6">var</span> deepPathMatch, syms, tree;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>deepPathMatch= {<span class="s6">|pn|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">var</span> arr= [];</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>pn.pathMatch.do{<span class="s6">|x|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(x.last.isPathSeparator, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr= arr++deepPathMatch.value(<span class="s6">PathName</span>(x++<span class="s7">"*"</span>));</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr= arr++<span class="s6">PathName</span>(x);</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>})</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr</p>
+<p class="p4"><span class="Apple-tab-span">	</span>};</p>
+<p class="p4"><span class="Apple-tab-span">	</span>syms= deepPathMatch.value(<span class="s6">PathName</span>(path)).collect{<span class="s6">|x|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.fullPath.split($/).collect{<span class="s6">|y|</span> y.asSymbol}</p>
+<p class="p4"><span class="Apple-tab-span">	</span>};</p>
+<p class="p4"><span class="Apple-tab-span">	</span>tree= ();</p>
+<p class="p4"><span class="Apple-tab-span">	</span>syms.do{<span class="s6">|x|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">var</span> parent= tree;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x.do{<span class="s6">|y, i|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">var</span> node= parent[y];</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(node.isNil, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent.put(y, ());</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent= parent[y];</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, {</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent= node;</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p4"><span class="Apple-tab-span">	</span>};</p>
+<p class="p4"><span class="Apple-tab-span">	</span>tree;</p>
+<p class="p4">};</p>
+<p class="p4">a.openAction_{<span class="s6">|view, x, y|</span></p>
+<p class="p9"><span class="s5"><span class="Apple-tab-span">	</span></span>"rebuilding tree of /sounds directory"<span class="s5">.postln;</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>view.tree= buildTreeFunc.value(<span class="s7">"sounds"</span>);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//build and replace tree</span></p>
+<p class="p4">};</p>
+<p class="p4">a.closeAction_{<span class="s6">|view, x, y|</span> <span class="s7">"closing"</span>.postln};</p>
+<p class="p4">a.action_{<span class="s6">|view, val|</span> (<span class="s7">"selected:"</span>+val).postln};</p>
+<p class="p4">)</p>
 </body>
 </html>
