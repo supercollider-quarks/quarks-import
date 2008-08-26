@@ -318,12 +318,13 @@ SETOmeta : JITseto {
 SETOdump : SETObject {
 	update {
 		postf("SETOdump:update: object updated"++
+			"\tvis:\t%\n" ++
 			"\tID :\t%\n" ++
 			"\tCls:\t%\n" ++
 			"\tPos:\t%\n" ++
 			"\tRot:\t%\n" ++			
 			"\tVel:\t%\n" ++
-			"\tAcc:\t%\n", id, classID, pos, this.rotMat, velocity, acceleration);
+			"\tAcc:\t%\n", visible, id, classID, pos, this.rotMat, velocity, acceleration);
 	}	
 }
 

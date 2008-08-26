@@ -14,7 +14,11 @@ Author:
 SETOMTServer : SETOServer {
 	var interface;
 
+
 	var specs;
+
+
+
 
 	*new {|netaddr, setoClass, interactionClass|
 		^super.new("_ixy", setoClass, interactionClass)
@@ -30,9 +34,8 @@ SETOMTServer : SETOServer {
 	setFunc_{|function|
 		setFunc = function;
 		OSCReceiverFunction(interface, \set, {|numItems ... args|
-			// format: /MT numItems id, x, y, ...
+			// format: /mt "set" numItems id, x, y, ...
 			args   = args.reshape(numItems, 3);
-
 			// eval setFunc for each 3-tuple 
 			args.do{|val|
 				// all objects are from the same type (0)
@@ -45,7 +48,7 @@ SETOMTServer : SETOServer {
 			};
 			// eval aliveFunc for each incoming message
 			(numItems > 0).if({
-				aliveFunc.value(*(0..(numItems - 1)));
+				aliveFunc.value(*args.flop[0]);
 			}, {
 				aliveFunc.value([]);
 			})
