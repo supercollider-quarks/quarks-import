@@ -1,18 +1,23 @@
 //redFrik
 
+//--changes080827
+//added hiliteColor_
+//moved around some methods and added more comments
+//andother rewrite of positioning.  bugfix for nested views with decorators.
 //--changes080826
 //now using SCPopUpMenu instead of SCListView as base. strange mistake
 //added GUI.popUpTreeMenu for consistency
 //fixed bug in bounds getter
 //rewrote positioning. should now work inside views with flowlayout decorators, tabbedview etc
 //this also fixed the swingosc offset issues
-//--080825initial release
+//--080825
+//initial release
 
 PopUpTreeMenu : SCViewHolder {
 	var	<>tree, <value, <currentLeaf, <>action, <>openAction, <>closeAction,
-		<font, <bounds, <parentWindow,
+		<font, <bounds, <>hiliteColor,
 		pop, usr, hgt, lst, add,
-		lastSelected= 0, xIndexLast, yIndexLast, mouseMoved;
+		lastSelected= 0, xIndexLast, yIndexLast, parentWindow, mouseMoved;
 	*initClass {
 		GUI.schemes.do{|z| z.popUpTreeMenu= PopUpTreeMenu}
 	}
@@ -20,30 +25,44 @@ PopUpTreeMenu : SCViewHolder {
 		^super.new.init(parent, bounds);
 	}
 	init {|argParent, argBounds|
-		parentWindow= this.prFindWindow(argParent);
+		var dec;
+		lst= List.new;							//one array in here for each submenu
+		tree= (\nil: ());							//default tree
 		font= GUI.font.new("Monaco", 9);
+		hiliteColor= Color.grey;
+		
+		//--create popUpMenu.  visible when submenus not open
 		pop= GUI.popUpMenu.new(argParent, argBounds)
 			.font_(font)
 			.background_(Color.clear)
 			.stringColor_(Color.black);
-		bounds= pop.bounds;						//adapt if decorator changed position
-		try{										//test if decorator and then shift
-			argParent.view.decorator.shift(
-				bounds.left-argParent.view.decorator.left,
-				bounds.top-argParent.view.decorator.top
-			);
-		} {};
-		add= this.prFindAdditionalOffset(argParent);	//some containers add extra (TabbedView)
+		bounds= pop.bounds;
+		pop.onClose= {lst.do{|z| if(z[1].notNil, {z[1].close})}};
+		this.view_(pop);
+		
+		//--search for parent decorator.  shift it to allow for userView on top of popUpMenu
+		dec= this.parent.decorator;
+		if(dec.notNil, {
+			dec.shift(bounds.left-dec.left, bounds.top-dec.top);
+		});
+		
+		//--create useView on top of popUpMenu.  any decorator is bypassed with shift above
 		usr= GUI.userView.new(argParent, bounds).relativeOrigin_(true);
 		usr.mouseDownAction_({|v, x, y| mouseMoved= false; this.prUserAction(v, x, y)});
 		usr.mouseMoveAction_({|v, x, y| mouseMoved= true; this.prUserAction(v, x, y)});
-		usr.mouseUpAction_({|v, x, y| mouseMoved= false; this.prUserActionEnd(v, x, y)});
-		lst= List.new;
-		tree= (\nil: ());							//default tree
-		pop.onClose= {lst.do{|z| if(z[1].notNil, {z[1].close})}};
-		//here set perhaps add on window endFrontAction?
-		this.view_(pop);
+		usr.mouseUpAction_({|v, x, y| this.prUserActionEnd(v, x, y)});
+		
+		//--find parentWindow and compensate for some containers that add extra offset (TabbedView)
+		argParent= this.parent;
+		add= Point(0, 0);
+		while({argParent.respondsTo(\findWindow).not}, {
+			add= add+Point(argParent.bounds.left.neg, argParent.bounds.top);
+			argParent= argParent.parent;
+		});
+		parentWindow= argParent.findWindow;			//set main window
 	}
+	
+	//--instance methods
 	currentPath {
 		^lst.collect{|z| z[3][z[2].value]};
 	}
@@ -61,7 +80,7 @@ PopUpTreeMenu : SCViewHolder {
 			xIndex= 0;							//force y update below
 			xIndexLast= 0;
 		}, {										//at some sub level
-			xIndex= lst.detectIndex{|z| z[0].containsPoint(x@y)};
+			xIndex= lst.detectIndex{|z| z[0].containsPoint(Point(x, y))};
 			if(xIndex.notNil, {
 				if(xIndex!=xIndexLast, {
 					if(xIndex>xIndexLast, {			//open a submenu if moving right
@@ -94,7 +113,7 @@ PopUpTreeMenu : SCViewHolder {
 		});
 	}
 	prUserActionEnd {|v, x, y|
-		var xIndex= lst.detectIndex{|z| z[0].containsPoint(x@y)};
+		var xIndex= lst.detectIndex{|z| z[0].containsPoint(Point(x, y))};
 		if(xIndex.isNil, {							//mouse released outside menu tree
 			//nil.postln;
 		}, {										//mouse released on node
@@ -149,6 +168,7 @@ PopUpTreeMenu : SCViewHolder {
 				.font_(pop.font)
 				.background_(pop.background)
 				.stringColor_(pop.stringColor)
+				.hiliteColor_(hiliteColor)
 				.items_(items);
 			//here later somehow test if in noclickmode and then track mouseposition from win
 			//window.acceptsMouseOver= true;
@@ -162,52 +182,17 @@ PopUpTreeMenu : SCViewHolder {
 			currentLeaf= addy;
 		});
 	}
-	prToScreen {|bounds|
-		^bounds.moveTo(
-			parentWindow.bounds.left+bounds.left-add.x,
-			parentWindow.bounds.height+parentWindow.bounds.top-bounds.top-bounds.height-add.y
-		)
-	}
-	prFindAdditionalOffset {|parent|					//search for additional x/y offset
-		var x= 0, y= 0;
-		var temp= parent;
-		while({temp.notNil}, {
-			if(temp.respondsTo(\parent), {
-				temp= temp.parent;
-				if(temp.notNil, {
-					x= x+temp.bounds.left;
-					y= y+temp.bounds.top;
-				});
-			}, {
-				temp= nil;
-			});
-		});
-		^Point(x, y);
-	}
-	prFindWindow {|parent|							//not so elegant search for top window
-		var cnt= 0;								//safety
-		var window;
-		while({window.isNil or:{cnt>99}}, {
-			cnt= cnt+1;
-			if(parent.isKindOf(GUI.window), {
-				window= parent;
-			}, {
-				if(parent.respondsTo(\findWindow), {	//must be topview
-					window= parent.findWindow;
-				}, {
-					if(parent.isKindOf(GUI.compositeView) or:{parent.isKindOf(FlowView)}, {
-						parent= parent.parent;
-					});
-				});
-			});
-		});
-		^window;
-	}
 	prLookup {|tree, addy|
 		^if(addy.size>1, {
 			this.prLookup(tree[addy[0]], addy.drop(1));
 		}, {
 			tree[addy[0].asSymbol];					//assume only symbol keys in dict
 		});
+	}
+	prToScreen {|bounds|
+		^bounds.moveTo(
+			parentWindow.bounds.left+bounds.left-add.x,
+			parentWindow.bounds.height+parentWindow.bounds.top-bounds.top-bounds.height-add.y
+		)
 	}
 }
