@@ -22,6 +22,8 @@ MixingBoard {
 		^super.new.init(name, skin, mixers);
 	}
 	
+	*at { |i| ^boards[i] }
+
 	init { arg name1, skin1 ... mixers1;
 
 		mixers.do({ arg m; m.free; });	// free all mixers if they exist
