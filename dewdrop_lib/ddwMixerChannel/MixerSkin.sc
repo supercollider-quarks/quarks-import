@@ -5,36 +5,40 @@ MixerGUIDef {
 		<>viewBounds,	// bounds relative to channel origin
 		<>numPresendsShow = 1,
 		<>numPostsendsShow = 1,
-		<>color1, <>color2;
+		<>color1, <>color2, <>clearColor;
 
 	*initClass {
-		Class.initClassTree(Collection);
-		Class.initClassTree(MixerChannelDef);
-			// generic mixer gui definition (vertical)
-		MixerChannelGUI.defaultDef = MixerGUIDef(Point(50, 290),
-			[MixerMuteWidget, MixerRecordWidget, MixerPresendWidget, MixerPanWidget,
-				MixerLevelSlider, MixerLevelNumber, MixerPostsendWidget, MixerNameWidget,
-				MixerOutbusWidget],
-			[Rect(0, 0, 20, 20), Rect(30, 0, 20, 20), Rect(0, 25, 50, 30), Rect(0, 65, 50, 15),
-				Rect(10, 85, 30, 100), Rect(0, 190, 50, 15), Rect(0, 210, 50, 30),
-				Rect(0, 245, 50, 20), Rect(0, 270, 50, 20)]);
-			// 1x1 mixer has no pan control, so I should not define a pan widget
-		MixerChannelDef.at(\mix1x1).guidef = MixerGUIDef(Point(50, 290),
-			[MixerMuteWidget, MixerRecordWidget, MixerPresendWidget,
-				MixerLevelSlider, MixerLevelNumber, MixerPostsendWidget, MixerNameWidget,
-				MixerOutbusWidget],
-			[Rect(0, 0, 20, 20), Rect(30, 0, 20, 20), Rect(0, 25, 50, 30),
-				Rect(10, 85, 30, 100), Rect(0, 190, 50, 15), Rect(0, 210, 50, 30),
-				Rect(0, 245, 50, 20), Rect(0, 270, 50, 20)]);
+		StartUp.add {
+				// generic mixer gui definition (vertical)
+			MixerChannelGUI.defaultDef = MixerGUIDef(Point(50, 290),
+				[MixerMuteWidget, MixerRecordWidget, MixerPresendWidget, MixerPanWidget,
+					MixerLevelSlider, MixerLevelNumber, MixerPostsendWidget, MixerNameWidget,
+					MixerOutbusWidget],
+				[Rect(0, 0, 20, 20), Rect(30, 0, 20, 20), Rect(0, 25, 50, 30), Rect(0, 65, 50, 15),
+					Rect(10, 85, 30, 100), Rect(0, 190, 50, 15), Rect(0, 210, 50, 30),
+					Rect(0, 245, 50, 20), Rect(0, 270, 50, 20)]);
+				// 1x1 mixer has no pan control, so I should not define a pan widget
+			MixerChannelDef.at(\mix1x1).guidef = MixerGUIDef(Point(50, 290),
+				[MixerMuteWidget, MixerRecordWidget, MixerPresendWidget,
+					MixerLevelSlider, MixerLevelNumber, MixerPostsendWidget, MixerNameWidget,
+					MixerOutbusWidget],
+				[Rect(0, 0, 20, 20), Rect(30, 0, 20, 20), Rect(0, 25, 50, 30),
+					Rect(10, 85, 30, 100), Rect(0, 190, 50, 15), Rect(0, 210, 50, 30),
+					Rect(0, 245, 50, 20), Rect(0, 270, 50, 20)]);
+		};
 	}
 
-	*new { |channelSize, viewProtos, viewKeys, viewBounds|
-		^super.newCopyArgs(channelSize, viewProtos, viewKeys, viewBounds).init
+	*new { |channelSize, viewProtos, /*viewKeys,*/ viewBounds|
+		^super.newCopyArgs(channelSize, viewProtos, /*viewKeys,*/ viewBounds).init
 	}
 	
 	init {
 		color1 = Color.new255(84, 31, 77);
 		color2 = Color.new255(230, 109, 225);
+		clearColor = switch(GUI.current.id)
+			{ \cocoa } { Color.clear }
+			{ \swing } { Color.new255(224, 223, 227) }
+			{ Color.clear }
 	}
 	
 	makeViews { |layout, origin, mixer, mcgui|
@@ -399,7 +403,7 @@ MixerPanWidget : MixerWidgetBase {
 		view.value_(spec.unmap(value ?? { mixer.getControl(\pan) }));
 	}
 	clearView { 
-		view.background_(Color.clear);
+		view.background_(gui.guidef.clearColor);
 		view.value_(0.5);
 	}
 	restoreView { 
@@ -426,7 +430,7 @@ MixerLevelSlider : MixerWidgetBase {
 		view.value_(spec.unmap(value ?? { mixer.getControl(\level) }));
 	}
 	clearView {
-		view.background_(Color.clear);
+		view.background_(gui.guidef.clearColor);
 		view.value_(0);
 	}
 	restoreView {
