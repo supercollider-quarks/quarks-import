@@ -143,6 +143,7 @@ MixingBoard {
 		
 		w.isNil.if({		// only build it if no window exists yet
 			w = GUI.window.new(name);
+			w.asView.background_(MixerChannelGUI.defaultDef.clearColor);
 			w.onClose_({ this.free });	// if user closes window, clean up after yourself
 			newWindow = true;
 		});
