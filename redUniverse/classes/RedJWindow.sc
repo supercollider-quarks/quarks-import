@@ -4,7 +4,7 @@
 
 /*
 RedJWindow : JSCWindow {
-	var <mouse, <isPlaying= false;
+	var <mouse, <isPlaying= false, <userView;
 	*new {|name= "redWindow", bounds, resizable= false, border= true, server, scroll= false|
 		^super.new.initSCWindow(name, bounds, resizable, border, scroll, server)
 	}
@@ -27,7 +27,8 @@ RedJWindow : JSCWindow {
 		
 		this.background_(Color.black);
 		mouse= RedVector2D[view.bounds.width/2, view.bounds.height/2];
-		this.view.mouseMoveAction_{|v, x, y| mouse= RedVector2D[x, y]};
+		userView= JSCUserView(this, view.bounds)
+			.mouseMoveAction_({|v, x, y| mouse= RedVector2D[x, y]});
 	}
 	draw {|func| this.drawHook_(func)}
 	play {|fps= 40|

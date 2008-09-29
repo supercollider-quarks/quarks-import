@@ -53,6 +53,10 @@ RedObject {
 	}
 }
 
+RedHiddenObject : RedObject {
+	initRedObject {}								//hides it from the world
+}
+
 //--an object that oscillates
 RedPendulum : RedObject {							//size is used as radius here
 	var <>theta= 1, <>angularVel= 0,					//floats
