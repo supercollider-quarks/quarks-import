@@ -3,10 +3,16 @@ work in progress.  happy for any comments or contributions.
 
 note! if you run LINUX, WINDOWS or just prefer to use SwingOSC over Cocoa, you'll need to uncomment all the code in the file RedJWindow.sc and recompile.
 
-some of the examples require additional classes like RedGA, RedLSystem etc.  these are available online at my homepage http://www.fredrikolofsson.com under code->sc
+note! this quark make one serious change by overriding Collection:species {^this.class}.  other things in your sc system may break.
+
+note! some of the examples require additional classes like RedGA, RedLSystem etc.  these are available online at my homepage http://www.fredrikolofsson.com under code->sc
 
 
 //--
+080929 - some minor additions
+	added extPoint asRedVector2D helper methods
+	added RedHiddenObject.  useful when using attractors
+	added <userView for RedWindow and RedJWindow
 080219 - updated for sc3.2 and swingosc0.59
 	fixed all pendulum examples to draw line on swingosc (added a GUI.pen.stroke)
 	changed from mouseover to mousemove so now it's required to click&drag to update mouse position.

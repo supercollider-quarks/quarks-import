@@ -7,7 +7,7 @@
 	//--world
 	w= GUI.redWindow.new("attractor test1", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
-	world= RedWorld3(RedVector2D[width, height], wgrav, 20); //dim,grav,maxvel,damp
+	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.25); //dim,grav,maxvel,damp
 	
 	//--objects
 	att= RedObject(world, RedVector2D[100, 100], RedVector2D[0, 0], RedVector2D[0, 0], 105, 10);
