@@ -5,21 +5,33 @@
 		var j, k, res, bc;
 		// prefix argument, since on Linux ifconfig does not lie in the user's path, but in /sbin/, so it can be passed as an argument (nescivi, April 2008)
 		res = Pipe.findValuesForKey(prefix++"ifconfig", "inet");
-		bc = this.broadcastIP;
+		bc = this.broadcastIP( prefix );
+
+		if ( res.notNil, {
+			// fix for Linux output: (nescivi, April 2008)
+			res.do{ |it,i| res[i] = it.replace("addr:",""); };
+		});
+
 		if(bc.notNil) {
-			bc = bc.keep(7);
-			res = res.select { |x| x.beginsWith(bc) }; // choose match with broadcast
+			// broadcast starting bits of IP are not necessary of length 3 each, so we need to calculate the first two fields
+			k = 0;
+			2.do{ |i| k = k + bc.find(".", offset: k);	};
+			bc = bc.keep(k+1);
+			if ( bc != "255.255", { // generic broadcast mask should not prevent us from finding a valid myIP
+				res = res.select { |x| x.beginsWith(bc) }; // choose match with broadcast
+			} );
 		};
 		
-		 // don't want to check for netmask here.
-		// need a simpler and better solution later.
-		res = res.reject(_ == "127.0.0.1");
-		
-		if(res.size > 1) { postln("the first of those devices was chosen: " ++ res) };
-		res = res.first;
+		if ( res.notNil, {
+			// don't want to check for netmask here.
+			// need a simpler and better solution later.
+			res = res.reject(_ == "127.0.0.1");
 
-		// fix for Linux output: (nescivi, April 2008)
-		res = res.replace("addr:","");
+		
+			if(res.size > 1) { postln("the first of those devices was chosen: " ++ res) };
+			res = res.first;
+		});
+
 		
 		^res ?? { 
 			"chosen loopback IP, no other ip available".warn; 
@@ -33,14 +45,20 @@
 		^NetAddr(hostname, port )
 	}
 
-	*broadcastIP {
-		var  res;
-		res = Pipe.findValuesForKey("ifconfig", "broadcast");
+	*broadcastIP { |prefix=""|
+		var  res,k,delimiter=$ ;
+		res = Pipe.findValuesForKey(prefix++"ifconfig", "broadcast");
+		res = res ++ Pipe.findValuesForKey(prefix++"ifconfig", "Bcast", $:);
+
 		if(res.size > 1) { postln("the first of those devices were chosen: " ++ res) };
+		res.do{ |it,i|
+			k = it.find(delimiter.asString) ?? { it.size } - 1;
+			res[i] = (it[0..k]);
+		};
 		^res.first
 	}
-	*broadcast { arg port = 57120;
-		var hostname = this.broadcastIP(port);
+	*broadcast { arg port = 57120, prefix="";
+		var hostname = this.broadcastIP(prefix);
 		if(hostname.isNil) { 
 			hostname = "127.0.0.1"; 
 			"no network with broadcast available. provisionally used loopback instead.".warn;
@@ -75,13 +93,13 @@
 		var j, k, indices, res, keySize;
 		key = key ++ delimiter;
 		keySize = key.size;
-		Pipe.do(commandLine, { |l|			
+		Pipe.do(commandLine, { |l|
 			indices = l.findAll(key);
 			indices !? {
 				indices.do { |j|
 					j = j + keySize;
 					while { l[j] == delimiter } { j = j + 1 };
-					k = l.find(delimiter.asString, offset:j) ?? {Êl.size } - 1;
+					k = l.find(delimiter.asString, offset:j) ?? { l.size } - 1;
 					res = res.add(l[j..k])
 				};
 			};
