@@ -1,8 +1,7 @@
 // this file is part of redUniverse toolkit /redFrik
 
-//uncomment this code and recompile if you're using swingosc (linux/windows)
+//this class can also be used with osx-swing.  just copy it to the osx folder
 
-/*
 RedJWindow : JSCWindow {
 	var <mouse, <isPlaying= false, <userView;
 	*new {|name= "redWindow", bounds, resizable= false, border= true, server, scroll= false|
@@ -40,4 +39,3 @@ RedJWindow : JSCWindow {
 	background_ {|color| view.background_(color)}
 	isOpen {^this.isClosed.not}
 }
-*/
