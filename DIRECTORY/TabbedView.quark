@@ -1,7 +1,7 @@
 (
 	\name: 		"TabbedView",
 	\path: 		"TabbedView",
-	\summary:	"Tabbed Composite/Scroll views with lots of cool methods. \nCross GUI Platform\for SC >=3.21",
+	\summary:	"Tabbed Composite/Scroll views with lots of cool methods. \nCross GUI Platform\nfor SC >=3.21",
 	\author: 		"jostM",
 
 	\version:		1.21,  // must be a float
