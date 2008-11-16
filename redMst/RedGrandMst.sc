@@ -1,5 +1,5 @@
 RedGrandMst {
-	classvar <song, <lastSong, <songDict;
+	classvar <song, lastSong, <>songDict;
 	*initClass {
 		songDict= ();
 		lastSong= 'default';
@@ -8,9 +8,9 @@ RedGrandMst {
 		name= name.asSymbol;
 		if(lastSong!=name, {
 			song= name;
-			songDict.put(lastSong, RedMst.getState);	//store
+			songDict.put(lastSong, RedMst.getState);	//store current as old
 			if(songDict[song].notNil, {
-				RedMst.setState(songDict[song]);		//recall
+				RedMst.setState(songDict[song]);		//recall old and overwrite current
 			});
 			lastSong= song;
 		});
