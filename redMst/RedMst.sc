@@ -1,5 +1,7 @@
 //redFrik - released under gnu gpl license
 
+//--changes 081116:
+//added RedGrandMst and getState and setState to RedMst
 //--changes 080819:
 //added metronome userview
 //changed fps to dur for update rate
@@ -24,6 +26,7 @@
 //RedSeq.  also extra gui class with esc key for next, section data, playing tracks etc
 //test RedTrk and RedTrk2 with Pbindf, Pmono and Pfx
 //possible bug with RedTrk2 and addAction.  it now differs from RedTrk
+//somehow start quant 0 so one don't have to wait for 1 whole period
 
 //--notes:
 //RedXM and RedMod can change RedMst's clock tempo!
@@ -133,5 +136,27 @@ RedMst {
 			});
 		});
 		this.goto(jump);
+	}
+	
+	//--support for RedGrandMst
+	*getState {
+		^(
+			\tracks: tracks,
+			\clock: clock,
+			\quant: quant,
+			\section: section,
+			\maxSection: maxSection,
+			\stopAheadTime: stopAheadTime,
+			\skipEmpty: skipEmpty
+		)
+	}
+	*setState {|dict|
+		tracks= dict[\tracks];
+		clock= dict[\clock];
+		quant= dict[\quant];
+		section= dict[\section];
+		maxSection= dict[\maxSection];
+		stopAheadTime= dict[\stopAheadTime];
+		skipEmpty= dict[\skipEmpty];
 	}
 }
