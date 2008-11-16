@@ -1,5 +1,8 @@
 //redFrik - released under gnu gpl license
 
+//todo:
+//mark when < and > button pressed, unmark when changed section
+
 RedMstGUI {
 	var	<win, <>dur= 0.25;
 	*new {|size= 24, skin|
@@ -17,14 +20,13 @@ RedMstGUI {
 			));
 			skin= GUI.skins.redMstGUI;
 		});
-		skin.postln;
 		fnt= GUI.font.new(skin.fontSpecs[0], size);
 		colBack= skin.background;
 		colFore= skin.foreground;
 		fnt2= fnt.copy.size_(9);
 		colBack2= colBack.complementary.alpha_(0.3);
 		colFore2= colFore.complementary.alpha_(0.7);
-		win= GUI.window.new("RedMst", Rect(300, 16, size*9.5+20, size*6+225), false)
+		win= GUI.window.new("RedMst", Rect(300, 2, size*9.5+20, size*6+225), false)
 			.alpha_(skin.unfocus ? 0.9)
 			.front;
 		win.view.background_(colBack);
