@@ -2,6 +2,7 @@
 
 //--changes 081116:
 //added RedGrandMst and getState and setState to RedMst
+//RedMst no longer stops the clock on .clear - note: this will leave stray clocks running
 //--changes 080819:
 //added metronome userview
 //changed fps to dur for update rate
@@ -63,11 +64,11 @@ RedMst {
 		tracks= ();
 		section= 0;
 		maxSection= 0;
-		if(clock!=TempoClock.default, {
+		/*if(clock!=TempoClock.default, {
 			clock.stop;
 			clock.clear;
 			clock= TempoClock.default;
-		});
+		});*/
 	}
 	*stop {
 		isPlaying= false;
