@@ -13,18 +13,18 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0019ba}
 p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #843424}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #ad1d13}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0d32ac}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #4c6724}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2b6f11}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline}
-span.s4 {color: #0d32ac}
-span.s5 {color: #843424}
-span.s6 {color: #4c6724}
+span.s4 {color: #0019ba}
+span.s5 {color: #ad1d13}
+span.s6 {color: #2b6f11}
 span.s7 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -36,7 +36,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1">RedMst controls track objects (RedTrk).<span class="Apple-converted-space">  </span>it does so by sending play and stop messages to them synced to a clock.<span class="Apple-converted-space">  </span>RedMst also has a global counter for sections.<span class="Apple-converted-space">  </span>if a track is not already playing and is activated to play for a certain section, it gets sent a play message when RedMst reaches that section, else the track is stopped.</p>
 <p class="p1">The section counter is driven manually by user input (*next, *goto, etc) or by RedSeq.<span class="Apple-converted-space">  </span>all messages controlling playback (*next, *previous, *goto, *play, *stop) are scheduled to happen on the next quant beat.</p>
 <p class="p2"><br></p>
-<p class="p3"><span class="s2">see also [</span><span class="s3">RedTrk</span><span class="s2">] [</span><span class="s3">RedTrk2</span><span class="s2">] [</span><span class="s3">RedSeq</span><span class="s2">] [</span><span class="s3">RedMstGUI</span><span class="s2">]</span></p>
+<p class="p3"><span class="s2">see also [</span><span class="s3">RedTrk</span><span class="s2">] [</span><span class="s3">RedTrk2</span><span class="s2">] [</span><span class="s3">RedSeq</span><span class="s2">] [</span><span class="s3">RedMstGUI</span><span class="s2">] [</span><span class="s3">RedGrandMst</span><span class="s2">]</span></p>
 <p class="p4"><br></p>
 <p class="p5"><b><span class="Apple-tab-span">	</span>*play(startSection)</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>play activated tracks on the next quant beat.</p>
@@ -75,6 +75,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><b>*remove(trk)</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>usually done with *clear.<span class="Apple-converted-space">  </span>removes a track from master controller.</p>
 <p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><b>*makeWindow(size, skin)</b></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>convenience method.<span class="Apple-converted-space">  </span>see RedMstGUI</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p7">//note: if you press cmd+. then you'll need to start the clock again</p>
@@ -217,7 +219,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><span class="s4">RedMst</span>.goto(4)</p>
 <p class="p8"><br></p>
 <p class="p11">RedMst<span class="s2">.stop</span></p>
-<p class="p7"><span class="s4">RedMst</span><span class="s2">.clear<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//free all tracks and remove them from RedMst.<span class="Apple-converted-space">  </span>also stops the clock</p>
+<p class="p7"><span class="s4">RedMst</span><span class="s2">.clear<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//free all tracks and remove them from RedMst</p>
+<p class="p7"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//note: does not stop the clock</p>
 <p class="p8"><br></p>
 <p class="p8"><br></p>
 <p class="p8"><br></p>
