@@ -1,5 +1,7 @@
 //redFrik - released under gnu gpl license
 
+//--changes 081117:
+//added class method makeWindow to RedMst
 //--changes 081116:
 //added RedGrandMst and getState and setState to RedMst
 //RedMst no longer stops the clock on .clear - note: this will leave stray clocks running
@@ -137,6 +139,11 @@ RedMst {
 			});
 		});
 		this.goto(jump);
+	}
+	
+	//--support for RedMstGUI
+	*makeWindow {|size, skin|
+		^RedMstGUI(size, skin);
 	}
 	
 	//--support for RedGrandMst
