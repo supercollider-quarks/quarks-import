@@ -56,8 +56,8 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 
 		if(freq.isNumber) {
 			this.shouldSteal.if({
-				bundle = this.setMsg(args ++ [\freqlag, voicer.portaTime, \freq, freq,
-					\gate, gate, \t_gate, gate]);
+				bundle = this.setMsg([\freqlag, voicer.portaTime, \freq, freq,
+					\gate, gate, \t_gate, gate] ++ args);
 			}, {
 				isReleasing.if({
 					bundle = this.releaseMsg(-1.02);	// quick release
