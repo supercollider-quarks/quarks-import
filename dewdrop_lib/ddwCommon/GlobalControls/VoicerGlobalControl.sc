@@ -460,7 +460,7 @@ VoicerGCView {
 	
 	updateView { |updateBus = true|
 		editor.notNil.if({
-			{	editor.value_(model.value);
+			{	editor.value_(model.value, false);
 				updateBus.if({ editor.changed }, { editorGUI.update }); 
 				nil
 			}.defer;
