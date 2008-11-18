@@ -142,7 +142,7 @@ RedMst {
 	}
 	
 	//--support for RedMstGUI
-	*makeWindow {|size, skin|
+	*makeWindow {|size= 24, skin|
 		^RedMstGUI(size, skin);
 	}
 	
