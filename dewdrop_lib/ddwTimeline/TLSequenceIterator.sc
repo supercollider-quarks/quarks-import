@@ -247,4 +247,10 @@ var temp;
 			};
 		});
 	}
+
+	*initClass {
+		StartUp.add {
+			(PathName(this.filenameSymbol.asString).pathOnly ++ "proto-cmds.scd").loadPath;
+		}
+	}
 }
