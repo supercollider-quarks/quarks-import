@@ -49,11 +49,6 @@
 	isActive { ^dataptr.notNil }
 }
 
-+ StartRow {
-	recursiveResize { ^nil }
-	findRightBottom { ^Point(0, 0) }
-}
-
 + Object { isActive { ^false } }		// non-views should reply with false
 
 + SCViewHolder {
