@@ -30,7 +30,7 @@ Proto({
 	~shouldSync = true;
 	
 	~play = { |parms|
-//"abstractcmd: play".debug;
+//thisThread.clock.beats.debug(">> %: play".format(~collIndex));
 		if(~isRunning.not) {
 			~setParms.(parms);
 			~isRunning = true;
@@ -43,6 +43,7 @@ Proto({
 			NotificationCenter.notify(currentEnvironment, \play, [parms]);
 			~schedDone.(parms);
 		};
+//thisThread.clock.beats.debug("<< abstractcmd: play");
 		currentEnvironment
 	};
 	~schedDone = { |parms|
@@ -376,10 +377,13 @@ PR(\abstractTLCommand).clone({
 	};
 	~done = { |parms|
 		~cleanup.(parms);
+		if(parms.tryPerform(\at, \manualStop) ? false) {
+			~bps.do(_.stopNow);
+		};
 		~bps.do({ |bp| bp.removeDependant(currentEnvironment) });
 	};
 	~update = { |obj, what, how|
-[obj.tryPerform(\collIndex), what, how].debug("bp1eventCmd got update");
+//[obj.tryPerform(\collIndex), what, how].debug("bp1eventCmd got update");
 		obj.removeDependant(currentEnvironment);
 		switch(what)
 				// triggerOneEvent failed
@@ -526,6 +530,7 @@ Proto({
 //		~seqStream ?? { ~seqStream = ~seqPattern.().asStream };
 			// should always reset: start from beginning of section every time you play
 		~seqStream = ~seqPattern.().asStream;
+			// ~condition is used elsewhere, not here, but needs to exist
 		~condition ?? { ~condition = Condition.new };
 		Routine({ |inval|
 			var	item, delta;
@@ -789,10 +794,11 @@ Proto({
 			currentEnvironment.changed(\section, section);
 		};
 	};
+	~currentSection_ = { |section| ~gotoSection.(section) };
 	
 	~countOffBeats_ = { |beats|
 		~countOffBeats = beats;
-		currentEnvironment.changed(\countoffBeats, beats);
+		currentEnvironment.changed(\countOffBeats, beats);
 	};
 	
 	~autoReset_ = { |autoReset|
@@ -824,5 +830,9 @@ Proto({
 	};
 	~sectionNames = { ~sections.collect({ |sect, i| "%: %".format(i+1, sect.name) }) };
 }) => PR(\sectionSequencer);
+
+PR.allOfType(\tlCmd).do({ |pr|
+	pr.value.put(\collIndex, pr.collIndex)
+});
 
 } { AbstractChuckArray.defaultSubType = saveSubType; };
