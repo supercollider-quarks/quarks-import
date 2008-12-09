@@ -25,7 +25,7 @@ ResizeFlowWindow {
 		bounds  ?? { bounds = GUI.window.screenBounds };
 		window = GUI.window.new(title, bounds, resizable, border, server, scroll)
 			.onClose_({ this.close });
-		view = this.class.viewClass.new(window.asView, bounds.moveTo(0, 0));
+		view = this.class.viewClass.new(window.asView, bounds.moveTo(0, 0), margin: 2@2);
 	}
 	
 	doesNotUnderstand { |selector ...args|

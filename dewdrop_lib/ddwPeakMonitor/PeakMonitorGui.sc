@@ -6,13 +6,13 @@ PeakMonitorGui : ObjectGui {
 	
 	guiBody { arg lay;
 		lay.startRow;
-		leftFlow = FlowView(lay, Rect(0, 0, model.numChannels * 13 + 10, 210));
+		leftFlow = FlowView(lay, Rect(0, 0, model.numChannels * 13 + 10, 210), margin: 2@2);
 		multiSl = GUI.multiSliderView.new(leftFlow, Rect(0, 0, model.numChannels * 13 + 2, 200));
 		
 		rightFlow = FlowView(lay, Rect(0, 0,
 				// ax + b(x-1) = ax + bx - b = (a+b)x - b
 			max((lay.decorator.gap.x + 50) * model.numChannels - lay.decorator.gap.x + 10, 210),
-			210));	// height
+			210), margin: 2@2);	// height
 
 		clipButtons = Array.fill(model.numChannels, { arg i;
 			GUI.button.new(rightFlow, Rect(0, 0, 50, 20))

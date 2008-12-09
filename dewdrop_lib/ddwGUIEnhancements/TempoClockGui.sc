@@ -48,8 +48,8 @@ TempoClockGui : ObjectGui {
 		namev.isNil.if({	// only make views if we don't already have them
 			name = n ? name ? "";
 
-			mainFlow = FixedWidthFlowView(lay, Rect.new(0, 0, width, height));
-			tempoFlow = FlowView(mainFlow, Rect(0, 0, 350, height));
+			mainFlow = FixedWidthFlowView(lay, Rect.new(0, 0, width, height), margin: 2@2);
+			tempoFlow = FlowView(mainFlow, Rect(0, 0, 350, height), margin: 2@2);
 
 			namev = GUI.staticText.new(tempoFlow, Rect.new(0, 0, namewidth, nameheight))
 				.align_(\center);

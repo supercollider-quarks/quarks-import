@@ -76,11 +76,12 @@ VoicerProxyGui : ObjectGui {
 				});
 			layout.startRow;
 
-			mainView = FixedWidthFlowView.new(layout, Rect(0, 0, width1 + width2 + 10, height))
+			mainView = FixedWidthFlowView.new(layout, Rect(0, 0, width1 + width2 + 10, height),
+				margin: 2@2)
 				.background_(backgr ? Color.grey);
-			controlView = FixedWidthFlowView.new(mainView, Rect(0, 0, width1, height))
+			controlView = FixedWidthFlowView.new(mainView, Rect(0, 0, width1, height), margin: 2@2)
 				.background_(controlBackgr ? Color.grey);
-			processView = FixedWidthFlowView.new(mainView, Rect(0, 0, width2, height))
+			processView = FixedWidthFlowView.new(mainView, Rect(0, 0, width2, height), margin: 2@2)
 				.background_(processBackgr ? Color.grey);
 			processView.decorator.nextLine;
 			
@@ -114,9 +115,9 @@ VoicerProxyGui : ObjectGui {
 
 			layout.startRow;
 
-			mainView = FixedWidthFlowView.new(layout, Rect(0, 0, width1 + 10, height))
+			mainView = FixedWidthFlowView.new(layout, Rect(0, 0, width1 + 10, height), margin: 2@2)
 				.background_(backgr ? Color.grey);
-			controlView = FixedWidthFlowView.new(mainView, Rect(0, 0, width1, height))
+			controlView = FixedWidthFlowView.new(mainView, Rect(0, 0, width1, height), margin: 2@2)
 				.background_(controlBackgr ? Color.grey);
 			
 			model.editor = this;
