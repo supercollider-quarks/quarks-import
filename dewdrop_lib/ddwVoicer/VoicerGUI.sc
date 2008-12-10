@@ -194,23 +194,27 @@ VoicerProxyGui : ObjectGui {
 	}
 	
 	updateStatus {
-		var	i, oldNumGCs = model.controlProxies.size;
-		{ 	dragSource.object_(model.asString);    // cf ObjectGui-writeName
-			runButton.value = model.isRunning.not.binaryValue;
-			nil
-		}.defer;
-		i = 0;	// index to controlProxies
-			// proxies should all be updated by this point
-			// only gui guiable controls; sort them in order of creation
-		model.globalControlsByCreation.do({ arg gc;
-			gc.makeGUI(false);	// don't resize now; makeGUI adds gcproxy to voicerproxy
-				// note that makeGUI doesn't make a gui if there already is one
-			i = i+1;
-		});
-			// resize the window only if the number of controlproxies has changed
-		(oldNumGCs != model.controlProxies.size).if({
-			this.sizeWindow;
-		});
+		var	i, oldNumGCs;
+			// if model is nil, I must have been removed already
+		if(model.notNil) {
+			oldNumGCs = model.controlProxies.size;
+			{ 	dragSource.object_(model.asString);    // cf ObjectGui-writeName
+				runButton.value = model.isRunning.not.binaryValue;
+				nil
+			}.defer;
+			i = 0;	// index to controlProxies
+				// proxies should all be updated by this point
+				// only gui guiable controls; sort them in order of creation
+			model.globalControlsByCreation.do({ arg gc;
+				gc.makeGUI(false);	// don't resize now; makeGUI adds gcproxy to voicerproxy
+					// note that makeGUI doesn't make a gui if there already is one
+				i = i+1;
+			});
+				// resize the window only if the number of controlproxies has changed
+			(oldNumGCs != model.controlProxies.size).if({
+				this.sizeWindow;
+			});
+		};
 	}
 	
 	refresh { 
