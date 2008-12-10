@@ -459,25 +459,28 @@ VoicerGCView {
 	}
 	
 	updateView { |updateBus = true|
-		editor.notNil.if({
+			// nameView.notClosed is an indirect check
+			// if window has closed, nameView.notClosed will be false
+			// and there is no need to update the views
+		if(editor.notNil and: { nameView.notClosed }) {
 			{	editor.value_(model.value, false);
 				updateBus.if({ editor.changed }, { editorGUI.update }); 
 				nil
 			}.defer;
-		});
+		};
 	}
 	
 	updateStatus {
 		this.displayNameSet;
 			// if visible, update spec and value because
 			// the proxy might be pointing to something else now
-		editor.notNil.if({
+		if(editor.notNil and: { nameView.notClosed }) {
 			editor.removeDependant(model);	// changing editor must not affect model yet
 			editor.spec_(model.spec).value_(model.value);
 			{ 	editorGUI.update;
 				nil
 			}.defer;
 			editor.addDependant(model);
-		});
+		};
 	}	
 }
