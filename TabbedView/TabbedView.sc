@@ -1,4 +1,4 @@
-/******* by jostM July9, 2008 version 1.21 *******/
+/******* by jostM Dec 15, 2008 version 1.22 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -26,7 +26,7 @@ TabbedView {
 		<labelPadding = 20,
 		left=0,
 		top=0,
-		<>swingFactor=7,
+		<swingFactor=7,// deprecated
 		<view;
 		
 	
@@ -193,7 +193,6 @@ TabbedView {
 			drawTop=drawCenter.y-(drawRect.height/2);
 			drawRight=drawCenter.x+(drawRect.width/2);
 			drawBottom=drawCenter.y+(drawRect.height/2);
-			
 			GUI.pen.use{
 				GUI.pen.rotate(rot1,drawCenter.x,drawCenter.y);
 					GUI.pen.width_(1);
@@ -238,6 +237,9 @@ TabbedView {
 				GUI.pen.rotate(rot2,drawCenter.x,drawCenter.y);
 				GUI.pen.font_(font);
 				GUI.pen.color_(strColor);
+				
+				//Pen.setShadow(0@0.neg, 5, Color.white.alpha_(1));
+
 				followEdges.if{
  					GUI.pen.stringCenteredIn(label, 
  						drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
@@ -277,7 +279,7 @@ TabbedView {
 	}
 	
 	updateViewSizes{
-	
+		
 		( GUI.id === \cocoa).if{
 				left = 0;
 				top  = 0;
@@ -287,21 +289,36 @@ TabbedView {
 		};
 		
 		if( GUI.id === \cocoa)  {
-			if ( tabHeight == \auto ){ tbht = ("A".bounds(font).height+1 )}{tbht=tabHeight};
+			var str1, str2;
+			str1=GUI.stringBounds("A",font);
+			if ( tabHeight == \auto ){ tbht = (str1.height+1 )}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 				if ( tabWidth.asSymbol == \auto )
-					{ tabWidths[i] = labels[i].bounds(font).width + labelPadding }
+					{ 
+					str2=GUI.stringBounds(labels[i],font);
+					tabWidths[i] = str2.width + labelPadding }
 					{ tabWidths[i] = tabWidth };
 					
 			};
-		} { /////This is a sloppy swing font width calculation
-			if ( tabHeight == \auto ){ tbht = (font.size+6)}{tbht=tabHeight};
+		} 
+		{
+			if ( tabHeight == \auto ){ tbht = (GUI.stringBounds("A",font).height+1 )}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 				if ( tabWidth.asSymbol == \auto )
-					{ tabWidths[i] = (labels[i].size * swingFactor*font.size*0.09)+ labelPadding }
+					{ tabWidths[i] = GUI.stringBounds(labels[i],font).width + labelPadding }
 					{ tabWidths[i] = tabWidth };
+					
 			};
+		 
 		};
+//		{ /////This is a sloppy swing font width calculation
+//			if ( tabHeight == \auto ){ tbht = (font.size+6)}{tbht=tabHeight};
+//			tabViews.do{ arg tab, i; 
+//				if ( tabWidth.asSymbol == \auto )
+//					{ tabWidths[i] = (labels[i].size * swingFactor*font.size*0.09)+ labelPadding }
+//					{ tabWidths[i] = tabWidth };
+//			};
+//		};
 
 		
 		switch(tabPosition)
@@ -655,6 +672,9 @@ TabbedView {
 		view.refresh;
 	}
 	
+	// deprecated
+	swingFactor_{arg v;swingFactor=v; "swingFactor deprecated. no longer needed.".warn  }
+	
 
 	// use these as examples to make your own class extentions according to your needs
 	*newBasic{ arg w, bounds, labels, colors, name=" ", scroll=false;
@@ -766,4 +786,6 @@ TabbedView {
 		q.tabHeight=14;
 		^q;
 	}
+		
+	
 }
