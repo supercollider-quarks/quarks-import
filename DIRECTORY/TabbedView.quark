@@ -4,7 +4,7 @@
 	\summary:	"Tabbed Composite/Scroll views with lots of cool methods. \nCross GUI Platform\nfor SC >=3.21",
 	\author: 		"jostM",
 
-	\version:		1.22,  // must be a float
+	\version:		1.21,  // must be a float
 	\helpdoc: 		"TabbedView.html",
 	\url:           "http://www.glyph.de/index.php?id=99"
 	
