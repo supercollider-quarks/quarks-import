@@ -33,12 +33,15 @@ MixerGUIDef {
 	}
 	
 	init {
-		color1 = Color.new255(84, 31, 77);
-		color2 = Color.new255(230, 109, 225);
-		clearColor = switch(GUI.current.id)
-			{ \cocoa } { Color.clear }
-			{ \swing } { Color.new255(224, 223, 227) }
-			{ Color.clear }
+		if(GUI.current.id == \cocoa) {
+				clearColor = Color.clear;
+				color1 = Color.new255(84, 31, 77);
+				color2 = Color.new255(230, 109, 225);
+		} {
+				clearColor = Color.new255(224, 223, 227);
+				color1 = clearColor;  // Color.new255(199, 227, 202);
+				color2 = clearColor;  // Color.new255(230, 109, 225);
+		};
 	}
 	
 	makeViews { |layout, origin, mixer, mcgui|
