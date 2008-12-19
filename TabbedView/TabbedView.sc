@@ -1,4 +1,4 @@
-/******* by jostM Dec 15, 2008 version 1.22 *******/
+/******* by jostM Dec 19, 2008 version 1.23 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -26,7 +26,7 @@ TabbedView {
 		<labelPadding = 20,
 		left=0,
 		top=0,
-		<swingFactor=7,// deprecated
+		<>swingFactor,
 		<view;
 		
 	
@@ -66,6 +66,7 @@ TabbedView {
 		font=GUI.font.default;		
 		stringColor = Color.black;
 		stringFocusedColor = Color.white;
+		swingFactor=Point(0.52146,1.25); 		
 		if( GUI.id === \cocoa)  {
 			labelColors = colors ? [Color.grey.alpha_(0.2)];
 			}{
@@ -278,6 +279,14 @@ TabbedView {
 		focusHistory = activeTab;
 	}
 	
+	stringBounds { |string, font|
+		(GUI.id === \swing).if{
+		^Rect(0, 0, string.size * font.size * swingFactor.x, font.size * swingFactor.y);
+		}{
+		^GUI.stringBounds(string, font);
+		}
+	}
+	
 	updateViewSizes{
 		
 		( GUI.id === \cocoa).if{
@@ -288,29 +297,14 @@ TabbedView {
 			top  = view.bounds.top;
 		};
 		
-		if( GUI.id === \cocoa)  {
-			var str1, str2;
-			str1=GUI.stringBounds("A",font);
-			if ( tabHeight == \auto ){ tbht = (str1.height+1 )}{tbht=tabHeight};
+			if ( tabHeight == \auto ){ tbht = (this.stringBounds("A",font).height+1 )}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 				if ( tabWidth.asSymbol == \auto )
 					{ 
-					str2=GUI.stringBounds(labels[i],font);
-					tabWidths[i] = str2.width + labelPadding }
+					tabWidths[i] = this.stringBounds(labels[i],font).width + labelPadding }
 					{ tabWidths[i] = tabWidth };
 					
 			};
-		} 
-		{
-			if ( tabHeight == \auto ){ tbht = (GUI.stringBounds("A",font).height+1 )}{tbht=tabHeight};
-			tabViews.do{ arg tab, i; 
-				if ( tabWidth.asSymbol == \auto )
-					{ tabWidths[i] = GUI.stringBounds(labels[i],font).width + labelPadding }
-					{ tabWidths[i] = tabWidth };
-					
-			};
-		 
-		};
 //		{ /////This is a sloppy swing font width calculation
 //			if ( tabHeight == \auto ){ tbht = (font.size+6)}{tbht=tabHeight};
 //			tabViews.do{ arg tab, i; 
@@ -671,10 +665,7 @@ TabbedView {
 		this.updateViewSizes();
 		view.refresh;
 	}
-	
-	// deprecated
-	swingFactor_{arg v;swingFactor=v; "swingFactor deprecated. no longer needed.".warn  }
-	
+		
 
 	// use these as examples to make your own class extentions according to your needs
 	*newBasic{ arg w, bounds, labels, colors, name=" ", scroll=false;
