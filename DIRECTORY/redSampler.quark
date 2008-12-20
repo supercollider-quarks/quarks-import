@@ -1,0 +1,8 @@
+(
+	\name:		"redSampler",
+	\path:		"redSampler",
+	\summary:	"disk and RAM playback of soundfiles",
+	\author:		"redFrik",
+	\helpdoc:		"RedDiskInSampler.html",
+	\url:			"http://www.fredrikolofsson.com/"
+)
