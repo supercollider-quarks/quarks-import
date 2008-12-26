@@ -130,8 +130,6 @@
 	guiNoLabel { arg  ... args; 
 		^this.guiClass.new(this).performList(\guiNoLabel, args);
 	}
-	
-	isView { ^false }
 }
 
 + SCView {
