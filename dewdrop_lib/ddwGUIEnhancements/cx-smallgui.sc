@@ -7,6 +7,8 @@
 			^Tile(this,args.first.asPageLayout)
 		});
 	}
+
+	isView { ^false }
 }
 
 
