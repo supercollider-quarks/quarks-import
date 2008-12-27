@@ -873,15 +873,15 @@ MixerScope {
 	}
 	
 	init { arg mc, layout;
-		(mc.server != Server.internal).if({
-			"Scope can only be used with the internal server.".die;
-		}, {
+		if(GUI.current.name == \CocoaGUI and: { mc.server !== Server.internal }) {
+			"Scope can only be used with the internal server when using the Cocoa GUI kit.".die;
+		} {
 			channel = mc;
 			bus = mc.inbus;
 			buffer = Buffer.alloc(channel.server, 4096, mc.def.outChannels);
 			this.makeServerObjects;
 			this.gui(layout);
-		});
+		};
 	}
 	
 	makeServerObjects {
@@ -893,13 +893,13 @@ MixerScope {
 
 	makeServerObjectsToBundle { arg bundle;
 		var def;
-			// timestamp the synthdef
-		def = SynthDef.new("scope" ++ Main.elapsedTime.trunc(0.01), {
-			ScopeOut.ar(In.ar(bus.index, bus.numChannels), buffer.bufnum)
+		def = SynthDef.new("mxscope" ++ GUI.current.name ++ buffer.numChannels, { |bus, bufnum|
+			(if(GUI.current.name == \CocoaGUI) { ScopeOut } { JScopeOut })
+			.ar(In.ar(bus, buffer.numChannels), bufnum)
 		});
 		bundle.add(["/d_recv", def.asBytes,
 			[\s_new, def.name, synthID = channel.server.nodeAllocator.allocPerm, 1,
-				channel.fadergroup.nodeID]]
+				channel.fadergroup.nodeID, bus: bus.index, bufnum: buffer.bufnum]]
 		);
 	}
 	
