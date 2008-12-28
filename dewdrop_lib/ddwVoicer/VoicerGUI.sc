@@ -35,6 +35,8 @@ VoicerProxyGui : ObjectGui {
 		<controlView, <processView,		// flowviews
 		<dragSink,					// you'll be dropping things in here
 		<masterLayout, <layout, iMadeMasterLayout = false;
+	
+	var	myModel;
 
 	guify { arg lay,bounds,title, small=false;
 		if(lay.isNil,{
@@ -91,6 +93,7 @@ VoicerProxyGui : ObjectGui {
 				{ this.sizeWindow; }.defer(0.25);
 			});
 
+			myModel = model;
 		});
 	}
 
@@ -170,14 +173,14 @@ VoicerProxyGui : ObjectGui {
 	}
 	
 	remove {
-		model.notNil.if({
-			model.controlProxies.do({ arg gc;
+		if(myModel.notNil) {
+			myModel.controlProxies.do({ arg gc;
 				gc.gui.remove(false, false);	// don't remove views or resize
 											// just break connections--why?
 				gc.gui = nil;					// -- view.remove removes all its children
 			});
-			model.editor = nil;
-			model = nil;
+			myModel.editor = nil;
+			myModel = nil;
 			view.notClosed.if({
 				view.remove;
 			});
@@ -188,9 +191,9 @@ VoicerProxyGui : ObjectGui {
 
 			// garbage
 			panicButton = runButton = controlView = processView = dragSink =
-				masterLayout = nil;
+				masterLayout = myModel = nil;
 			
-		});
+		};
 	}
 	
 	updateStatus {

@@ -128,11 +128,10 @@ TempoClockGui : ObjectGui {
 		(changer.isView).if({
 			model.tempo_(tempoEditor.value / 60);
 		}, {
-			(changer != \tempo).if({
-				this.updateCounter;
-			}, { 
-				tempoEditor.value_(model.tempo*60).changed; 
-			});
+			switch(changer)
+				{ \tempo } { tempoEditor.value_(model.tempo*60).changed }
+				{ \stop } { this.remove }
+				{ this.updateCounter }
 		});
 	}
 	

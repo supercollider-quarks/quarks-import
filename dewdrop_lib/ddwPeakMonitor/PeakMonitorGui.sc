@@ -3,6 +3,11 @@ PeakMonitorGui : ObjectGui {
 	var	leftFlow, rightFlow;
 	var	multiSl, clipButtons, maxRecentView;
 	var	maxRecent, recentSize, maxClip;
+		// workaround for crucial gui issue
+		// closing a Swing window executes viewDidClose before calling remove on me
+		// so the model variable is already nil and .remove doesn't clean up the model
+		// I'll keep the model in a variable that crucial doesn't know about
+	var	myModel;
 	
 	guiBody { arg lay;
 		lay.startRow;
@@ -34,6 +39,7 @@ PeakMonitorGui : ObjectGui {
 		maxClip = 0 ! model.numChannels;
 		recentSize = model.freq*2;
 		maxRecent = Array.new(recentSize);
+		myModel = model;
 	}
 	
 	update {
@@ -60,7 +66,10 @@ PeakMonitorGui : ObjectGui {
 	}
 	
 	remove {
-		model.free;
+		if(myModel.notNil) {
+			myModel.free;
+			myModel = nil;
+		}
 	}
 	
 }

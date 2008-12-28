@@ -7,7 +7,7 @@ ResizeFlowWindow {
 	*initClass {
 		StartUp.add({
 			windowMethods = #[acceptsClickThrough, acceptsClickThrough_, acceptsMouseOver,
-				acceptsMouseOver_, alpha_, alwaysOnTop, alwaysOnTop_, asPageLayout, bounds,
+				acceptsMouseOver_, alpha_, alwaysOnTop, alwaysOnTop_, /*asPageLayout,*/ bounds,
 				bounds_, callDrawHook, closed, dataptr, didBecomeKey, didResignKey,
 				drawHook, drawHook_, editable, endFrontAction, endFrontAction_, endFullScreen,
 				front, fullScreen, isClosed, minimize, name, name_, play,
