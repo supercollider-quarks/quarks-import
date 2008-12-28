@@ -62,7 +62,7 @@ PeakMonitor {
 	free {
 		updater.stop;
 			// if there's a gui, drop it
-		this.dependants.do({ arg d; d.free });
+		this.dependants.do({ arg d; d.remove });
 		resp.remove;
 		synth !? { synth.free };
 		bus !? {

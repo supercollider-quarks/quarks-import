@@ -1,7 +1,8 @@
 
 MixerScopeGui : ObjectGui {
 	classvar	defaultWidth = 500, defaultHeight = 100;
-	var	<layout, <masterLayout, scopeView, <iMadeMasterLayout;
+	var	<layout, <masterLayout, scopeView, <iMadeMasterLayout,
+		myModel;
 
 	guify { arg lay,bounds,title;
 		if(lay.isNil,{
@@ -23,6 +24,7 @@ MixerScopeGui : ObjectGui {
 		layout = lay;
 		scopeView = GUI.scopeView.new(lay, lay.bounds)
 			.bufnum_(model.buffer.bufnum);
+		myModel = model;
 	}
 	
 	remove { arg dummy, freeModel = true;	// when model frees programmatically, this is false
@@ -34,20 +36,13 @@ MixerScopeGui : ObjectGui {
 				scopeView.remove;
 			});
 	
-			freeModel.if({ model.free; });
+			freeModel.if({ myModel.free; });
 	
 			if(iMadeMasterLayout and: { masterLayout.isClosed.not }) {
 				masterLayout.prClose;
 			};
 			
-			layout = masterLayout = scopeView = iMadeMasterLayout = nil;
+			layout = masterLayout = scopeView = iMadeMasterLayout = myModel = nil;
 		};
-	}
-
-	viewDidClose {
-		model.removeDependant(this);
-			// sorry cx, this is messing me up in SwingOSC
-//		model = nil;
-//		super.viewDidClose;
 	}
 }
