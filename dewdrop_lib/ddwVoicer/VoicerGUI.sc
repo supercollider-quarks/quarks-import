@@ -181,7 +181,7 @@ VoicerProxyGui : ObjectGui {
 			});
 			myModel.editor = nil;
 			myModel = nil;
-			view.notClosed.if({
+			(view.notNil and: { view.notClosed }).if({
 				view.remove;
 			});
 
