@@ -4,6 +4,7 @@
 TLSequenceIterator {
 	classvar	<>defaultAutoSync = true;
 	var	<array, <sequencer, <activeCmds, <>autoSyncAtEnd,
+		<>onStop,
 		<status = \idle, routine, <condition, <>index, <clock, <>shouldSync = true;
 	*new { |array, sequencer, autoSync|
 		^super.newCopyArgs(array, sequencer, IdentitySet.new, autoSync ? defaultAutoSync)
@@ -92,6 +93,7 @@ TLSequenceIterator {
 		parms[\manualStop] ?? { parms.put(\manualStop, true) };
 //parms.debug("parms after update");
 		activeCmds.copy.do({ |cmd| cmd.stop(parms) });
+		onStop.value(parms);
 		routine.stop;
 		if(status != \idle) {
 			this.changed(\done).debug("done upon stop");
@@ -141,7 +143,7 @@ TLSequenceIterator {
 	
 	cmdStopped { |cmd, parms, resumeTime|
 		var	oldCmds;
-var temp;
+//var temp;
 
 //status.debug(">> cmdStopped");
 		activeCmds.remove(cmd);
