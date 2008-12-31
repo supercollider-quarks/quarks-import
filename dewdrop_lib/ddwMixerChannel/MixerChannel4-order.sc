@@ -710,17 +710,16 @@ MixerChannel {
 		arg name, start, end, dur = 1, warp;
 		
 		var startTime, timeSpec;
-		
+
 		name.notNil.if({
 			this.stopAuto(name);	// begin by clearing automation
 
 				// schedule periodic updates for level and gui
 				// spec to convert time into level
-			warp = warp ?? { controls[name].spec.warp.class }; // by default use warp from control
-			start = start ?? { controls[name].spec.minval };
-			end = end ?? { controls[name].spec.maxval };
+			warp ?? { warp = controls[name].spec.warp.class }; // by default use warp from control
+			start ?? { start = controls[name].spec.minval };
+			end ?? { end = controls[name].spec.maxval };
 			timeSpec = ControlSpec.new(start, end, warp);
-			startTime = Main.elapsedTime;
 			lineRoutines[name] = Routine({
 				startTime = thisThread.clock.beats;
 				{ (thisThread.clock.beats - startTime) <= dur }.while({
@@ -731,7 +730,11 @@ MixerChannel {
 				});
 				this.setControl(name, end, true, false);
 				nil.yield		// stop
-			}).play(SystemClock);
+			});
+				// previously used routine.play(SystemClock)
+				// but this was bad when controlLine was called from another clock
+				// this is the proper way: schedule for 'now' on sysclock
+			SystemClock.sched(0, lineRoutines[name]);
 		}, {
 			MethodError("Must specify a control name.", this).throw;
 		});
