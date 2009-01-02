@@ -26,6 +26,7 @@ OSCBus{
 	free{
 		bus.free;
 		responder.remove;
+		bus = nil;
 	}
 
 }
@@ -59,6 +60,7 @@ DataBus{
 	free{
 		bus.free;
 		updater.stop;
+		bus = nil;
 	}
 
 }
