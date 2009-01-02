@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="824.42">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #623924}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #623924}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #1b34d9}
+span.s3 {color: #142fe0}
+span.s4 {color: #000000}
+span.s5 {color: #303b89}
+span.s6 {color: #623924}
+span.s7 {font: 12.0px Helvetica; color: #000000}
+span.s8 {color: #1427a2}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>BusMonitor<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>class to monitor a control bus graphically with GNUPlot</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: </b><a href="../Core/Object.html"><span class="s2"><b>Object</b></span></a></p>
+<p class="p3"><br></p>
+<p class="p6">This creates a GNUPlot.monitor on the bus, with an update time of 0.05, a data size of 1000, and a skip of 20.</p>
+<p class="p3"><br></p>
+<p class="p1"><b>See also: </b><a href="GNUPlot.html"><span class="s2"><b>GNUPlot</b></span></a></p>
+<p class="p3"><br></p>
+<p class="p4"><b>You need to have GNUPlot installed in order to be able to use this class!</b></p>
+<p class="p2"><br></p>
+<p class="p4"><b>Creation / Class Methods</b></p>
+<p class="p5"><br></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>*new( b )</b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Create a monitor on bus "b".</p>
+<p class="p7"><br></p>
+<p class="p11"><b>Accessing Instance and Class Variables</b></p>
+<p class="p7"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>setRange(min=0.0,max=1.0)</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set the minimum and maximum of the plotting range.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>start</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Start the monitor.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>stop</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Stop the monitor.</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>dt_</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set the update time of the monitor (default 0.05).</p>
+
+<p class="p6"><b><span class="Apple-tab-span">	</span>cleanUp</b></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Quit GNUPlot and close the pipe to GNUPlot.</p>
+
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p11"><b>Example:</b></p>
+<p class="p14">s = Server.local.boot;</p>
+<p class="p14">b = <span class="s8">Bus</span>.control(s,1);</p>
+<p class="p14">{ Out.kr( b.index, Mix.new( SinOsc.kr( [0.125, 0.25], 0, [0.6,0.4] ) ) ) }.play;</p>
+<p class="p14">a = BusMonitor.new( b );</p>
+<p class="p14">a.start;</p>
+<p class="p14">a.setRange( -1, 1 );</p>
+<p class="p14">a.stop;</p>
+<p class="p14">a.cleanUp;</p>
+</body>
+</html>
