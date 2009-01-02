@@ -7,5 +7,6 @@
 	\version:		0.2, // must be a float
 	\country: 		"Germany",
 	\since: 		"2005",
-	\url:           "http://www.lfsaw.de/hardware/ambient_lights.shtml"
+	\url:           "http://www.lfsaw.de/hardware/ambient_lights.shtml",
+\helpdoc: "help/Orb.html"
 )

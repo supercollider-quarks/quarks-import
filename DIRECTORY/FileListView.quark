@@ -4,5 +4,6 @@
 	\summary: "a gui Listbox that navigates a filesystem.",
 	\author: "blackrain",
 	\organization: 	"realizedsound",
-	\url:           "http://www. realizedsound.net/"
+	\url:           "http://www. realizedsound.net/",
+\helpdoc: "FileListView.help.rtf"
 )
