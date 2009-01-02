@@ -1,11 +1,11 @@
 
 +NetAddr {
 	// check this again!!
-	*myIP { |prefix=""|
+	*myIP { |prefix="",device=""|
 		var j, k, res, bc;
 		// prefix argument, since on Linux ifconfig does not lie in the user's path, but in /sbin/, so it can be passed as an argument (nescivi, April 2008)
-		res = Pipe.findValuesForKey(prefix++"ifconfig", "inet");
-		bc = this.broadcastIP( prefix );
+		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "inet");
+		bc = this.broadcastIP( prefix, device );
 
 		if ( res.notNil, {
 			// fix for Linux output: (nescivi, April 2008)
@@ -45,10 +45,10 @@
 		^NetAddr(hostname, port )
 	}
 
-	*broadcastIP { |prefix=""|
+	*broadcastIP { |prefix="",device=""|
 		var  res,k,delimiter=$ ;
-		res = Pipe.findValuesForKey(prefix++"ifconfig", "broadcast");
-		res = res ++ Pipe.findValuesForKey(prefix++"ifconfig", "Bcast", $:);
+		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
+		res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
 
 		if(res.size > 1) { postln("the first of those devices were chosen: " ++ res) };
 		res.do{ |it,i|
