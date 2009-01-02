@@ -3,7 +3,7 @@
 \path: "LinuxExternal",
 \summary: "A set of classes to interface external programs on Linux, such as GNUPlot and JACK tools.",
 \author: "Marije Baalman",
-\version: 0.1,
+\version: 0.2,
 \organization: "nescivi",
 \country: "Netherlands",
 \since: "2007",
