@@ -11,7 +11,7 @@
 	\organization: 	"CIRMA  - Universitˆ di Torino",
 	\country: 		"Italy",
 	\since: 		"2007",
-	\helpdoc: "00. GeoGraphyStartup.html",
+	\helpdoc: "GeoGraphyHelp/00. GeoGraphyStartup.html",
 	\ext_dependancy:  { 'SwingOSC'.asClass.notNil },
 	\url:           "http://www.cirma.unito.it/andrea/geoGraphy/"
 )

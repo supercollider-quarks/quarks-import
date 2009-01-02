@@ -4,5 +4,6 @@
 	\summary: "control rate editor with a 1.0 or 0.0 float value",
 	\author: "blackrain",
 	\organization: 	"realizedsound",
-	\url:           "http://www. realizedsound.net/"
+	\url:           "http://www. realizedsound.net/",
+\helpdoc: "KrToggleEditor.help.rtf"
 )

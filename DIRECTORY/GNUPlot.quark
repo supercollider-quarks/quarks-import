@@ -7,7 +7,7 @@
 \organization: "nescivi",
 \country: "Netherlands",
 \since: "2009",
-\helpdoc: "GNUPlot/Help/GNUPlot.html",
+\helpdoc: "Help/GNUPlot.html",
 \ext_dependancy: "gnuplot",
 \url: "http://www.nescivi.nl"
 )

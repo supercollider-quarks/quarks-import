@@ -10,5 +10,6 @@
 	\country: 		"uk - es - is",
 	\since: 		"2000",
 	\ext_dependancy: "none",
-	\url:           "http://www.ixi-audio.net"
+	\url:           "http://www.ixi-audio.net",
+\helpdoc: "help/ixiViews.html"
 )

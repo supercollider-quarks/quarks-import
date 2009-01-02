@@ -314,7 +314,7 @@ SETOServerView {
 	initView{|parent, bounds, tServer|
 		setoServer = tServer;
 		view = GUI.compositeView.new(parent,bounds);
-		view.relativeOrigin = true;
+		//	view.relativeOrigin = true;
 		view.background = Color.white;
 		objects = ();
 	}

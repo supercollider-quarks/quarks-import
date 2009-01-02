@@ -7,7 +7,7 @@
 \organization: "nescivi",
 \country: "Netherlands",
 \since: "2009",
-\helpdoc: "JACK/Help/SCJMeterBridge.html",
+\helpdoc: "Help/JACK.html",
 \ext_dependancy: "jack_connect, jack_lsp, meterbridge",
 \url: "http://www.nescivi.nl"
 )
