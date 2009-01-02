@@ -1,5 +1,6 @@
 Arduino
 {
+	classvar <>crtscts=true;
 	var <port, <parser, inputThread;
 	var <>action;
 
@@ -13,7 +14,8 @@ Arduino
 				baudrate,
 				// without flow control data written only seems to
 				// appear at the device after closing the connection
-				crtscts: true
+				// aug.2008: made this into a class variable so it can be turned off in certain subclass environments (nescivi)
+				crtscts: crtscts
 			)
 		).init
 	}
