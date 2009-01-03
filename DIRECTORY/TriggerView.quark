@@ -4,5 +4,6 @@
 	\summary: "a gui button/toggle",
 	\author: "blackrain",
 	\organization: 	"realizedsound",
-	\url:           "http://www. realizedsound.net/"
+	\url:           "http://www. realizedsound.net/",
+\helpdoc: "TriggerView.html"
 )
