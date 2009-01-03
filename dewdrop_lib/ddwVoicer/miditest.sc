@@ -34,49 +34,48 @@
 			// can have controllers on a different midi channel (or different device)
 		ctlChannel = ctlChannel ? channel;
 		
-		target.asTarget.server.waitForBoot({
-				// make the player
-			voicer = makeVoicerFunc.(this, initArgs, target: target, bus: bus)
-				?? { Voicer.new(20, this, initArgs, target: target, bus: bus) };
-			socket = VoicerMIDISocket.new(channel, voicer);  // plug into MIDI
+			// make the player
+		voicer = makeVoicerFunc.(this, initArgs, target: target, bus: bus)
+			?? { Voicer.new(20, this, initArgs, target: target, bus: bus) };
+		socket = VoicerMIDISocket.new(channel, voicer);  // plug into MIDI
 
-				// make guis for controls other than freq and gate
-				// first get the InstrSynthDef
-				// how to exempt args? provide non-SimpleNumber in initArgs
-				// (Ref of SimpleNumber works to make fixed arg)
-			patch = voicer.nodes.at(0).patch;
-			synthdef = patch.asSynthDef;
-			argNames = patch.argNames ?? { this.argNames };
+			// make guis for controls other than freq and gate
+			// first get the InstrSynthDef
+			// how to exempt args? provide non-SimpleNumber in initArgs
+			// (Ref of SimpleNumber works to make fixed arg)
+		patch = voicer.nodes.at(0).patch;
+		synthdef = patch.asSynthDef;
+		argNames = patch.argNames ?? { this.argNames };
 
-				// now make midi controllers, but only for kr inputs
-				// we have to go to the synthdef because only it knows which are noncontrols
-			synthdef.allControlNames.do({ |cname|
-				(cname.rate == \control and:
-					{ #[\freq, \gate, \out].includes(cname.name).not }
-				).if({
-					i = argNames.detectIndex({ |name| name == cname.name });
-					parg = patch.args[i];
-					socket.addControl(
-						nil,		// socket will allocate a controller for me
-						argNames[i],
-						(name == \pb).if(1, patch.args[i].value),
-						(name == \pb).if(
-							[7.midiratio.reciprocal, 7.midiratio, \exponential, 0, 1],
-							parg.tryPerform(\spec) ?? { patch.argSpecs[i] }),
-						ctlChannel
-					);
-				});
+			// now make midi controllers, but only for kr inputs
+			// we have to go to the synthdef because only it knows which are noncontrols
+		synthdef.allControlNames.do({ |cname|
+			(cname.rate == \control and:
+				{ #[\freq, \gate, \out].includes(cname.name).not }
+			).if({
+				i = argNames.detectIndex({ |name| name == cname.name });
+				parg = patch.args[i];
+				socket.addControl(
+					nil,		// socket will allocate a controller for me
+					argNames[i],
+					(name == \pb).if(1, patch.args[i].value),
+//						(name == \pb).if(
+//							[7.midiratio.reciprocal, 7.midiratio, \exponential, 0, 1],
+//							parg.tryPerform(\spec) ?? { patch.argSpecs[i] }),
+					parg.tryPerform(\spec) ?? { patch.argSpecs[i] },
+					ctlChannel
+				);
 			});
-				// make stop button
-			voicer.addProcess([["Stop test", close]], \toggle);  // so it's a button not a menu
-
-			layout = voicer.gui.masterLayout;
-			layout.onClose = close;
-			
-			// now user can play
-			"\n\nTry your Instr using your midi keyboard. Arguments have been routed as shown".postln;
-			"in the console window.".postln;
 		});
+			// make stop button
+		voicer.addProcess([["Stop test", close]], \toggle);  // so it's a button not a menu
+
+		layout = voicer.gui.masterLayout;
+		layout.onClose = close;
+		
+		// now user can play
+		"\n\nTry your Instr using your midi keyboard. Arguments have been routed as shown".postln;
+		"in the console window.".postln;
 		^voicer
 	}
 
@@ -163,57 +162,55 @@
 		ctlChannel = ctlChannel ? channel;
 		specs = specs ? Array.new;
 
-		target.asTarget.server.waitForBoot({
-			this.send(target.asTarget.server);	// tell the server about me
-			
-				// make the player
-			voicer = makeVoicerFunc.(this.name, #[], target: target, bus: bus)
-				?? { Voicer.new(20, this.name, target: target, bus: bus) };
-			socket = VoicerMIDISocket.new(channel, voicer);  // plug into MIDI
-			
-				// make guis for controls other than freq and gate
-				// first get the InstrSynthDef
-				// how to exempt args? provide non-SimpleNumber in initArgs
-			
-				// now make midi controllers
-			this.allControlNames.do({ arg cn, i;
-					// freq and gate must be omitted
-				name = cn.name.asSymbol;
-				#[\freq, \gate, \outbus].includes(name).not.if({
-					specs[i].respondsTo(\asSpec).if({
-						spec = specs.at(cn.index).asSpec ?
-							ControlSpec.specs.at(name) ?
-							ControlSpec.new;	// this is probably not 100% robust
-					}, {
-						spec = specs[i];
-					});
-					(spec.rate != \scalar).if({
-						socket.addControl(
-							nil,		// let Socket find me a controller
-							name,
-							(name == \pb).if(1, spec.default),
-							(name == \pb).if(
-								[7.midiratio.reciprocal, 7.midiratio, \exponential, 0, 1],
-								spec),
-							ctlChannel
-						);
-					}, {
-						voicer.setArgDefaults([name, spec.tryPerform(\default) ?? { spec }])
-					});
+		this.send(target.asTarget.server);	// tell the server about me
+		
+			// make the player
+		voicer = makeVoicerFunc.(this.name, #[], target: target, bus: bus)
+			?? { Voicer.new(20, this.name, target: target, bus: bus) };
+		socket = VoicerMIDISocket.new(channel, voicer);  // plug into MIDI
+		
+			// make guis for controls other than freq and gate
+			// first get the InstrSynthDef
+			// how to exempt args? provide non-SimpleNumber in initArgs
+		
+			// now make midi controllers
+		this.allControlNames.do({ arg cn, i;
+				// freq and gate must be omitted
+			name = cn.name.asSymbol;
+			#[\freq, \gate, \outbus].includes(name).not.if({
+				specs[i].respondsTo(\asSpec).if({
+					spec = specs.at(cn.index).asSpec ?
+						ControlSpec.specs.at(name) ?
+						ControlSpec.new;	// this is probably not 100% robust
+				}, {
+					spec = specs[i];
+				});
+				(spec.rate != \scalar).if({
+					socket.addControl(
+						nil,		// let Socket find me a controller
+						name,
+						(name == \pb).if(1, spec.default),
+						(name == \pb).if(
+							[7.midiratio.reciprocal, 7.midiratio, \exponential, 0, 1],
+							spec),
+						ctlChannel
+					);
+				}, {
+					voicer.setArgDefaults([name, spec.tryPerform(\default) ?? { spec }])
 				});
 			});
-			
-				// make stop button
-			voicer.addProcess([["Stop test", close]], \toggle);  // so it's a button not a menu
-
-			layout = voicer.gui.masterLayout;
-			layout.onClose = close;
-			
-			// now user can play
-			"\n\nTry your SynthDef using your midi keyboard. Arguments have been routed as shown".postln;
-			"in the console window.".postln;
-			^voicer
 		});
+		
+			// make stop button
+		voicer.addProcess([["Stop test", close]], \toggle);  // so it's a button not a menu
+
+		layout = voicer.gui.masterLayout;
+		layout.onClose = close;
+		
+		// now user can play
+		"\n\nTry your SynthDef using your midi keyboard. Arguments have been routed as shown".postln;
+		"in the console window.".postln;
+		^voicer
 	}
 
 	miditestMono { arg channel = 0, specs, target, bus, ctlChannel;
