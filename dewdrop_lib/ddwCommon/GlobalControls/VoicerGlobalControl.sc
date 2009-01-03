@@ -32,15 +32,17 @@ GlobalControlBase : AbstractFunction {
 	}
 	
 	init { arg n, b, val, sp, guiOK;
+		server = b.tryPerform(\server) ? Server.default;
+		if(server.serverRunning.not) {
+			MethodError("Server % must be running before using global controls."
+				.format(server), this).throw;
+		};			
 		allowGUI = guiOK;
 		voicerIndex = indexForSorting = indexForSorting + 1;
 		spec = sp.asSpec;
 		name = n.asSymbol;
-		server = b.tryPerform(\server) ? Server.default;
-		server.waitForBoot({	// these steps must not occur until server is running
-			bus = b ?? { BusDict.control(server, 1, name ++ " control") };
-			this.set(val ? spec.default);
-		});
+		bus = b ?? { BusDict.control(server, 1, name ++ " control") };
+		this.set(val ? spec.default);
 		lag = defaultLag;
 		this.makeGUI;		// if gui isn't opened, this does nothing
 	}
@@ -220,21 +222,23 @@ VoicerGlobalControl : GenericGlobalControl {
 	}
 	
 	init { arg n, b, val, sp, guiOK, v;
+		voicer = v;
+		server = voicer.target.server;
+		if(server.serverRunning.not) {
+			MethodError("Server % must be running before using global controls."
+				.format(server), this).throw;
+		};			
 		allowGUI = guiOK;
 		spec = sp.asSpec;
 		name = n.asSymbol;
-		voicer = v;
 		voicerIndex = voicer.maxControlNum + 1;
 		parentProxy = voicer.proxy;
-		server = voicer.target.server;
-		server.waitForBoot({	// these steps must not occur until server is running
-			bus = b ? BusDict.control(server, 1, name ++ " control");
-			this.set(val ? spec.default);
-				// do the mapping for loaded nodes
-			voicer.nodes.do({ arg n;
-				(n.isPlaying).if({
-					n.map(name, bus.index);
-				});
+		bus = b ? BusDict.control(server, 1, name ++ " control");
+		this.set(val ? spec.default);
+			// do the mapping for loaded nodes
+		voicer.nodes.do({ arg n;
+			(n.isPlaying).if({
+				n.map(name, bus.index);
 			});
 		});
 		this.makeGUI;		// if gui isn't opened, this does nothing

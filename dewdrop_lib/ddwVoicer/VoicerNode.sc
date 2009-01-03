@@ -268,22 +268,20 @@ InstrVoicerNode : SynthVoicerNode {
 			// use given bus or hardware output
 		bus = b ? Bus.new(\audio, 0, 1, target.server);
 		olddefname.isNil.if({
-			target.server.waitForBoot({	// don't make the patch until server is ready
-				patch = this.makePatch(instr, ar);
-					// cracky workaround for cxx's synthdef naming problem
-					// this breaks nested patches but I never use that anyway
-				def = patch.asSynthDef;
-				def.name = (defname = def.name ++ UniqueID.next);
-				try { def.memStore }		// this might not work with wrapped Instr's
-					{ |error|
-						error.notNil.if({
-							"Error occurred during InstrVoicerNode initialization: memStore.\nSending synthdef normally.".warn;
-							error.reportError;
-							"\nContinuing. Voicer will be usable. Pattern arguments will not be detected automatically.".postln;
-							def.send(target.server);
-						});
-					};
-			});
+			patch = this.makePatch(instr, ar);
+				// cracky workaround for cxx's synthdef naming problem
+				// this breaks nested patches but I never use that anyway
+			def = patch.asSynthDef;
+			def.name = (defname = def.name ++ UniqueID.next);
+			try { def.memStore }		// this might not work with wrapped Instr's
+				{ |error|
+					error.notNil.if({
+						"Error occurred during InstrVoicerNode initialization: memStore.\nSending synthdef normally.".warn;
+						error.reportError;
+						"\nContinuing. Voicer will be usable. Pattern arguments will not be detected automatically.".postln;
+						def.send(target.server);
+					});
+				};
 		}, {
 				// olddefname was not nil: the patch was made earlier by another node
 				// this one will use the same synthdef
