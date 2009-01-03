@@ -5,7 +5,7 @@
 	\author: 		"Marije Baalman",
 	\organization:	"Concordia University, Montreal",
 	\country: 		"Canada",
-	\helpdoc:		"SenseWorld.html",
+	\helpdoc:		"Help/SenseWorld.html",
 	\dependencies: ["MathLib"],
 	\since: 		"2007",
 	\version:		"0.1"

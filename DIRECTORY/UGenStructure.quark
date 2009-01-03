@@ -4,7 +4,7 @@
 	\summary:		"SynthDef independent UGen graphs, and some laTeX extensions",
 	\author: 		"Julian Rohrhuber",
 	\organization: 	"University Cologne",
-	\helpdoc:		"help/UGenNode.html",
+	\helpdoc:		"UGenNode.rtf",
 	\country: 		"Germany",
 	\since: 		"2008"
 )

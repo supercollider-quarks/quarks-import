@@ -6,5 +6,6 @@
 	\organization: 	"LFSaw",
 	\country: 		"Germany",
 	\since: 		"2005",
-	\url:           "http://LFSaw.de/"
+	\url:           "http://LFSaw.de/",
+\helpdoc: "Help/Turtle.html"
 )

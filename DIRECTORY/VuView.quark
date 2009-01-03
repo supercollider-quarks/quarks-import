@@ -4,5 +4,6 @@
 	\summary: "gui view with a gauge",
 	\author: "blackrain",
 	\organization: 	"realizedsound",
-	\url:           "http://www. realizedsound.net/"
+	\url:           "http://www. realizedsound.net/",
+\helpdoc: "VuView.html"
 )

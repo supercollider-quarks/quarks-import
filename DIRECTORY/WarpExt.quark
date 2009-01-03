@@ -3,5 +3,6 @@
 	\name: 		"WarpExt",
 	\path: 		"WarpExt",
 	\summary:	"Warp0 and WarpIn - extensions to the Warp1 UGen",
-	\author: 		"Joshua Parmenter"
+	\author: 		"Joshua Parmenter",
+\helpdoc: "WarpExt.html"
 )
