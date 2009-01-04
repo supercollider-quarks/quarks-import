@@ -5,7 +5,7 @@ TempoClick {
 	classvar	<>latencyFudge = 0;
 	
 	var	<server, <clock, <bus, <subdiv, <nodeID, nodeIDBounce;
-	var	aliveThread;
+	var	aliveThread, serverWatcher;
 	
 	*new { arg server, clock, bus, subdiv = 1;
 		^super.newCopyArgs(server ?? { Server.default }, clock ? TempoClock.default,
@@ -18,6 +18,17 @@ TempoClick {
 			("Clock must be a TempoClock. This is " ++ clock.asString).die;
 		});
 		clock.addDependant(this);
+		serverWatcher = Updater(server, { |server, changed|
+			if(changed == \serverRunning and: { server.serverRunning.not }) {
+				AppClock.sched(5, {
+						// really dead, stop the tempoclick
+					if(server.serverRunning.not) {
+						"Server died, TempoClick is stopped.".postln;
+						this.free
+					}
+				})
+			}
+		});
 		nodeID = server.nodeAllocator.allocPerm;
 		id2 = server.nodeAllocator.allocPerm;
 		nodeIDBounce = nodeID + id2;
@@ -45,18 +56,13 @@ TempoClick {
 		
 		aliveThread = Routine({
 			{	nodeID = nodeIDBounce - nodeID;
-					// schedule the onset using latency to coincide with the clock
-					// so server-side and client-side sequencers are in sync
-				server.sendBundle(0.2 / clock.tempo, [\s_new, \TempoClick, nodeID,
+				server.sendBundle(server.latency, [\s_new, \TempoClick, nodeID,
 					0, 0,	// at head of group 0
 					\tempo, clock.tempo, \subd, subdiv, \bus, bus.index]);
 				1.0.wait;
 			}.loop;
 		});
-		clock.schedAbs(
-			((time = clock.elapsedBeats.roundUp - 0.2) < clock.elapsedBeats).if(
-				{ time + 1 }, { time }),
-			aliveThread);
+		clock.schedAbs(clock.elapsedBeats.roundUp, aliveThread);
 	}
 	
 	stop {
@@ -69,8 +75,12 @@ TempoClick {
 		this.stop;
 		bus.free;
 		clock.removeDependant(this);
-		server.nodeAllocator.freePerm(nodeID);
-		server.nodeAllocator.freePerm(nodeIDBounce - nodeID);
+		serverWatcher.remove;
+		if(nodeID.notNil) {
+			server.nodeAllocator.freePerm(nodeID);
+			server.nodeAllocator.freePerm(nodeIDBounce - nodeID);
+			nodeID = nil
+		};
 	}
 	
 	update {
