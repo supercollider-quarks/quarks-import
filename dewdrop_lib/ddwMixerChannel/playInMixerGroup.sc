@@ -65,7 +65,9 @@
 		this.playToMixer(mixer)
 	}
 	playOnGlobalControl { |gc, target|
-		this.play((target ?? { gc.server }).asTarget, nil, gc.bus)
+			// if I don't wrap gc's bus in a SharedBus,
+			// freeing the patch will free the bus also... that's bad
+		this.play((target ?? { gc.server }).asTarget, nil, SharedBus.newFrom(gc.bus, gc))
 	}
 }
 
