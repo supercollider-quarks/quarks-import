@@ -6,18 +6,28 @@
 		children.do({ arg c;
 			c.recursiveResize;
 		});
-		this.tryPerform(\reflowAll);
-		this.tryPerform(\resizeToFitContents).isNil.if({
-			this.tryPerform(\resizeToFit);
-		});
+//		this.tryPerform(\reflowAll);
+//		this.tryPerform(\resizeToFitContents).isNil.if({
+//			this.tryPerform(\resizeToFit);
+//		});
 	}
 	
-	findRightBottom {		// a containerview can find the lowest-right point occupied by
-		var maxpt;
-		maxpt = this.bounds.leftTop;
+	findRightBottom {
+		var origin = this.bounds.leftTop, maxpt;
+		if(this.tryPerform(\relativeOrigin) ? false) {
+			maxpt = Point(0, 0);
+		} {
+			maxpt = origin;
+		};
 		children.do({ arg c;
 			maxpt = maxpt.max(c.findRightBottom);
 		});
+		if(this.tryPerform(\relativeOrigin) ? false) {
+			maxpt = maxpt + origin;
+		};
+		if(decorator.notNil) {
+			maxpt = maxpt + decorator.margin;
+		};
 		^maxpt
 	}
 }
