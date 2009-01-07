@@ -18,6 +18,8 @@ span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #0000ff}
 span.s3 {color: #0000bf}
 span.s4 {color: #007300}
+span.s5 {color: #000000}
+span.s6 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -41,5 +43,22 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p5">h.highlight(9.rand, 10.rand)</p>
 <p class="p7"><br></p>
+<p class="p3"><b>monitorBus(bus, rate, colour)</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>uses the <b>highlight</b> feature to create a Task reading the highlight location from a 2-channel control-rate <a href="SC://Bus"><span class="s2">Bus</span></a>, as follows:</p>
+<p class="p2"><br></p>
+<p class="p4">// Using the "h" created in the above example...</p>
+<p class="p6"><br></p>
+<p class="p5">s.boot;</p>
+<p class="p5">b = <span class="s3">Bus</span>.control(s, 2);</p>
+<p class="p5">(</p>
+<p class="p5">x = {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> pos = {<span class="s3">LFNoise2</span>.kr(2).range(0,8).round}.dup;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.kr(b, pos);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">Out</span>.ar(0, <span class="s3">Pan2</span>.ar(<span class="s3">SinOsc</span>.ar(pos[1].linexp(8,0,220,440), 0, 0.1), pos[0].linlin(0,8,-1,1)));</p>
+<p class="p5">}.play(s);</p>
+<p class="p5">)</p>
+<p class="p4"><span class="s5">t = h.monitorBus(b); </span>// Returns a running Task</p>
+<p class="p6"><br></p>
+<p class="p5">t.stop; x.free; b.free; <span class="s6">// tidy up</span></p>
 </body>
 </html>
