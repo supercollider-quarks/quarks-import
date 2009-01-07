@@ -36,6 +36,44 @@ HeatMap {
 			}
 		}.play(AppClock)
 	}
+	
+	*plot2DfileData { | path, title, labels, rowlen=3, picsize=90, colscheme=\bw |
+		var sf, farr, numrows, netsize, w, numchans, heatmaps;
+				
+		sf = SoundFile.new;
+		sf.openRead(path);
+		farr = FloatArray.newClear(sf.numFrames * sf.numChannels);
+		sf.readData(farr);
+		sf.close;
+		
+		numchans = sf.numChannels;
+		numrows = (numchans / rowlen).ceil.asInteger;
+		netsize = sqrt(sf.numFrames);
+		
+		farr = farr.clump(numchans).flop.collect(_.clump(netsize));
+		
+		// SCWindow
+		w = Window(title, Rect(100, 500, (picsize + 10)*rowlen+10, (picsize + 30)*numrows+20));
+		w.front;
+		
+		if(title.isNil){title = path.basename.splitext[0]};
+		if(labels.isNil){ labels = numchans.collect{|index| "Channel"+index}};
+		
+		heatmaps = farr.collect{|data, index|
+			// SCStaticText
+			StaticText.new(w, Rect((picsize + 10)*(index % rowlen)+10, (picsize + 30)*floor(index/rowlen)+15, picsize, 15))
+				.string_(labels[index]).align_(\center);
+			// HeatMap
+			data.heatMap(nil, win: w, bounds: Rect((picsize + 10)*(index % rowlen)+10, (picsize + 30)*floor(index/rowlen)+30, picsize, picsize), 
+				showVals: false, colscheme: colscheme);
+		};
+	
+		// ALSO paint the filename into the bottom, for future reference
+		StaticText.new(w, Rect(0, (picsize + 30)*numrows+5, (picsize + 10)*rowlen+10, 15)).string_(path.basename.splitext[0]).align_(\center)
+		
+		^[w, heatmaps]
+	} // end *plot2DfileData
+	
 } // end HeatMap class
 
 + SequenceableCollection {
