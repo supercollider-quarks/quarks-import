@@ -8,18 +8,33 @@ See heatMap.html for examples of usage.
 
 */
 HeatMap {
-	var <>compview, <patches, prCachedBkgrnds;
+	var <>compview, <patches, prHighlighted, prCachedBkgrnds;
 	parent { ^compview.parent }
 	patches_ { |theseones|
 		patches = theseones;
 		prCachedBkgrnds = patches.collect{|pcol| pcol.collect{|patch| patch.background}};
 	}
 	reset {
-		patches.do{|pcol, xindex| pcol.do{|patch, yindex| patch.background_(prCachedBkgrnds[xindex][yindex])}};
+		//patches.do{|pcol, xindex| pcol.do{|patch, yindex| patch.background_(prCachedBkgrnds[xindex][yindex])}};
+		if(prHighlighted.notNil){
+			patches[prHighlighted.x][prHighlighted.y].background_(prCachedBkgrnds[prHighlighted.x][prHighlighted.y]);
+			prHighlighted = nil;
+		}
 	}
-	highlight { |x,y,col|
+	highlight { |x, y, colour|
 		this.reset;
-		patches[x][y].background = col ? Color.red;
+		prHighlighted = x@y;
+		patches[x][y].background = colour ? Color.red;
+	}
+	
+	monitorBus { |bus, rate=24, colour|
+		rate = rate.reciprocal;
+		^Task{
+			loop{
+				rate.wait;
+				bus.getn(2, {|vals| {this.highlight(vals[0], vals[1], colour)}.defer});
+			}
+		}.play(AppClock)
 	}
 } // end HeatMap class
 
