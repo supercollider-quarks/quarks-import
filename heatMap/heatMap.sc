@@ -2,11 +2,27 @@
 
 "heatMap" extension to SuperCollider.
 (c) 2007-2008 Dan Stowell.
-Released under the GPL.
+Released under the GPL, version 3 or (at your option) any later version.
 
 See heatMap.html for examples of usage.
 
 */
+HeatMap {
+	var <>compview, <patches, prCachedBkgrnds;
+	parent { ^compview.parent }
+	patches_ { |theseones|
+		patches = theseones;
+		prCachedBkgrnds = patches.collect{|pcol| pcol.collect{|patch| patch.background}};
+	}
+	reset {
+		patches.do{|pcol, xindex| pcol.do{|patch, yindex| patch.background_(prCachedBkgrnds[xindex][yindex])}};
+	}
+	highlight { |x,y,col|
+		this.reset;
+		patches[x][y].background = col ? Color.red;
+	}
+} // end HeatMap class
+
 + SequenceableCollection {
 
 	heatMap { |numChannels, bounds, xLabels=false, yLabels=false, 
@@ -144,7 +160,7 @@ See heatMap.html for examples of usage.
 		
 		if(ownWin){ win.front };
 		
-		^compview;
+		^HeatMap.new.compview_(compview).patches_(patches.clump(numChannels));
 	}
 	
 }
