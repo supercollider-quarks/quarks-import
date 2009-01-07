@@ -14,6 +14,7 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #0000ff}
 span.s3 {color: #0000bf}
@@ -60,5 +61,14 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s5">t = h.monitorBus(b); </span>// Returns a running Task</p>
 <p class="p6"><br></p>
 <p class="p5">t.stop; x.free; b.free; <span class="s6">// tidy up</span></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p3"><b>*plot2DfileData(path, title, labels, rowlen=3, picsize=90, colscheme=\bw)</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span>This convenience reads a file from <b>path</b> (in a format such as AIFF/WAV/etc) and plots a 2D heatmap for each channel, on the assumption that the file represents a <b><i>SQUARE</i></b> heatmap, having (edgelength * edgelength) frames in the datafile. This is the format used by <a href="../../../../../../backups/_mysvn_/mcldsc/ExtensionsByDan/MCLD_UGens/Help/SOMTrain.html"><span class="s2">SOMTrain</span></a> and <a href="../../../../../../backups/_mysvn_/mcldsc/ExtensionsByDan/MCLD_UGens/Help/SOMRd.html"><span class="s2">SOMRd</span></a>, among others. The window prints out pretty nicely, on Mac at least.</p>
+<p class="p3"><span class="Apple-tab-span">	</span>The method returns an array containing two things: the parent window, and an array of the HeatMap objects.</p>
+<p class="p2"><br></p>
+<p class="p4">// Note: this time "h" is going to be our array of heatmaps</p>
+<p class="p8"><span class="s5">#w, h = </span><span class="s3">HeatMap</span><span class="s5">.plot2DfileData(</span><span class="s3">Local</span><span class="s5">.datapath +/+ </span>"MatchEQ/a11wlk01-features-SOMcoords.aiff"<span class="s5">, </span>"Look at these data"<span class="s5">);</span></p>
+<p class="p5">~location = 9.rand @ 10.rand; h.do{<span class="s3">|hm|</span> hm.highlight(~location.x, ~location.y)}; w.refresh</p>
 </body>
 </html>
