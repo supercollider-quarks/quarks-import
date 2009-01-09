@@ -49,6 +49,7 @@ Rational : AbstractFunction {
 	asInteger { ^value.asInteger } 
 	
 	asUGenInput { ^value }
+	asControlInput { ^value }
 	synthArg { ^value }
 	
 	numerator {
