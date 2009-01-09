@@ -39,12 +39,11 @@ MixingBoard {
 	}
 	
 	free {
-		// remove this mixing board and all channels
-		
-			// false says to hold off gui updates
+			// remove this mixing board and all channels
 		onClose.value(this);
 		w.isClosed.not.if({ w.onClose = nil; w.close; });
-		mixers.do({ arg m; m.mixer = nil });
+			// false says to skip gui updates (which would fail b/c window is gone)
+		mixers.do({ arg m; m.mixer_(nil, false) });
 		boards.remove(this);
 	}
 	
