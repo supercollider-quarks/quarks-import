@@ -32,6 +32,8 @@ NilTimeSpec {   // always schedules for now
 	offset { ^0 }
 	offset_ {}
 	bindClassName { ^\NilTimeSpec }
+
+	printOn { |stream| this.storeOn(stream) }
 }
 
 DelayTimeSpec : NilTimeSpec {
@@ -45,6 +47,8 @@ DelayTimeSpec : NilTimeSpec {
 		var beats = clock.tryPerform(\beats);
 		^beats + dStream.next(beats)
 	}
+	
+	storeArgs { ^[delay] }
 }
 
 DelayTimeSpecLeadTime : DelayTimeSpec {
@@ -67,6 +71,7 @@ AbsoluteTimeSpec : NilTimeSpec {
 				.format(quant, (argClock ? clock).beats), this).throw;
 		});
 	}
+	storeArgs { ^[quant] }
 }
 
 AbsoluteTimeSpecLeadTime : AbsoluteTimeSpec {
@@ -115,6 +120,17 @@ BasicTimeSpec : AbsoluteTimeSpecLeadTime {
 		if(q < 0) { q = q.neg * schedclock.beatsPerBar };
 		^roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
 			+ p - (bp.leadTime ? 0)
+	}
+	storeArgs { 
+		^if(offset.isNil) {
+			if(phase.isNil) {
+				[quant]
+			} {
+				[quant, phase]
+			}
+		} {
+			[quant, phase, offset]
+		}
 	}
 }
 
