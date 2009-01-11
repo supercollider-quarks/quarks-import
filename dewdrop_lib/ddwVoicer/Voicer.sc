@@ -559,11 +559,12 @@ Voicer {		// collect and manage voicer nodes
 				},
 				
 				play: #{
-					var	lag, timingOffset = ~timingOffset ? 0;
+					var	lag, timingOffset = ~timingOffset ? 0, releaseGate;
 					~voicer.notNil.if({
 						lag = ~latency;
 						~prepNote.value;
 						~finish.value;	// user-definable
+						releaseGate = (~releaseGate ? 0).asArray;
 	
 						~nodes.do({ |node, i|
 							var	freq = ~freq.wrapAt(i), length = ~length.wrapAt(i);
@@ -575,7 +576,7 @@ Voicer {		// collect and manage voicer nodes
 							);
 							(length.notNil and: { length != inf }).if({
 								thisThread.clock.sched(length + timingOffset, {
-									node.release(0,
+									node.release(releaseGate.wrapAt(i),
 										node.server.latency.notNil.if({
 											lag + node.server.latency
 										}),
@@ -588,7 +589,7 @@ Voicer {		// collect and manage voicer nodes
 			));
 	
 			Event.default[\eventTypes].put(\voicerNote, #{|server|
-				var lag, strum, sustain, i, timingOffset = ~timingOffset ? 0;
+				var lag, strum, sustain, i, timingOffset = ~timingOffset ? 0, releaseGate;
 				
 				~freq = (~freq.value + ~detune).asArray;
 	
@@ -603,6 +604,7 @@ Voicer {		// collect and manage voicer nodes
 						(i = ~args.detectIndex({ |item| item == \gate })).notNil
 							.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
 					}).asArray;
+					releaseGate = (~releaseGate ? 0).asArray;
 					
 					~nodes = ~voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
 					~voicer.setArgsInEvent(currentEnvironment);
@@ -622,7 +624,7 @@ Voicer {		// collect and manage voicer nodes
 						);
 						(length.notNil and: { length != inf }).if({
 							thisThread.clock.sched(length + timingOffset, {
-								node.release(0,
+								node.release(releaseGate.wrapAt(i),
 									node.server.latency.notNil.if({
 										lag + node.server.latency
 									}),
