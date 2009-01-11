@@ -294,8 +294,14 @@ PR(\abstractTLCommand).clone({
 //name.debug("bpcmd - playing");
 //[thisThread.clock.beats, BP(name).eventSchedTime(~quant)].debug("now, go time");
 //~quant.dump;
-				thisThread.clock.schedAbs(BP(name).eventSchedTime(~quant), {
-					BP(name).play(NilTimeSpec.new, nil, doReset: ~doReset ? false);
+				thisThread.clock.schedAbs(BP(name).eventSchedTime(~quant), e {
+						// if not running, cmd was stopped before BP fired
+						// so skip the .play
+					if(~isRunning) {
+						BP(name).play(NilTimeSpec.new, nil, doReset: ~doReset ? false);
+					} {
+						BP(name).removeDependant(currentEnvironment);
+					};
 				});
 			};
 		});
