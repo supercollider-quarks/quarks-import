@@ -24,7 +24,7 @@
 <body>
 <p class="p1"><b>TuningRatios : EqualTemperament</b></p>
 <p class="p2"><br></p>
-<p class="p3">TuningRatios allows you to specify a ratio above the base for each note in an octave. Ideal for just intonation.</p>
+<p class="p3">TuningRatios allows you to specify a ratio above the base for each note in an octave. Useful for simplified just intonation schemes.</p>
 <p class="p2"><br></p>
 <p class="p4"><b>*new(stepsPerOctave, calibratefreq, calibratenote, tunings)</b></p>
 <p class="p2"><br></p>
@@ -40,7 +40,7 @@
 <p class="p4"><b>cps(noteindex)</b></p>
 <p class="p4"><b>value(noteindex)</b></p>
 <p class="p2"><br></p>
-<p class="p3">Compute frequency in Hz for the given note index. If you use a fractional indices, the offset from the array will be interpolated using blendAt. That is, if note 0 has an offset of 0 and note 1 has an offset of 0.1, note 0.5 will have an offset of 0.05.</p>
+<p class="p3">Compute frequency in Hz for the given note index. If you use fractional indices, the offset from the array will be interpolated using blendAt. That is, if note 0 has an offset of 0 and note 1 has an offset of 0.1, note 0.5 will have an offset of 0.05.</p>
 <p class="p2"><br></p>
 <p class="p5">// build a Pythagorean C tuning, no correction for the comma</p>
 <p class="p6"><br></p>
@@ -94,7 +94,7 @@
 <p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>\instrument<span class="s2">, </span>\default<span class="s2">,</span></p>
 <p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>\tuning<span class="s2">, t</span></p>
 <p class="p7">).collect({ <span class="s1">|ev|</span> [ev.degree, ev.use({ ~freq.value })].postln; ev })</p>
-<p class="p7">.play(protoEvent: <span class="s1">Event</span>.default.copy.put(<span class="s3">\freq</span>, #{ ~tuning.cps(~midinote.value + ~ctranspose) * ~harmonic }));</p>
+<p class="p7">.play(protoEvent: <span class="s1">Event</span>.default.put(<span class="s3">\freq</span>, #{ ~tuning.cps(~midinote.value + ~ctranspose) * ~harmonic }));</p>
 <p class="p7">)</p>
 <p class="p6"><br></p>
 <p class="p7">p.stop;</p>
