@@ -96,6 +96,7 @@ TempoClockGui : ObjectGui {
 
 		updater.isNil.if({
 			updater = Routine.new({ 	// routine to update every beat
+				var	waitTime;
 				{ model.isRunning }.while({
 					this.updateCounter;
 					if(metro.notNil and: { metro.synth.notNil }) {
@@ -104,7 +105,11 @@ TempoClockGui : ObjectGui {
 							metro.synth.setMsg(\t_trig, metroLevel)
 						]);
 					};
-					1.wait
+					if((waitTime = min(1, model.nextBar - model.beats)) == 0) {
+						min(1, model.beatsPerBar).wait
+					} {
+						waitTime.wait;
+					};
 				});
 			});
 				// start it running on the next beat
