@@ -1,5 +1,7 @@
 //redFrik
 
+//--changes090114
+//bugfix: userview canfocus now set to false
 //--changes080827
 //added hiliteColor_
 //moved around some methods and added more comments
@@ -51,6 +53,7 @@ PopUpTreeMenu : SCViewHolder {
 		usr.mouseDownAction_({|v, x, y| mouseMoved= false; this.prUserAction(v, x, y)});
 		usr.mouseMoveAction_({|v, x, y| mouseMoved= true; this.prUserAction(v, x, y)});
 		usr.mouseUpAction_({|v, x, y| this.prUserActionEnd(v, x, y)});
+		usr.canFocus= false;
 		
 		//--find parentWindow and compensate for some containers that add extra offset (TabbedView)
 		argParent= this.parent;
