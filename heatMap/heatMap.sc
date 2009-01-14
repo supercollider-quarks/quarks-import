@@ -159,16 +159,16 @@ HeatMap {
 		maptocolindex = {|val| (val - min) * cols.lastIndex / (max - min) };
 		
 		maptoposition = {|index| 
-			Rect(patchWidth * (index / numChannels).floor + xoff, 
-				patchHeight * (index % numChannels)       + yoff, 
+			Rect(patchWidth * (index / numChannels).floor, 
+				patchHeight * (index % numChannels)     , 
 				patchWidth, patchHeight)
 		};
 		
 		
 		// The SCCompositeView
-		compview = GUI.compositeView.new(win, Rect(100, 400, 
+		compview = GUI.compositeView.new(win, Rect(xoff, yoff, 
 						width, height
-						)).resize_(5);
+						)).relativeOrigin_(true).resize_(5);
 		
 		// Now let's create the actual patches of heat!
 		// SCStaticText
@@ -212,7 +212,7 @@ HeatMap {
 		};
 		
 		if(ownWin){ win.front };
-		
+				
 		^HeatMap.new.compview_(compview).patches_(patches.clump(numChannels));
 	}
 	
