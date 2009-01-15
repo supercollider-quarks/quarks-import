@@ -10,8 +10,8 @@ RedWindow : SCWindow {
 		argBounds= argBounds ?? {Rect(128, 64, 300, 300)};
 		allWindows= allWindows.add(this);
 		if(scroll, {"RedWindow: can't scroll".warn});
-		view= SCTopView(nil, argBounds.moveTo(0,0));
-		this.prInit(name, argBounds, resizable, border, false, view);
+		view= SCTopView(nil, argBounds.moveTo(0, 0));
+		this.prInit(name, argBounds, resizable, border, false, view, false);
 		
 		this.background_(Color.black);
 		mouse= RedVector2D[view.bounds.width/2, view.bounds.height/2];
