@@ -5,66 +5,66 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.41">
+<meta name="CocoaVersion" content="824.48">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-span.s1 {font: 18.0px Helvetica; color: #0000bf}
-span.s2 {color: #0000bf}
-span.s3 {color: #000000}
-span.s4 {text-decoration: underline}
-span.s5 {color: #007300}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {text-decoration: underline}
+span.s4 {color: #0000ff}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>RedWorld</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fundamental object in the </b><span class="s2"><b>RedUniverse</b></span><b> toolkit</b></p>
+<p class="p1"><span class="s1"><b>RedWorld</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fundamental object in the RedUniverse toolkit</b></p>
 <p class="p2"><br></p>
 <p class="p3"><br></p>
-<p class="p1">base for all other worlds like <span class="s2">RedWorld2</span>, <span class="s2">RedWorld3</span>.<span class="Apple-converted-space">  </span>implements simplified physical laws.</p>
+<p class="p1">base for all other worlds like RedWorld2, RedWorld3.<span class="Apple-converted-space">  </span>implements simplified physical laws.</p>
 <p class="p3"><br></p>
-<p class="p4"><span class="s3">see also [</span><span class="s4">RedObject</span><span class="s3">], [</span><span class="s4">RedUniverse</span><span class="s3">]</span></p>
-<p class="p3"><b></b><br></p>
-<p class="p1"><span class="s4">class methods:</span></p>
+<p class="p4"><span class="s2">see also [<a href="RedObject.html"><span class="s3">RedObject</span></a>], [<a href="RedUniverse.html"><span class="s3">RedUniverse</span></a>]</span></p>
+<p class="p3"><br></p>
+<p class="p1"><span class="s3">class methods:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*new(dim, gravity, maxVel, damping)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a new world.<span class="Apple-converted-space">  </span>see class source for defaults.</p>
 <p class="p3"><br></p>
-<p class="p1"><span class="s4">instance methods:</span></p>
+<p class="p1"><span class="s3">instance methods:</span></p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>add(redObj)</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>manually add an object to <span class="s2">this</span> world.<span class="Apple-converted-space">  </span>usually never needed.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>manually add an object to this world.<span class="Apple-converted-space">  </span>usually never needed.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>remove(redObj)</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>manually remove an object from <span class="s2">this</span> world.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>manually remove an object from this world.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>contain(redObj)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wrap an object around world dimensions.<span class="Apple-converted-space">  </span>ie world without borders - going out on the right side</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>brings the object back on the left.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>contains(redObj)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>check if an object is within world dimensions.<span class="Apple-converted-space">  </span>used for detecting wall bounce.<span class="Apple-converted-space">  </span>returns boolean.</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
-<p class="p1"><span class="s4">instance variables:</span></p>
+<p class="p1"><span class="s3">instance variables:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;dim</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>size of <span class="s2">this</span> world (<span class="s2">RedVector</span> of any dimension).<span class="Apple-converted-space">  </span>ie the world can have any number of dimensions.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>size of this world (<a href="RedVector.html"><span class="s4">RedVector</span></a> of any dimension).<span class="Apple-converted-space">  </span>ie the world can have any number of dimensions.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;gravity</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>world gravity (<span class="s2">RedVector</span> of any dimension) for each dimension.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>world gravity (<a href="RedVector.html"><span class="s4">RedVector</span></a> of any dimension) for each dimension.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;maxVel</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>scalar with maximum velocity.<span class="Apple-converted-space">  </span>ie <span class="s5">'speed of light'</span> for <span class="s2">this</span> world.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>scalar with maximum velocity.<span class="Apple-converted-space">  </span>ie 'speed of light' for this world.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;damping</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>scalar.<span class="Apple-converted-space">  </span>the cost of running into walls etc.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;objects</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of all objects currently in <span class="s2">this</span> world.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of all objects currently in this world.</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
-<p class="p6"><span class="s3">a= </span>RedWorld<span class="s3">.new</span></p>
-<p class="p6"><span class="s3">b= </span>RedObject<span class="s3">(a)</span></p>
-<p class="p5"><br></p>
-<p class="p7">a.dump</p>
-<p class="p5"><br></p>
-<p class="p6">RedUniverse<span class="s3">.worlds</span></p>
-<p class="p6">RedUniverse<span class="s3">.remove(a)</span></p>
-<p class="p6">RedUniverse<span class="s3">.worlds</span></p>
+<p class="p6"><span class="s2">a= </span>RedWorld<span class="s2">.new</span></p>
+<p class="p6"><span class="s2">b= </span>RedObject<span class="s2">(a)</span></p>
+<p class="p7"><br></p>
+<p class="p8">a.dump</p>
+<p class="p7"><br></p>
+<p class="p6">RedUniverse<span class="s2">.worlds</span></p>
+<p class="p6">RedUniverse<span class="s2">.remove(a)</span></p>
+<p class="p6">RedUniverse<span class="s2">.worlds</span></p>
 </body>
 </html>
