@@ -1,11 +1,15 @@
 
 HierSch - Hierarchical Scheduler
 
-(c) 2007-2008 Tom Hall 
+(c) 2007-2009 Tom Hall 
 GPLv3, http://gnu.org/copyleft/
 
 
 // Changes log
+
+2009-01-22
+Changed priority structure from priority 12 to priority 0 always plays.
+Updated Helpfile
 
 2008-02-03
 help file expanded, priority method name changes
