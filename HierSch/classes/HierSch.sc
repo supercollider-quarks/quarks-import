@@ -1,5 +1,5 @@
 // HierSch (c) 2007-2009 Tom Hall
-// version 2008-01-22
+// version 2009-01-22
 
 HierSch { 
 	var <>t, <dict, myRate, myQuant, <isRunning=true;
