@@ -1,11 +1,11 @@
-// HierSch (c) 2007-2008 Tom Hall
-// version 2008-02-03
+// HierSch (c) 2007-2009 Tom Hall
+// version 2008-01-22
 
 HierSch { 
 	var <>t, <dict, myRate, myQuant, <isRunning=true;
 	var mySingleH = true, myMute= false, numHs2play=1;
 	var myflipH = false, myPlayEach = false, myHierFlip=false;
-	var ignoredHiers, <>muteH12=false, ceaseAllBool=false;
+	var ignoredHiers, <>muteH0=false, ceaseAllBool=false;
 		
 	*new { arg t; 
 		if (t.isNil, {^"Please specify a TempoClock".error});
@@ -99,8 +99,9 @@ HierSch {
 			// may select multiple elements having the same priority
 			tmpArr = selection.select({|x| x[0]==i}); 
 			// filter out duplicates for each hier if nec
-			// if prior 12, always play
-			if ((mySingleH and: {i != 12}), {tmpArr = [tmpArr.choose]});
+			// UPDATED
+			// if prior 0, always play
+			if ((mySingleH and: {i != 0}), {tmpArr = [tmpArr.choose]});
 			finalData = finalData ++ tmpArr;
 		};
 		^[list[0], finalData]
@@ -110,8 +111,9 @@ HierSch {
 	// rtns sorted arr (no duplicates)
 	heirsChooser { |priorities|
 		if (myMute, {^[]});
-		// take out muted hiers plus 12 for now, added again below
-		priorities = priorities.reject({|i| (ignoredHiers ++ 12).includes(i)});
+		// UPDATED
+		// take out muted hiers plus 0 for now, added again below
+		priorities = priorities.reject({|i| (ignoredHiers ++ 0).includes(i)});
 		priorities = priorities.asSet.asArray; // remove duplicate hiers
 		priorities = priorities.sort;
 		if (myPlayEach.not, {
@@ -119,8 +121,9 @@ HierSch {
 			// Here the main hiers are selected
 			priorities = priorities.keep(numHs2play);
 		});
-		// unless muted, add hier 12 back into arr
-		if (muteH12.not, {priorities = priorities ++ 12}); 
+		// UPDATED
+		// unless muted, add hier 0 back into arr
+		if (muteH0.not, {priorities = priorities ++ 0}); 
 		^priorities
 	}
 	
@@ -153,7 +156,7 @@ HierSch {
 	playNoneBut_ { |arr|
 		myMute = false;
 		myPlayEach = false;	
-		ignoredHiers = (0..11).reject({|i| arr.includes(i)});
+		ignoredHiers = (1..12).reject({|i| arr.includes(i)});
 	}
 	
 	// as above
@@ -164,13 +167,13 @@ HierSch {
 	playGT_ { |int|
 		myMute = false;
 		myPlayEach = false;	
-		ignoredHiers = (0..int);
+		ignoredHiers = (1..int);
 	}
 	
 	playLT_ { |int|
 		myMute = false;
 		myPlayEach = false;	
-		ignoredHiers = (int..11);
+		ignoredHiers = (int..12);
 	}
 		
 	mute { myMute = true }
@@ -333,12 +336,12 @@ HierSch {
 		)
 	}
 
-	testRate {|priority=0|
+	testRate {|priority=1|
 		format("rate is %", myRate).postln;
 		this.testAbstract(1/myRate, myRate, priority);
 	}
 	
-	test { |priority=0|
+	test { |priority=1|
 		this.testAbstract(1, t.beatsPerBar, priority);
 	}
 
