@@ -66,9 +66,12 @@ PeakMonitorGui : ObjectGui {
 	}
 	
 	remove {
+		var	tempModel = myModel;
 		if(myModel.notNil) {
-			myModel.free;
+			tempModel = myModel;
+				// must do this first to prevent infinite recursion
 			myModel = nil;
+			tempModel.free;
 		}
 	}
 	
