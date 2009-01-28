@@ -1,4 +1,4 @@
-/******* by jostM Dec 19, 2008 version 1.23 *******/
+/******* by jostM Jan 24, 2008 version 1.24 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -20,7 +20,7 @@ TabbedView {
 		<resize = 1,
 		<tabPosition = \top,
 		<followEdges=true,
-		<relativeOrigin=true,
+		relativeOrigin=true,
 		<activeTab = 0,
 		focusHistory = 0,
 		<labelPadding = 20,
@@ -42,22 +42,14 @@ TabbedView {
 			
 		//must be written this way, or nested views don't work with a nil bounds.
 		bounds.isNil.if{
-			w.respondsTo(\relativeOrigin).if{
-				(w.asView.relativeOrigin).if{
+			(w.asView.relativeOrigin).if{
 					bounds = w.asView.bounds.moveTo(0,0);
 				}
 				{bounds = w.asView.bounds};
-			}{
-			w.respondsTo(\absoluteBounds).if{
-				 bounds = w.asView.absoluteBounds 
-				 }{
-				 bounds = w.asView.bounds}; 
-			};
 		};
 		
 		//try{relativeOrigin=FlowView.relativeOrigin};
 		view = GUI.compositeView.new(w,bounds).resize_(resize);
-		view.respondsTo(\relativeOrigin_).if{view.relativeOrigin_(true)};
 		lbls= lbls ? ["tab1","tab2","tab3"];
 		scroll=scr;
 		labels = [];
@@ -112,7 +104,7 @@ TabbedView {
 		tabWidths=tabWidths.insert(index,50);	
 		
 		tab = GUI.userView.new(view); //bounds are set later
-		tab.respondsTo(\relativeOrigin_).if{tab.relativeOrigin_(false)};
+		tab.relativeOrigin_(false);
 		tab.enabled = true;
 		tab.mouseDownAction_({
 			this.focus(i);
@@ -122,7 +114,6 @@ TabbedView {
 		
 		scroll.if{container = GUI.scrollView.new(view).resize_(5)}
 		{container = GUI.compositeView.new(view,view.bounds).resize_(5)}; //bounds are set later
-		container.respondsTo(\relativeOrigin_).if{container.relativeOrigin_(relativeOrigin)};
 		container.background = backgrounds[i%backgrounds.size];
 		
 		
@@ -265,13 +256,23 @@ TabbedView {
 					stringFocusedColor ); // focus colors 
 				views[i].visible_(true);
 				// do the user focusAction only on focus
-				if (focusHistory!= i){ focusActions[i].value; };
 			}{
 				this.paintTab( tab, labels[i], 
 					unfocusedColors[ i%unfocusedColors.size ], 
 					stringColor );// unfocus colors
 				views[i].visible_(false);
-						if (focusHistory == i)
+					//do the user unfocusAction only on unfocus
+			};
+		};
+	}
+	
+	doActions{
+		
+		tabViews.do{ arg tab,i;
+			if (activeTab == i){
+				if (focusHistory!= i){ focusActions[i].value; };
+			}{
+				if (focusHistory == i)
 					//do the user unfocusAction only on unfocus
 					{ unfocusActions[ focusHistory ].value };
 			};
@@ -289,13 +290,8 @@ TabbedView {
 	
 	updateViewSizes{
 		
-		( GUI.id === \cocoa).if{
-				left = 0;
-				top  = 0;
-		}{
-			left = view.bounds.left;
-			top  = view.bounds.top;
-		};
+		left = 0;
+		top  = 0;
 		
 			if ( tabHeight == \auto ){ tbht = (this.stringBounds("A",font).height+1 )}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
@@ -574,12 +570,14 @@ TabbedView {
 	
 	focus_{arg index;
 		activeTab = index;
-		"focus_(index) deprecated. pleas use focus(index)".postln;
+		"focus_(index) deprecated. please use focus(index)".postln;
 		this.updateFocus();
+		this.doActions;
 	}
 	focus{arg index;
 		activeTab = index;
 		this.updateFocus();
+		this.doActions;
 	}
 	
 	labelColors_{arg colorArray; 
@@ -631,12 +629,8 @@ TabbedView {
 		 
 	}
 	
-	relativeOrigin_{arg ro; 	
-		 relativeOrigin = ro;
-		 this.updateViewSizes();
-		 
-	}
-	
+	relativeOrigin{"TabbedView.relativeOrigin: relative origin settings  deprecated.".warn}
+	relativeOrigin_{"TabbedView.relativeOrigin_: relative origin settings deprecated.".warn}
 	
 	removeAt{ arg index;
 	
