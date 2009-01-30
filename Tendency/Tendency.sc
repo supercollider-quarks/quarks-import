@@ -1,11 +1,12 @@
 Tendency {
-	var <>parX, <>parY, <>parA, <>parB;
+	var <>parX, <>parY, <>parA, <>parB, <>defDist;
 	
-	*new {|parX = 1.0, parY = 0.0, parA = 0.1, parB = 0.1|
-		^super.newCopyArgs(parX, parY, parA, parB);
+	*new {|parX = 1.0, parY = 0.0, parA = 0.1, parB = 0.1, defDist = \uniform|
+		^super.newCopyArgs(parX, parY, parA, parB, defDist);
 		}
 		
-	at {|time = 0.0, dist = \uniform|
+	at {|time = 0.0, dist|
+		dist = dist ?? {defDist};
 		^case
 			{dist == \uniform} {this.uniformAt(time)}
 			{dist == \lpRand} {this.lpRandAt(time)}
