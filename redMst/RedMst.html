@@ -9,7 +9,7 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0019ba}
 p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
@@ -50,7 +50,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><b>*stop</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stop all tracks on the next quant beat.</p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*clear</b></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stop and remove all tracks, reset section counter and stop the clock.</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stop and remove all tracks, reset section counter and stop the clock.<span class="Apple-converted-space">  </span>clears action function.</p>
 <p class="p4"><span class="Apple-tab-span">	</span></p>
 <p class="p5"><b><span class="Apple-tab-span">	</span>&lt;*tracks</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dictionary of all tracks.<span class="Apple-converted-space">  </span>tracks (RedTrk objects) add themselves here when created.</p>
@@ -66,6 +66,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>how much time ahead play the stop message will be scheduled.<span class="Apple-converted-space">  </span>default= 0.05 seconds.</p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>&lt;&gt;*skipEmpty</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>next and previous methods skip over sections that does not have active tracks.<span class="Apple-converted-space">  </span>default= false.</p>
+<p class="p5"><span class="Apple-tab-span">	</span><b>&lt;&gt;action</b></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a function to be evaluated when section changes.</p>
 <p class="p5"><b><span class="Apple-tab-span">	</span>&lt;*isPlaying</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>boolean</p>
 <p class="p4"><span class="Apple-tab-span">	</span></p>
@@ -212,6 +214,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><br></p>
 <p class="p12">RedMst<span class="s2">.play</span></p>
 <p class="p11"><span class="s4">RedMst</span>.section</p>
+<p class="p11"><span class="s4">RedMst</span>.action= {(<span class="s7">"action! tempo:"</span>+<span class="s4">RedMst</span>.clock.tempo+<span class="s7">"section:"</span>+<span class="s4">RedMst</span>.section).postln}</p>
 <p class="p12">RedMst<span class="s2">.next</span></p>
 <p class="p11"><span class="s4">RedMst</span>.goto(0)</p>
 <p class="p11"><span class="s4">RedMst</span>.goto(1)</p>
@@ -220,7 +223,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11"><span class="s4">RedMst</span>.goto(4)</p>
 <p class="p8"><br></p>
 <p class="p12">RedMst<span class="s2">.stop</span></p>
-<p class="p7"><span class="s4">RedMst</span><span class="s2">.clear<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//free all tracks and remove them from RedMst</p>
+<p class="p7"><span class="s4">RedMst</span><span class="s2">.clear<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//free all tracks and remove them from RedMst.<span class="Apple-converted-space">  </span>clears action function</p>
 <p class="p7"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//note: does not stop the clock</p>
 <p class="p8"><br></p>
 <p class="p8"><br></p>

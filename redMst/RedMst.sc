@@ -1,5 +1,7 @@
 //redFrik - released under gnu gpl license
 
+//--changes 090203:
+//added action function
 //--changes 081117:
 //added class method makeWindow to RedMst
 //--changes 081116:
@@ -41,6 +43,7 @@ RedMst {
 			<section= 0, <maxSection= 0,
 			<>stopAheadTime= 0.05,
 			<>skipEmpty= false,
+			<>action,
 			<isPlaying= false,
 			alreadyJumping= false;
 	*initClass {
@@ -66,6 +69,7 @@ RedMst {
 		tracks= ();
 		section= 0;
 		maxSection= 0;
+		action= nil;
 		/*if(clock!=TempoClock.default, {
 			clock.stop;
 			clock.clear;
@@ -117,6 +121,7 @@ RedMst {
 					});
 				};
 				alreadyJumping= false;
+				action.value;
 				nil;
 			});
 			alreadyJumping= true;
@@ -155,7 +160,8 @@ RedMst {
 			\section: section,
 			\maxSection: maxSection,
 			\stopAheadTime: stopAheadTime,
-			\skipEmpty: skipEmpty
+			\skipEmpty: skipEmpty,
+			\action: action
 		)
 	}
 	*setState {|dict|
@@ -166,5 +172,6 @@ RedMst {
 		maxSection= dict[\maxSection];
 		stopAheadTime= dict[\stopAheadTime];
 		skipEmpty= dict[\skipEmpty];
+		action= dict[\action];
 	}
 }
