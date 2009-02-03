@@ -118,9 +118,15 @@ RedMstGUI {
 					RedMst.tracks.do{|trk, y|
 						GUI.pen.color_(colFore);
 						GUI.pen.strokeRect(Rect(0, y*h, view.bounds.width, h*0.9));
-						trk.sections.do{|x|
-							GUI.pen.fillRect(Rect(x*w, y*h, w, h*0.9));
-						};
+						if(trk.sections.includes(inf), {
+							(RedMst.maxSection+1).do{|x|
+								GUI.pen.fillRect(Rect(x*w, y*h, w, h*0.9));
+							};
+						}, {
+							trk.sections.do{|x|
+								GUI.pen.fillRect(Rect(x*w, y*h, w, h*0.9));
+							};
+						});
 						str= trk.key.asString+"("++trk.item.class++")";
 						GUI.pen.fillColor_(colFore2);
 						GUI.pen.stringAtPoint(str, Point(0, y*h));

@@ -10,19 +10,19 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0019ba}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #574233; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #ad1d13}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0019ba}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #544234; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline}
-span.s4 {color: #0019ba}
-span.s5 {color: #2b6f11}
+span.s4 {color: #0000bf}
+span.s5 {color: #007300}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -50,7 +50,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="s4">RedMst</span>.clear;</p>
 <p class="p9"><span class="s4">RedMst</span>.clock= <span class="s4">TempoClock</span>(150/60);</p>
 <p class="p9"><span class="s4">RedMst</span>.quant= 2;</p>
-<p class="p9"><span class="s4">SynthDef</span>(<span class="s5">\fast</span>, {<span class="s4">|freq|</span> <span class="s4">Out</span>.ar(0, <span class="s4">SinOsc</span>.ar(freq, 0, <span class="s4">Line</span>.kr(0.2, 0, 0.1)))}).store;</p>
+<p class="p9"><span class="s4">SynthDef</span>(<span class="s5">\fast</span>, {<span class="s4">|freq|</span> <span class="s4">Out</span>.ar(0, <span class="s4">SinOsc</span>.ar(freq, 0, <span class="s4">Line</span>.kr(0.2, 0, 0.1)))}).memStore;</p>
 <p class="p9"><span class="s4">RedTrk</span>(<span class="s5">\a</span>, <span class="s4">Pbind</span>(<span class="s5">\instrument</span>, <span class="s5">\fast</span>, <span class="s5">\dur</span>, 1, <span class="s5">\degree</span>, <span class="s4">Pseq</span>(#[0, 4, 2, 3], <span class="s4">inf</span>)), #[0, 1]);</p>
 <p class="p9"><span class="s4">RedTrk</span>(<span class="s5">\b</span>, <span class="s4">Pbind</span>(<span class="s5">\instrument</span>, <span class="s5">\fast</span>, <span class="s5">\dur</span>, 1/3, <span class="s5">\degree</span>, <span class="s4">Pn</span>(<span class="s4">Pshuf</span>(#[10, 6, 5, 8], 4), <span class="s4">inf</span>)), #[1]);</p>
 <p class="p9">)</p>
@@ -63,7 +63,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="s4">RedMst</span>.clear;</p>
 <p class="p9"><span class="s4">RedMst</span>.clock= <span class="s4">TempoClock</span>(80/60);</p>
 <p class="p9"><span class="s4">RedMst</span>.quant= 1;</p>
-<p class="p9"><span class="s4">SynthDef</span>(<span class="s5">\slow</span>, {<span class="s4">|freq|</span> <span class="s4">Out</span>.ar(0, <span class="s4">LPF</span>.ar(<span class="s4">Blip</span>.ar(freq, 20, <span class="s4">Line</span>.kr(1, 0, 2))))}).store;</p>
+<p class="p9"><span class="s4">SynthDef</span>(<span class="s5">\slow</span>, {<span class="s4">|freq|</span> <span class="s4">Out</span>.ar(0, <span class="s4">LPF</span>.ar(<span class="s4">Blip</span>.ar(freq, 20, <span class="s4">Line</span>.kr(1, 0, 2))))}).memStore;</p>
 <p class="p9"><span class="s4">RedTrk</span>(<span class="s5">\a</span>, <span class="s4">Pbind</span>(<span class="s5">\instrument</span>, <span class="s5">\slow</span>, <span class="s5">\dur</span>, 3, <span class="s5">\degree</span>, <span class="s4">Pseq</span>(#[0, 0, 1, 2], <span class="s4">inf</span>)), #[0, 1]);</p>
 <p class="p9"><span class="s4">RedTrk</span>(<span class="s5">\b</span>, <span class="s4">Pbind</span>(<span class="s5">\instrument</span>, <span class="s5">\slow</span>, <span class="s5">\dur</span>, 2, <span class="s5">\degree</span>, <span class="s4">Pn</span>(<span class="s4">Pshuf</span>(#[5, 4, 3, 3], 2), <span class="s4">inf</span>)), #[1]);</p>
 <p class="p9">)</p>
