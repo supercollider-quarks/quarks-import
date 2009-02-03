@@ -1,7 +1,8 @@
 //redFrik - released under gnu gpl license
 
 //--changes 090203:
-//added action function
+//added action function to RedMst
+//added inf for section index to RedMst
 //--changes 081117:
 //added class method makeWindow to RedMst
 //--changes 081116:
@@ -55,7 +56,7 @@ RedMst {
 	}
 	*add {|trk|
 		tracks.put(trk.key, trk);
-		if(trk.sections.maxItem>maxSection, {
+		if(trk.sections.includes(inf).not and:{trk.sections.maxItem>maxSection}, {
 			maxSection= trk.sections.maxItem;
 		});
 	}
@@ -102,8 +103,10 @@ RedMst {
 		}, {
 			clock.schedAbs(clock.nextTimeOnGrid(quant)-stopAheadTime, {
 				tracks.do{|x|
-					if(x.sections.includes(jumpSection).not and:{x.isPlaying}, {
-						x.stop;
+					if(x.sections.includes(inf).not, {
+						if(x.sections.includes(jumpSection).not and:{x.isPlaying}, {
+							x.stop;
+						});
 					});
 				};
 				nil;
@@ -116,8 +119,14 @@ RedMst {
 					("RedMst: new section:"+section+"of"+maxSection).postln;
 				});
 				tracks.do{|x|
-					if(x.sections.includes(section) and:{x.isPlaying.not}, {
-						x.play;
+					if(x.sections.includes(inf).not, {
+						if(x.sections.includes(section) and:{x.isPlaying.not}, {
+							x.play;
+						});
+					}, {
+						if(x.isPlaying.not, {
+							x.play;
+						});
 					});
 				};
 				alreadyJumping= false;
