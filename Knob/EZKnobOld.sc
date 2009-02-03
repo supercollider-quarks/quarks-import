@@ -1,7 +1,10 @@
 // blackrain at realizedsound dot net - 0106
 //	03.10.2008 - Relative origin mods. Knob is a subclass of SCViewHolder now.
 
-EZKnob	{
+// This version of EZKnob is deprecated.
+// The SuperCollider 3.3 alpha distribution includes EZKnob now.
+
+EZKnobOld	{
 	var <>labelView, <>knobView, <>numberView, <value, <>round = 0.0001, <>action, <>controlSpec;
 	var <enabled, <cv;
 	
@@ -23,22 +26,11 @@ EZKnob	{
 		height = (dimensions.y * 2) + dimensions.x + 6;
 
 		bounds = Point.new(width + 4, height + 4);
-		
-		if ( Knob.useRelativeOrigin ) {
-			bounds = bounds.asRect;
-		};
-		
+
 		cv = GUI.compositeView.new(window, bounds)
 			.background_(b);
-			
-		cv.tryPerform(\relativeOrigin_, Knob.useRelativeOrigin);
-			
-		if ( Knob.useRelativeOrigin ) {
-			flowBounds = bounds
-		}{
-			flowBounds = cv.bounds
-		};
 
+		flowBounds = cv.bounds;
 		cv.decorator = FlowLayout.new(flowBounds, 2@0, 0@4);
 	
 		enabled = true;

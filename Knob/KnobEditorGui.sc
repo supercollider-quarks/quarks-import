@@ -20,8 +20,8 @@ KnobEditorGui : EditorGui {
 		};
 		font = GUI.font.new(fontName, fontSize);
 		
-		cv = GUI.compositeView.new(layout, layout.bounds)
-			.relativeOrigin_(Knob.useRelativeOrigin);
+		cv = GUI.compositeView.new(layout, layout.bounds);
+	//		.relativeOrigin_(Knob.useRelativeOrigin);
 		cv.decorator = FlowLayout.new(cv.bounds, 0@0, 0@4);
 
 		this.kn(cv, knobSize);
