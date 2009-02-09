@@ -29,7 +29,7 @@ Collective {
 						.init(participants)
 	}
 	
-	*default { ^default ?? {Êdefault = this.new.autoCollect } }
+	*default { ^default ?? {default = this.new.autoCollect } }
 	
 	*makeName { ^format("%_%", String.rand(8, 1), NetAddr.myIP.split($.).last).asSymbol }
 	channel { ^("/" ++ groupName).asSymbol }
@@ -210,7 +210,7 @@ Collective {
 	
 	findKeyForAddr { arg addr;
 		everybody.keysValuesDo {|key, val|
-			if(val == addr) {Ê^key }
+			if(val == addr) {^key }
 		};
 		^nil
 	}
@@ -252,7 +252,7 @@ Participation {
 	var >channel;
 	
 	*new { arg collective; 
-		^super.new.prSetCollective(collective ?? {ÊCollective.default }).init
+		^super.new.prSetCollective(collective ?? {Collective.default }).init
 	}
 	
 	init {}
@@ -328,7 +328,7 @@ Collector : Participation {
 		updatePeriod = rrand(3.0, 3.5);
 		this.addResponder(\collect, { |r, t, msg|
 				var flag = msg[3];
-				if(flag == -1) {Ê
+				if(flag == -1) {
 					collective.removeSomeone(msg[1], msg[2]);
 					if(collective.verbose) { "collective: %, trying to remove: % (ip: %)"
 							.format(collective.myName, msg[1], msg[2])
@@ -352,7 +352,7 @@ Collector : Participation {
 		this.addResponder(\recvPing, { arg r, t, msg;
 			var name = msg[1];
 			var time = msg[2];
-			time !? {Êtime = (Main.elapsedTime - time).round(0.001) };
+			time !? {time = (Main.elapsedTime - time).round(0.001) };
 			name !? {
 				"% responded after % sec.\n".postf(name, time ? "??");
 				//recvAction.value(name, time);
@@ -418,7 +418,7 @@ Collector : Participation {
 		CmdPeriod.remove(this);
 		UI.unregisterForShutdown(shutdownFunc)
 	}
-	cmdPeriod { if(eternal) {Êthis.start } }
+	cmdPeriod { if(eternal) {this.start } }
 	
 	// to improve.
 	makeWindow { arg w;
@@ -489,7 +489,7 @@ ChatWindow : Chat {
 			.bounds_(Rect(30, 210, 400, 50));
 		
 		readWin.onClose_({ this.stop });
-		writeWin.keyDownAction_({Êarg doc, char;
+		writeWin.keyDownAction_({arg doc, char;
 				var string;
 				 if(char === Char.tab) {
 	 					string = doc.currentLine;

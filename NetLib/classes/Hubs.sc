@@ -134,7 +134,7 @@ MarkovNet : Participation {
 			// data
 			recvedData = msg[3 + infoSize ..];
 			sendData = blend(data, recvedData, blendFactor.postln);
-			forwardData = if(inject) { sendData } {ÊrecvedData };
+			forwardData = if(inject) { sendData } {recvedData };
 			recvedData.postln;
 			if(n > 0) {
 				SystemClock.sched(delta, {
