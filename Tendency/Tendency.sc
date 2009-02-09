@@ -150,7 +150,7 @@ Tendency {
 			},{
 			val = this.parXAt(time) * log(u)  ;
 			});
-		^(val + this.parYAt(time))
+		^(val + this.parXAt(time))
 	}
 
 	// alaplace
@@ -165,7 +165,7 @@ Tendency {
 			},{
 			val = this.parXAt(time) * exp(u)  ;
 			});
-		^(val + this.parYAt(time))
+		^(val + this.parXAt(time))
 	}
 
 	// hcos
@@ -216,3 +216,9 @@ Tendency {
 	}
 			
 }
+
++SimpleNumber {
+	at {
+		^this
+		}
+	}
