@@ -1,10 +1,6 @@
 
 /*
 it woud be possible to do this outside a SynthDef, then UGen would automatically produce this representation. (UGen.buildSynthDef == nil)
-
-or: a node proxy could register the structure!?
-put a pseudo SynthDef in.
-
 */
 
 UGenNode : UGen {
@@ -34,25 +30,60 @@ UGenNode : UGen {
 		^this.notYetImplemented(thisMethod)
 	}
 		
-	/*reducedArguments {
-		var defaultArguments, n = arguments.size;
+	reducedArguments {
+		var defaultArguments, numArgs = arguments.size;
 		var method = ugenClass.class.findRespondingMethodFor(selector);
 		method !? {
-			defaultArguments = method.prototypeFrame.keep(arguments.size);
-			arguments.size.reverseDo { |i| if(arguments[i] == defaultArguments[i]) { n = i } };
-			n.postln;
-			^arguments.keep(n.neg);
+			defaultArguments = method.prototypeFrame.drop(1).keep(numArgs);
+			numArgs.reverseDo { |i| 
+					if(arguments[i] != defaultArguments[i]) {
+					^arguments.keep(i + 1);
+				}
+			};
+			^[]
 		};
-		"no method found".postln;
-		^arguments
-	}*/
-	// storeArgs { ^[ugenClass, selector, arguments] }
-	
-	storeOn { arg stream; 
-		if(ugenClass == MulAdd) { this.storeOnMulAdd(stream); ^this };
-		stream << ugenClass.name << "." << selector << "(" <<<* arguments << ")"
+		"no method found".error;
 	}
-	storeOnMulAdd { arg stream;
+	storeOn { arg stream;
+		var params = this.reducedArguments;
+		stream << ugenClass.name << "." << selector;
+		if(params.notEmpty) { stream << "(" <<<* params << ")" }; 
+	}
+	
+}
+
+UnaryOpUGenNode : UGenNode {
+	*new { |selector, operand|
+		^super.new(UnaryOpUGen, \new, [selector, operand])
+	}
+	storeOn { arg stream;
+		var selector, operand;
+		#selector, operand = arguments;
+		stream <<< operand << "." << selector
+	}
+}
+
+BinaryOpUGenNode : UGenNode {
+	*new { |selector, op1, op2|
+		^super.new(BinaryOpUGen, \new, [selector, op1, op2])
+	}
+	storeOn { arg stream;
+		var selector, op1, op2;
+		#selector, op1, op2 = arguments;
+		if(selector.isBasicOperator) {
+			stream <<< op1 << " " << selector << " " <<< op2
+		} {
+			stream <<< op1 << "." << selector << "(" <<< op2 << ")"
+		}
+	}
+}
+
+MulAddUGenNode : UGenNode {
+	*new { |rate, in, mul, add|
+		^super.new(MulAdd, \new, [in, mul, add])
+	}
+	// here, we don't use .madd, which may be slightly more efficient, but is not so nice to read.
+	storeOn { arg stream; 
 		var in, mul, add;
 		#in, mul, add = arguments;
 		stream <<< in;
@@ -60,21 +91,6 @@ UGenNode : UGen {
 		if(add != 0) { stream << " + (" <<< add << ")" };
 	}
 }
-
-UnaryOpUGenNode : UGenNode {
-	*new { |selector, operand|
-		^super.new(UnaryOpUGen, \new, [selector, operand])
-	}
-
-}
-
-BinaryOpUGenNode : UGenNode {
-	*new { |selector, op1, op2|
-		^super.new(BinaryOpUGen, \new, [selector, op1, op2])
-	}
-}
-
-
 
 ControlUGenNode : UGenNode {
 	var <>names = #[];

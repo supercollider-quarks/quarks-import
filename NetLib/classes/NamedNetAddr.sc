@@ -28,7 +28,7 @@ NamedNetAddr : NetAddr {
 				
 			if(receiverName === \broadcast  // broadcast
 				or: 
-				{ÊreceiverName === name })
+				{ receiverName === name })
 			{
 				func.value(time, recv, msg[1..]) // remove name
 			}

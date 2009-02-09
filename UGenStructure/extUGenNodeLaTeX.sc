@@ -1,32 +1,24 @@
 + UGenNode {
 
 	asLaTeX {
-		if(ugenClass == MulAdd) { ^this.maddLaTeX };
+		var res, args;
 		if(ugenClass == Integrator) { ^this.integLaTeX };
-		^ugenClass.name ++ "_{" ++ selector 
-			++ "}\\left(" 
-			++ arguments.collect(_.asLaTeX).join(", ")
-			++ " \\right)"
-	}
-	
-	maddLaTeX {
-		var res = arguments[0].asLaTeX;
-		if(arguments[1] != 1) {
-			res = res ++ " \\cdot " ++ arguments[1].asLaTeX;
-		};
-		if(arguments[2] != 0) {
-			res = res ++ " + " ++ arguments[2].asLaTeX;
+		args = this.reducedArguments;
+		res = ugenClass.name ++ "_{" ++ selector ++ "}";
+		if(args.notEmpty) {
+			res = res ++ this.bracketLaTeX(args.collect(_.asLaTeX).join(", "))
 		};
 		^res
 	}
 	
 	integLaTeX {
-		^"\\int_{" ++ selector ++ "}^{" ++ arguments[1].asLaTeX 
+		^"\\int_{" ++ selector ++ "}^{ leak = " ++ arguments[1].asLaTeX 
 			++ "} {" ++ arguments[0].asLaTeX ++ "} dt"
 	}
 }
 
 + UnaryOpUGenNode {
+
 	asLaTeX {
 		var op = arguments[0];
 		var x = arguments[1].asLaTeX;
@@ -43,40 +35,60 @@
 		if(op == 'ceil') { ^"\\lceil{" ++ x ++ "}\\rceil"};
 		if(op == 'neg') { ^"- " ++ x };
 		
-		^op  ++ " \\left(" ++ x ++ " \\right)"
+		^op  ++ this.bracketLaTeX(x)
 	}
 	
 }
 
 + BinaryOpUGenNode {
+
 	asLaTeX {
-		var op = arguments[0];
-		if(op == '/') {
-			if(arguments[2].isNumber) { 
-				^"\\frac{1}{" ++ arguments[2].asLaTeX ++ "} " + arguments[1].asLaTeX 
+		var selector, op1, op2, op2orig;
+		#selector, op1, op2 = arguments;
+		op2orig = op2;
+		op1 = op1.asLaTeX;
+		op2 = op2.asLaTeX;
+		
+		if(selector == '/') {
+			if(op2orig.isNumber) {
+				^"\\frac{1}{" ++ op2 ++ "} " + op1 
 			};
-			^"\\frac {" ++ arguments[1].asLaTeX ++ "}{" ++ arguments[2].asLaTeX ++ "}"
+			^"\\frac {" ++ op1 ++ "}{" ++ op2 ++ "}"
 		};
-		if(op == '*') {
-			^arguments[1].asLaTeX ++ " \\cdot " ++ arguments[2].asLaTeX 
+		if(selector == '*') {
+			^op1 ++ " \\cdot " ++ op2 
 		};
-		if(op == 'pow') {
-			^"{" ++ arguments[1].asLaTeX ++ "}^{" ++ arguments[2].asLaTeX ++ "}"
+		if(selector == 'pow') {
+			^"{" ++ op1 ++ "}^{" ++ op2 ++ "}"
 		};
-		if(op == 'absdif') {
-			^"\\left|{" ++ arguments[1].asLaTeX ++ "-" ++  arguments[2].asLaTeX ++ "}\\right|"
+		if(selector == 'absdif') {
+			^this.bracketLaTeX(op1 ++ "-" ++  op2, "|", "|");
 		};
-		if(op.isBasicOperator) {
-			^" \\left(" ++ 
-				arguments[1].asLaTeX + op + arguments[2].asLaTeX ++ " \\right)"
+		if(selector.isBasicOperator) {
+			^this.bracketLaTeX(op1 + selector + op2)
 		}; 
-		^op.asLaTeX  ++ " \\left("  ++ this.argsAsLaTeX ++ " \\right)"
-	}
-	
-	argsAsLaTeX {
-		^arguments[1..].collect(_.asLaTeX).join(", ")
+		^selector.asLaTeX + this.bracketLaTeX(op1 + "," + op2)
+		
 	}
 }
+
++ MulAddUGenNode {
+
+	asLaTeX {
+		var res, in, mul, add;
+		#in, mul, add = arguments;
+		res = in.asLaTeX;
+		
+		if(mul != 1) {
+			res = res ++ " \\cdot " ++ mul.asLaTeX;
+		};
+		if(add != 0) {
+			res = res ++ " + " ++ add.asLaTeX;
+		};
+		^res
+	}
+}
+
 + ControlUGenNode {
 	asLaTeX {
 		var nm = names;
@@ -94,9 +106,10 @@
 + Collection {
 	asLaTeX {
 		var items = this.collect(_.asLaTeX);
-		var res = "\n \\left[ \\begin{array}{ll}\n";
+		var res = "\\begin{array}{ll}\n";
 		res = res ++ items.join("\\\\\n");
-		res = res ++ "\\end{array} \\right] \n";
+		res = res ++ "\\end{array}";
+		res = this.bracketLaTeX(res, "\n[", "]\n");
 		^res
 	}
 	asFracLaTeX {
@@ -116,6 +129,9 @@
 		"\n\\end{displaymath}\n"
 		"\\end{document}\n"
 	}
+	bracketLaTeX { arg content, lbracket = "(", rbracket = ")";
+		^"\\left" ++ lbracket ++ "{" + content + "} \\right" ++ rbracket
+	}  
 }
 
 + Symbol {
@@ -131,18 +147,39 @@
 }
 
 + Float {
-	asLaTeX {
-		var frac;
-		frac = (this / pi).asFraction;
-		if(frac[0] <= 5 and: { frac[1] <= 5 }) {
-			^frac.asFracLaTeX ++ " \\pi"
+	asLaTeX { // do some basic analysis here
+		var frac, res;
+		
+		frac = this.extractFraction;
+		frac !? { ^this.simplifyFractionAsLaTex(frac) };
+		
+		frac = this.extractFraction({ |x| x / pi });
+		frac !? {  res = this.simplifyFractionAsLaTex(frac);
+			^if(res == 1) {Ê"" } { res } ++ " \\pi" 
 		};
-		frac = this.asFraction;
-		if(frac[0] == frac[1]) { ^"1" };
-		if(frac[0] <= 100 and: { frac[1] <= 100 }) {
-			^frac.asFracLaTeX
-		};
+
+		frac = this.extractFraction({ |x| exp(x) });
+		frac !? { ^"e^{" ++ this.simplifyFractionAsLaTex(frac) ++ "}" };
+		
+		frac = this.extractFraction({ |x| x.squared });
+		frac !? { ^"\\sqrt{" ++ this.simplifyFractionAsLaTex(frac) ++ "}" };
+		
 		^this.asString
+	}
+	
+	extractFraction { arg func, maxden = 100;
+		var num = func.value(this) ? this;
+		var frac = num.asFraction;
+		frac.postln;
+		if(frac[0] > maxden or: { frac[1] > maxden }) { ^nil };
+		if(absdif(frac[0] / frac[1], num).postln > 1e-10) { ^nil };
+		^frac
+	}
+	
+	simplifyFractionAsLaTex { arg frac;
+		if(frac[0] == frac[1]) { ^"1" };
+		if(frac[1] == 1) { ^frac[0].asString };
+		^frac.asFracLaTeX
 	}
 }
 
