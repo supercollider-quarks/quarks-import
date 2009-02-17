@@ -9,7 +9,7 @@
 
 ToggleBaseView : SCViewHolder {
 	var <value, <string, <hasBorder, <colorOn, <colorOff, <fontColorOn, <fontColorOff, font,
-		fontColor, color, <>action;
+		fontColor, color, <>action, <>centerString=true;
 
 	*new { arg parent, bounds;
 		^super.new.init(parent, bounds);
@@ -29,7 +29,7 @@ ToggleBaseView : SCViewHolder {
 		this.value_(false);
 
 		this.view.drawFunc_({
-			var bounds;
+			var bounds, stringDrawMethod;
 			bounds = Rect(0,0,this.view.bounds.width, this.view.bounds.height);
 			color = [colorOff, colorOn].at(this.value.binaryValue);
 			area = bounds.insetBy(2,2);
@@ -40,7 +40,9 @@ ToggleBaseView : SCViewHolder {
 			color.set;
 			GUI.pen.fillRect(area);
 			string.notNil.if({
-				string.drawInRect(area, font, fontColor)
+			//	string.drawInRect(area, font, fontColor)
+				stringDrawMethod = [\drawInRect, \drawCenteredIn].at(centerString.binaryValue);
+				string.perform(stringDrawMethod, area, font, fontColor);
 			})
 		});
 		this.view.mouseDownAction_({ arg view, x, y, modifiers, buttonNumber, clickCount;
