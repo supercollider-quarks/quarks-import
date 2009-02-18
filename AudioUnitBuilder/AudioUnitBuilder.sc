@@ -1,8 +1,9 @@
 AudioUnitBuilder{
-	classvar dir="scaudk/", command="cd %; ./makecustomplugin % % %", <>unitDict, <>displayDict;
+	classvar <>rez="/Developer/Tools/Rez", <>unitDict, <>displayDict;
 	var name, specs, function, plistData, type, subtype;
 	var <>doNoteOn=false,<>beatDiv=nil,<>port=9989,<>blockSize=64;
 	var <>componentsPath = "~/Library/Audio/Plug-Ins/Components/";
+	
 	var xmlHead = '<?xml version="1.0" encoding="UTF-8"?>';
 	var docType = '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">';
 	var gpl = "/* SuperCollider real time audio synthesis system\n"
@@ -187,7 +188,7 @@ AudioUnitBuilder{
 		"mkdir -p %/synthdefs".format(resources).systemCmd;
 		synthDef.writeDefFile(dir++"/");		
         "mv %/%.scsyndef %/synthdefs".format(unixDir,name,resources).systemCmd;
-        result= "Rez -o %/SuperColliderAU.rsrc -useDF %/tmp.r".format(unixDir,unixDir).systemCmd;
+        result= "% -o %/SuperColliderAU.rsrc -useDF %/tmp.r".format(rez,unixDir,unixDir).systemCmd;
 		if(result!=0,{"Error running Rez ".postln},{"Created %".format(component).postln});
 		"mv %/SuperColliderAU.rsrc % %".format(unixDir,resources).systemCmd;
 		"rm %/tmp.r".format(unixDir).systemCmd;
