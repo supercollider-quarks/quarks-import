@@ -64,7 +64,7 @@ SynthVoicerNode {
 			out = Array(initArgDict.size * 2);
 			initArgDict.keysValuesDo({ |name, value| out.add(name).add(value) });
 		});
-		^out
+		^out.asOSCArgArray
 	}
 	
 	makeInitArgDict { |initArgs|
@@ -85,7 +85,7 @@ SynthVoicerNode {
 			// assemble arguments
 		args2 = initArgs ++ [\gate, gate, \t_gate, gate];
 		args = (args ? []).flat;
-		(args.at(0).notNil).if({ args2 = args2 ++ args });
+		(args.at(0).notNil).if({ args2 = args2 ++ args.asOSCArgArray });
 		freq.notNil.if({ args2 = args2 ++ [\freq, freq] });
 			// make synth object
 		synth = Synth.basicNew(defname, target.server);
@@ -189,7 +189,7 @@ SynthVoicerNode {
 			args = (args ? []).clump(2)
 				.select({ arg a; voicer.globalControls.at(a.at(0).asSymbol).isNil })
 				.flatten(1);
-			^[[15, synth.nodeID] ++ args]
+			^[[15, synth.nodeID] ++ args.asOSCArgArray]
 		}, {
 			^nil
 		});
