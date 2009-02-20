@@ -85,11 +85,11 @@ SynthVoicerNode {
 			// assemble arguments
 		args2 = initArgs ++ [\gate, gate, \t_gate, gate];
 		args = (args ? []).flat;
-		(args.at(0).notNil).if({ args2 = args2 ++ args.asOSCArgArray });
+		(args.at(0).notNil).if({ args2 = args2 ++ args });
 		freq.notNil.if({ args2 = args2 ++ [\freq, freq] });
 			// make synth object
 		synth = Synth.basicNew(defname, target.server);
-		bundle.add(synth.newMsg(target, args2 ++ this.mapArgs
+		bundle.add(synth.newMsg(target, args2.asOSCArgArray ++ this.mapArgs
 			++ [\out, bus.index, \outbus, bus.index], addAction));
 		^bundle
 	}
@@ -99,7 +99,7 @@ SynthVoicerNode {
 
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
-		if(freq.isNumber) {
+		if(freq.isValidVoicerArg) {
 			this.shouldSteal.if({
 				this.stealNode(synth, latency);
 			});
@@ -304,7 +304,7 @@ InstrVoicerNode : SynthVoicerNode {
 		// does trigger et al. need to hit the children?
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
-		if(freq.isNumber) {
+		if(freq.isValidVoicerArg) {
 			this.shouldSteal.if({
 				this.stealNode(synth, latency);
 			});

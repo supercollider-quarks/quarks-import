@@ -187,7 +187,7 @@ Voicer {		// collect and manage voicer nodes
 	trigger1 { arg freq, gate = 1, args, lat = -1;
 		var node;
 			// freq may be a symbol to produce a rest
-		freq.isNumber.if({
+		freq.isValidVoicerArg.if({
 			node = this.perform(stealer);
 				// args may be [\key, value] or [[\key, value], [\key, value]]
 				// in the latter case, trigger1 should take only the first subarray
@@ -213,7 +213,7 @@ Voicer {		// collect and manage voicer nodes
 			gate.respondsTo(\wrapAt).not.if({ gate = [gate] });
 				// for each freq, get node and play it
 			^freq.collect({ arg f, i;
-				f.isNumber.if({
+				f.isValidVoicerArg.if({
 					this.perform(stealer).trigger(f, gate.wrapAt(i), args.wrapAt(i), lat);
 				});
 			});
@@ -339,17 +339,18 @@ Voicer {		// collect and manage voicer nodes
 					argList = Array(controls.size * 2);
 					controls.do({ |c|
 						cname = c.name.asSymbol;
-//						(cname.envirGet.size == 0).if({ cname.envirPut(cname.envirGet.asArray) });
-						(eventWithoutParent[cname].size == 0).if({
-							eventWithoutParent[cname] = eventWithoutParent[cname].asArray;
-						});
-							// add value: environment overrides node's initarg,
-							// which overrides the SynthDef's default
-						argList.add(cname)
-							.add(eventWithoutParent[cname].wrapAt(i)
-								?? { node.initArgAt(cname) }
-								?? { c.defaultValue }
-							);
+						if(cname != '?') {
+							(eventWithoutParent[cname].size == 0).if({
+								eventWithoutParent[cname] = eventWithoutParent[cname].asArray;
+							});
+								// add value: environment overrides node's initarg,
+								// which overrides the SynthDef's default
+							argList.add(cname)
+								.add(eventWithoutParent[cname].wrapAt(i)
+									?? { node.initArgAt(cname) }
+									?? { c.defaultValue }
+								);
+						};
 					});
 					argList
 				}, {

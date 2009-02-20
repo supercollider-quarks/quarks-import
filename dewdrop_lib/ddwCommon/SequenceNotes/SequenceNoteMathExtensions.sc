@@ -49,7 +49,7 @@
 		});
 		^true
 	}
-	isValidSynthArg { ^false }
+	isValidSynthArg { ^true }
 }
 
 + Object {
@@ -60,13 +60,10 @@
 + String {
 	isValidSynthArg {
 		^(this[0] == $c and: {
-				// block {} is for early exit from loops
-			block { |break|
-				(1..this.size-1).do({ |i|
-					this[i].isDecDigit.not.if({ break.(false) });
-				});
-				true
-			}
+			(1..this.size-1).do({ |i|
+				this[i].isDecDigit.not.if({ ^false });
+			});
+			^true
 		})
 	}
 	isValidVoicerArg { ^this.isValidSynthArg }
@@ -74,5 +71,5 @@
 
 + Symbol {
 	isValidSynthArg { ^this.asString.isValidSynthArg }
-	isValidVoicerArg { ^this.isValidSynthArg }
+	isValidVoicerArg { ^this.asString.isValidSynthArg }
 }
