@@ -1,17 +1,23 @@
+
+// WARNING - 
+// SNBox has been deprecated.
+// its functionality  has been implemented in SCNumberBox
+
 // blackrain at realizedsound dot net
 // mod from the original concept by thor and cylob / original behaviour from sc2 by James McCartney
 // fix key modidiers bug and horizontral scroll action by Stephan Wittwer 08/2006
 // handle a nil value by Wouter Snoei 08/2006
 
 SNBox : SCNumberBox {
+/*
 	var <>clipLo = -inf, <>clipHi = inf, hit, inc=1.0, <>scroll=true, <>shift_step=0.1, <>ctrl_step=10;
 
 	*viewClass { ^SCNumberBox }
-/*
-	init { arg argParent, argBounds;
-		super.init(argParent, argBounds).boxColor_(Color.blue(0.0,0.1));
-	}
-*/
+
+//	init { arg argParent, argBounds;
+//		super.init(argParent, argBounds).boxColor_(Color.blue(0.0,0.1));
+//	}
+
 	value_ { arg val;
 		keyString = nil;
 		this.stringColor = normalColor;
@@ -50,5 +56,6 @@ SNBox : SCNumberBox {
 		});
 		mouseMoveAction.value(this, x, y, modifiers);	
 	}
+*/
 }
 
