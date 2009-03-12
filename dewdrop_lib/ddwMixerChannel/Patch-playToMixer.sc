@@ -49,6 +49,12 @@
 	}
 }
 
++ String {
+	draggedIntoMixerGUI { |gui|
+		this.interpret.draggedIntoMixerGUI(gui)
+	}
+}
+
 // I have to override this core method. Sorry.
 // If I don't, MixerChannelReconstructor doesn't work.
 + Server {

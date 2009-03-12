@@ -8,3 +8,14 @@
 		gui.model.spec = this.asSpec;
 	}
 }
+
+	// needed because Cocoa GUI no longer interprets strings for you
++ String {
+	draggedIntoVoicerGUI { |gui|
+		^this.interpret.draggedIntoVoicerGUI(gui)
+	}
+	
+	draggedIntoVoicerGCGUI { |gui|
+		^this.interpret.draggedIntoVoicerGCGUI(gui)
+	}
+}
