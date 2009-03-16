@@ -1,4 +1,4 @@
 
 + ArrayedCollection {
-	plot { GNUPlot.plot( this ) }
+	gnuplot { GNUPlot.plot( this ) }
 }
