@@ -152,10 +152,3 @@
 	}
 }
 
-+ Nil { // nil matches everything
-		
-	pairsDo {
-		 ^this
-	}
-}
-
