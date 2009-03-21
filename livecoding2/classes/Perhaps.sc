@@ -3,7 +3,8 @@
 
 Perhaps : Maybe {
 
-	var <>connected, <>action;
+	var <>connected, <>action; // later instead of action can be added others.
+	var <>name; // for now.
 		
 	// find better name.
 	glue { 
@@ -23,6 +24,7 @@ Perhaps : Maybe {
 	}
 	
 	addConnection { arg obj;
+		"added connection".postln;
 		if(connected.isNil) { connected = IdentitySet.new };
 		connected.add(obj);
 	}
@@ -30,23 +32,28 @@ Perhaps : Maybe {
 	value_ { arg obj;
 		this.releaseGlued;
 		value = obj;
+		"set value".postln;
 		this.catchRecursion {
-			this.update(this, obj);
+			this.update(this, obj); // placeholder also forwards change to itself.
 			this.changed(obj);
 		};
 		
 	}
 	
 	update { arg who, what;
-		if(who !== this) {
-			"updated % %\n".postf(who, what);
-			this.doAction(who, what)
-		} {
-			"didn't do it.".postln;
-		};	
+		"updated % %\n".postf(who.name, what);
+		this.doAction(who, what)	
 	}
 	
 	doAction { arg who, what;
 		action.value(this, what);
 	}
+}
+
+Contract : Maybe {
+	var <>condition;
+	test {
+		^condition.value(value)
+	}
+
 }
