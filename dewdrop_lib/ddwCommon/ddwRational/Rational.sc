@@ -42,7 +42,13 @@ Rational : AbstractFunction {
 
 	/% { |that, adverb| 
 		^(value.perform('/', that, adverb)).asRational 
-	} 
+	}
+	
+	fuzzygcd { |that, error = 0.15, tries|
+			// why not this.fuzzygcd?
+			// 'that' might be a Rational which also should be converted to float
+		^that.fuzzygcd(value, error, tries)
+	}
 
 	asRational { ^this } 
 	asFloat { ^value } 
