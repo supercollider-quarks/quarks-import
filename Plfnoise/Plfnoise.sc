@@ -19,7 +19,7 @@ Plfnoise0 : Pattern {
 			(counter <= 0).if({
 				hiVal = hiStr.next(inval);
 				loVal = loStr.next(inval);
-				counter = nSamps.next(inval);
+				counter = nSampsStr.next(inval);
 				if(hiVal.isNil or: { loVal.isNil or: {counter.isNil}}) { ^inval };
 				level = hiVal.rrand(loVal);
 				});
@@ -52,7 +52,7 @@ Plfnoise1 : Pattern {
 			(counter <= 0).if({
 				hiVal = hiStr.next(inval);
 				loVal = loStr.next(inval);
-				counter = nSamps.next(inval);
+				counter = nSampsStr.next(inval);
 				if(hiVal.isNil or: { loVal.isNil or: {counter.isNil}}) { ^inval };
 				nextValue = hiVal.rrand(loVal);
 				slope = (nextValue - level) / counter;
@@ -95,7 +95,7 @@ Plfnoise2 : Pattern {
 				nextValue = hiVal.rrand(loVal);
 				level = nextMidPt;
 				nextMidPt = (nextValue + val) * 0.5;
-				counter = nSamps.next(inval);
+				counter = nSampsStr.next(inval);
 				fseglen = counter;
 				curve = 2 * 
 					(nextMidPt - level - (fseglen * slope) / ((fseglen * fseglen) + fseglen));
