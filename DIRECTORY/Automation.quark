@@ -2,7 +2,8 @@
     \name:    "Automation",
     \path:    "Automation",
     \summary: "Record and playback live GUI (or any other) activity.",
-    \author:  "neels",
+    \author:  "neels@hofmeyr.de",
     \url:     "http://hofmeyr.de/neels/software/automation/",
     \helpdoc: "Help/Automation.scd"
+    \since:   "2009"
 )
