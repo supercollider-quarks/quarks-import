@@ -41,7 +41,7 @@ BufferQueryQueue {
 		
 		isRunning = true;
 			// place OSCResponder -- note that flow of control happens here
-		resp = OSCresponderNode(server.addr, "/b_info", { arg t, r, m;
+		resp = OSCpathResponder(server.addr, ['/b_info', buffer.bufnum], { arg t, r, m;
 			buffer.numFrames = m.at(2);
 			buffer.numChannels = m.at(3);
 			buffer.sampleRate = m.at(4);
