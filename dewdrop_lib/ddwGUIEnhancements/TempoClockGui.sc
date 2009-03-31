@@ -54,7 +54,7 @@ TempoClockGui : ObjectGui {
 			namev = GUI.staticText.new(tempoFlow, Rect.new(0, 0, namewidth, nameheight))
 				.align_(\center);
 
-			tempoEditor = NumberEditor.new(model.tempo*60, [20, 500, \linear, 1]);
+			tempoEditor = NumberEditor.new(model.tempo*60, [20, 320, \linear, 1]);
 			tempoEditGui = tempoEditor.gui(tempoFlow);
 			tempoEditor.action = { arg v; model.tempo_(v/60) };
 
