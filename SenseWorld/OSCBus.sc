@@ -1,7 +1,7 @@
 OSCBus{
 	var <bus;
 	var <server;
-	var <responder;
+	var responder;
 	var <nc;
 	var <>scale=1;
 
@@ -10,7 +10,7 @@ OSCBus{
 	}
 
 	init{ |addr, cmdName, nchan, s|
-		server = s ? Server.local;
+		server = s ? Server.default;
 		nc = nchan ? 1;
 		responder = OSCresponderNode.new( addr, cmdName, { |t,r,msg|
 			bus.setn( msg.copyRange( 1, nc ) * scale );
@@ -19,6 +19,7 @@ OSCBus{
 	}
 
 	renew{
+		if ( bus.notNil, { this.free; });
 		bus = Bus.control( server, nc );
 		responder.add;
 	}
@@ -36,8 +37,8 @@ DataBus{
 	var <server;
 	var <func;
 	var <nc;
-	var <updater;
-	var <>dT = 0.05;
+	var updater;
+	var <dT = 0.05;
 	var <>scale=1;
 
 	*new{ |function, nchan, server|
@@ -45,17 +46,20 @@ DataBus{
 	}
 
 	init{ |function, nchan, s|
-		server = s ? Server.local;
+		server = s ? Server.default;
 		nc = nchan ? 1;
 		func = function;
 		this.renew;
 	}
 
 	renew{
+		if ( bus.notNil, { this.free; });
 		bus = Bus.control( server, nc );
-		updater = SkipJack( { bus.setn( func.value * scale ) }, dT );
-		updater.start;
+		updater = SkipJack( { bus.setn( func.value * scale ) }, dT, autostart: true );
+		//		updater.start;
 	}
+
+	dT_{ |dt| dT = dt; updater.dt = dT; }
 	
 	free{
 		bus.free;

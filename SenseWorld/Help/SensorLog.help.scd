@@ -2,6 +2,8 @@ SensorLog helpfile
 
 SensorLog helps you log and playback logged incoming sensor data (or any other data that is written to a control bus).
 
+// NOTE this class is still buggy. Don't rely on it to work properly
+
 /// ------------
 /// Example:
 /// ------------

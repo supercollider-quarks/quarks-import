@@ -1,6 +1,6 @@
-/* $Id: MotionTracker.sc 54 2009-02-06 14:54:20Z nescivi $ 
+/* $Id: DataCollector.sc 54 2009-02-06 14:54:20Z nescivi $ 
  *
- * Copyright (C) 2009, Marije Baalman <nescivi _at_ gmail.com>
+ * Copyright (C) 2009, Marije Baalman <nescivi _at_ gmail _dot_ com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,7 @@ DataCollector{
 	classvar <>folder = "DataCollectorBackup/";
 
 	var <>name,	<>collection;
-	var <>verbose=false;
-	
-	
+		
 	*initClass { this.makeBackupFolder }
 	
 	*makeBackupFolder { 
@@ -64,7 +62,6 @@ DataCollector{
 		if ( date.notNil, {
 			metadata = (\metadata: mdata, \date: date) },{
 				metadata = (\metadata: mdata ) });
-		metadata.postln;
 		this.addTrace( metadata );
 	}
 
