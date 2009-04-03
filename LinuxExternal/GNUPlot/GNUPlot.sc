@@ -1,5 +1,12 @@
-GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
+GNUPlot { 
+
 	classvar id, <>folder = "SC_to_GNUPlot/";
+
+	var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
+
+	// histogram:
+	var <>histoMin, <>histoMax, <>histoSteps = 100;
+
         // This function takes an arbitrary array and plots the values
 	*initClass{
 		id = 0;
@@ -93,24 +100,31 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 		pipe.flush;
 	}
 
-	plotd{ |data,ns=1,label=""|
-		pipe.putString("plot ");
-		(ns-1).do{ |i|
-			pipe.putString("'-' title \""++label++(i+1)++"\",");
-		};
-		pipe.putString("'-' title \""++label++ns++"\"\n");
-		if ( ns > 1,
-			{
-				ns.do{ |id|
-					data.at(id).do{ |it,i| pipe.putString( ""++ it ++ "\n" ); };
-					pipe.putString("e\n");
-				};
-			},
-			{
-				data.do{ |it,i| pipe.putString( ""++ it ++ "\n" ); };
-				pipe.putString("e\n");
-			});
+	putTestCommand{ |command,tmpname,label=""|
+		pipe.putString(command ++ "\n");
 		pipe.flush;
+	}
+
+	plotd{ |data,ns=1,label=""|
+		defer{
+			pipe.putString("plot ");
+			(ns-1).do{ |i|
+				pipe.putString("'-' title \""++label++(i+1)++"\",");
+			};
+			pipe.putString("'-' title \""++label++ns++"\"\n");
+			if ( ns > 1,
+				{
+					ns.do{ |id|
+						data.at(id).do{ |it,i| pipe.putString( ""++ it ++ "\n" ); };
+						pipe.putString("e\n");
+					};
+				},
+				{
+					data.do{ |it,i| pipe.putString( ""++ it ++ "\n" ); };
+					pipe.putString("e\n");
+				});
+			pipe.flush;
+		};
 	}
 
 	plot{ |data,ns=1,label=""|
@@ -145,6 +159,16 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 		this.plot( lastdata, lastns, label );
 	}
 
+	autoscaleX{
+		pipe.putString( "set autoscale x\n" );
+		pipe.flush;
+	}
+
+	autoscaleY{
+		pipe.putString( "set autoscale y\n" );
+		pipe.flush;
+	}
+
 	setXrange{ |min,max|
 		pipe.putString( "unset autoscale x\n" );
 		pipe.putString( "set xrange ["++min++":"++max++"]\n" );
@@ -161,6 +185,11 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 		pipe.putString( "quit\n" );
 		pipe.flush;
 		pipe.close;
+	}
+
+	monitorReset{
+		var length = hisdata.size;
+		hisdata = Array.fill( length, 0 );
 	}
 
 	monitor{ |updateF,dt,length,ns=1,skip=1| // id: id of data to monitor, dt: time step, skip: stepsize
@@ -192,6 +221,68 @@ GNUPlot { var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 
 	stopMonitor{ 
 		monrout.stop;
+	}
+
+
+	plotdHisto{ |data,ns=1,label="",verb=true|
+		var histodata, xtics;
+		var step,start,end,xticsArr;
+		defer{
+			if ( ns > 1, {
+				histodata = data.collect{ |it| it.histo(histoSteps,histoMin,histoMax, verb) };
+				xticsArr = data.first.histoBands(histoSteps,histoMin,histoMax);
+				//	histodata = histodata.flop;
+			},{
+				histodata = data.histo(histoSteps,histoMin,histoMax, verb);
+				xticsArr = data.histoBands(histoSteps,histoMin,histoMax);
+				//	histodata = histodata.first;
+			});
+
+
+			// create the tics axis:
+			step = xticsArr.size / 10;
+			start = (step / 2 ).floor;
+			end = xticsArr.size - start;
+			
+			xticsArr = xticsArr.at( ( start,(step+start)..end) );
+			if ( xticsArr.last.isNil, { xticsArr = xticsArr.drop(-1); });
+			
+			xtics = "set xtics ( ";
+			xticsArr.do{ |it,i| 
+				xtics = xtics ++ "\"" ++ it.round(0.1) ++ "\"" + ( i*step+(step/2) );
+				if ( i < (xticsArr.size - 1) ){ xtics = xtics ++ ", " };
+			};
+			xtics = xtics ++ ")";
+			
+			pipe.putString( xtics ++ "\n" );
+			
+			this.plotd( histodata, ns, label );
+		};
+	}
+
+	// as Monitor, but plots a Histogram of the data
+	monitorHisto{ |updateF,dt,length,ns=1,skip=1| // id: id of data to monitor, dt: time step, skip: stepsize
+		updateFunc = updateF;
+		hisdata = Array.fill( length, 0 );
+		monrout = Task{ 
+			var cnt = 0;
+			var histodata;
+			inf.do{ 
+				hisdata.pop;
+				hisdata = hisdata.addFirst( updateFunc.value );
+				cnt = cnt + 1;
+				if ( cnt == skip,
+					{
+						if ( ns > 1, {
+							this.plotdHisto( hisdata.flop, ns );
+						},{
+							this.plotdHisto( hisdata.flatten, ns );
+						});
+						cnt = 0;
+					});
+				dt.wait;
+			}
+		};
 	}
 
 }
