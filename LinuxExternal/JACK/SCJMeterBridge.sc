@@ -1,4 +1,4 @@
-// 2005, Marije Baalman
+// 2005-9, Marije Baalman
 
 SCJMeterBridge { classvar <>no, <typelist, <>prepend;
 
@@ -8,8 +8,8 @@ SCJMeterBridge { classvar <>no, <typelist, <>prepend;
 		typelist = [ "dpm", "vu", "ppm", "jf", "sco" ];
 	}
 
-	*new { arg channels, type, reflevel, pre;
-		^super.new.init(channels, type, reflevel, pre);
+	*new { arg channels, type, reflevel, pre, io;
+		^super.new.init(channels, type, reflevel, pre, io);
 	}
 
 	*info { arg pre;
@@ -17,7 +17,7 @@ SCJMeterBridge { classvar <>no, <typelist, <>prepend;
 		(prepend++"meterbridge").unixCmd;
 	}
 
-	init { arg channels, type, reflevel, pre;
+	init { arg channels, type, reflevel, pre, io = \out;
 		var meterbridge, correcttype;
 		//nochan = nochan ? 1;
 		//startchan = startchan ? 0;
@@ -32,7 +32,17 @@ SCJMeterBridge { classvar <>no, <typelist, <>prepend;
 			} );
 		meterbridge = prepend++"meterbridge -t"+ type + "-n SuperMeter"++no+ "-c" + channels.size;
 		if ( reflevel.notNil , { meterbridge = meterbridge + "-r" + reflevel; });
-		channels.do{ |it,i| meterbridge=meterbridge ++ " SuperCollider:out_" ++ (it+1); };
+
+		if ( io == \out ){
+			channels.do{ |it,i| meterbridge=meterbridge ++ " SuperCollider:out_" ++ (it+1); };
+		};
+		if ( io == \in ){
+			channels.do{ |it,i| meterbridge=meterbridge ++ " SuperCollider:in_" ++ (it+1); };
+		};
+		if ( io == \inout ){
+			channels[0].do{ |it,i| meterbridge=meterbridge ++ " SuperCollider:out_" ++ (it+1); };
+			channels[1].do{ |it,i| meterbridge=meterbridge ++ " SuperCollider:in_" ++ (it+1); };
+		};
 		meterbridge.unixCmd;
 		no = no + 1;
 	}
