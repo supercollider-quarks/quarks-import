@@ -11,6 +11,15 @@
 	}
 }
 
++ Pchain {
+	atKey { |key|
+		patterns.do { |p|
+			if ( p.class == Pbind ){ ^p.atKey( key )};
+		};
+		^nil
+	}
+}
+
 + PatternProxy{
 	atKey{ |key|
 		^source.atKey( key )
