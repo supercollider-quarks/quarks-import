@@ -4,14 +4,16 @@ BusMonitor{
 	var <data;
 	var <>dt = 0.05;
 	var <>hisSize = 1000;
+	var <>skip = 20;
 	
-	*new{ |bus,hisSize|
-		^super.new.init( bus,hisSize );
+	*new{ |bus,hisSize,skip|
+		^super.new.init( bus,hisSize,skip );
 	}
 
-	init{ |b,hs|
+	init{ |b,hs,sk|
 		bus = b;
 		hisSize = hs ? hisSize;
+		skip = sk ? skip;
 		data = Array.fill( bus.numChannels, 0 );
 		gnuplot= GNUPlot.new;
 		this.initMonitor;
@@ -38,7 +40,7 @@ BusMonitor{
 		gnuplot.monitor( { 
 			bus.getn( bus.numChannels, { |v| v.do{ |it,i| data[i] = it; } } );
 			data.collect{ |it| it.value } 
-		}, dt, hisSize, bus.numChannels, skip: 20 ); 
+		}, dt, hisSize, bus.numChannels, skip: skip ); 
 	}
 
 	cleanUp{
