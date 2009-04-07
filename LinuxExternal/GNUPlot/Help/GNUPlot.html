@@ -1,115 +1,298 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<title></title>
-<meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.42">
-<style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
-p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #623924}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p11 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p12 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica; min-height: 17.0px}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #623924}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #1b34d9}
-span.s3 {color: #142fe0}
-span.s4 {color: #000000}
-span.s5 {color: #303b89}
-span.s6 {color: #623924}
-span.s7 {font: 12.0px Helvetica; color: #000000}
-span.s8 {color: #1427a2}
-span.Apple-tab-span {white-space:pre}
-</style>
-</head>
-<body>
-<p class="p1"><span class="s1"><b>GNUPlot<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>class to interface GNUPlot from SuperCollider</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
-<p class="p2"><br></p>
-<p class="p1"><b>Inherits from: </b><a href="../Core/Object.html"><span class="s2"><b>Object</b></span></a></p>
-<p class="p3"><br></p>
-<p class="p4"><b>You need to have GNUPlot installed in order to be able to use this class!</b></p>
-<p class="p2"><br></p>
-<p class="p4"><b>Creation / Class Methods</b></p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>*plot( arg data )</b></p>
-<p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Plot the data which should be an array.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// plot example</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">GNUPlot</span>.plot( [0,2,3,2,1,0.4] );</p>
-<p class="p9"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// using the Collection extensions you can also directly use plot on the array:</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[0,2,3,2,1,0.4].plot;</p>
-<p class="p5"><br></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>*new</b></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>This creates an instance of GNUPlot, and a Pipe interface to pass on new plot data to it.</p>
-<p class="p7"><br></p>
-<p class="p9"><span class="s7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// create an instance and plot data:</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">GNUPlot</span>.new;</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.plot( [0,2,3,2,1,0.4] );</p>
-</p>
-<p class="p10"><span class="s6">// plot several sets of data in one figure:</span></p>
-<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.plot( [ [0,2,3,2,1,0.4], [2,1,2,-2,0.4,0.2] ], 2 )</p>
-<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.stop</p>
-<p class="p7"><br></p>
-<p class="p11"><b>Accessing Instance and Class Variables</b></p>
-<p class="p7"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>plot(arg data, ns, label)</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Plots the data, assuming ns rows, and using the label. This method uses a temporary file to pass on the data to GNUPlot.</p>
-<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">GNUPlot</span>.new;</p>
-<p class="p10"><span class="s6">// plot several sets of data in one figure:</span></p>
-<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.plot( [ [0,2,3,2,1,0.4], [2,1,2,-2,0.4,0.2] ], 2, "example" )</p>
-<p class="p10"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.stop</p>
+	<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<title>SuperCollider helpfile: GNUPlot</title>
+	<meta name="Generator" content="SC HelpFile Writer">
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>plotd(arg data, ns, label)</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Plots the data, assuming ns rows, and using the label. This method pipes the data directly to GNUPlot, without using a temporary file.</p>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #ffffff;
+      }
+      .comment {
+        /* font-lock-comment-face */
+        color: #b22222;
+      }
+      .comment-delimiter {
+        /* font-lock-comment-delimiter-face */
+        color: #b22222;
+      }
+      .constant {
+        /* font-lock-constant-face */
+        color: #5f9ea0;
+      }
+      .string {
+        /* font-lock-string-face */
+        color: #bc8f8f;
+      }
+      .type {
+        /* font-lock-type-face */
+        color: #228b22;
+      }
+      .variable-name {
+        /* font-lock-variable-name-face */
+        color: #b8860b;
+      }
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setXrange( arg min, max )</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Sets the x-range for the data.</p>
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>setYrange( arg min, max )</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Sets the y-range for the data.</p>
+	</head>
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>stop</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Stops the instance and closes the pipe.</p>
+<h1>GNUPlot</h1>
+<h2>class to interface GNUPlot from SuperCollider</h2>
+<p><em>Inherits from:</em>: <strong>Object</strong> </p>
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>monitor( arg updateF,dt,length,ns=1,skip=1 )</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Creates a monitor for data.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>updateF </b>- update function; this should return the additional data to be plotted.</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>dt<span class="Apple-converted-space"> </span></b> - time interval between updates</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>length<span class="Apple-converted-space"> </span></b> - the number of data points to plot</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ns<span class="Apple-converted-space"> </span></b> - the number of rows in the data</p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>skip<span class="Apple-converted-space"> </span></b> - how many updates are in between plots. If skip is 1 then every dt there is a new plot. If skip=10, then every ten updates of the data, it is actually plotted. This allows you to keep the graphical update rate lower than the data update rate.</p>
+<p>This class allows you to use the powerful plotting capabilities of GNUPlot from within SuperCollider.<BR><STRONG>You need to have GNUPlot installed in order to be able to use this class!</STRONG></p>
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>startMonitor</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Start the monitor.</p>
+<h3>Creation / Class Methods</h3>
+<DL>
 
-<p class="p6"><b><span class="Apple-tab-span">	</span>stopMonitor</b></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Start the monitor.</p>
+<DT><STRONG>*new</STRONG></DT>
+<DD>Create a new instance of GNUPlot.</DD>
 
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p11"><b>Example: monitoring data:</b></p>
-<p class="p6">In some cases it is useful to monitor data as it comes in.</p>
-<p class="p3"><br></p>
-<p class="p13">// what this example does</p>
-<p class="p14">g = <span class="s8">GNUPlot</span>.new;</p>
-<p class="p14">g.monitor( { 1.0.rand; }, 0.3, 20, 1 );</p>
-<p class="p14">g.startMonitor;</p>
-<p class="p14">g.stopMonitor;</p>
-<p class="p13">// monitor two values in one plot:</p>
-<p class="p14">g.monitor( { [1.0.rand, 2.0.rand] }, 0.3, 20, 2 );</p>
-<p class="p14">g.startMonitor;</p>
-<p class="p14">g.stopMonitor;</p>
-<p class="p13">// clean up:</p>
-<p class="p14">g.stop;</p>
-</body>
-</html>
+<DT><STRONG>*plot(data)</STRONG></DT>
+<DD>Plots the data array with GNUPlot. <br><em>Note, you can call <b>.gnuplot</b> directly on an ArrayedCollection to plot it with this method.</em>
+
+<p><strong> - Example - </strong></p>
+
+    <pre>
+<span class="comment-delimiter">// </span><span class="comment">plot example
+</span><span class="type">GNUPlot</span>.plot( [0,2,3,2,1,0.4] );
+<span class="comment-delimiter">// </span><span class="comment">using the Collection extensions you can also directly use gnuplot on the
+</span><span class="variable-name">array:</span>
+[0,2,3,2,1,0.4].gnuplot;
+</pre>
+
+</DD>
+
+<DT><STRONG>*plotenv(env)</STRONG></DT>
+<DD>Plot an envelope. <br><em>Note, you can call <b>.gnuplot</b> directly on an Env to plot it with this method</em></DD>
+
+
+
+</DL>
+
+<h3>Accessing Instance and Class Variables</h3>
+<DL>
+
+<DT><STRONG>start</STRONG></DT>
+<DD>Start GNUPlot and creates a pipe to it. (called automatically when creating a new instance.)</DD>
+
+<DT><STRONG>stop</STRONG></DT>
+<DD>Quit GNUPlot and close the pipe. Since GNUPlot is opened in "persist" mode, the window will not disappear, you will have to close it manually.</DD>
+
+
+<h4> - Basic plotting - </h4>
+
+<DT><STRONG>plot(data,ns,label)</STRONG></DT>
+<DD>Plots the data, assuming ns rows, and using the label. This method uses a temporary file to pass on the data to GNUPlot.
+<DL>
+<DT><EM>data</EM></DT>
+<DD>The data to plot.</DD>
+<DT><EM>ns</EM></DT>
+<DD>Number of rows. Each row will be plotted as a separate graph line.</DD>
+<DT><EM>label</EM></DT>
+<DD>Labels to use.</DD>
+</DL>
+
+<p><strong> - Example - </strong></p>
+
+    <pre>
+<span class="comment-delimiter">// </span><span class="comment">create an instance and plot data:
+</span>g = <span class="type">GNUPlot</span>.new;
+g.plot( [0,2,3,2,1,0.4] );
+
+<span class="comment-delimiter">// </span><span class="comment">plot several sets of data in one figure:
+</span>g.plot( [ [0,2,3,2,1,0.4], [2,1,2,-2,0.4,0.2] ], 2 )
+g.stop
+</pre>
+
+
+</DD>
+
+<DT><STRONG>replot(data,ns,label)</STRONG></DT>
+<DD>Add data to previous data and plot it.<DL>
+<DT><EM>data</EM></DT>
+<DD>New data to be added.</DD>
+<DT><EM>ns</EM></DT>
+<DD>Number of rows in the data (default 1)</DD>
+<DT><EM>label</EM></DT>
+<DD>Label to use.</DD>
+</DL>
+</DD>
+
+<DT><STRONG>plotd(data,ns,label)</STRONG></DT>
+<DD>Plots the data, assuming ns rows, and using the label. This method pipes the data directly to GNUPlot, without using a temporary file.<DL>
+<DT><EM>data</EM></DT>
+<DD>The data to plot.</DD>
+<DT><EM>ns</EM></DT>
+<DD>Number of rows. Each row will be plotted as a separate graph line.</DD>
+<DT><EM>label</EM></DT>
+<DD>Labels to use.</DD>
+</DL>
+
+</DD>
+
+<DT><STRONG>setXrange(min,max)</STRONG></DT>
+<DD>Sets the x-range for the data. This turns autoscaling off.</DD>
+
+<DT><STRONG>autoscaleX</STRONG></DT>
+<DD>Turn on autoscaling for the x-axis</DD>
+
+
+<DT><STRONG>setYrange(min,max)</STRONG></DT>
+<DD>Sets the y-range for the data. This turns autoscaling off.</DD>
+
+<DT><STRONG>autoscaleY</STRONG></DT>
+<DD>Turn on autoscaling for the y-axis.</DD>
+
+
+<h4> - Histogram plotting - </h4>
+
+<DT><STRONG>plotdHisto(data,ns,label,verb)</STRONG></DT>
+<DD>Plots the data in a histogram, assuming ns rows, and using the label. This method pipes the data directly to GNUPlot, without using a temporary file.<DL>
+<DT><EM>verb</EM></DT>
+<DD>Whether or not to use verbosity while creating the histogram.</DD>
+</DL>
+
+</DD>
+
+
+<DT><STRONG>histoSteps</STRONG></DT>
+<DD>  </DD>
+
+<DT><STRONG>histoSteps_</STRONG></DT>
+<DD>The number of bins to use in the histogram</DD>
+
+
+<DT><STRONG>histoMin</STRONG></DT>
+<DD>  </DD>
+
+
+<DT><STRONG>histoMin_</STRONG></DT>
+<DD>Minimum bin value for the histogram</DD>
+
+<DT><STRONG>histoMax</STRONG></DT>
+<DD>  </DD>
+
+<DT><STRONG>histoMax_</STRONG></DT>
+<DD>Maximum bin value for the histogram</DD>
+
+<h4> - 3D and scatter - </h4>
+
+<DT><STRONG>plot3( data, label )</STRONG></DT>
+<DD>Creates a 3D plot.</DD>
+
+<DT><STRONG>scatter( data, label )</STRONG></DT>
+<DD>Creates a scatter plot.</DD>
+
+
+<h4> - Data monitoring - </h4>
+
+<DT><STRONG>monitor(updateF,dt,length,ns,skip)</STRONG></DT>
+<DD>Creates a monitor for data.<br><em>Note: See also <b>BusMonitor</b>. There is a convenience method for Bus called <b>monitor</b> to monitor a control bus using this method.</em><DL>
+<DT><EM>length</EM></DT>
+<DD>the number of data points to plot</DD>
+<DT><EM>dt</EM></DT>
+<DD>time interval between updates</DD>
+<DT><EM>ns</EM></DT>
+<DD>the number of rows in the data</DD>
+<DT><EM>updateF</EM></DT>
+<DD>update function; this should return the additional data to be plotted.</DD>
+<DT><EM>skip</EM></DT>
+<DD>how many updates are in between plots. If skip is 1 then every dt there is a new plot. If skip=10, then every ten updates of the data, it is actually plotted. This allows you to keep the graphical update rate lower than the data update rate.</DD>
+</DL>
+
+</DD>
+
+
+
+<DT><STRONG>startMonitor</STRONG></DT>
+<DD>Start the monitor (either a regular monitor or histogram monitor)</DD>
+
+<DT><STRONG>monitorReset</STRONG></DT>
+<DD>Reset the data of the monitor.</DD>
+
+<DT><STRONG>stopMonitor</STRONG></DT>
+<DD>Stop the monitor</DD>
+
+
+<DT><STRONG>monitorHisto(updateF,dt,length,ns,skip)</STRONG></DT>
+<DD>Creates a histogram monitor for data. Arguments as in <b>monitor</b>, but it also observes the histoStep, histoMin and histoMax variables.<br><em>Note: See also <b>BusHistoMonitor</b>. There is a convenience method for Bus called <b>monitorHisto</b> to monitor a control bus using this method.</em></DD>
+
+
+<h4>- Direct interaction with GNUPlot - </h4>
+
+<DT><STRONG>putTestCommand(command)</STRONG></DT>
+<DD>Pipe a string command to gnuplot. This should be something gnuplot understands.</DD>
+
+
+</DL>
+
+<h3>Monitor example</h3>
+
+    <pre>
+g = <span class="type">GNUPlot</span>.new;
+<span class="comment-delimiter">// </span><span class="comment">one channel of random value data, at 0.3 seconds interval
+</span>g.monitor( { 1.0.rand; }, 0.3, 20, 1 ); 
+g.startMonitor;
+g.stopMonitor;
+<span class="comment-delimiter">// </span><span class="comment">monitor two values in one plot:
+</span>g.monitor( { [1.0.rand, 2.0.rand] }, 0.3, 20, 2 );
+g.startMonitor;
+g.stopMonitor;
+<span class="comment-delimiter">// </span><span class="comment">clean up:
+</span>g.stop;
+
+</pre>
+
+
+<h4>Private class methods and variables</h4>
+
+<DL>
+<DT><STRONG>*makeBackupFolder</STRONG></DT>
+<DD>Creates the folder for the temporary files. This is called from *initClass.</DD>
+
+<DT><STRONG>*envarray(env)</STRONG></DT>
+<DD>Converts an envelope into a plottable format for GNUPlot</DD>
+
+<DT><STRONG>*folder</STRONG></DT>
+<DD>  </DD>
+
+<DT><STRONG>*folder_</STRONG></DT>
+<DD>Folder for temporary files (default SC_to_GNUPlot in the working directory)</DD>
+
+</DL>
+<h4>Private methods and variables</h4>
+
+<DL>
+<DT><STRONG>lastdata</STRONG></DT>
+<DD>The last data plotted. Used to add to from replot.</DD>
+
+<DT><STRONG>hisdata</STRONG></DT>
+<DD>Stored data from the monitor</DD>
+
+<DT><STRONG>putCommand(command,tmpname,label)</STRONG></DT>
+<DD>Put a plotting command to gnuplot. Do not use directly.</DD>
+
+<DT><STRONG>createTempFile(data,ns)</STRONG></DT>
+<DD>Creates a temporary file to feed to gnuplot with the data. Is called from <em>plot</em>.</DD>
+
+
+</DL>
+
+<hr><p>This helpfile was created with the class HelpFile2</p>
+ </body></html>

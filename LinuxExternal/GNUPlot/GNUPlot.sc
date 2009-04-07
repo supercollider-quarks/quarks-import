@@ -1,5 +1,10 @@
 GNUPlot { 
 
+	// original class by Ben Moran (2006)
+	// mods from John Yates (2006)
+	// seriously expanded by Marije Baalman (2006-9)
+	// additions by Oswald Berthold (2009)
+
 	classvar id, <>folder = "SC_to_GNUPlot/";
 
 	var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
@@ -72,7 +77,7 @@ GNUPlot {
 
 	createTempFile{ |data,ns=1|
 		var fh, tmpname,unlaced;
-		tmpname = folder++"scdata"++gid++".tmp"; // Todo: proper temp name!
+		tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
 		//	id = id + 1;
 		// And add exception handling.
 		fh = File.new(tmpname,"w");
@@ -100,7 +105,7 @@ GNUPlot {
 		pipe.flush;
 	}
 
-	putTestCommand{ |command,tmpname,label=""|
+	putTestCommand{ |command|
 		pipe.putString(command ++ "\n");
 		pipe.flush;
 	}
@@ -285,4 +290,47 @@ GNUPlot {
 		};
 	}
 
+
+	// Oswalds' additions:
+	plot3 {|data, label|
+		var fh, tmpname; // = this.createTempFile3( data, ns );
+		defer {
+			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
+			// And add exception handling.
+			fh = File.new(tmpname,"w");
+			data.flop.do{|sub|
+				sub.do {|val|
+					fh.putString(val.asString ++ " ");
+				};
+				fh.putString("\n");
+			};
+			fh.close;
+			
+			["GNUPlot.plot3 data size: ", data.size].postln;
+			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
+			lastdata = [ data ];
+			pipe.flush;
+		}
+	}
+
+	scatter {|data, label|
+		var fh, tmpname; // = this.createTempFile3( data, ns );
+		defer {
+			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
+			// And add exception handling.
+			fh = File.new(tmpname,"w");
+			data.do{|sub|
+				sub.do {|val|
+					fh.putString(val.asString ++ " ");
+				};
+				fh.putString("\n");
+			};
+			fh.close;
+			
+			["GNUPlot.scatter data size: ", data.size].postln;
+			pipe.putString("plot \""++tmpname++"\" with points title \""++label++"\"\n");
+			lastdata = [ data ];
+			pipe.flush;     
+		}
+	}
 }
