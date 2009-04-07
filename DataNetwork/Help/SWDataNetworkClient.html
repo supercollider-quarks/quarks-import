@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SWDataNetworkClient</TITLE>
+<META NAME="description" CONTENT="SWDataNetworkClient">
+<META NAME="keywords" CONTENT="datanetwork">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="datanetwork.css">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node9.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node11.html">
+</HEAD>
+
+<BODY >
+
+
+<H2><A NAME="SECTION00046000000000000000">
+SWDataNetworkClient</A>
+</H2>
+<p>
+This implements an OSC client to a DataNetwork, so that an external SuperCollider client can also be part of the network.
+</p>
+<p>
+This class is a subclass of SWDataNetwork, so the methods used in that class can be used in this class as well. In some cases methods have an additional argument, which only need to be set, when called internally, so the user interface is the same as when using SWDataNetwork. Access to nodes, slots and their data is just the same as for a local network.
+</p>
+<p>There are some additional methods to send out OSC messages, or for internal use.</p>
+<DL>
+
+<h3> - Methods - </h3>
+
+<DT><STRONG>*new( ip, hst )</STRONG></DT>
+<DD>Create a new client, with <em>ip</em> and <em>host</em>. <em>ip</em> should be a hostname or string (the NetAddr of it is created in the class). <em>host</em> should be a NetAddr representing the address of the host.</DD>
+
+
+<DT><STRONG>setHost ( ip, port )</STRONG></DT>
+<DD>Set the ip and port of the host. This will remove and then re-add the OSC responders with the new host NetAddr. This is the method called upon receiving the datanetwork announce message.</DD>
+
+<DT><STRONG>findHost ( ip )</STRONG></DT>
+<DD>Try to find the host, based on the given IP (if none is given, the method will use the IP of the previous host). The client will then get the port number from the file in which it is written by the host (access with curl through http).</DD>
+
+<DT><STRONG>tryReconnect</STRONG></DT>
+<DD>Try to find the host (with the method findHost), and register again to that host.</DD>
+
+
+<DT><STRONG>autoregister (  )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>autoregister_ (  )</STRONG></DT>
+<DD>If true, when the host NetAddr is reset with setHost, the client will automatically register to it.</DD>
+
+<DT><STRONG>host (  )</STRONG></DT>
+<DD>Retrieve the current host.</DD>
+<DT><STRONG>myaddr (  )</STRONG></DT>
+<DD>Retrieve own address.</DD>
+
+<DT><STRONG>lasttime (  )</STRONG></DT>
+<DD>Last time the client received a ping message.</DD>
+<DT><STRONG>worryAboutTime (  )</STRONG></DT>
+<DD>Method called to check whether the last time a pong was received is not too late. If it has been too long, the client tries to register anew.</DD>
+
+
+<DT><STRONG>registered (  )</STRONG></DT>
+<DD>If set, then the client has been registered succesfully</DD>
+
+<DT><STRONG>addExpected ( id, label, size, fromnw )</STRONG></DT>
+<DD>Add an expected node to the network. This is the same as in SWDataNetwork. However, if called from an OSC message, then <em>fromnw</em> is set to true and the changes are not sent back to the host.</DD>
+
+<DT><STRONG>setData ( id, data, fromnw )</STRONG></DT>
+<DD>Set data in the network. This is the same as in SWDataNetwork. However, if called from an OSC message, then <em>fromnw</em> is set to true and the changes are not sent back to the host.</DD>
+
+<DT><STRONG>add ( key, slot, fromnw )</STRONG></DT>
+<DD>Add a label in the spec of the network. This is the same as in SWDataNetwork. However, if called from an OSC message, then <em>fromnw</em> is set to true and the changes are not sent back to the host.</DD>
+
+
+
+<h4> - Methods to interface with the remote host </h4>
+
+<DT><STRONG>register (  )</STRONG></DT>
+<DD>Register to the network.</DD>
+<DT><STRONG>unregister (  )</STRONG></DT>
+<DD>Unregister from the network.</DD>
+
+<h4> - Sending query messages - </h4>
+
+<DT><STRONG>queryExpected (  )</STRONG></DT>
+<DD>Query which nodes are expected in the network.</DD>
+<DT><STRONG>queryNodes (  )</STRONG></DT>
+<DD>Query which nodes are present in the network.</DD>
+<DT><STRONG>querySlots (  )</STRONG></DT>
+<DD>Query which slots are present in the network.</DD>
+<DT><STRONG>querySetters (  )</STRONG></DT>
+<DD>Query of which nodes the client is a setter.</DD>
+<DT><STRONG>querySubscriptions (  )</STRONG></DT>
+<DD>Query to which nodes and slots the client is subscribed.</DD>
+<DT><STRONG>queryClients (  )</STRONG></DT>
+<DD>Query which clients are in the network.</DD>
+
+<h4> - Subscribing and unsubscribing to nodes - </h4>
+
+
+<DT><STRONG>subscribeNode ( node )</STRONG></DT>
+<DD>Subscribe to a node.</DD>
+<DT><STRONG>unsubscribeNode ( node )</STRONG></DT>
+<DD>Unsubscribe from a node.</DD>
+<DT><STRONG>subscribeSlot ( slot )</STRONG></DT>
+<DD>Subscribe to a slot.</DD>
+<DT><STRONG>unsubscribeSlot ( slot )</STRONG></DT>
+<DD>Unsubscribe from a slot</DD>
+
+<DT><STRONG>getNode ( node )</STRONG></DT>
+<DD>Get data from a node just one single time.</DD>
+<DT><STRONG>getSlot ( slot )</STRONG></DT>
+<DD>Get data from a slot just one single time.</DD>
+
+
+<h4> - Private methods called from OSC messages; these message automatically update the data in the network - </h4>
+
+<DT><STRONG>nodeInfo ( msg )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>slotInfo ( msg )</STRONG></DT>
+<DD></DD>
+
+<DT><STRONG>nodeData ( msg )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>slotData ( msg )</STRONG></DT>
+<DD></DD>
+
+<h4> - Private methods called from OSC messages; these message automatically post an informative message in the post window - </h4>
+
+<DT><STRONG>unsubscribeNodeInfo ( msg )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>unsubscribeSlotInfo ( msg )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>subscribeNodeInfo ( msg )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>subscribeSlotInfo ( msg )</STRONG></DT>
+<DD></DD>
+
+<DT><STRONG>clientInfo ( msg )</STRONG></DT>
+<DD></DD>
+<DT><STRONG>setterInfo ( msg )</STRONG></DT>
+<DD></DD>
+
+
+<h4> - Private methods - </h4>
+
+<DT><STRONG>labelNode ( node )</STRONG></DT>
+<DD><em>private</em> - This method is called when this client labels a node in the network, using the <em>add</em> method. This method sends out an OSC message to the host.</DD>
+<DT><STRONG>labelSlot ( slot )</STRONG></DT>
+<DD><em>private</em> - This method is called when this client labels a slot in the network, using the <em>add</em> method. This method sends out an OSC message to the host.</DD>
+
+<DT><STRONG>sendData ( id, data )</STRONG></DT>
+<DD><em>private</em> - This method is called when this client sets data to the network. This method sends out an OSC message to the host with the data.</DD>
+
+<DT><STRONG>sendPong (  )</STRONG></DT>
+<DD><em>private</em> - sends a pong to the host. This method is called in response to receiving a ping message.</DD>
+
+<DT><STRONG>registered_ (  )</STRONG></DT>
+<DD><em>private</em> - set the registered flag</DD>
+
+<DT><STRONG>addResponders (  )</STRONG></DT>
+<DD><em>private</em> - Add all OSC responders</DD>
+<DT><STRONG>removeResponders (  )</STRONG></DT>
+<DD><em>private</em> - Remove all OSC responders</DD>
+
+</DL>
+
+<BR><HR>
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<UL>
+<LI>
+<I> Next: </I> <A NAME="tex2html79"
+	HREF="SWDataNetworkLog.html">SWDataNetworkLog</A>
+</LI>
+<LI><I> Previous:</I> <A 
+  HREF="SWDataNetworkOSCClient.html">SWDataNetworkOSCClient</A>
+</LI>
+<LI><I>Up: </I><A 
+  HREF="SenseWorldDataNetwork.html">SenseWorldDataNetwork</A></LI>
+</UL>
+
+</DIV>
+<!--End of Navigation Panel-->
+
+<P>
+<BR><HR>
+<ADDRESS>
+Marije Baalman
+2009-03-16
+</ADDRESS>
+</BODY>
+</HTML>
