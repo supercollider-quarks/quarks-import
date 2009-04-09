@@ -5,11 +5,17 @@ ThinkPad : Laptop {
 	myInit{
 		keyboardID = [1,1,"isa0060/serio0/input0"];
 		touchpadID = [2, 7, "isa0060/serio1/input0"];
-		this.initKeyboard;
-		this.initTouchpad;
 
-		this.initHdaps;
-		this.initTrackpoint;
+		//		Routine{
+		//	1.0.wait;
+			this.initKeyboard;
+		//	1.0.wait;
+			this.initTouchpad;
+		//	1.0.wait;
+			this.initHdaps;
+		//	1.0.wait;
+			this.initTrackpoint;
+		//}.play( AppClock );
 	}
 
 	initHdaps{
