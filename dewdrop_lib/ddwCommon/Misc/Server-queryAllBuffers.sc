@@ -2,7 +2,7 @@
 // server buffer debugger
 
 + Server {
-	queryAllBuffers { |timeout = 1.2, wait = 0.001|
+	queryAllBuffers { |timeout = 1.2, wait = 0.001, action|
 		var	returns = Array.newClear(this.options.numBuffers),
 			osc = OSCresponderNode(this.addr, '/b_info', { |t, r, m|
 				bInfoCount = bInfoCount + 1;
@@ -20,9 +20,13 @@
 		AppClock.sched(timeout, {
 			(bInfoCount == this.options.numBuffers).if({
 				returns = returns.reject(_.isNil);
-				returns.do({ |buf|
-					buf.postln;
-				});
+				if(action.notNil) {
+					action.value(returns)
+				} {
+					returns.do({ |buf|
+						buf.postln;
+					});
+				};
 			}, {
 				"queryAllBuffers failed; some b_queries timed out (% / % = %%)."
 					.format(bInfoCount, this.options.numBuffers,
