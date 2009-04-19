@@ -50,7 +50,8 @@
 + Instr {
 	playInMixerGroup { |mixer, target, patchType, args|
 		var	newPatch;
-		mixer.addPatch(newPatch = patchType.new(this, args));
+		mixer.addPatch(newPatch = patchType.new(this, args,
+			outClass: if(target === mixer.effectgroup) { ReplaceOut } { Out }));
 		^newPatch.playToMixer(mixer)
 	}
 	
