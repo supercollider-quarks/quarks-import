@@ -106,16 +106,21 @@ PR(\abstractTLCommand).clone({
 PR(\abstractTLCommand).clone({
 	~fire = { |parms|
 //		~setParms.(parms);
+		var	schedTime;
 		~server ?? { ~server = Server.default };
 		~node = Synth.basicNew(~name, ~server, ~id);
 		~id = ~node.nodeID;		// nil is replaced in basicNew
 		~latency ?? { ~latency = ~server.latency };
 		~args = ~getArgs.value(parms);
-		if(~latency == 0) {
-			s.sendBundle(nil, ~node.newMsg(~target, ~args, ~addAction ? \addToHead))
-		} {
-			s.sendBundle(~latency, ~node.newMsg(~target, ~args, ~addAction ? \addToHead))
-		};
+		~quant ?? { ~quant = 0 };
+		~schedTime = ~quant.nextTimeOnGrid(thisThread.clock);
+		thisThread.clock.schedAbs(~schedTime, e {
+			if(~latency == 0) {
+				s.sendBundle(nil, ~node.newMsg(~target, ~args, ~addAction ? \addToHead))
+			} {
+				s.sendBundle(~latency, ~node.newMsg(~target, ~args, ~addAction ? \addToHead))
+			};
+		});
 		NodeWatcher.register(~node, true);  // true == assumePlaying
 		~node.addDependant(currentEnvironment);
 	};
@@ -138,7 +143,7 @@ PR(\abstractTLCommand).clone({
 	~schedDone = { |parms|
 		if(~dur.notNil and: { ~synthDesc.tryPerform(\hasGate) ? false }) {
 //"synthCmd scheduling release".debug;
-			thisThread.clock.sched(~dur, e { ~stop.(parms) });
+			thisThread.clock.schedAbs(~schedTime + ~dur, e { ~stop.(parms) });
 		};	// else -- node had better end on its own and trigger ~update
 	};
 	~done = { |parms|
@@ -292,12 +297,13 @@ PR(\abstractTLCommand).clone({
 					// user hook to manipulate BP before play
 				~prepareBP.(BP(name));
 //name.debug("bpcmd - playing");
-//[thisThread.clock.beats, BP(name).eventSchedTime(~quant)].debug("now, go time");
+//[thisThread.clock.beats, thisThread.clock.baseBarBeat, BP(name).eventSchedTime(~quant)].debug("now, basebar, go time");
 //~quant.dump;
 				thisThread.clock.schedAbs(BP(name).eventSchedTime(~quant), e {
 						// if not running, cmd was stopped before BP fired
 						// so skip the .play
 					if(~isRunning) {
+//[~name, thisThread.clock.beats].debug("playing bps now");
 						BP(name).play(NilTimeSpec.new, nil, doReset: ~doReset ? false);
 					} {
 						BP(name).removeDependant(currentEnvironment);
