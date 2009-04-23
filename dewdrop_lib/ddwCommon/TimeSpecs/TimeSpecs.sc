@@ -32,6 +32,7 @@ NilTimeSpec {   // always schedules for now
 	offset { ^0 }
 	offset_ {}
 	timingOffset { ^this.offset }
+	timingOffset_ { |offset| this.offset_(offset) }
 	bindClassName { ^\NilTimeSpec }
 
 	printOn { |stream| this.storeOn(stream) }
