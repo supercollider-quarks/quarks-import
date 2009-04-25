@@ -193,13 +193,15 @@ MixingBoard {
 			// take into account height of last row
 		vSize = vSize + rowHeight + skin.gap.y;
 
-		{
-		isNew.if({	// if new, assign origin
-			w.bounds = Rect.new(5, 5, hSize + (2*skin.gap.x), vSize+20);
-		}, {			// if old, keep existing origin
-			w.bounds = Rect.new(w.bounds.left, w.bounds.top, hSize + (2*skin.gap.x), vSize+20);
-		});
-		nil }.defer;
+		if(w.isClosed.not) {
+			{
+			isNew.if({	// if new, assign origin
+				w.bounds = Rect.new(5, 5, hSize + (2*skin.gap.x), vSize+20);
+			}, {			// if old, keep existing origin
+				w.bounds = Rect.new(w.bounds.left, w.bounds.top, hSize + (2*skin.gap.x), vSize+20);
+			});
+			nil }.defer;
+		};
 		
 		^this
 	}		
