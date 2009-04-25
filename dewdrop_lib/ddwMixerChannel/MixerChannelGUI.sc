@@ -87,7 +87,7 @@ MixerChannelGUI {
 		mx.tryPerform(\mcgui_, this);
 		newdef = mx.tryPerform(\def).tryPerform(\guidef) ? defaultDef;
 		(guidef != newdef).if({
-			this.guidef = newdef;	// this will also set the views' mixer variables
+			this.guidef_(newdef, updateGUI);	// this will also set the views' mixer variables
 		}, {
 			views.do(_.mixer_(mixer));
 		});
