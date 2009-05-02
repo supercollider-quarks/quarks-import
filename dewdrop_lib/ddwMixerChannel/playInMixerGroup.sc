@@ -118,6 +118,22 @@
 	}
 }
 
++ Event {
+	playInMixerGroup { |mixer, target, patchType, args|
+		this.proto ?? { this.proto = () };
+		this.proto.putAll((
+			chan: mixer,
+			server: mixer.server,
+			group: target.tryPerform(\nodeID) ?? { target },
+			bus: mixer.inbus,
+			outbus: mixer.inbus.index,
+			out: mixer.inbus.index,
+			i_out: mixer.inbus.index
+		));
+		^this.play;
+	}
+}
+
 
 // needed for type tests
 
