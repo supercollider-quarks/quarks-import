@@ -309,6 +309,27 @@ JInTC_composite : JInTController {
 	}
 }
 
+/** as found on a PowerMate */
+JInTC_PowerKnob : JInTC_composite {
+	*new {|desc, server, specs|
+		specs = specs ? [
+			ControlSpec(0, 95, default: 0), 
+			ControlSpec(0, 95, default: 0), 
+			ControlSpec(0, 1, default: 0),
+			ControlSpec(0, 1, default: 0)
+		];
+		^super.new(desc ? 
+			"Just a big volume knob",
+			server, 
+			[
+				JInTC_EndlessKnob.new(spec: specs[0]), // turning
+				JInTC_EndlessKnob.new(spec: specs[1]), // down->turning
+				JInTC_Button.new(spec: specs[2]),         // short press
+				JInTC_Button.new(spec: specs[2])         // long press
+			]
+		);
+	}
+}
 
 /** as found on logitech dual action */
 JInTC_ThumbStick : JInTC_composite {
