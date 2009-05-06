@@ -317,7 +317,7 @@ SETOmeta : JITseto {
 
 SETOdump : SETObject {
 	update {
-		postf("SETOdump:update: object updated"++
+		postf("SETOdump:update: object updated\n"++
 			"\tvis:\t%\n" ++
 			"\tID :\t%\n" ++
 			"\tCls:\t%\n" ++
