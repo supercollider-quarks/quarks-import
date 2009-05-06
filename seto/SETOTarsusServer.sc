@@ -38,9 +38,9 @@ SETOTarsusServer : SETOServer {
 			var pos, rot;
 			
 			numObj = ((args.size) div: 6);
-
-			// format: /client set time 6DOF<1> ... 6DOF<n>
-			//	where 6DOF<i> == rrrppp
+			
+			// format: /client "set" <time> <6DOF1> ... <6DOFn>
+			//    where 6DOFi == rrrppp
 			args   = args.reshape(numObj, 2, 3);
 
 			// eval setFunc for each 6-tuple 
