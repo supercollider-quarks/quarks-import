@@ -1,5 +1,8 @@
 //redFrik - released under gnu gpl license
 
+//--changed 090507:
+//added isJumping and jumpSection to RedMst
+//various updates to RedMstGUI: resize window, blinking jump section, etc, RedMstGUI2, RedMstGUI3
 //--changes 090203:
 //added action function to RedMst
 //added inf for section index to RedMst
@@ -41,7 +44,7 @@
 
 RedMst {
 	classvar	<tracks, <>clock, <>quant= 4,
-			<section= 0, <maxSection= 0,
+			<section= 0, <maxSection= 0, <jumpSection,
 			<>stopAheadTime= 0.05,
 			<>skipEmpty= false,
 			<>action,
@@ -70,6 +73,7 @@ RedMst {
 		tracks= ();
 		section= 0;
 		maxSection= 0;
+		jumpSection= nil;
 		action= nil;
 		/*if(clock!=TempoClock.default, {
 			clock.stop;
@@ -92,7 +96,7 @@ RedMst {
 	*play {|startSection= 0|
 		this.goto(startSection);
 	}
-	*goto {|jumpSection|
+	*goto {|gotoSection|
 		isPlaying= true;
 		if(clock.isNil, {
 			clock= TempoClock.default;
@@ -101,10 +105,11 @@ RedMst {
 		if(alreadyJumping, {
 			"RedMst: already jumping somewhere - goto ignored".inform;
 		}, {
+			jumpSection= gotoSection;
 			clock.schedAbs(clock.nextTimeOnGrid(quant)-stopAheadTime, {
 				tracks.do{|x|
 					if(x.sections.includes(inf).not, {
-						if(x.sections.includes(jumpSection).not and:{x.isPlaying}, {
+						if(x.sections.includes(gotoSection).not and:{x.isPlaying}, {
 							x.stop;
 						});
 					});
@@ -112,7 +117,8 @@ RedMst {
 				nil;
 			});
 			clock.schedAbs(clock.nextTimeOnGrid(quant), {
-				section= jumpSection;
+				section= gotoSection;
+				jumpSection= nil;
 				if(section>maxSection, {
 					"RedMst: reached the end".postln;
 				}, {
@@ -154,6 +160,9 @@ RedMst {
 		});
 		this.goto(jump);
 	}
+	*isJumping {
+		^jumpSection.notNil;
+	}
 	
 	//--support for RedMstGUI
 	*makeWindow {|size= 24, skin|
@@ -168,6 +177,7 @@ RedMst {
 			\quant: quant,
 			\section: section,
 			\maxSection: maxSection,
+			\jumpSection: jumpSection,		//not needed
 			\stopAheadTime: stopAheadTime,
 			\skipEmpty: skipEmpty,
 			\action: action
@@ -179,6 +189,7 @@ RedMst {
 		quant= dict[\quant];
 		section= dict[\section];
 		maxSection= dict[\maxSection];
+		jumpSection= dict[\jumpSection];		//not needed
 		stopAheadTime= dict[\stopAheadTime];
 		skipEmpty= dict[\skipEmpty];
 		action= dict[\action];

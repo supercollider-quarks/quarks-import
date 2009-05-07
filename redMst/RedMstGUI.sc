@@ -1,17 +1,20 @@
 //redFrik - released under gnu gpl license
 
-//todo:
-//mark when < and > button pressed, unmark when changed section
 
 RedMstGUI {
-	var	<win, <>dur= 0.25;
+	var	<win, <>dur= 0.25,
+		guiPlay, guiPrev, guiNext, guiSection, guiMaxSection, guiTempo, guiQuant,
+		guiMetro, guiUser,
+		fnt, colBack, colFore, colBack2, colFore2, task;
 	*new {|size= 24, skin|
 		^super.new.initRedMstGUI(size, skin);
 	}
 	initRedMstGUI {|size, skin|
-		var	guiPlay, guiPrev, guiNext, guiSection, guiMaxSection,
-			guiTempo, guiQuant, guiUser, guiMetro,
-			task, fnt, fnt2, colBack, colFore, colBack2, colFore2;
+		this.prInitInterface(size, skin);
+		this.prInitTask(size);
+		this.prInitCleanUp;
+	}
+	prInitInterface {|size, skin|
 		if(skin.isNil, {
 			GUI.skins.put(\redMstGUI, (
 				background: Color.red(0.8),
@@ -23,10 +26,9 @@ RedMstGUI {
 		fnt= GUI.font.new(skin.fontSpecs[0], size);
 		colBack= skin.background;
 		colFore= skin.foreground;
-		fnt2= fnt.copy.size_(9);
 		colBack2= colBack.complementary.alpha_(0.3);
 		colFore2= colFore.complementary.alpha_(0.7);
-		win= GUI.window.new("RedMst", Rect(300, 2, size*9.5+20, size*6+225), false)
+		win= GUI.window.new("RedMst", Rect(300, GUI.window.screenBounds.height-50, size*9.5+20, size*6+25), false)
 			.alpha_(skin.unfocus ? 0.9)
 			.front;
 		win.view.background_(colBack);
@@ -43,25 +45,86 @@ RedMstGUI {
 		guiPlay= GUI.button.new(win, Rect(0, 0, size*4, size*1.5))
 			.canFocus_(false)
 			.states_([["play", colFore, colBack], ["stop", colBack, colFore]])
-			.action_{|view|
-				if(view.value==1, {
-					RedMst.play;
-				}, {
-					RedMst.stop;
-				});
-			};
+			.action_{|view| if(view.value==1, {RedMst.play}, {RedMst.stop})};
 		guiPrev= GUI.button.new(win, Rect(0, 0, size*1.5, size*1.5))
 			.canFocus_(false)
 			.states_([["<", colFore, colBack]])
-			.action_{|view|
-				RedMst.prev;
-			};
+			.action_{|view| RedMst.prev};
 		guiNext= GUI.button.new(win, Rect(0, 0, size*1.5, size*1.5))
 			.canFocus_(false)
 			.states_([[">", colFore, colBack]])
-			.action_{|view|
-				RedMst.next;
+			.action_{|view| RedMst.next};
+		
+		this.prInitMetro(size);
+		win.view.decorator.nextLine;
+		
+		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("sect:");
+		guiSection= GUI.staticText.new(win, Rect(0, 0, size*2, size*1.5));
+		guiMaxSection= GUI.staticText.new(win, Rect(0, 0, size*3.25, size*1.5));
+		win.view.decorator.nextLine;
+		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("bpm:");
+		guiTempo= GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5));
+		win.view.decorator.nextLine;
+		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("quant:");
+		guiQuant= GUI.staticText.new(win, Rect(0, 0, size*1.5, size*1.5));
+		win.view.decorator.nextLine;
+		
+		this.prInitUser(size);
+		
+		win.view.children.do{|x|
+			if(x.respondsTo(\font), {x.font_(fnt)});
+			if(x.respondsTo(\stringColor_), {x.stringColor_(colFore)});
+		};
+	}
+	prInitMetro {}
+	prInitUser {}
+	prInitTask {|size|
+		task= Routine{
+			var lastJump;
+			inf.do{
+				{
+					guiPlay.value_(RedMst.isPlaying.binaryValue);
+					guiSection.string_(RedMst.section);
+					guiMaxSection.string_("/"++RedMst.maxSection);
+					try{
+						guiTempo.string_(RedMst.clock.tempo*60);
+					} {
+						guiTempo.string_("-");
+					};
+					guiQuant.string_(RedMst.quant);
+					if(lastJump!=RedMst.jumpSection, {
+						lastJump= RedMst.jumpSection;
+						if(RedMst.jumpSection.isNil, {
+							guiPrev.states_([["<", colFore, colBack]]);
+							guiNext.states_([[">", colFore, colBack]]);
+						}, {
+							if(RedMst.jumpSection<RedMst.section, {
+								guiPrev.states_([["<", colFore2, colBack2]]);
+							}, {
+								guiNext.states_([[">", colFore2, colBack2]]);
+							});
+						});
+						guiPrev.refresh;
+						guiNext.refresh;
+					});
+				}.defer;
+				dur.wait;
 			};
+		}.play(RedMst.clock);
+	}
+	prInitCleanUp {
+		CmdPeriod.doOnce({
+			if(win.isClosed.not, {
+				win.close;
+				task.stop;
+			});
+		});
+		win.onClose_{task.stop};
+	}
+}
+
+RedMstGUI2 : RedMstGUI {
+	prInitMetro {|size|
 		guiMetro= GUI.userView.new(win, Rect(0, 0, size*1.5, size*1.5))
 			.relativeOrigin_(true)
 			.drawFunc_{|view|
@@ -87,6 +150,10 @@ RedMstGUI {
 					1.5pi,
 					RedMst.clock.beatInBar/RedMst.clock.beatsPerBar*2pi
 				);
+				GUI.pen.fill;
+				if(RedMst.isJumping, {
+					GUI.pen.fillColor_(colFore2);
+				});
 				GUI.pen.addAnnularWedge(
 					midPnt,
 					0,
@@ -96,24 +163,54 @@ RedMstGUI {
 				);
 				GUI.pen.fill;
 			};
-		win.view.decorator.nextLine;
-		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("sect:");
-		guiSection= GUI.staticText.new(win, Rect(0, 0, size*2, size*1.5));
-		guiMaxSection= GUI.staticText.new(win, Rect(0, 0, size*3.25, size*1.5));
-		win.view.decorator.nextLine;
-		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("bpm:");
-		guiTempo= GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5));
-		win.view.decorator.nextLine;
-		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("quant:");
-		guiQuant= GUI.staticText.new(win, Rect(0, 0, size*1.5, size*1.5));
-		win.view.decorator.nextLine;
-		guiUser= GUI.userView.new(win, Rect(0, 0, win.bounds.width-7, 200))
+	}
+	prInitTask {|size|
+		task= Routine{
+			var lastJump;
+			inf.do{
+				{
+					guiPlay.value_(RedMst.isPlaying.binaryValue);
+					guiSection.string_(RedMst.section);
+					guiMaxSection.string_("/"++RedMst.maxSection);
+					try{
+						guiTempo.string_(RedMst.clock.tempo*60);
+					} {
+						guiTempo.string_("-");
+					};
+					guiQuant.string_(RedMst.quant);
+					guiMetro.refresh;
+					if(lastJump!=RedMst.jumpSection, {
+						lastJump= RedMst.jumpSection;
+						if(RedMst.jumpSection.isNil, {
+							guiPrev.states_([["<", colFore, colBack]]);
+							guiNext.states_([[">", colFore, colBack]]);
+						}, {
+							if(RedMst.jumpSection<RedMst.section, {
+								guiPrev.states_([["<", colFore2, colBack2]]);
+							}, {
+								guiNext.states_([[">", colFore2, colBack2]]);
+							});
+						});
+						guiPrev.refresh;
+						guiNext.refresh;
+					});
+				}.defer;
+				dur.wait;
+			};
+		}.play(RedMst.clock);
+	}
+}
+
+RedMstGUI3 : RedMstGUI2 {
+	prInitUser {|size|
+		var fnt2= fnt.copy.size_(9);
+		guiUser= GUI.userView.new(win, Rect(0, 0, win.bounds.width-7, 0))
 			.relativeOrigin_(true)
 			.drawFunc_{|view|
 				var w, h, str;
 				if(RedMst.tracks.notEmpty, {
 					w= view.bounds.width/(RedMst.maxSection+1);
-					h= view.bounds.height/RedMst.tracks.size;
+					h= size;//view.bounds.height/RedMst.tracks.size;
 					GUI.pen.font_(fnt2);
 					RedMst.tracks.do{|trk, y|
 						GUI.pen.color_(colFore);
@@ -133,15 +230,17 @@ RedMstGUI {
 					};
 					GUI.pen.fillColor_(colBack2);
 					GUI.pen.fillRect(Rect(RedMst.section*w, 0, w, view.bounds.height-(h*0.1)));
+					if(RedMst.isJumping, {
+						if((RedMst.clock.beats*2).asInteger%2==0, {
+							GUI.pen.fillRect(Rect(RedMst.jumpSection*w, 0, w, view.bounds.height-(h*0.1)));
+						});
+					});
 				});
 			};
-		
-		win.view.children.do{|x|
-			if(x.respondsTo(\font), {x.font_(fnt)});
-			if(x.respondsTo(\stringColor_), {x.stringColor_(colFore)});
-		};
-		
+	}
+	prInitTask {|size|
 		task= Routine{
+			var lastNumTracks= -1, lastJump;
 			inf.do{
 				{
 					guiPlay.value_(RedMst.isPlaying.binaryValue);
@@ -153,18 +252,38 @@ RedMstGUI {
 						guiTempo.string_("-");
 					};
 					guiQuant.string_(RedMst.quant);
-					guiMetro.refresh;
-					guiUser.refresh;
+					if(lastNumTracks!=RedMst.tracks.size, {
+						lastNumTracks= RedMst.tracks.size;
+						win.bounds= win.bounds.setExtent(
+							win.bounds.width,
+							(size*6+25+(lastNumTracks*size)).min(GUI.window.screenBounds.height-50)
+						);
+						guiUser.bounds= guiUser.bounds.setExtent(
+							guiUser.bounds.width,
+							lastNumTracks*size
+						);
+					}, {
+						guiMetro.refresh;
+						guiUser.refresh;
+						if(lastJump!=RedMst.jumpSection, {
+							lastJump= RedMst.jumpSection;
+							if(RedMst.jumpSection.isNil, {
+								guiPrev.states_([["<", colFore, colBack]]);
+								guiNext.states_([[">", colFore, colBack]]);
+							}, {
+								if(RedMst.jumpSection<RedMst.section, {
+									guiPrev.states_([["<", colFore2, colBack2]]);
+								}, {
+									guiNext.states_([[">", colFore2, colBack2]]);
+								});
+							});
+							guiPrev.refresh;
+							guiNext.refresh;
+						});
+					});
 				}.defer;
 				dur.wait;
 			};
 		}.play(RedMst.clock);
-		CmdPeriod.doOnce({
-			if(win.isClosed.not, {
-				win.close;
-				task.stop;
-			});
-		});
-		win.onClose_{task.stop};
 	}
 }
