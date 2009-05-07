@@ -5,7 +5,7 @@ GNUPlot {
 	// seriously expanded by Marije Baalman (2006-9)
 	// additions by Oswald Berthold (2009)
 
-	classvar id, <>folder = "SC_to_GNUPlot/";
+	classvar id, <>folder = "SC_to_GNUPlot/", <>initCode = "set data style lines\n", <>gnuplotpath="gnuplot";
 
 	var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 
@@ -14,8 +14,16 @@ GNUPlot {
 
         // This function takes an arbitrary array and plots the values
 	*initClass{
-		id = 0;
-		this.makeBackupFolder;
+		StartUp.add{
+			id = 0;
+			Platform.case(\osx, {
+				// on OSX, common "x11" term doesn't work by default (since SC not under X11)
+				initCode = initCode ++ "set term aqua\n";
+				gnuplotpath = "/opt/local/bin/gnuplot";
+			});
+			this.folder = PathName.tmp +/+ "SC_to_GNUPlot/";
+			this.makeBackupFolder;
+		}
 	}
 
 	*makeBackupFolder { 
@@ -37,8 +45,8 @@ GNUPlot {
 			fh.putString(val.asString ++ "\n");
 		});
 		fh.close;
-		fh = Pipe.new("gnuplot -persist", "w");
-		fh.putString("set data style lines\n");
+		fh = Pipe.new(gnuplotpath + "-persist", "w");
+		fh.putString(initCode);
 		fh.putString("plot \"" ++ tmpname ++ "\" title \"\" \n");
 		fh.close;
 	}
@@ -55,7 +63,7 @@ GNUPlot {
 	
 	*plotenv {
 		|env|
-		GNUPlot.plot(GNUPlot.envarray(env));
+		this.plot(this.envarray(env));
 		//plot(envarray(env));
 	}
 
@@ -71,8 +79,8 @@ GNUPlot {
 	}
 
 	start{
-		pipe = Pipe.new("gnuplot -persist", "w");
-		pipe.putString("set data style lines\n");
+		pipe = Pipe.new(gnuplotpath + "-persist", "w");
+		pipe.putString(this.class.initCode);
 	}
 
 	createTempFile{ |data,ns=1|
