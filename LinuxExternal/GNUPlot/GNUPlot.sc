@@ -327,7 +327,7 @@ GNUPlot {
 	g = GNUPlot.new;
 	// a nice deckchair:
 	g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]])	*/
-	surf3 {|data, label, hidden3d=true|
+	surf3 {|data, label, hidden3d=true, pm3d=false|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
@@ -345,7 +345,8 @@ GNUPlot {
 			fh.close;
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
-			pipe.putString("set %hidden3d\n".format(if(hidden3d, "", "un")));
+			pipe.putString("%set hidden3d\n".format(if(hidden3d, "", "un")));
+			pipe.putString("%set pm3d\n".format(if(pm3d, "", "un")));
 			pipe.putString("set dummy u,v\n"); // This dummy tells gnuplot it's doing a surface not a curve
 			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
 			lastdata = [ data ];
