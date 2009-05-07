@@ -140,8 +140,9 @@ GNUPlot {
 		};
 	}
 
-	plot{ |data,ns=1,label=""|
+	plot{ |data,ns=1,label="", title|
 		var tmpname = this.createTempFile( data, ns );
+		title !? {pipe.putString("set title %\n".format(title.quote))};
 		if ( ns == 1,
 			{
 				pipe.putString("plot \""++tmpname++"\" title \""++label++"\"\n");
@@ -300,7 +301,7 @@ GNUPlot {
 
 
 	// Oswalds' additions:
-	plot3 {|data, label|
+	plot3 {|data, label, title|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
@@ -315,6 +316,7 @@ GNUPlot {
 			fh.close;
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
+			title !? {pipe.putString("set title %\n".format(title.quote))};
 			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
 			lastdata = [ data ];
 			pipe.flush;
@@ -327,7 +329,7 @@ GNUPlot {
 	g = GNUPlot.new;
 	// a nice deckchair:
 	g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]])	*/
-	surf3 {|data, label, hidden3d=true, pm3d=false|
+	surf3 {|data, label, hidden3d=true, pm3d=false, title|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
@@ -347,6 +349,7 @@ GNUPlot {
 			["GNUPlot.plot3 data size: ", data.size].postln;
 			pipe.putString("%set hidden3d\n".format(if(hidden3d, "", "un")));
 			pipe.putString("%set pm3d\n".format(if(pm3d, "", "un")));
+			title !? {pipe.putString("set title %\n".format(title.quote))};
 			pipe.putString("set dummy u,v\n"); // This dummy tells gnuplot it's doing a surface not a curve
 			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
 			lastdata = [ data ];
@@ -354,7 +357,7 @@ GNUPlot {
 		}
 	}
 
-	scatter {|data, label|
+	scatter {|data, label, title|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
@@ -369,10 +372,19 @@ GNUPlot {
 			fh.close;
 			
 			["GNUPlot.scatter data size: ", data.size].postln;
+			title !? {pipe.putString("set title %\n".format(title.quote))};
 			pipe.putString(  if(data[0].size==3, "splot", "plot") 
 					++ "\""++tmpname++"\" with points title \""++label++"\"\n");
 			lastdata = [ data ];
 			pipe.flush;     
 		}
 	}
+	
+	// http://gnuplot.info/docs/node281.html
+	setView{ |...vals|
+		pipe.putString("set view %\n".format(vals.join($,)).postln);
+		pipe.putString("replot\n");
+		pipe.flush;
+	}
+
 }
