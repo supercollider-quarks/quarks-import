@@ -306,7 +306,7 @@ GNUPlot {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
 			// And add exception handling.
 			fh = File.new(tmpname,"w");
-			data.flop.do{|sub|
+			data.do{|sub|
 				sub.do {|val|
 					fh.putString(val.asString ++ " ");
 				};
@@ -315,6 +315,38 @@ GNUPlot {
 			fh.close;
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
+			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
+			lastdata = [ data ];
+			pipe.flush;
+		}
+	}
+	
+	// the data for this should be an array-of-arrays-of-arrays, eg:
+	// [[p01, p02, p03], [p10, p11, p12], [p20, p21, p22]] where each "pXX" is an array of 3D co-ords.
+	/*
+	g = GNUPlot.new;
+	// a nice deckchair:
+	g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]])	*/
+	surf3 {|data, label, hidden3d=true|
+		var fh, tmpname; // = this.createTempFile3( data, ns );
+		defer {
+			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
+			// And add exception handling.
+			fh = File.new(tmpname,"w");
+			data.do{	|col|
+				col.do{|sub|
+					sub.do {|val|
+						fh.putString(val.asString ++ " ");
+					};
+					fh.putString("\n");
+				};
+				fh.putString("\n");
+			};
+			fh.close;
+			
+			["GNUPlot.plot3 data size: ", data.size].postln;
+			pipe.putString("set %hidden3d\n".format(if(hidden3d, "", "un")));
+			pipe.putString("set dummy u,v\n"); // This dummy tells gnuplot it's doing a surface not a curve
 			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
 			lastdata = [ data ];
 			pipe.flush;

@@ -201,6 +201,30 @@ g.stop
 <DT><STRONG>plot3( data, label )</STRONG></DT>
 <DD>Creates a 3D plot.</DD>
 
+    <pre>
+
+g = <span class="type">GNUPlot</span>.new;
+g.plot3([[0,0,0], [1,0,0], [1,1,1], [2,1,2], [3,3,2], [4,5,4]], "wiggle");
+g.plot3({  { 1.0.bilinrand  }.dup(3)  }.dup(1000), "hairball");
+
+</pre>
+
+<DT><STRONG>surf3( data, label, hidden3d )</STRONG></DT>
+<DD>Creates a 3D surface, where the input data is a 2D grid of 3D points. "hidden3d" (default=true) specifies whether &quot;hidden line removal&quot; is used.</DD>
+
+    <pre>
+
+g = <span class="type">GNUPlot</span>.new;
+
+g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]], "deckchair");
+
+~xyz = (-10, -9.5 .. 10).collect{|x| (-10, -9.5 .. 10).collect{|y|  [x,y,sin(x+y)] } }
+g.surf3(~xyz, "undulathon");
+
+</pre>
+
+
+
 <DT><STRONG>scatter( data, label )</STRONG></DT>
 <DD>Creates a scatter plot.</DD>
 
