@@ -369,7 +369,8 @@ GNUPlot {
 			fh.close;
 			
 			["GNUPlot.scatter data size: ", data.size].postln;
-			pipe.putString("plot \""++tmpname++"\" with points title \""++label++"\"\n");
+			pipe.putString(  if(data[0].size==3, "splot", "plot") 
+					++ "\""++tmpname++"\" with points title \""++label++"\"\n");
 			lastdata = [ data ];
 			pipe.flush;     
 		}
