@@ -265,8 +265,13 @@ g.surf3(~xyz, "undulathon", pm3d: true);
 
 <h4>- Direct interaction with GNUPlot - </h4>
 
-<DT><STRONG>putTestCommand(command)</STRONG></DT>
-<DD>Pipe a string command to gnuplot. This should be something gnuplot understands.</DD>
+<DT><STRONG>sendCmd</STRONG></DT>
+<DD>Send an arbitrary gnuplot command to the gnuplot session. This should be something gnuplot understands.</DD>
+
+<pre>
+g.sendCmd("set title \"Ooo look at this\"");
+g.sendCmd("replot");
+</pre>
 
 
 </DL>
