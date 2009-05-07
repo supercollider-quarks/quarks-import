@@ -209,17 +209,17 @@ g.plot3({  { 1.0.bilinrand  }.dup(3)  }.dup(1000), "hairball");
 
 </pre>
 
-<DT><STRONG>surf3( data, label, hidden3d )</STRONG></DT>
+<DT><STRONG>surf3( data, label, hidden3d, pm3d )</STRONG></DT>
 <DD>Creates a 3D surface, where the input data is a 2D grid of 3D points. "hidden3d" (default=true) specifies whether &quot;hidden line removal&quot; is used.</DD>
 
     <pre>
 
 g = <span class="type">GNUPlot</span>.new;
 
-g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]], "deckchair");
+g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]], "deckchair", pm3d: false);
 
 ~xyz = (-10, -9.5 .. 10).collect{|x| (-10, -9.5 .. 10).collect{|y|  [x,y,sin(x+y)] } }
-g.surf3(~xyz, "undulathon");
+g.surf3(~xyz, "undulathon", pm3d: true);
 
 </pre>
 
