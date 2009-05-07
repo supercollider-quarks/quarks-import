@@ -382,7 +382,7 @@ GNUPlot {
 	
 	// http://gnuplot.info/docs/node281.html
 	setView{ |...vals|
-		pipe.putString("set view %\n".format(vals.join($,)).postln);
+		pipe.putString("set view %\n".format(vals.join($,)));
 		pipe.putString("replot\n");
 		pipe.flush;
 	}
