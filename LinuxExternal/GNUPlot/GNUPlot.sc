@@ -114,8 +114,8 @@ GNUPlot {
 	}
 
 	putTestCommand{ |command|
-		pipe.putString(command ++ "\n");
-		pipe.flush;
+		this.deprecated(thisMethod, this.class.findMethod(\sendCmd));
+		^this.sendCmd(command);
 	}
 
 	plotd{ |data,ns=1,label=""|
@@ -386,5 +386,9 @@ GNUPlot {
 		pipe.putString("replot\n");
 		pipe.flush;
 	}
-
+	
+	sendCmd { |str|
+		pipe.putString(str ++ "\n");
+		pipe.flush;
+	}
 }
