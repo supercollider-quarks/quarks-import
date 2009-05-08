@@ -39,12 +39,7 @@ GNUPlot {
 		var fh, tmpname;
 		tmpname = folder++"scdata"++id++".tmp"; // Todo: proper temp name!
 		id = id + 1;
-		// And add exception handling.
-		fh = File.new(tmpname,"w");
-		data.do({|val|
-			fh.putString(val.asString ++ "\n");
-		});
-		fh.close;
+		this.pr_writeTempData1(data, tmpname: tmpname);
 		fh = Pipe.new(gnuplotpath + "-persist", "w");
 		fh.putString(initCode);
 		fh.putString("plot \"" ++ tmpname ++ "\" title \"\" \n");
@@ -94,24 +89,13 @@ GNUPlot {
 		var fh, tmpname,unlaced;
 		tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
 		//	id = id + 1;
-		// And add exception handling.
-		fh = File.new(tmpname,"w");
 		if ( ns == 1,
 			{
-				data.do{|val|
-					fh.putString(val.asString ++ "\n");
-				};
+				this.class.pr_writeTempData1(data, tmpname: tmpname);
 			},
 			{
-				//unlaced = data.flat.unlace( ns );
-				//unlaced.postln;
-				ns.do{ |i| 
-					data[i].do{ |val|
-						fh.putString(val.asString ++ "\n");
-					};
-					fh.putString("\n\n");};
+				this.class.pr_writeTempData2(data, ["\n", "\n\n"], tmpname: tmpname);
 			});
-		fh.close;
 		^tmpname;
 	}
 
@@ -312,15 +296,7 @@ GNUPlot {
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
-			// And add exception handling.
-			fh = File.new(tmpname,"w");
-			data.do{|sub|
-				sub.do {|val|
-					fh.putString(val.asString ++ " ");
-				};
-				fh.putString("\n");
-			};
-			fh.close;
+			this.class.pr_writeTempData2(data, tmpname: tmpname);
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
 			title !? {pipe.putString("set title %\n".format(title.quote))};
@@ -340,18 +316,7 @@ GNUPlot {
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
-			// And add exception handling.
-			fh = File.new(tmpname,"w");
-			data.do{	|col|
-				col.do{|sub|
-					sub.do {|val|
-						fh.putString(val.asString ++ " ");
-					};
-					fh.putString("\n");
-				};
-				fh.putString("\n");
-			};
-			fh.close;
+			this.class.pr_writeTempData3(data, tmpname: tmpname);
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
 			pipe.putString("%set hidden3d\n".format(if(hidden3d, "", "un")));
@@ -368,15 +333,7 @@ GNUPlot {
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
-			// And add exception handling.
-			fh = File.new(tmpname,"w");
-			data.do{|sub|
-				sub.do {|val|
-					fh.putString(val.asString ++ " ");
-				};
-				fh.putString("\n");
-			};
-			fh.close;
+			this.class.pr_writeTempData2(data, tmpname: tmpname);
 			
 			["GNUPlot.scatter data size: ", data.size].postln;
 			title !? {pipe.putString("set title %\n".format(title.quote))};
@@ -398,4 +355,40 @@ GNUPlot {
 		pipe.putString(str ++ "\n");
 		pipe.flush;
 	}
-}
+	
+	//////////////////////////////////////////////////////////////////////
+	// Helper functions to write temp data files
+	*pr_writeTempData1 { |data, delims(["\n"]), tmpname|
+		// And add exception handling.
+		var fh = File.new(tmpname,"w");
+		data.do{|val|
+			fh.putString(val.asString ++ delims[0]);
+		};
+		fh.close;
+	}
+	*pr_writeTempData2 { |data, delims([" ", "\n"]), tmpname|
+		// And add exception handling.
+		var fh = File.new(tmpname,"w");
+		data.do{|sub|
+			sub.do {|val|
+				fh.putString(val.asString ++ delims[0]);
+			};
+			fh.putString(delims[1]);
+		};
+		fh.close;
+	}
+	*pr_writeTempData3 { |data, delims([" ", "\n", "\n"]), tmpname|
+		// And add exception handling.
+		var fh = File.new(tmpname,"w");
+		data.do{	|col|
+			col.do{|sub|
+				sub.do {|val|
+					fh.putString(val.asString ++ delims[0]);
+				};
+				fh.putString(delims[1]);
+			};
+			fh.putString(delims[2]);
+		};
+		fh.close;
+	}	
+} // End GNUPlot class
