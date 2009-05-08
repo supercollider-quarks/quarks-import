@@ -82,7 +82,14 @@ GNUPlot {
 		pipe = Pipe.new(gnuplotpath + "-persist", "w");
 		pipe.putString(this.class.initCode);
 	}
-
+	
+	/*
+	On Mac you need to use a script to launch something in X11 rather than aqua...
+	*/
+	*pathToXLauncher {
+		^ this.filenameSymbol.asString.dirname +/+ "mac-open-x11-direct"
+	}
+	
 	createTempFile{ |data,ns=1|
 		var fh, tmpname,unlaced;
 		tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
