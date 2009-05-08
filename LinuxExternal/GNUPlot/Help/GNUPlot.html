@@ -90,6 +90,16 @@
 
 </DL>
 
+<div style="margin: 0px 70px; border: 1px dashed; padding: 3px;">
+<h4>Note for Mac users:</h4>
+<p>GNUPlot can display its plots in various ways - this quark assumes that you want to plot in Aquaterm. If you want to send plots to X11 instead, run code similar to:</p>
+<pre>
+<span class="comment-delimiter">// </span><span class="comment">for mac users who want X:
+</span><span class="type">GNUPlot</span>.initCode    = <span class="type">GNUPlot</span>.initCode ++ <span class="string">"\n set term x11 \n"</span>;
+<span class="type">GNUPlot</span>.gnuplotpath = <span class="type">GNUPlot</span>.pathToXLauncher.quote + <span class="string">"/opt/local/bin/gnuplot"</span>;
+</pre>
+</div>
+
 <h3>Accessing Instance and Class Variables</h3>
 <DL>
 
