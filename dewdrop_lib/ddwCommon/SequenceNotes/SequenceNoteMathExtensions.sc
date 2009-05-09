@@ -49,7 +49,12 @@
 		});
 		^true
 	}
-	isValidSynthArg { ^true }
+	isValidSynthArg {
+		this.do({ |item|
+			item.isValidSynthArg.not.if({ ^false });
+		});
+		^true
+	}
 }
 
 + Object {
