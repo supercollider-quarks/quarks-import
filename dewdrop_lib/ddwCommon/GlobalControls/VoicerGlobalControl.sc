@@ -70,7 +70,7 @@ GlobalControlBase : AbstractFunction {
 	}
 	
 	free { arg updateGUI = true;
-		this.stopWatching;
+		this.stopWatching.stopAuto;
 		BusDict.free(bus);		// free the bus
 		bus = nil;
 		this.changed((what: \modelWasFreed, resync: true));
@@ -87,6 +87,34 @@ GlobalControlBase : AbstractFunction {
 		// automation
 	play { |thing, args, target, addAction = \addToTail|
 		^thing.playOnGlobalControl(this, args, target, addAction)
+	}
+	automate { |thing, args, target, addAction = \addToTail|
+		if(autoSynth.notNil) { this.stopAuto };
+		autoSynth = this.play(thing, args, target, addAction);
+		if(autoSynth.respondsTo(\nodeID)) {
+			OSCpathResponder(target.asTarget.server.addr, ['/n_end', autoSynth.asNodeID],
+				{ |time, resp, msg|
+						// when replacing the synth, this action could fire for the old synth
+						// after the autoSynth variable changed
+						// so doublecheck if the n_end node ID matches the current autoSynth
+					if(autoSynth.asNodeID == msg[1]) {
+						autoSynth = nil;
+					};
+					resp.remove;
+				}).add;
+		};
+		^autoSynth
+	}
+	stopAuto {
+		var	desc;
+		if(autoSynth.notNil and: {
+				(desc = SynthDescLib.global[autoSynth.tryPerform(\defName).asSymbol]).notNil
+				and: { desc.hasGate } }) {
+			autoSynth.release;
+		} {
+			autoSynth.free;
+		};
+		autoSynth = nil;
 	}
 	
 		// mapping and UGen support
