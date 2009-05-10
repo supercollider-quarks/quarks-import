@@ -7,10 +7,12 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+
 090510 - added RedLSystem and RedLTurtle classes
 	updated example 070-lsystem.scd
 	edited links in all helpfiles and in the overview
 	added s.sync to a few examples
+	updated and moved redFingerprint quark into redUniverse
 081111 - moved RedWindow and RedJWindow into separate folders (osx, linux, windows) so that cocoa gui code is ignored on linux+windows
 080929 - some minor additions
 	added extPoint asRedVector2D helper methods
