@@ -3,10 +3,14 @@ work in progress.  happy for any comments or contributions.
 
 note! this quark make one serious change by overriding Collection:species {^this.class}.  other things in your sc system may break.
 
-note! some of the examples require additional classes like RedGA, RedLSystem etc.  these are available online at my homepage http://www.fredrikolofsson.com under code->sc
+note! some of the examples require additional classes like RedGA etc.  these are available online at my homepage http://www.fredrikolofsson.com under code->sc
 
 
 //--
+090510 - added RedLSystem and RedLTurtle classes
+	updated example 070-lsystem.scd
+	edited links in all helpfiles and in the overview
+	added s.sync to a few examples
 081111 - moved RedWindow and RedJWindow into separate folders (osx, linux, windows) so that cocoa gui code is ignored on linux+windows
 080929 - some minor additions
 	added extPoint asRedVector2D helper methods

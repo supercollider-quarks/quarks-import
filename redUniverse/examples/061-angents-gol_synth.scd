@@ -14,6 +14,7 @@ s.waitForBoot{
 		z= SinOsc.ar(freq+SinOsc.ar(40, 0, beat), 0, Lag.kr(amp, 0.02));
 		Out.ar(out, Pan2.ar(z, pan));
 	}).send(s);
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("agents test ca2", Rect(128, 64, width, height)).front;
@@ -35,6 +36,7 @@ s.waitForBoot{
 	}.dup(n);	//world,loc,vel,acc,mass,size
 	
 	synths= {|i| Synth(\sine, [\amp, 0, \freq, i/n*100+200])}.dup(n);
+	s.sync;
 	
 	//rule= #[[2, 3], [3]];						//rule "23/3" conways game of life
 	//rule= #[[2, 3], [3, 6]];					//rule "23/36" highlife

@@ -15,6 +15,7 @@ s.waitForBoot{
 		z= SinOsc.ar(freq+SinOsc.ar(fm, 0, beat), 0, Lag.kr(amp, 0.1));
 		Out.ar(out, Pan2.ar(z*e, pan));
 	}).send(s);
+	s.sync;
 	synths= ();									//keep track of synths with this dictionary
 	
 	//--world
