@@ -16,6 +16,7 @@ s.waitForBoot{
 		z= Klank.ar(`[freqs, amps, rings], Impulse.ar(0));
 		Out.ar(out, Pan2.ar(z*e, pan));
 	}).send(s);
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("bounce test", Rect(128, 64, width, height)).front;

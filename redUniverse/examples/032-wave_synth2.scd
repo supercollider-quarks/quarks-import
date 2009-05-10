@@ -17,6 +17,7 @@ s.waitForBoot{
 		z= Mix(LPF.ar(LFSaw.ar(freq+[0, beat], Rand(0, 2), amp*0.5), lp));
 		Out.ar(out, Pan2.ar(z, pan));
 	}).send(s);
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("wave test2 synths", Rect(128, 64, width, height)).front;
@@ -37,6 +38,7 @@ s.waitForBoot{
 			Synth(\saw, [\beat, 0, \amp, 0]);
 		});
 	}.dup(n);
+	s.sync;
 	
 	//--loop
 	w.draw{

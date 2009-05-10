@@ -7,7 +7,6 @@ s.waitForBoot{
 		syn, buf, bus, human;
 	
 	//--world
-	Routine{
 	w= GUI.redWindow.new("track test1", Rect(128, 64, width, height)).front;
 	world= RedWorld3(RedVector2D[width, height], damping:0.5); //dim,grav,maxvel,damp
 	
@@ -30,7 +29,7 @@ s.waitForBoot{
 		timbre= SpecFlatness.kr(chain);
 		centroid= SpecPcile.kr(chain, 0.5);
 		Out.kr(out, [event, delta, freq, amp, timbre, centroid])}).send(s);
-	1.wait;
+	s.sync;
 	syn= Synth(\human, [\out, 10, \bufnum, buf.bufnum]);//output 6 ch control data from tracker
 	bus= Bus(\control, 10, 6);						//access control data at ch 10-15
 	
@@ -87,6 +86,7 @@ s.waitForBoot{
 			human.state.centroid= arr[5];
 		})
 	};
+	s.sync;
 	
 	//--loop
 	w.draw{
@@ -115,5 +115,4 @@ s.waitForBoot{
 		buf.free;
 		world.objects.do{|o| o.state.at(\synth).free};
 	};
-	}.play(AppClock);
 })

@@ -13,6 +13,7 @@ s.waitForBoot{
 		z= SinOsc.ar(freq, SinOsc.ar(XLine.ar(freq2, 1, dur), 0, pi), amp)+ClipNoise.ar(e*0.001);
 		Out.ar(out, Pan2.ar(z*e, pan));
 	}).send(s);
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("rocks pinball test", Rect(128, 64, width, height)).front;

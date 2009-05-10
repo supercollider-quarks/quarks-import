@@ -16,6 +16,7 @@ s.waitForBoot{
 			)
 		);
 	}).send(s);
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("3d test", Rect(128, 64, width, height)).front;

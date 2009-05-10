@@ -14,6 +14,7 @@ s.waitForBoot{
 		z= BPF.ar(LFSaw.ar(freq+SinOsc.ar(freq2, 0, amount), 0, amp), freq2*2);
 		Out.ar(out, Pan2.ar(z*e, pan));
 	}).send(s);
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("collision test2", Rect(128, 64, width, height)).front;
@@ -27,6 +28,7 @@ s.waitForBoot{
 		RedObject(world, RedVector2D[width, height].rand, vel, 0, mass, mass*5); //world,loc,vel,acc,mass,size
 	}.dup(n);
 	synths= {Synth(\fm, [\amp, 0])}.dup(n);
+	s.sync;
 	
 	//--loop
 	w.draw{

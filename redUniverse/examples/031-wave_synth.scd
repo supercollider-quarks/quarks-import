@@ -12,6 +12,7 @@ s.waitForBoot{
 		z= Mix(SinOsc.ar(freq+[0, beat], 0, amp*0.5));
 		Out.ar(out, Pan2.ar(z, pan));
 	}).send(s);
+	s.sync;
 	
 	//--world
 	RedUniverse.clear;
@@ -26,6 +27,7 @@ s.waitForBoot{
 		sys.add(RedObject(world, loc, nil, nil, 1.5, 12)); //world,loc,vel,acc,mass,size
 	}.dup(n);
 	synths= {|i| Synth(\sine, [\beat, 0, \amp, 0])}.dup(n);
+	s.sync;
 	
 	//--loop
 	w.draw{

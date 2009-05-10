@@ -7,7 +7,6 @@ s.waitForBoot{
 	var width= 640, height= 480, w, world, n= 10, synths;
 	
 	//--world
-	Routine{
 	w= GUI.redWindow.new("listening pos test", Rect(128, 64, width, height)).front;
 	world= RedWorld3(RedVector2D[width, height], damping:0.5);		 //dim,grav,maxvel,damp
 	
@@ -17,7 +16,7 @@ s.waitForBoot{
 		z= RLPF.ar(Mix(LFSaw.ar(freq+[0, beat], 0, amp)), lp);
 		Out.ar(out, Pan2.ar(z, pan));
 	}).send(s);
-	0.5.wait;
+	s.sync;
 	
 	//--objects
 	{
@@ -29,6 +28,7 @@ s.waitForBoot{
 			.wchange_(0.9)
 			.state_((\synth: Synth(\beating)))
 	}.dup(n);
+	s.sync;
 	
 	//--loop
 	w.draw{
@@ -57,5 +57,4 @@ s.waitForBoot{
 		}
 	}.play;
 	w.onClose_{world.objects.do{|o| o.state.at(\synth).free}};
-	}.play(AppClock);
 })

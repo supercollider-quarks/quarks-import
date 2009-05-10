@@ -8,7 +8,6 @@ s.waitForBoot{
 		objsFunc, fmbusses, rmbusses, delay, dist, drums;
 	
 	//--synthesis
-	Routine{
 	SynthDef(\teknoDrum, {|out= 0, t_trig= 0, fmbusin= 50, fmbusout= 60, rmbusin= 70, rmbusout= 80, fmsend= 0, fmamount= 0, rmsend= 0, rmamount= 0, freq= 60, atk= 0.01, dec= 0.2, pitchatk= 0.01, pitchdec= 0.2, env= 0, pol= 1, amp= 1, pan= 0|
 		var dry, wet, src, fmod, rmod, freq2, aenv, penv;
 		fmod= InFeedback.ar(fmbusin, 1)*(fmamount*5000);
@@ -22,7 +21,7 @@ s.waitForBoot{
 		Out.ar(fmbusout, src*fmsend);
 		Out.ar(rmbusout, src*rmsend);
 		Out.ar(out, Pan2.ar(src, pan, amp));
-	}).store;
+	}).send(s);
 	
 	SynthDef(\teknoDist, {|in= 0, out= 0, lp= 127, hp= 0, res= 0.3, lfo= 0.1, dp= 0, env= 0.01, spd= 3, dis= 0, mix= 0|
 		var dry, wet, lfosc, envfollow;
@@ -35,7 +34,7 @@ s.waitForBoot{
 		wet= RHPF.ar(RLPF.ar(dry, (lp+lfosc).midicps, res), hp.midicps, 2);
 		wet= (wet*(dis+1)).softclip;
 		Out.ar(out, XFade2.ar(dry, wet, mix*2-1));
-	}, #[0, 0, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0]).store;
+	}, #[0, 0, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0]).send(s);
 	
 	SynthDef(\teknoDelay, {|in= 0, out= 0, lp= 127, hp= 0, lfo= 0.1, dp= 0, bpm= 120, sub= 2, fn= 0, fb= 0.1, mix= 0|
 		var dry, wet, lfosc, ms, feedback, del;
@@ -48,8 +47,8 @@ s.waitForBoot{
 		wet= wet+del;
 		LocalOut.ar(wet);
 		Out.ar(out, XFade2.ar(dry, wet, mix*2-1));
-	}, #[0, 0, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0]).store;
-
+	}, #[0, 0, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0]).send(s);
+	
 	SynthDef(\teknoBusses, {|in= 80, out= 70|
 		var input, mix0, mix1, mix2, mix3;
 		input= In.ar(in, 4);
@@ -58,8 +57,8 @@ s.waitForBoot{
 		mix2= input[0]+input[1]+input[3];
 		mix3= input[0]+input[1]+input[2];
 		Out.ar(out, [mix0, mix1, mix2, mix3]);
-	}).store;
-	0.5.wait;
+	}).send(s);
+	s.sync;
 	
 	fmbusses= Synth(\teknoBusses, [\out, 50, \in, 60]);
 	rmbusses= Synth(\teknoBusses, [\out, 70, \in, 80]);
@@ -71,6 +70,7 @@ s.waitForBoot{
 		Synth(\teknoDrum, [\out, 10, \fmbusin, 52, \fmbusout, 62, \rmbusin, 72, \rmbusout, 82]),
 		Synth(\teknoDrum, [\out, 10, \fmbusin, 53, \fmbusout, 63, \rmbusin, 73, \rmbusout, 83]),
 	];
+	s.sync;
 	
 	//--world
 	w= GUI.redWindow.new("agents test tekno", Rect(128, 64, width, height)).front;
@@ -162,5 +162,4 @@ s.waitForBoot{
 		dist.free;
 		drums.do{|x| x.free};
 	};
-	}.play(AppClock);
 })
