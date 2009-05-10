@@ -11,7 +11,7 @@
 	//lsys= RedLSystem("F", ($F: "F[+F--F]+F"));
 	lsys= RedLSystem("F", ($F: "F+F--F+F"));
 	5.do{lsys.next};
-	lplot= RedTurtle(lsys, 5, 20);		//length, theta
+	lplot= RedLTurtle(lsys, 5, 20);		//length, theta
 	
 	//--loop
 	w.draw{

@@ -4,14 +4,14 @@
 //drawing normalization
 //18 n square spikes, penrose snowflake
 
-RedTurtle {
+RedLTurtle {
 	var	<>lsystem, <>length, <>theta, <>scale, <>noise,
 		<>commands, <>preCommandAction,
 		n, index;
 	*new {|lsystem, length= 40, theta= 20, scale= 1, noise= 0|
-		^super.newCopyArgs(lsystem, length, theta, scale, noise).initRedTurtle;
+		^super.newCopyArgs(lsystem, length, theta, scale, noise).initRedLTurtle;
 	}
-	initRedTurtle {
+	initRedLTurtle {
 		commands= this.defaultCommands;
 	}
 	draw {
