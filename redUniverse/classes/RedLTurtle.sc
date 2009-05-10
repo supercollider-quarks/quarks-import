@@ -2,7 +2,6 @@
 
 //--todo:
 //drawing normalization
-//18 n square spikes, penrose snowflake
 
 RedLTurtle {
 	var	<>lsystem, <>length, <>theta, <>scale, <>noise,
@@ -15,7 +14,7 @@ RedLTurtle {
 		commands= this.defaultCommands;
 	}
 	draw {
-		n= 1;
+		n= 0;
 		index= 0;
 		if(lsystem.isString, {
 			this.prDrawStr(lsystem, 0);
@@ -72,25 +71,26 @@ RedLTurtle {
 		var depthLength;
 		x.do{|chr, i|
 			if(chr.isDecDigit, {
-				n= chr.digit;
+				n= n*10+x.digit;
 			}, {
 				depthLength= scale*length;			//depth cannot be calculated for strings
 				preCommandAction.value(0, depthLength, i);
-				n.do{commands[chr].value(0, depthLength, i)};
-				n= 1;
+				n.max(1).do{commands[chr].value(0, depthLength, i)};
+				n= 0;
 			});
 		};
 	}
 	prDrawSys {|x, depth|
 		var depthLength;
 		if(x.size==0, {
+			if(x.isArray, {^nil});
 			if(x.isDecDigit, {
-				n= x.digit;
+				n= n*10+x.digit;
 			}, {
 				depthLength= scale**depth*length;
 				preCommandAction.value(depth, depthLength, index);
-				n.do{commands[x].value(depth, depthLength, index)};
-				n= 1;
+				n.max(1).do{commands[x].value(depth, depthLength, index)};
+				n= 0;
 				index= index+1;
 			});
 		}, {
