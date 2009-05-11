@@ -217,6 +217,32 @@ g = <span class="type">GNUPlot</span>.new;
 g.plot3([[0,0,0], [1,0,0], [1,1,1], [2,1,2], [3,3,2], [4,5,4]], "wiggle");
 g.plot3({  { 1.0.bilinrand  }.dup(3)  }.dup(1000), "hairball");
 
+// more plot3
+(
+h = GNUPlot.new;
+t = 2*pi*Array.series(1001, 0, 1/1000);
+)
+
+( // helix
+var f1 = 10;
+var f2 = 10;
+d = [sin(f1*t), cos(f2*t), t].flop;
+h.plot3(d, \spiral)
+)
+
+( // wound wiggle
+var f1 = 2;
+var f2 = 3;
+d = [sin(f1*t), cos(f2*t), t].flop;
+h.plot3(d, 'wiggly spiral')
+)
+
+( // damped helix
+var f1 = 10;
+var f2 = 10;
+d = [sin(f1*t)*exp(t.neg), cos(f2*t)*exp(t.neg), t].flop;
+h.plot3(d, \damped)
+)
 </pre>
 
 <DT><STRONG>surf3( data, label, hidden3d, pm3d )</STRONG></DT>
@@ -238,6 +264,44 @@ g.surf3(~xyz, "undulathon", pm3d: true);
 <DT><STRONG>scatter( data, label )</STRONG></DT>
 <DD>Creates a scatter plot.</DD>
 
+<pre>
+h = GNUPlot.new;
+// scatter wants pairs of values [x,y]
+
+// some 2d random distributions
+(
+d = {[1.0.sum3rand, exprand(0.001, 1.0)]}.dup(1000);
+h.scatter(d, 'y: exp/x: qgauss')
+)
+
+(
+d = {{1.0.sum3rand}.dup(2)}.dup(1000);
+h.scatter(d, '2d quasi-gaussian')
+)
+
+// walking-stick map (see Henon map)
+(
+var gam, del, eps, ab, numit, wsm, res;
+wsm = {|gamma, delta, eps, ab|
+	var anp1, bnp1;
+	#a, b = ab;
+	anp1 = gamma * a * (1 - a) - b;
+	bnp1 = (delta * b - eps) * (1 - (2 * a));
+	[anp1, bnp1]
+};
+
+gam = 3.8;
+del = 0.4;
+eps = 0.02;
+numit = 1000;
+res = Array.new(numit+1);
+res = res.add([0.8, 0.00001]);
+numit.do {|i|
+	res = res.add(wsm.value(gam, del, eps, res[i]));
+};
+h.scatter(res, \wsm);
+)
+</pre>
 
 <h4> - Data monitoring - </h4>
 

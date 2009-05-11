@@ -4,6 +4,7 @@ GNUPlot {
 	// mods from John Yates (2006)
 	// seriously expanded by Marije Baalman (2006-9)
 	// additions by Oswald Berthold (2009)
+	// additions and some refactoring by Dan Stowell (2009)
 
 	classvar id, <>folder = "SC_to_GNUPlot/", <>initCode = "set data style lines\n", <>gnuplotpath="gnuplot";
 
@@ -37,8 +38,7 @@ GNUPlot {
     *plot {
 		|data|
 		var fh, tmpname;
-		tmpname = folder++"scdata"++id++".tmp"; // Todo: proper temp name!
-		id = id + 1;
+		tmpname = this.pr_tmpname;
 		this.pr_writeTempData1(data, tmpname: tmpname);
 		fh = Pipe.new(gnuplotpath + "-persist", "w");
 		fh.putString(initCode);
@@ -70,7 +70,6 @@ GNUPlot {
 		gid = id;
 		id = id+1;
 		this.start;
-		//		pipe.putString("plot \"" ++ tmpname ++ "\"\n");
 	}
 
 	start{
@@ -79,7 +78,7 @@ GNUPlot {
 	}
 	
 	/*
-	On Mac you need to use a script to launch something in X11 rather than aqua...
+	On Mac you need to use a script if you want to launch something in X11 rather than aqua:
 	*/
 	*pathToXLauncher {
 		^ this.filenameSymbol.asString.dirname +/+ "mac-open-x11-direct"
@@ -87,8 +86,7 @@ GNUPlot {
 	
 	createTempFile{ |data,ns=1|
 		var fh, tmpname,unlaced;
-		tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
-		//	id = id + 1;
+		tmpname = this.pr_tmpname;
 		if ( ns == 1,
 			{
 				this.class.pr_writeTempData1(data, tmpname: tmpname);
@@ -100,7 +98,7 @@ GNUPlot {
 	}
 
 	putCommand{ |command,tmpname,label=""|
-		pipe.putString(command+ "\"" ++ tmpname ++ "\" title \""++label++"\"\n");
+		pipe.putString(command + tmpname.quote + "title" + label.asString.quote ++ Char.nl);
 		pipe.flush;
 	}
 
@@ -119,12 +117,12 @@ GNUPlot {
 			if ( ns > 1,
 				{
 					ns.do{ |id|
-						data.at(id).do{ |it,i| pipe.putString( ""++ it ++ "\n" ); };
+						data.at(id).do{ |it,i| pipe.putString( "%\n".format(it) ); };
 						pipe.putString("e\n");
 					};
 				},
 				{
-					data.do{ |it,i| pipe.putString( ""++ it ++ "\n" ); };
+					data.do{ |it,i| pipe.putString( "%\n".format(it) ); };
 					pipe.putString("e\n");
 				});
 			pipe.flush;
@@ -133,16 +131,16 @@ GNUPlot {
 
 	plot{ |data,ns=1,label="", title|
 		var tmpname = this.createTempFile( data, ns );
-		title !? {pipe.putString("set title %\n".format(title.quote))};
+		title !? {pipe.putString("set title %\n".format(title.asString.quote))};
 		if ( ns == 1,
 			{
-				pipe.putString("plot \""++tmpname++"\" title \""++label++"\"\n");
+				pipe.putString("plot % title %\n".format(tmpname.asString.quote, label.asString.quote));
 				lastdata = [ data ];
 			},
 			{
-				pipe.putString("plot \""++tmpname++"\" index 0 title \""++label+"0\"");
+				pipe.putString("plot % index 0 title \"% 0\"".format(tmpname.asString.quote, label));
 				(ns-1).do{ |i|
-					pipe.putString(", \""++tmpname++"\" index "++ (i+1) ++" title \""++label+(i+1)++"\""); };
+					pipe.putString(", % index % title \"% %\"".format(tmpname.asString.quote, i+1, label, i+1)); };
 				pipe.putString( "\n" );
 				lastdata = data;
 			});
@@ -176,13 +174,13 @@ GNUPlot {
 
 	setXrange{ |min,max|
 		pipe.putString( "unset autoscale x\n" );
-		pipe.putString( "set xrange ["++min++":"++max++"]\n" );
+		pipe.putString( "set xrange [%:%]\n".format(min, max) );
 		pipe.flush;
 	}
 
 	setYrange{ |min,max|
 		pipe.putString( "unset autoscale y\n" );
-		pipe.putString( "set yrange ["++min++":"++max++"]\n" );
+		pipe.putString( "set yrange [%:%]\n".format(min, max) );
 		pipe.flush;
 	}
 
@@ -292,15 +290,15 @@ GNUPlot {
 
 
 	// Oswalds' additions:
-	plot3 {|data, label, title|
+	plot3 {|data, label="", title|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
-			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
+			tmpname = this.pr_tmpname;
 			this.class.pr_writeTempData2(data, tmpname: tmpname);
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
-			title !? {pipe.putString("set title %\n".format(title.quote))};
-			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
+			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
+			pipe.putString("splot % with lines title %\n".format(tmpname.asString.quote, label.asString.quote));
 			lastdata = [ data ];
 			pipe.flush;
 		}
@@ -312,33 +310,33 @@ GNUPlot {
 	g = GNUPlot.new;
 	// a nice deckchair:
 	g.surf3([[[0,0.5,0], [ 0.5,0,0], [ 1,-0.5,0]],   [[ 0.5,1,0], [ 1,0.5,0], [ 1.5,0,0]], [[ 1,1.5,0.5], [ 1.5,1,0.5], [ 2,0.5,0.5]]])	*/
-	surf3 {|data, label, hidden3d=true, pm3d=false, title|
+	surf3 {|data, label="", hidden3d=true, pm3d=false, title|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
-			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
+			tmpname = this.pr_tmpname;
 			this.class.pr_writeTempData3(data, tmpname: tmpname);
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
 			pipe.putString("%set hidden3d\n".format(if(hidden3d, "", "un")));
 			pipe.putString("%set pm3d\n".format(if(pm3d, "", "un")));
-			title !? {pipe.putString("set title %\n".format(title.quote))};
+			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
 			pipe.putString("set dummy u,v\n"); // This dummy tells gnuplot it's doing a surface not a curve
-			pipe.putString("splot \""++tmpname++"\" with lines title \""++label++"\"\n");
+			pipe.putString("splot % with lines title %\n".format(tmpname.asString.quote, label.asString.quote));
 			lastdata = [ data ];
 			pipe.flush;
 		}
 	}
 
-	scatter {|data, label, title|
+	scatter {|data, label="", title|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
-			tmpname = folder+/+"scdata"++gid++".tmp"; // Todo: proper temp name!
+			tmpname = this.pr_tmpname;
 			this.class.pr_writeTempData2(data, tmpname: tmpname);
 			
 			["GNUPlot.scatter data size: ", data.size].postln;
-			title !? {pipe.putString("set title %\n".format(title.quote))};
+			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
 			pipe.putString(  if(data[0].size==3, "splot", "plot") 
-					++ "\""++tmpname++"\" with points title \""++label++"\"\n");
+					++ "% with points title %\n".format(tmpname.asString.quote, label.asString.quote));
 			lastdata = [ data ];
 			pipe.flush;     
 		}
@@ -390,5 +388,15 @@ GNUPlot {
 			fh.putString(delims[2]);
 		};
 		fh.close;
-	}	
+	}
+	
+	// Generate temporary filenames for class method calls, and for instance method calls
+	*pr_tmpname { |postfix=""|
+		var tmpname = folder +/+ "scdata_meta%%.tmp".format(id, postfix); // Todo: proper temp name!
+		id = id + 1;
+		^ tmpname
+	}
+	pr_tmpname { |postfix=""|
+		^ folder +/+ "scdata%%.tmp".format(gid, postfix); // Todo: proper temp name!
+	}
 } // End GNUPlot class
