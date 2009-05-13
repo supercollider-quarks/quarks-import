@@ -12,7 +12,7 @@
 KrBusWatcher : NodeWatcher {
 	classvar	<>allBusWatchers;
 	
-	var	<aliveThread, <>updateFreq = 2, <>server;
+	var	<aliveThread, <>updateFreq = 2;
 
 	*initClass {
 		allBusWatchers = IdentityDictionary.new;

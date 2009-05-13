@@ -25,7 +25,7 @@ MixerChannel {
 		<synthgroup,			// group for things played on this channel
 
 		<controls,			// GenericGlobalControls for each parm defined in the MCDef
-		<autoSynths,			// for synth-based automation
+//		<autoSynths,			// for synth-based automation
 		<lineRoutines,		// for lineTo methods
 
 		<>preSends, <>postSends,	// keep track of sends for gui
@@ -155,7 +155,7 @@ MixerChannel {
 		}, { name });
 		
 		lineRoutines = IdentityDictionary.new;
-		autoSynths = IdentityDictionary.new;
+//		autoSynths = IdentityDictionary.new;
 
 		controls = def.makeControlArray(this);
 		this.setControls(initValues);
@@ -261,7 +261,7 @@ MixerChannel {
 			controls.do(_.free);
 
 			inbus = outbus = synth = fadergroup = effectgroup = synthgroup =
-				controls = autoSynths = lineRoutines = def =
+				controls = /*autoSynths =*/ lineRoutines = def =
 				postSends = preSends = server = mcgui = nil;
 			
 			bundled = -1;		// to make sure .ready returns false
@@ -648,18 +648,25 @@ MixerChannel {
 
 	automate { |name, synthdef, args|
 		this.stopAuto(name);
-
-		autoSynths[name] = controls[name].play(synthdef, args, fadergroup);
-		^autoSynths[name]
+			
+		^controls[name].automate(synthdef, args, fadergroup);
 	}
-	
+
+		// workaround for backward compatibility
+		// MC used to keep a dictionary of automation synths
+		// now the MixerControls keep track of them
+		// in case you ask for autoSynths, I need to return that dictionary
+		// nils are automatically dropped per Dictionary rule
+	autoSynths {
+		^controls.collect(_.autoSynth)
+	}
+
 		// nil means wipe them all out--dangerous?
 	stopAuto { |name|
 		name.notNil.if({
 			lineRoutines[name].stop;
 			lineRoutines[name] = nil;
-			autoSynths[name].free;
-			autoSynths[name] = nil;
+			controls[name].stopAuto;
 		}, {
 			controls.keysDo({ |key| this.stopAuto(key) })
 		});

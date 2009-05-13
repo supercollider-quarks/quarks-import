@@ -51,6 +51,7 @@ GlobalControlBase : AbstractFunction {
 			// take action only if value is changing
 			// because of dependencies, .set may be called multiple times with the same value
 		(value != val).if({
+			this.stopAuto;
 			value = val;
 			bus.server.sendBundle(latency, this.setMsg(value));
 			this.changed((what: \value, updateGUI: updateGUI, resync: resync, updateBus: false));
@@ -89,10 +90,14 @@ GlobalControlBase : AbstractFunction {
 		^thing.playOnGlobalControl(this, args, target, addAction)
 	}
 	automate { |thing, args, target, addAction = \addToTail|
+		var	targetServer = target.asTarget.server;
+		if(targetServer !== server) {
+			MethodError("Target is not on the same server as the GlobalControl.", this).throw;
+		};
 		if(autoSynth.notNil) { this.stopAuto };
 		autoSynth = this.play(thing, args, target, addAction);
-		if(autoSynth.respondsTo(\nodeID)) {
-			OSCpathResponder(target.asTarget.server.addr, ['/n_end', autoSynth.asNodeID],
+		if(server.notified and: { autoSynth.respondsTo(\asNodeID) }) {
+			OSCpathResponder(server.addr, ['/n_end', autoSynth.asNodeID],
 				{ |time, resp, msg|
 						// when replacing the synth, this action could fire for the old synth
 						// after the autoSynth variable changed
@@ -106,15 +111,10 @@ GlobalControlBase : AbstractFunction {
 		^autoSynth
 	}
 	stopAuto {
-		var	desc;
-		if(autoSynth.notNil and: {
-				(desc = SynthDescLib.global[autoSynth.tryPerform(\defName).asSymbol]).notNil
-				and: { desc.hasGate } }) {
-			autoSynth.release;
-		} {
+		if(autoSynth.notNil) {
 			autoSynth.free;
+			autoSynth = nil;
 		};
-		autoSynth = nil;
 	}
 	
 		// mapping and UGen support
