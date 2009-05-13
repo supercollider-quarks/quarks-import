@@ -254,14 +254,20 @@ Voicer {		// collect and manage voicer nodes
 		});
 	}
 	
+		// release a specific VoicerNode object
+		// especially useful in Events
+	releaseNode { |node, freq, releaseGate = 0, lat = -1|
+		susPedal.if({
+			susPedalNodes.add(node);
+		}, {
+			node.release(releaseGate, (lat ? 0).isNegative.if({ latency }, { lat }));
+		});
+	}
+
 	release1 { arg freq, lat = -1;
 		var node;
 		(node = this.firstNodeFreq(freq)).notNil.if({
-			susPedal.if({
-				susPedalNodes.add(node);
-			}, {
-				node.release(0, (lat ? 0).isNegative.if({ latency }, { lat }));
-			});
+			this.releaseNode(node, freq, 0, lat);
 		});
 	}
 	
@@ -577,11 +583,8 @@ Voicer {		// collect and manage voicer nodes
 							);
 							(length.notNil and: { length != inf }).if({
 								thisThread.clock.sched(length + timingOffset, {
-									node.release(releaseGate.wrapAt(i),
-										node.server.latency.notNil.if({
-											lag + node.server.latency
-										}),
-										freq);
+									this.releaseNode(node, freq, releaseGate.wrapAt(i),
+										node.server.latency.notNil.if({ lag + node.server.latency }));
 								});
 							});
 						});
@@ -625,11 +628,8 @@ Voicer {		// collect and manage voicer nodes
 						);
 						(length.notNil and: { length != inf }).if({
 							thisThread.clock.sched(length + timingOffset, {
-								node.release(releaseGate.wrapAt(i),
-									node.server.latency.notNil.if({
-										lag + node.server.latency
-									}),
-									freq);
+								this.releaseNode(node, freq, releaseGate.wrapAt(i),
+									node.server.latency.notNil.if({ lag + node.server.latency }));
 							});
 						});
 					});
@@ -693,7 +693,7 @@ MonoPortaVoicer : Voicer {
 			{ "Invalid object to use as instrument. Can't build voicer.".die }
 	}
 	
-	release1 { arg freq, lat = -1;
+	releaseNode { |node, freq, releaseGate = 0, lat = -1|
 		(lat ? 0).isNegative.if({ lat = latency });
 		lastFreqs.remove(freq);
 		(lastFreqs.size > 0).if({
@@ -701,8 +701,14 @@ MonoPortaVoicer : Voicer {
 			nodes.at(0).frequency = lastFreqs.last;
 			^nodes.at(0)
 		}, {
-			^this.firstNodeFreq(freq).release(0, lat)
+			^this.firstNodeFreq(freq).release(releaseGate, lat)
 		});
+	}
+	
+	release1 { arg freq, lat = -1;
+			// because this is MonoPortaVoicer, with only one node,
+			// dispatch to releaseNode directly
+		this.releaseNode(nodes.first, freq, 0, lat);
 	}
 	
 	gate1 { arg freq, dur, gate = 1, args, lat = -1;
@@ -754,7 +760,6 @@ VoicerNoGate : Voicer {	// just like Voicer, except synthdefs should use fixed-l
 		// gate one or many
 	gate { arg freq, dur, gate = 1, args, lat = -1;
 		var node, nodecoll;
-//[freq, dur, gate, args].asCompileString.postln;
 		(lat ? 0).isNegative.if({ lat = latency });
 		(freq.size > 0).if({
 			nodecoll = this.trigger(freq, gate ? 1, args, lat);  // play them
