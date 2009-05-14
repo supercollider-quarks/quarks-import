@@ -14,7 +14,7 @@ GLOBOL {
 	classvar <classmethdict;
 	classvar prevPreProcessor, prevNetFlag;
 	
-	*run { |n = 8|
+	*run { | n = 8 |
 		if(isRunning) { "GLOBOL IS RUNNING ALREADY!".warn; ^this };
 		prevPreProcessor = thisProcess.interpreter.preProcessor;
 		thisProcess.interpreter.preProcessor = { |string| 
@@ -30,7 +30,7 @@ GLOBOL {
 		id = inf.asInteger.rand;
 	}
 	
-	*end { |time = 8|
+	*end { | time = 8 |
 		thisProcess.interpreter.preProcessor = prevPreProcessor;
 		space.clear(time).pop;
 		isRunning = false;
@@ -51,14 +51,14 @@ GLOBOL {
 		
 	}
 	
-	*process { |string|
+	*process { | string |
 		var lines = split(string, Char.nl);
 		if(isPermitted(this, string).not) { "GLOBOL DOES NOT PERMIT STRINGS".warn; ^this };
 		
 		this.distribute(string);
 		string.postln; // GLOBOL REPL
 		
-		^join(collect(lines, { |line|
+		^join(collect(lines, { | line |
 			var newline = "".copy;
 			var allCaps = List.new;
 			var capStart, capLength = 0;
@@ -128,11 +128,11 @@ GLOBOL {
 	
 	// NETWORKING //
 	
-	*isPermitted { |string|
+	*isPermitted { | string |
 		^string.includes($").not and: { string.find("asString").isNil }
 	}
 	
-	*distribute { |string|
+	*distribute { | string |
 		sender.sendMsg("/GLOBOL2009", string);
 	}
 	
@@ -157,7 +157,7 @@ GLOBOL {
 		NetAddr.broadcastFlag = prevNetFlag;
 	}
 	
-	*broadcastIP { |prefix="",device=""|
+	*broadcastIP { | prefix = "", device = "" |
 		var  res,k,delimiter=$ ;
 		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
 		res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
@@ -170,7 +170,8 @@ GLOBOL {
 		};
 		^res.first
 	}
-	*broadcast { arg port = 57120, prefix="";
+	
+	*broadcast { | port = 57120, prefix = "" |
 		var hostname = this.broadcastIP(prefix);
 		if(hostname.isNil) { 
 			hostname = "127.0.0.1"; 
