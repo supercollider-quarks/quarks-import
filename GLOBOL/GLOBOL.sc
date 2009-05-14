@@ -1,24 +1,30 @@
 
-   /////////////////////////////////////////////////////////
-  // GLOBOL 2009 : EVERYTHING, EVERYWHERE, ALL THE TIME ///
- /////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////
+     // GLOBOL-2009 : EVERYTHING, EVERYWHERE, ALL THE TIME ///
+    /////////////////////////////////////////////////////////
+ 
+  //       ADC, JRH; Donnerstag, 1. Januar 1970 01:02:42            //
+ //  NETWORKING OPENS INTERPRETER - USE 'CONNECT' AT YOUR OWN RISK //
 
-// ADC, JRH; Donnerstag, 1. Januar 1970 01:02:42 //
-//  TODO: AUTOMATIC NETWORK SYNC WITH PUBLIC  //
 
 
 GLOBOL {
 
 	classvar space, <isRunning = false, <numChannels;
-	classvar server, responder, sender, id;
+	classvar server, responder, <sender, id;
 	classvar <classmethdict;
 	classvar prevPreProcessor, prevNetFlag;
 	
 	*run { | n = 8 |
 		if(isRunning) { "GLOBOL IS RUNNING ALREADY!".warn; ^this };
 		prevPreProcessor = thisProcess.interpreter.preProcessor;
-		thisProcess.interpreter.preProcessor = { |string| 
-			interpret(process(this, string));
+		thisProcess.interpreter.preProcessor = { |string|
+			if(isPermitted(this, string).not) { 
+				"GLOBOL DOES NOT PERMIT THIS INPUT".warn;
+			} {
+				this.distribute(string); // SEND TO EVERYWHERE
+				interpret(process(this, string));
+			};
 			"''"; // BLOCK SC REPL
 		};
 		numChannels = n;
@@ -26,7 +32,7 @@ GLOBOL {
 		space = ProxySpace.push(Server.local.reboot);
 		isRunning = true;
 		this.buildDict;
-		this.connect;
+		// this.connect;
 		id = inf.asInteger.rand;
 	}
 	
@@ -53,16 +59,13 @@ GLOBOL {
 	
 	*process { | string |
 		var lines = split(string, Char.nl);
-		if(isPermitted(this, string).not) { "GLOBOL DOES NOT PERMIT STRINGS".warn; ^this };
 		
-		this.distribute(string);
 		string.postln; // GLOBOL REPL
 		
 		^join(collect(lines, { | line |
-			var newline = "".copy;
-			var allCaps = List.new;
-			var capStart, capLength = 0;
 			
+			var newline = String.new;
+						
 			line = line.replace(":", ".");
 			line = " " ++ line ++ "  ";
 			
@@ -92,8 +95,23 @@ GLOBOL {
 					};
 				};
 				
-				// REPLACE CAP-STRINGS WITH PROPER CLASS AND METHOD NAMES
-				newline.do { |char, index|
+				newline = replaceCaps(this, newline);
+				if(shouldAddSemiColon(this, newline)) { newline = newline ++ ";" };
+				
+				newline
+				
+		}), Char.nl);
+	}
+	
+	
+	// REPLACE CAP-STRINGS WITH PROPER CLASS AND METHOD NAMES
+	
+	*replaceCaps { | string |
+		
+			var allCaps = List.new;
+			var capStart, capLength = 0;
+			
+				string.do { |char, index|
 					
 					if(char.isAlpha and: { char.isUpper }) { 
 						if (capLength == 0) { 
@@ -107,60 +125,81 @@ GLOBOL {
 						capLength = 0;
 					};
 				}; 
-				newline = newline.copy;
+				string = string.copy;
 				allCaps.do { |list| 
 					var start, length, bigName, smallName; 
 					#start, length = list;
 					
-					bigName = newline[start..start + length - 1].asSymbol;
+					bigName = string[start..start + length - 1].asSymbol;
 					smallName = classmethdict[bigName];
 					smallName !? {
-						newline.overWrite(smallName, start);
+						string.overWrite(smallName, start);
 					};
 				};
-				if(newline.every(_.isSpace).not) { newline = newline ++ ";" };
-				newline
-		}), Char.nl);
+				^string
 	}
 	
+	*shouldAddSemiColon { | string |
+		string.reverseDo { |char|
+			if(char.isSpace.not and: { char.isAlphaNum.not }) { ^false };
+			if(char.isAlphaNum) { ^true };
+		};
+		^false
+
+	}
 	
 	
 	
 	// NETWORKING //
 	
 	*isPermitted { | string |
-		^string.includes($").not and: { string.find("asString").isNil }
+		string = string.toUpper;
+		// THIS IS NOT SAFE, BUT AVERTS SOME BAD SIMPLE IDEAS. 
+		^string.find("UNIXCMD").isNil
+			and: { string.find("SYSTEMCMD").isNil } 
+			and: { string.find("FILE").isNil } 
+			and: { string.find("PIPE").isNil }
 	}
 	
 	*distribute { | string |
-		sender.sendMsg("/GLOBOL2009", string);
+		sender !? { sender.sendMsg("/GLOBOL-2009", string, id) };
 	}
 	
 	*connect {
-		responder = OSCresponder(nil, "/GLOBOL2009", { |r,t,msg|
+		("NETWORKING OPENS INTERPRETER - USE 'CONNECT' AT YOUR OWN RISK"
+		"\nUSE DISCONNECT TO CLOSE INTERPRETER").postln;
+		
+		sender = this.broadcast;
+		prevNetFlag = NetAddr.broadcastFlag;
+		NetAddr.broadcastFlag = true;
+		
+		responder = OSCresponder(nil, "/GLOBOL-2009", { |r,t,msg|
 				var code = msg[1].asString;
 				var inID = msg[2];
-				// GLOBOL DOES NOT PERMIT STRINGS
+				msg.postln;
+				// GLOBOL DOES TRY NOT TO PERMIT SYSTEM CALLS
+				// AVOID INFINITE NETWORK LOOP
 				if(inID != id and: { isPermitted(this, code) }) 
 				{
 					interpret(process(this, code));
 				}
 		}).add;
-		sender = this.broadcast;
-		prevNetFlag = NetAddr.broadcastFlag;
-		NetAddr.broadcastFlag = true;
+	
 	}
 	
 	*disconnect {
 		responder.remove;
-		sender.disconnect;
-		NetAddr.broadcastFlag = prevNetFlag;
+		"INTERPRETER CLOSED.".postln;
+		sender !? { 
+			sender.disconnect; 
+			NetAddr.broadcastFlag = prevNetFlag;
+		};
 	}
 	
 	*broadcastIP { | prefix = "", device = "" |
 		var  res,k,delimiter=$ ;
-		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
-		res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
+		res = Pipe.findValuesForKey(prefix +/+ "ifconfig" + device, "broadcast");
+		res = res ++ Pipe.findValuesForKey(prefix +/+ "ifconfig" + device, "Bcast", $:);
 
 		if(res.size > 1) { postln(toUpper("the first of the following devices were chosen: " 
 			++ res)) };
