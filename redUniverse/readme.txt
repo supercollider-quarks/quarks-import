@@ -8,6 +8,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 //--
 
+090514 - growth example and asPoint added to RedVector
 090510 - added RedLSystem and RedLTurtle classes
 	updated example 070-lsystem.scd
 	edited links in all helpfiles and in the overview

@@ -15,6 +15,7 @@ RedVector2D[float] : RedVector {
 	mag {^this[0].sumsqr(this[1]).sqrt}
 	distance {|redVec| ^(redVec[0]-this[0]).hypot(redVec[1]-this[1])}
 	dot {|redVec| ^(this[0]*redVec[0])+(this[1]*redVec[1])}
+	asPoint{ ^Point(this[0], this[1])}
 }
 
 //--3d vector optimised for speed
