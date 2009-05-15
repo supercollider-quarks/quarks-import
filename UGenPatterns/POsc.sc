@@ -1,9 +1,36 @@
 //redFrik
 
 //todo:
-//Pulse
+//LFPar, LFCub, LFPulse
 
-PFSinOsc : Pattern {
+
+PSinOsc : Pattern {
+	var <>freq, <>phase, <>mul, <>add, <>length;
+	*new {|freq= 440, phase= 0, mul= 1, add= 0, length= inf|
+		^super.newCopyArgs(freq, phase, mul, add, length);
+	}
+	storeArgs {^[freq, phase, mul, add, length]}
+	embedInStream {|inval|
+		var freqStr= freq.asStream;
+		var phaseStr= phase.asStream;
+		var mulStr= mul.asStream;
+		var addStr= add.asStream;
+		var freqVal, phaseVal, mulVal, addVal;
+		var theta= 0;
+		length.value.do{
+			addVal= addStr.next(inval);
+			mulVal= mulStr.next(inval);
+			phaseVal= phaseStr.next(inval);
+			freqVal= freqStr.next(inval);
+			if(addVal.isNil or:{mulVal.isNil or:{phaseVal.isNil or:{freqVal.isNil}}}, {^inval});
+			inval= (sin(theta/freqVal*2pi+phaseVal)*mulVal+addVal).yield;
+			theta= theta+1;
+		};
+		^inval;
+	}
+}
+
+PLFSaw : Pattern {
 	var <>freq, <>iphase, <>mul, <>add, <>length;
 	*new {|freq= 440, iphase= 0, mul= 1, add= 0, length= inf|
 		^super.newCopyArgs(freq, iphase, mul, add, length);
@@ -14,38 +41,68 @@ PFSinOsc : Pattern {
 		var mulStr= mul.asStream;
 		var addStr= add.asStream;
 		var freqVal, mulVal, addVal;
-		var theta= 0;
+		var counter= iphase;
 		length.value.do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil or:{freqVal.isNil}}, {^inval});
-			inval= (sin(theta/freqVal*2pi+iphase)*mulVal+addVal).yield;
-			theta= theta+1;
+			inval= (counter*2-1*mulVal+addVal).yield;
+			counter= counter+freqVal.reciprocal%1;
 		};
 		^inval;
 	}
 }
 
-PSaw : Pattern {
-	var <>freq, <>mul, <>add, <>length;
-	*new {|freq= 440, mul= 1, add= 0, length= inf|
-		^super.newCopyArgs(freq, mul, add, length);
-	}
-	storeArgs {^[freq, mul, add, length]}
+PLFTri : PLFSaw {
 	embedInStream {|inval|
 		var freqStr= freq.asStream;
 		var mulStr= mul.asStream;
 		var addStr= add.asStream;
 		var freqVal, mulVal, addVal;
-		var counter= 0;
+		var counter= iphase;
 		length.value.do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil or:{freqVal.isNil}}, {^inval});
-			inval= (counter*2-1*mul+add).yield;
+			inval= ((counter*2).fold(-1, 1)*2-1*mulVal+addVal).yield;
 			counter= counter+freqVal.reciprocal%1;
+		};
+		^inval;
+	}
+}
+
+PImpulse : Pattern {
+	var <>freq, <>phase, <>mul, <>add, <>length;
+	*new {|freq= 440, phase= 0, mul= 1, add= 0, length= inf|
+		^super.newCopyArgs(freq, phase, mul, add, length);
+	}
+	storeArgs {^[freq, phase, mul, add, length]}
+	embedInStream {|inval|
+		var freqStr= freq.asStream;
+		var phaseStr= phase.asStream;
+		var mulStr= mul.asStream;
+		var addStr= add.asStream;
+		var freqVal, phaseVal, mulVal, addVal;
+		var counter= 0, flag= false;
+		length.value.do{
+			addVal= addStr.next(inval);
+			mulVal= mulStr.next(inval);
+			phaseVal= phaseStr.next(inval);
+			freqVal= freqStr.next(inval);
+			if(addVal.isNil or:{mulVal.isNil or:{phaseVal.isNil or:{freqVal.isNil}}}, {^inval});
+			if(counter>=phaseVal and:{flag.not}, {
+				inval= (mulVal+addVal).yield;
+				flag= true;
+			}, {
+				inval= addVal.yield;
+			});
+			counter= counter+freqVal.reciprocal;
+			if(counter>=1, {
+				counter= counter%1;
+				flag= false;
+			});
 		};
 		^inval;
 	}
