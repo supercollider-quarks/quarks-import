@@ -44,7 +44,37 @@ PSaw : Pattern {
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil or:{freqVal.isNil}}, {^inval});
-			inval= (counter*2-1*mul+add).yield;
+			inval= (counter*2-1*mulVal+addVal).yield;
+			counter= counter+freqVal.reciprocal%1;
+		};
+		^inval;
+	}
+}
+
+PPulse : Pattern {
+	var <>freq, <>width, <>mul, <>add, <>length;
+	*new {|freq= 440, width= 0.5, mul= 1, add= 0, length= inf|
+		^super.newCopyArgs(freq, width, mul, add, length);
+	}
+	storeArgs {^[freq, width, mul, add, length]}
+	embedInStream {|inval|
+		var freqStr= freq.asStream;
+		var widthStr= width.asStream;
+		var mulStr= mul.asStream;
+		var addStr= add.asStream;
+		var freqVal, widthVal, mulVal, addVal;
+		var counter= 0;
+		length.value.do{
+			addVal= addStr.next(inval);
+			mulVal= mulStr.next(inval);
+			widthVal= widthStr.next(inval);
+			freqVal= freqStr.next(inval);
+			if(addVal.isNil or:{mulVal.isNil or:{widthVal.isNil or:{freqVal.isNil}}}, {^inval});
+			if(counter<widthVal, {
+				inval= (mulVal+addVal).yield;
+			}, {
+				inval= addVal.yield;
+			});
 			counter= counter+freqVal.reciprocal%1;
 		};
 		^inval;
