@@ -17,7 +17,7 @@ SynthVoicerNode {
 		<initArgDict,	// quicker access to initial arg values
 		<defname,
 		voicer,		// to help with globally mapped controls; what if voicer is nil?
-		myLastLatency,	// because latency is now variable at the voicer level
+		<myLastLatency,	// because latency is now variable at the voicer level
 						// important because you may have 2 processes with different latencies
 						// using the same Voicer
 		<>steal = true;		// by default, if another note needs this object, its synth node can be killed
@@ -117,7 +117,7 @@ SynthVoicerNode {
 				});
 			});
 			frequency = freq;	// save frequency for Voicer.release
-			lastTrigger = Main.elapsedTime;	// save time
+			lastTrigger = thisThread.seconds;	// save time
 			this.isPlaying = true;
 			isReleasing = false;
 		} {
