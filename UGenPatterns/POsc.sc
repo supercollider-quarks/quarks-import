@@ -1,8 +1,5 @@
 //redFrik
 
-//todo:
-//LFPar, LFCub
-
 
 PSinOsc : Pattern {
 	var <>freq, <>phase, <>mul, <>add, <>length;
