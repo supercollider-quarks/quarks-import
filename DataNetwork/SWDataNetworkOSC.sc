@@ -5,6 +5,7 @@ SWDataNetworkOSC{
 
 	classvar <>httppath = "/var/www/";
 
+	var <clientPorts;
 	var <clients;
 	var <network;
 	var responders;
@@ -24,91 +25,126 @@ SWDataNetworkOSC{
 		network = netw;
 		network.osc = this;
 		clients = Array.new;
+		clientPorts = List.new;
 		setters = IdentityDictionary.new;
 		responders = [
 			OSCresponderNode( nil, '/register', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.addClient( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.addClient( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/unregister', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.removeClient( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.removeClient( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/pong', { |t,r,msg,addr|
 				var client;
 				if ( verbose > 3, { msg.postln; });
-				addr.port = msg[1];
-				client = this.findClient( addr );
-				if ( client.notNil, { client.pong } ) ;
+				if ( msg.size > 1 ){
+					addr.port = msg[1];
+					client = this.findClient( addr );
+					if ( client.notNil, { client.pong } ) ;
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/expected', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.expectedQuery( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.expectedQuery( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/nodes', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.nodeQuery( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.nodeQuery( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/slots', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.slotQuery( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.slotQuery( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/clients', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.clientQuery( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.clientQuery( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/subscriptions', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.subscriptionQuery( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.subscriptionQuery( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/setters', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.setterQuery( addr );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.setterQuery( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/subscribe/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.nodeSubscribe( addr, msg.copyToEnd( 2 ) );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.nodeSubscribe( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/subscribe/slot', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.slotSubscribe( addr, msg.copyToEnd( 2 ) );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.slotSubscribe( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/unsubscribe/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.nodeUnsubscribe( addr, msg.copyToEnd( 2 ) );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.nodeUnsubscribe( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/unsubscribe/slot', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.slotUnsubscribe( addr, msg.copyToEnd( 2 ) );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.slotUnsubscribe( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/set/data', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.setData( addr, msg.copyToEnd( 2 ) );
-			}),
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.setData( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/label/slot', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.labelSlot( addr, msg.copyToEnd( 2 ) );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.labelSlot( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/label/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.labelNode( addr, msg.copyToEnd( 2 ) );
-			}),
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.labelNode( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/get/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.getNode( addr, msg.copyToEnd( 2 ) );
-			}),
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.getNode( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/get/slot', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.getSlot( addr, msg.copyToEnd( 2 ) );
-			}),
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.getSlot( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/remove/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.removeNode( addr, msg.copyToEnd( 2 ) );
-			}),
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.removeNode( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/add/expected', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				addr.port = msg[1]; this.addExpected( addr, msg.copyToEnd( 2 ) );
-			})
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.addExpected( addr, msg.copyToEnd( 2 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			})
 		];
 
 		responders.do{ |it| it.add };
@@ -128,14 +164,19 @@ SWDataNetworkOSC{
 		var b,broadcastip,myip;
 		var prefix;
 		var cips;
+		var file;
 
 		// write to http accessible file:
-		("echo" + NetAddr.langPort + "> " ++ httppath +/+ "SenseWorldDataNetwork").unixCmd;
+		//		("echo" + NetAddr.langPort + "> " ++ httppath +/+ "SenseWorldDataNetwork").unixCmd;
+		file = File.open( httppath +/+ "SenseWorldDataNetwork", "w");
+		file.write( NetAddr.langPort.asString);
+		file.close;
 
 		if ( ports.isNil, {
 			ports = (6000..6009) ++ (57120..57129);
 		});
 
+		ports = ports ++ clientPorts;
 
 		NetAddr.broadcastFlag_( true );
 
@@ -336,6 +377,7 @@ SWDataNetworkOSC{
 		//		there = clients.find( { |it| it.addr == addr } );
 		[addr,there].postln;
 		if ( there.isNil, {
+			clientPorts.add( addr.port );
 			clients = clients.add( SWDataNetworkOSCClient.new( addr ); );
 			watcher.start;
 			if ( gui.notNil ){ 
@@ -535,6 +577,13 @@ SWDataNetworkOSC{
 		};
 	}
 
+	sendDataNode{ |node|
+		if ( verbose > 1, { ["sendDataNode", node.id, node.data].postln; } );
+		clients.do{ |it|
+			it.sendDataNode( node );
+		};
+	}
+
 	nodeRemoved{ |id|
 		clients.do{ |it| it.nodeRemoved( id ) };
 	}
@@ -667,6 +716,26 @@ SWDataNetworkOSCClient{
 				{
 					//	"slot subscribed".postln;
 					addr.sendMsg( '/data/slot', id, i, it );
+				})
+		};
+	}
+
+	sendDataNode{ |node|
+		var msg;
+		//		if ( verbose, { 
+		//		["sendData", id,data].postln;// } );
+		if ( subscriptions.includes( node.id ),
+			{
+				msg = ['/data/node', node.id] ++ node.data;
+				//	"node subscribed".postln;
+				//	msg.postln;
+				addr.sendMsg( *msg );
+			});
+		node.slots.do{ |it,i|
+			if ( subscriptions.includes( it.id ),
+				{
+					//	"slot subscribed".postln;
+					addr.sendMsg( '/data/slot', it.id[0], it.id[1], it.value );
 				})
 		};
 	}

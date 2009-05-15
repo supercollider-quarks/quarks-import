@@ -17,6 +17,9 @@ SWDataNetwork{
 	var <>recTask;
 	var <logfile;
 
+	var <recTime = false;
+	var <timelogfile;
+
 	*new{ 
 		^super.new.init;
 	}
@@ -113,15 +116,24 @@ SWDataNetwork{
 
 	setData{ |id,data|
 		var ret = true;
+		var ret2;
+		var lasttime;
 		if ( verbose > 1, { [id,data].postln; } );
 		if ( nodes[id].isNil, {
 			ret = this.registerNode( id, data.size );
 			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
 		});
-		if ( ret ) { 
-			nodes[id].data = data;
-			if ( osc.notNil, {
-				osc.sendData( id, data );
+		if ( ret ) {
+			if ( recTime ){
+				lasttime = nodes[id].lasttime;
+			};
+			ret2 = nodes[id].data_( data );
+			if ( ret2 and: recTime){
+				this.writeTimeUpdate( id, lasttime - nodes[id].lasstime );
+			};
+			if ( osc.notNil and: ret2, {
+				//	osc.sendData( id, data );
+				osc.sendDataNode( nodes[id] );
 			});
 		};
 	}
@@ -258,6 +270,30 @@ SWDataNetwork{
 		logfile.write( "\n" );
 	}
 
+
+	/// log update times
+
+	// recording
+	initTimeRecord{ |fn|
+		fn = fn ? "SWDataNetworkUpdateLog";
+		timelogfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
+		recTime = true;
+	}
+
+	writeTimeUpdate{ |id,time|
+		logfile.write( id.asString );
+		logfile.write( "\t" );
+		logfile.write( time.asString );
+		logfile.write( "\n" );
+	}
+
+	closeTimeRecord{
+		recTime = false;
+		timelogfile.close;
+	}
+
+	// add interfaces:
+
 	makeGui{
 		^SWDataNetworkGui.new( this );
 	}
@@ -348,7 +384,9 @@ SWDataNode{
 			lasttime = Process.elapsedTime;
 			action.value( data );
 			//	trigger.value;
+			^true;
 		});
+		^false;
 		//		indata.copyRange(0,data.size-1).do{ |it,i| data[i].value = it };
 	}
 
