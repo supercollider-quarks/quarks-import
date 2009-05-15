@@ -1,7 +1,5 @@
 //redFrik
 
-//todo:
-//
 
 PLine : Pattern {
 	var <>start, <>end, <>dur, <>mul, <>add, <>length;
