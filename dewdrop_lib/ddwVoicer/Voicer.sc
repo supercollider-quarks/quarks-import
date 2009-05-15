@@ -551,8 +551,15 @@ Voicer {		// collect and manage voicer nodes
 					~freq = ~freq ?? { ~note.freq };
 					(~midi ? true).if({ ~freq = ~midiNoteToFreq.value(~freq).asArray },
 						{ ~freq = ~freq.asArray });
-					~delta = ~delta ? ~note.dur;
+					~dur = ~dur ?? { ~delta ?? { ~note.dur } };
 					~length = (~length ? ~note.length).asArray;
+						// some patterns (e.g. Pfindur) might shorten the delta
+						// in which case length could be too long
+						// but this really applies only to MonoPortaVoicers,
+						// hence the adjust... test
+					if(~adjustLengthToRealDelta.value and: { ~dur != currentEnvironment.delta }) {
+						~length = ~length * currentEnvironment.delta / ~dur;
+					};
 					~args = ~args ? ~note.args;
 					~gate = (~gate ?? {
 							// identify the \gate, xxx pair in the args array
@@ -566,8 +573,9 @@ Voicer {		// collect and manage voicer nodes
 				},
 				
 				play: #{
-					var	lag, timingOffset = ~timingOffset ? 0, releaseGate;
-					~voicer.notNil.if({
+					var	lag, timingOffset = ~timingOffset ? 0, releaseGate,
+						voicer = ~voicer;
+					voicer.notNil.if({
 						lag = ~latency;
 						~prepNote.value;
 						~finish.value;	// user-definable
@@ -583,17 +591,20 @@ Voicer {		// collect and manage voicer nodes
 							);
 							(length.notNil and: { length != inf }).if({
 								thisThread.clock.sched(length + timingOffset, {
-									this.releaseNode(node, freq, releaseGate.wrapAt(i),
+									voicer.releaseNode(node, freq, releaseGate.wrapAt(i),
 										node.server.latency.notNil.if({ lag + node.server.latency }));
 								});
 							});
 						});
 					});
-				}
+				},
+					// you could override this
+				adjustLengthToRealDelta: { ~voicer.isKindOfByName(\MonoPortaVoicer) }
 			));
 	
 			Event.default[\eventTypes].put(\voicerNote, #{|server|
-				var lag, strum, sustain, i, timingOffset = ~timingOffset ? 0, releaseGate;
+				var	lag, strum, sustain, i, timingOffset = ~timingOffset ? 0, releaseGate,
+					voicer = ~voicer;
 				
 				~freq = (~freq.value + ~detune).asArray;
 	
@@ -610,8 +621,8 @@ Voicer {		// collect and manage voicer nodes
 					}).asArray;
 					releaseGate = (~releaseGate ? 0).asArray;
 					
-					~nodes = ~voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
-					~voicer.setArgsInEvent(currentEnvironment);
+					~nodes = voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
+					voicer.setArgsInEvent(currentEnvironment);
 					
 					~nodes.do({ |node, i|
 						var latency, freq, length;
@@ -628,7 +639,7 @@ Voicer {		// collect and manage voicer nodes
 						);
 						(length.notNil and: { length != inf }).if({
 							thisThread.clock.sched(length + timingOffset, {
-								this.releaseNode(node, freq, releaseGate.wrapAt(i),
+								voicer.releaseNode(node, freq, releaseGate.wrapAt(i),
 									node.server.latency.notNil.if({ lag + node.server.latency }));
 							});
 						});
@@ -696,7 +707,9 @@ MonoPortaVoicer : Voicer {
 	releaseNode { |node, freq, releaseGate = 0, lat = -1|
 		(lat ? 0).isNegative.if({ lat = latency });
 		lastFreqs.remove(freq);
-		(lastFreqs.size > 0).if({
+		(lastFreqs.size > 0
+		and: { node.frequency != lastFreqs.last
+		and: { thisThread.seconds > node.lastTrigger } }).if({
 			nodes.at(0).set([\freq, lastFreqs.last], lat);
 			nodes.at(0).frequency = lastFreqs.last;
 			^nodes.at(0)
