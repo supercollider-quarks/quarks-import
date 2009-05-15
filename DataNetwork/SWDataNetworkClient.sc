@@ -107,7 +107,10 @@ SWDataNetworkClient : SWDataNetwork{
 				if ( verbose > 0, { msg.postln; });
 				this.unsubscribeSlotInfo( msg.copyToEnd( 1 ) );
 			}),
-
+			OSCresponderNode( host, '/removed/node', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.removeNode( msg.copyToEnd( 1 ), true );
+			}),
 			OSCresponderNode( host, '/data/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
 				this.nodeData( msg.copyToEnd( 1 ) );
@@ -326,6 +329,16 @@ SWDataNetworkClient : SWDataNetwork{
 		/*		if ( gui.notNil ){
 
 			};*/
+	}
+
+	// overloaded from base class
+	removeNode{ |id,fromnw=false|
+		if ( verbose > 1, { ("remove" + id).postln; });
+		if ( fromnw.not )
+		{ host.sendMsg( '/remove/node', NetAddr.langPort, id );}
+		{
+			nodes.removeAt( id );			
+		};	
 	}
 
 	// overloaded from base class
