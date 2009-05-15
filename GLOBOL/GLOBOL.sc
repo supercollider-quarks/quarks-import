@@ -165,11 +165,14 @@ GLOBOL {
 		sender !? { sender.sendMsg("/GLOBOL-2009", string, id) };
 	}
 	
-	*connect {
+	*connect { |broadcastIP|
 		("NETWORKING OPENS INTERPRETER - USE 'CONNECT' AT YOUR OWN RISK"
 		"\nUSE DISCONNECT TO CLOSE INTERPRETER").postln;
-		
-		sender = this.broadcast;
+		sender = if(broadcastIP.isNil) { 
+			this.broadcast 
+		} {
+		 	NetAddr(broadcastIP, NetAddr.langPort)
+		 };
 		prevNetFlag = NetAddr.broadcastFlag;
 		NetAddr.broadcastFlag = true;
 		
