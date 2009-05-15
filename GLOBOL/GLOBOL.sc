@@ -47,10 +47,10 @@ GLOBOL {
 		classmethdict = ();
 		
 		Class.allClasses.do { |class|
-				classmethdict.put(class.name.asString.toUpper.asSymbol, class.name.asString);
+				classmethdict.put(class.name.asString.collect(_.toUpper).asSymbol, class.name.asString);
 				class.methods.do { |method|
 					classmethdict.put(
-						*[method.name.asString.toUpper.asSymbol, method.name.asString]
+						*[method.name.asString.collect(_.toUpper).asSymbol, method.name.asString]
 					)
 				}
 		};
@@ -153,7 +153,7 @@ GLOBOL {
 	// NETWORKING //
 	
 	*isPermitted { | string |
-		string = string.toUpper;
+		string = string.collect(_.toUpper);
 		// THIS IS NOT SAFE, BUT AVERTS SOME BAD SIMPLE IDEAS. 
 		^string.find("UNIXCMD").isNil
 			and: { string.find("SYSTEMCMD").isNil } 
@@ -201,8 +201,8 @@ GLOBOL {
 		res = Pipe.findValuesForKey(prefix +/+ "ifconfig" + device, "broadcast");
 		res = res ++ Pipe.findValuesForKey(prefix +/+ "ifconfig" + device, "Bcast", $:);
 
-		if(res.size > 1) { postln(toUpper("the first of the following devices were chosen: " 
-			++ res)) };
+		if(res.size > 1) { postln(("the first of the following devices were chosen: " 
+			++ res).collect(_.toUpper)) };
 		res.do{ |it,i|
 			k = it.find(delimiter.asString) ?? { it.size } - 1;
 			res[i] = (it[0..k]);
@@ -215,7 +215,7 @@ GLOBOL {
 		if(hostname.isNil) { 
 			hostname = "127.0.0.1"; 
 			"no network with broadcast available."
-			" provisionally used loopback instead.".toUpper.warn;
+			" provisionally used loopback instead.".collect(_.toUpper).warn;
 		};
 		^NetAddr(hostname, port)
 	}
