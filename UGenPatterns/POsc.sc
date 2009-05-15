@@ -1,7 +1,7 @@
 //redFrik
 
 //todo:
-//LFPar, LFCub, LFPulse
+//LFPar, LFCub
 
 
 PSinOsc : Pattern {
@@ -67,6 +67,36 @@ PLFTri : PLFSaw {
 			freqVal= freqStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil or:{freqVal.isNil}}, {^inval});
 			inval= ((counter*2).fold(-1, 1)*2-1*mulVal+addVal).yield;
+			counter= counter+freqVal.reciprocal%1;
+		};
+		^inval;
+	}
+}
+
+PLFPulse : Pattern {
+	var <>freq, <>iphase, <>width, <>mul, <>add, <>length;
+	*new {|freq= 440, iphase= 0, width= 0.5, mul= 1, add= 0, length= inf|
+		^super.newCopyArgs(freq, iphase, width, mul, add, length);
+	}
+	storeArgs {^[freq, iphase, width, mul, add, length]}
+	embedInStream {|inval|
+		var freqStr= freq.asStream;
+		var widthStr= width.asStream;
+		var mulStr= mul.asStream;
+		var addStr= add.asStream;
+		var freqVal, widthVal, mulVal, addVal;
+		var counter= iphase;
+		length.value.do{
+			addVal= addStr.next(inval);
+			mulVal= mulStr.next(inval);
+			widthVal= widthStr.next(inval);
+			freqVal= freqStr.next(inval);
+			if(addVal.isNil or:{mulVal.isNil or:{widthVal.isNil or:{freqVal.isNil}}}, {^inval});
+			if(counter<widthVal, {
+				inval= (mulVal+addVal).yield;
+			}, {
+				inval= addVal.yield;
+			});
 			counter= counter+freqVal.reciprocal%1;
 		};
 		^inval;
