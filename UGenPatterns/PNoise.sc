@@ -1,7 +1,7 @@
 //redFrik
 
 //todo:
-//BrownNoise, PinkNoise, ClipNoise, GrayNoise, Crackle, Logistic
+//BrownNoise, PinkNoise, GrayNoise, Crackle, Logistic
 
 
 PWhiteNoise : Pattern {

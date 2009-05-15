@@ -1,7 +1,5 @@
 //redFrik
 
-//todo:
-//Pulse
 
 PFSinOsc : Pattern {
 	var <>freq, <>iphase, <>mul, <>add, <>length;
