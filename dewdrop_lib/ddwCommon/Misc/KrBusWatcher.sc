@@ -105,4 +105,6 @@ KrBusWatcher : NodeWatcher {
 			i = i + msg[i+1] + 2;
 		});
 	}
+
+	server_ { |newServer| server = newServer }
 }
