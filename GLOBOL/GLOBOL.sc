@@ -47,10 +47,12 @@ GLOBOL {
 		classmethdict = ();
 		
 		Class.allClasses.do { |class|
-				classmethdict.put(class.name.asString.collect(_.toUpper).asSymbol, class.name.asString);
+				classmethdict.put(class.name.asString
+							.collect(_.toUpper).asSymbol, class.name.asString);
 				class.methods.do { |method|
 					classmethdict.put(
-						*[method.name.asString.collect(_.toUpper).asSymbol, method.name.asString]
+						*[method.name.asString
+							.collect(_.toUpper).asSymbol, method.name.asString]
 					)
 				}
 		};
@@ -113,7 +115,7 @@ GLOBOL {
 			
 				string.do { |char, index|
 					
-					if(char.isAlpha and: { char.isUpper }) { 
+					if(char.isAlphaNum and: { char.isUpper }) { 
 						if (capLength == 0) { 
 							capStart = index; 
 						};
@@ -179,7 +181,6 @@ GLOBOL {
 		responder = OSCresponder(nil, "/GLOBOL-2009", { |r,t,msg|
 				var code = msg[1].asString;
 				var inID = msg[2];
-				msg.postln;
 				// GLOBOL DOES TRY NOT TO PERMIT SYSTEM CALLS
 				// AVOID INFINITE NETWORK LOOP
 				if(inID != id and: { isPermitted(this, code) }) 
