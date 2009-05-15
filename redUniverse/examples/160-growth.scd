@@ -47,8 +47,9 @@
 		
 		//--render all objects
 		world.objects.do{|o, i|						//iterate all objects in this world
-			GUI.pen.strokeRect(Rect.aboutRedObject2D(o));
-		}
+			GUI.pen.addRect(Rect.aboutRedObject2D(o));
+		};
+		GUI.pen.stroke;
 	}.play(40);
 )
 

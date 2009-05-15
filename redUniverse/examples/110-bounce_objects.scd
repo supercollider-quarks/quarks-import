@@ -17,7 +17,7 @@
 	//--loop
 	w.draw{
 		GUI.pen.strokeColor_(Color.grey(0.7, 0.5));
-		GUI.pen.width_(1);
+		GUI.pen.width_(2);
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
 			o.addForce(o.frictionForce(-0.3));
@@ -32,7 +32,8 @@
 			world.contain(o);
 			
 			//--render
-			GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
+			GUI.pen.addOval(Rect.aboutRedObject2D(o));
 		};
+		GUI.pen.stroke;
 	}.play;
 )

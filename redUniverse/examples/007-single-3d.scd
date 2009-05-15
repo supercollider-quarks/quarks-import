@@ -24,13 +24,14 @@
 			o.addForce(o.world.gravity);
 			o.update;
 			world.contain(o);
-			//GUI.pen.strokeRect(Rect.aboutPoint(o.loc.asPoint, o.size, o.size));
-			//GUI.pen.strokeRect(Rect.aboutPoint(w.mouse.asPoint, o.size, o.size));
-			GUI.pen.strokeRect(Rect.aboutRedVector3D(o.loc, o.size, width, height, depth, 1.25, 0.5));
-			GUI.pen.strokeRect(Rect.aboutRedObject3D(o, 1.25, 0.4));
-			GUI.pen.strokeRect(Rect.aboutRedObject3D(o, 1.15, 0.3));
-			GUI.pen.strokeRect(Rect.aboutRedObject3D(o, 1.05, 0.2));
-			GUI.pen.strokeRect(Rect.aboutRedObject3D(o, 1.00, 0.1));
-		}
+			//GUI.pen.addRect(Rect.aboutPoint(o.loc.asPoint, o.size, o.size));
+			//GUI.pen.addRect(Rect.aboutPoint(w.mouse.asPoint, o.size, o.size));
+			GUI.pen.addRect(Rect.aboutRedVector3D(o.loc, o.size, width, height, depth, 1.25, 0.5));
+			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.25, 0.4));
+			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.15, 0.3));
+			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.05, 0.2));
+			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.00, 0.1));
+		};
+		GUI.pen.stroke;
 	}.play;
 )
