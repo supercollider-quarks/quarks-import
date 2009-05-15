@@ -30,9 +30,9 @@
 			//--render
 			ploc= o.pendulumLoc2D.asPoint;
 			GUI.pen.line(o.loc.asPoint, ploc);
-			GUI.pen.stroke;
-			GUI.pen.strokeOval(Rect.aboutPoint(ploc, o.size/5, o.size/5));
-		}
+			GUI.pen.addOval(Rect.aboutPoint(ploc, o.size/5, o.size/5));
+		};
+		GUI.pen.stroke;
 	}.play;
 )
 

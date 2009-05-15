@@ -31,8 +31,9 @@
 				world.contain(o);
 				
 				//--render
-				GUI.pen.strokeRect(Rect.aboutRedObject2D(o));
+				GUI.pen.addRect(Rect.aboutRedObject2D(o));
 			});
-		}
+		};
+		GUI.pen.stroke;
 	}.play;
 )
