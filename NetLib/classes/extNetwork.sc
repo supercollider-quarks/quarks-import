@@ -60,15 +60,18 @@
 	
 	// this works much better
 	
-	*broadcastIP {
+	*broadcastIP { arg prefix = "", device = "";
 		var line, pipe;
-		pipe = Pipe("ifconfig | grep broadcast | awk '{print $NF}'", "r");
+		pipe = Pipe("% ifconfig % | grep broadcast | awk '{print $NF}'"
+			.format(prefix, device), 
+			"r"
+		);
 		{ line = pipe.getLine }.protect { pipe.close };
 		^line
 	}
 	
-	*broadcast { arg port = 57120, prefix="";
-		var hostname = this.broadcastIP(prefix);
+	*broadcast { arg port = 57120, prefix="", device = "";
+		var hostname = this.broadcastIP(prefix, device);
 		if(hostname.isNil) { 
 			hostname = "127.0.0.1"; 
 			"no network with broadcast available. provisionally used loopback instead.".warn;
