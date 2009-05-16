@@ -224,7 +224,11 @@ SWDataNodeGui{
 
 		mon = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Mon", Color.blue ], ["Mon", Color.red ] ] ).action_( {
-				|but| node.monitor( but.value.booleanValue ) 
+				|but| 
+				node.monitor( but.value.booleanValue );
+				if ( but.value.booleanValue ){
+					node.busmonitor.makeGui( node.key.asString );
+				}
 			} ).font_( font );
 
 		bus = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(

@@ -129,7 +129,7 @@ SWDataNetwork{
 			};
 			ret2 = nodes[id].data_( data );
 			if ( ret2 and: recTime){
-				this.writeTimeUpdate( id, lasttime - nodes[id].lasstime );
+				this.writeTimeUpdate( id, nodes[id].lasttime - lasttime );
 			};
 			if ( osc.notNil and: ret2, {
 				//	osc.sendData( id, data );
@@ -281,10 +281,10 @@ SWDataNetwork{
 	}
 
 	writeTimeUpdate{ |id,time|
-		logfile.write( id.asString );
-		logfile.write( "\t" );
-		logfile.write( time.asString );
-		logfile.write( "\n" );
+		timelogfile.write( id.asString );
+		timelogfile.write( "\t" );
+		timelogfile.write( time.asString );
+		timelogfile.write( "\n" );
 	}
 
 	closeTimeRecord{
@@ -381,8 +381,8 @@ SWDataNode{
 		if ( indata.size == slots.size , {
 			data = indata * scale;
 			data.do{ |it,i| slots[i].value = it };
+			action.value( data, this );
 			lasttime = Process.elapsedTime;
-			action.value( data );
 			//	trigger.value;
 			^true;
 		});

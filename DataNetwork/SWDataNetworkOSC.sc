@@ -566,7 +566,7 @@ SWDataNetworkOSC{
 				setters.put( msg[0], addr );
 			});
 		if ( setters.at( msg[0] ) == addr, {
-			network.addExpected( msg[0], msg[1], msg[2] );
+			network.addExpected( msg[0], msg[2], msg[1] );
 		});
 	}
 
