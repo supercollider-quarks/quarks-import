@@ -80,6 +80,9 @@ TLSequenceIterator {
 					// in case this is a spawned iterator
 				NotificationCenter.notify(this, \done, (activeCmds: activeCmds));
 				this.changed(\done, activeCmds); // .debug("done sent");
+					// allow old cmds to be GC'ed
+					// not sure if this will break something
+				activeCmds = IdentitySet.new;
 			});
 			(clock ?? { thisThread.clock }).sched(time, routine);
 		} {
@@ -92,7 +95,13 @@ TLSequenceIterator {
 		parms ?? { parms = () };
 		parms[\manualStop] ?? { parms.put(\manualStop, true) };
 //parms.debug("parms after update");
-		activeCmds.copy.do({ |cmd| cmd.stop(parms) });
+		activeCmds.copy.do({ |cmd|
+				// stopping non-syncable commands here messes up their status
+				//  for the next iterator
+			if(parms[\manualStop] or: { cmd.shouldSync }) {
+				cmd.stop(parms)
+			};
+		});
 		onStop.value(parms);
 		routine.stop;
 		if(status != \idle) {
@@ -119,7 +128,7 @@ TLSequenceIterator {
 	addActive { |cmd|
 //		var	updater;
 //"\n\n>> TLSequenceIterator:addActive".debug;
-//cmd.env.debug("added command");
+//(try { cmd.env } { cmd }).debug("added command");
 //cmd.dump;
 //this.dumpBackTrace;
 		activeCmds.add(cmd);
@@ -144,7 +153,7 @@ TLSequenceIterator {
 	cmdStopped { |cmd, parms, resumeTime|
 		var	oldCmds;
 //var temp;
-
+//
 //status.debug(">> cmdStopped");
 		activeCmds.remove(cmd);
 		
