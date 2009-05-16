@@ -613,6 +613,12 @@ Voicer {		// collect and manage voicer nodes
 					lag = ~lag;
 					strum = ~strum;
 					sustain = ~sustain = ~sustain.value.asArray;
+						// for mono voicers, adjust sustain if note's delta is altered
+					if(voicer.isKindOfByName(\MonoPortaVoicer)
+					and: { ~dur != currentEnvironment.delta }) {
+						~sustain = ~sustain * currentEnvironment.delta / ~dur;
+					};
+						
 					~gate = (~gate ?? {
 							// identify the \gate, xxx pair in the args array
 							// 2nd removeAt should return the value *wink*
