@@ -45,7 +45,7 @@
 		^NetAddr(hostname, port )
 	}
 
-	*broadcastIP { |prefix="",device=""|
+	/**broadcastIP { |prefix="",device=""|
 		var  res,k,delimiter=$ ;
 		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
 		res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
@@ -56,7 +56,17 @@
 			res[i] = (it[0..k]);
 		};
 		^res.first
+	}*/
+	
+	// this works much better
+	
+	*broadcastIP {
+		var line, pipe;
+		pipe = Pipe("ifconfig | grep broadcast | awk '{print $NF}'", "r");
+		{ line = pipe.getLine }.protect { pipe.close };
+		^line
 	}
+	
 	*broadcast { arg port = 57120, prefix="";
 		var hostname = this.broadcastIP(prefix);
 		if(hostname.isNil) { 
