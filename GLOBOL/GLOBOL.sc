@@ -168,8 +168,8 @@ GLOBOL {
 	}
 	
 	*connect { |broadcastIP|
-		("NETWORKING OPENS INTERPRETER - USE 'CONNECT' AT YOUR OWN RISK"
-		"\nUSE DISCONNECT TO CLOSE INTERPRETER").postln;
+		("* NETWORKING OPENS INTERPRETER - USE 'CONNECT' AT YOUR OWN RISK"
+		"\nUSE 'DISCONNECT' TO CLOSE INTERPRETER. *").postln;
 		sender = if(broadcastIP.isNil) { 
 			this.broadcast 
 		} {
@@ -193,25 +193,19 @@ GLOBOL {
 	
 	*disconnect {
 		responder.remove;
-		"INTERPRETER CLOSED.".postln;
+		responder = nil;
+		"* INTERPRETER CLOSED. *".postln;
 		sender !? { 
 			sender.disconnect; 
 			NetAddr.broadcastFlag = prevNetFlag;
 		};
 	}
 	
-	*broadcastIP { | prefix = "", device = "" |
-		var  res,k,delimiter=$ ;
-		res = Pipe.findValuesForKey(prefix +/+ "ifconfig" + device, "broadcast");
-		res = res ++ Pipe.findValuesForKey(prefix +/+ "ifconfig" + device, "Bcast", $:);
-
-		if(res.size > 1) { postln(("the first of the following devices were chosen: " 
-			++ res).collect(_.toUpper)) };
-		res.do{ |it,i|
-			k = it.find(delimiter.asString) ?? { it.size } - 1;
-			res[i] = (it[0..k]);
-		};
-		^res.first
+	*broadcastIP {
+		var line, pipe;
+		pipe = Pipe("ifconfig | grep broadcast | awk '{print $NF}'", "r");
+		{ line = pipe.getLine }.protect { pipe.close };
+		^line
 	}
 	
 	*broadcast { | port = 57120, prefix = "" |
