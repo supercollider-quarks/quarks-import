@@ -42,3 +42,63 @@ PXLine : PLine {
 		^inval;
 	}
 }
+
+PLinExp : FilterPattern {
+	var <>srclo, <>srchi, <>dstlo, <>dsthi;
+	*new {|pattern, srclo= 0, srchi= 1, dstlo= 1, dsthi= 2|
+		^super.newCopyArgs(pattern, srclo, srchi, dstlo, dsthi);
+	}
+	storeArgs {^[pattern, srclo, srchi, dstlo, dsthi]}
+	embedInStream {|inval|
+		var evtStr= pattern.asStream;
+		var sloStr= srclo.asStream;
+		var shiStr= srchi.asStream;
+		var dloStr= dstlo.asStream;
+		var dhiStr= dsthi.asStream;
+		var outVal, sloVal, shiVal, dloVal, dhiVal;
+		loop{
+			outVal= evtStr.next(inval);
+			if(outVal.isNil, {^inval});
+			sloVal= sloStr.next(outVal);
+			if(sloVal.isNil, {^inval});
+			shiVal= shiStr.next(outVal);
+			if(shiVal.isNil, {^inval});
+			dloVal= dloStr.next(outVal);
+			if(dloVal.isNil, {^inval});
+			dhiVal= dhiStr.next(outVal);
+			if(dhiVal.isNil, {^inval});
+			
+			inval= outVal.linexp(sloVal, shiVal, dloVal, dhiVal).yield;
+		};
+	}
+}
+
+PLinLin : FilterPattern {
+	var <>srclo, <>srchi, <>dstlo, <>dsthi;
+	*new {|pattern, srclo= 0, srchi= 1, dstlo= 1, dsthi= 2|
+		^super.newCopyArgs(pattern, srclo, srchi, dstlo, dsthi);
+	}
+	storeArgs {^[pattern, srclo, srchi, dstlo, dsthi]}
+	embedInStream {|inval|
+		var evtStr= pattern.asStream;
+		var sloStr= srclo.asStream;
+		var shiStr= srchi.asStream;
+		var dloStr= dstlo.asStream;
+		var dhiStr= dsthi.asStream;
+		var outVal, sloVal, shiVal, dloVal, dhiVal;
+		loop{
+			outVal= evtStr.next(inval);
+			if(outVal.isNil, {^inval});
+			sloVal= sloStr.next(outVal);
+			if(sloVal.isNil, {^inval});
+			shiVal= shiStr.next(outVal);
+			if(shiVal.isNil, {^inval});
+			dloVal= dloStr.next(outVal);
+			if(dloVal.isNil, {^inval});
+			dhiVal= dhiStr.next(outVal);
+			if(dhiVal.isNil, {^inval});
+			
+			inval= outVal.linlin(sloVal, shiVal, dloVal, dhiVal).yield;
+		};
+	}
+}
