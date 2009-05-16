@@ -5,6 +5,8 @@ SWDataNetworkOSC{
 
 	classvar <>httppath = "/var/www/";
 
+	var <>maxMissedPongs = 60;
+
 	var <clientPorts;
 	var <clients;
 	var <network;
@@ -14,6 +16,9 @@ SWDataNetworkOSC{
 	var <setters;
 
 	var <>gui;
+
+	var <logfile;
+	var <logging = false;
 
 	var <>verbose = 0;
 
@@ -85,6 +90,18 @@ SWDataNetworkOSC{
 					addr.port = msg[1]; this.setterQuery( addr );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
+			OSCresponderNode( nil, '/subscribe/all', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.allNodeSubscribe( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
+			}),
+			OSCresponderNode( nil, '/unsubscribe/all', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.allNodeUnsubscribe( addr );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
+			}),
 			OSCresponderNode( nil, '/subscribe/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
 				if ( msg.size > 1 ){
@@ -149,7 +166,9 @@ SWDataNetworkOSC{
 
 		responders.do{ |it| it.add };
 
-		watcher = SkipJack.new( { this.sendPings }, 1, name: "SWDataNetworkOSC" , autostart: true );
+		watcher = SkipJack.new( { 
+			this.sendPings;
+		}, 1, name: "SWDataNetworkOSC" , autostart: true );
 
 		this.announce;
 
@@ -206,6 +225,9 @@ SWDataNetworkOSC{
 			gui.addLogMsg( "network announced" );
 		};
 
+		if ( logging ){
+			this.writeLogLine( "network announced");
+		};
 	}
 
 	expectedQuery{ |addr|
@@ -214,6 +236,10 @@ SWDataNetworkOSC{
 		});
 		network.expectedNodes.do{ |key|
 			addr.sendMsg( '/info/expected', key );
+		};
+
+		if ( logging ){
+			this.writeLogLine( "/query/expected from client with IP"+addr.ip+"and port"+addr.port );
 		};
 	}
 
@@ -224,6 +250,11 @@ SWDataNetworkOSC{
 		network.nodes.keysValuesDo{ |key,node|
 			addr.sendMsg( '/info/node', key, node.key, node.slots.size );
 		};
+
+		if ( logging ){
+			this.writeLogLine( "/query/nodes from client with IP"+addr.ip+"and port"+addr.port );
+		};
+
 	}
 
 	slotQuery{ |addr|
@@ -235,6 +266,10 @@ SWDataNetworkOSC{
 				addr.sendMsg( '/info/slot', key, i, it.key );
 			};
 		};
+		if ( logging ){
+			this.writeLogLine( "/query/slots from client with IP"+addr.ip+"and port"+addr.port );
+		};
+
 	}
 
 	clientQuery{ |addr|
@@ -244,6 +279,10 @@ SWDataNetworkOSC{
 		clients.do{ |it|
 			addr.sendMsg( '/info/client', it.addr.ip, it.addr.port, it.addr.hostname );
 		};
+		if ( logging ){
+			this.writeLogLine( "/query/clients from client with IP"+addr.ip+"and port"+addr.port );
+		};
+
 	}
 
 	subscriptionQuery{ |addr|
@@ -254,6 +293,10 @@ SWDataNetworkOSC{
 		},{
 			client.subscriptionQuery;
 		});
+		if ( logging ){
+			this.writeLogLine( "/query/subscriptions from client with IP"+addr.ip+"and port"+addr.port );
+		};
+
 	}
 
 	newExpected{ |id,label|
@@ -273,20 +316,41 @@ SWDataNetworkOSC{
 		}
 	}
 
+	allNodeSubscribe{ |addr|
+		var client;
+		client = this.findClient( addr );
+		if ( client.isNil, {
+			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
+		},{
+			network.nodes.do{ |it| 
+				client.subscribeNode( it.id );
+				this.getNode( addr, [it.id] );
+				if ( gui.notNil ){
+					gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to node:"+it.id );
+				};
+				if ( logging ){
+					this.writeLogLine( "/subscribe/all from client with IP"+addr.ip+"and port"+addr.port );
+				};
+			};
+		});
+	}
+
 	nodeSubscribe{ |addr,msg|
 		var client;
 		client = this.findClient( addr );
 		if ( client.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
-			client.subscribeNode( msg[0] );
+			client.subscribeNode( msg[0].asInteger );
 			this.getNode( addr, msg );
+
+			if ( gui.notNil ){
+				gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to node:"+msg[0] );
+			};
+			if ( logging ){
+				this.writeLogLine( "/subscribe/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
 		});
-
-		if ( gui.notNil ){
-			gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to node:"+msg[0] );
-		};
-
 	}
 
 	slotSubscribe{ |addr,msg|
@@ -295,13 +359,34 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
-			client.subscribeSlot( msg[0], msg[1].asInteger );
+			client.subscribeSlot( msg[0].asInteger, msg[1].asInteger );
 			this.getSlot( addr, msg );
+			if ( gui.notNil ){
+				gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to slot:"+msg.copyRange(0,1) );
+			};
+			if ( logging ){
+				this.writeLogLine( "/subscribe/slot:" + msg.copyRange(0,1) + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
 		});
+	}
 
-		if ( gui.notNil ){
-			gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to slot:"+msg.copyRange(0,1) );
-		};
+	allNodeUnsubscribe{ |addr|
+		var client;
+		client = this.findClient( addr );
+		if ( client.isNil, {
+			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
+		},{
+			client.subscriptions.do{ |it| 
+				client.unsubscribeNode( it );
+				if ( gui.notNil ){
+					gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from node:"+it );
+				};
+				if ( logging ){
+					this.writeLogLine( "/unsubscribe/all from client with IP"+addr.ip+"and port"+addr.port );
+				};
+
+			};
+		});
 	}
 
 	nodeUnsubscribe{ |addr,msg|
@@ -310,13 +395,15 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
-			client.unsubscribeNode( msg[0] );
+			client.unsubscribeNode( msg[0].asInteger );
+			if ( gui.notNil ){
+				gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from node:"+msg[0] );
+			};
+			if ( logging ){
+				this.writeLogLine( "/unsubscribe/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
+
 		});
-
-		if ( gui.notNil ){
-			gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from node:"+msg[0] );
-		};
-
 	}
 
 	slotUnsubscribe{ |addr,msg|
@@ -325,13 +412,15 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
-			client.unsubscribeSlot( msg[0], msg[1].asInteger );
+			client.unsubscribeSlot( msg[0].asInteger, msg[1].asInteger );
+			if ( gui.notNil ){
+				gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from slot:"+msg.copyRange(0,1) );
+			};
+			if ( logging ){
+				this.writeLogLine( "/unsubscribe/slot:" + msg.copyRange(0,1) + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
+
 		});
-
-		if ( gui.notNil ){
-			gui.addLogMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from slot:"+msg.copyRange(0,1) );
-		};
-
 	}
 
 	getNode{ |addr,msg|
@@ -342,6 +431,7 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
+			msg[0] = msg[0].asInteger;
 			if ( network.nodes.at( msg[0] ).isNil, {
 				addr.sendMsg( '/warn', "Node"+msg[0]+"does not exist yet");
 			},{
@@ -350,6 +440,9 @@ SWDataNetworkOSC{
 			addr.sendMsg( *data );
 			//	addr.sendMsg( '/data/node', msg[1], *data );
 			});
+			if ( logging ){
+				this.writeLogLine( "/get/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
 		});
 	}
 
@@ -359,11 +452,15 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
+			msg[0] = msg[0].asInteger;
 			if ( network.nodes.at( msg[0] ).isNil, {
 				addr.sendMsg( '/warn', "Node"+msg[0]+"does not exist yet");
 			},{
 				addr.sendMsg( '/data/slot', msg[0], msg[1], network.nodes.at( msg[0] ).slots.at( msg[1].asInteger ).value );
 			});
+			if ( logging ){
+				this.writeLogLine( "/get/slot:" + msg.copyRange(0,1) + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
 		});
 	}
 
@@ -384,6 +481,9 @@ SWDataNetworkOSC{
 				gui.addClient( clients.last );
 				gui.addLogMsg( "client registered:"+(addr.asString.replace( "a NetAddr","")) );
 			};
+			if ( logging ){
+				this.writeLogLine( "client registered:"+(addr.asString.replace( "a NetAddr")) );
+			};
 		},{
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is already registered. Please unregister first");
 		});
@@ -401,6 +501,9 @@ SWDataNetworkOSC{
 		if ( gui.notNil ){
 			gui.removeClient( there );
 			gui.addLogMsg( "client unregistered:"+(addr.asString.replace( "a NetAddr","")) );
+		};
+		if ( logging ){
+			this.writeLogLine( "client unregistered:"+(addr.asString.replace( "a NetAddr")) );
 		};
 	}
 
@@ -482,6 +585,7 @@ SWDataNetworkOSC{
 		if ( there.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first");
 		},{
+			msg[0] = msg[0].asInteger;
 			if ( network.nodes.at( msg[0] ).notNil,
 				{
 					if ( setters.at( msg[0] ) == addr, {
@@ -493,6 +597,9 @@ SWDataNetworkOSC{
 				},{
 					addr.sendMsg( '/error', ("node with id"+msg[0]+"is not part of the network" ) ); 
 				});
+			if ( logging ){
+				this.writeLogLine( "/remove/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+			};
 		});
 	}
 
@@ -503,6 +610,7 @@ SWDataNetworkOSC{
 		if ( there.isNil, {
 			addr.sendMsg( '/error', "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first");
 		},{
+			msg[0] = msg[0].asInteger;
 			if ( network.nodes.at( msg[0] ).isNil,
 				{
 					if ( setters.at( msg[0] ).isNil, {
@@ -515,7 +623,7 @@ SWDataNetworkOSC{
 					addr.sendMsg( '/error', ("node with id"+msg[0]+"and size"+(msg.size - 1 )+"is not expected to be part of the network" ) ); 
 				}, {
 					if ( setters.at( msg[0] ) == addr, {
-						network.setData( msg[0], msg.copyToEnd( 1 ) );
+						network.setData( msg[0], msg.copyToEnd( 1 ).asFloat );
 						if ( addsetter, {
 							there.addSetter( network.nodes.at( msg[0] ) );
 							// only send data back to sender first time the node is set, for confirmation:
@@ -523,7 +631,9 @@ SWDataNetworkOSC{
 							if ( gui.notNil ){
 								gui.addLogMsg( "client:"+(there.addr.asString.replace( "a NetAddr",""))+"became setter of node:"+msg[0] );
 							};
-
+							if ( logging ){
+								this.writeLogLine( "client:"+(there.addr.asString.replace( "a NetAddr",""))+"became setter of node:"+msg[0] );
+							};
 						});
 					});
 				});
@@ -531,6 +641,7 @@ SWDataNetworkOSC{
 	}
 
 	labelSlot{ |addr,msg|
+		msg[0] = msg[0].asInteger;
 		if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
 			{
 				setters.put( msg[0], addr );
@@ -543,9 +654,13 @@ SWDataNetworkOSC{
 					addr.sendMsg( '/warn', ("you are not the setter of node with id"+msg[0]++", so you cannot label it" ) );
 				});
 			});
+		if ( logging ){
+			this.writeLogLine( "/label/slot:" + msg.copyRange(0,1) + " from client with IP"+addr.ip+"and port"+addr.port );
+		};
 	}
 
 	labelNode{ |addr,msg|
+		msg[0] = msg[0].asInteger;
 		if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
 			{
 				setters.put( msg[0], addr );
@@ -558,9 +673,13 @@ SWDataNetworkOSC{
 					addr.sendMsg( '/warn', ("you are not the setter of node with id"+msg[0]++", so you cannot label it" ) );
 				});
 			});
+		if ( logging ){
+			this.writeLogLine( "/label/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		};
 	}
 
 	addExpected{ |addr,msg|
+		msg[0] = msg[0].asInteger;
 		if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
 			{
 				setters.put( msg[0], addr );
@@ -568,6 +687,9 @@ SWDataNetworkOSC{
 		if ( setters.at( msg[0] ) == addr, {
 			network.addExpected( msg[0], msg[2], msg[1] );
 		});
+		if ( logging ){
+			this.writeLogLine( "/add/expected:" + msg + " from client with IP"+addr.ip+"and port"+addr.port );
+		};
 	}
 
 	sendData{ |id,data|
@@ -590,15 +712,37 @@ SWDataNetworkOSC{
 	
 	sendPings{
 		clients.do{ |it| it.ping };
+		clients.do{ |it| if ( it.missedPongs > maxMissedPongs ){ this.removeClient( it.addr ) } };
 	}
 
 	stop{
 		clients.do{ |it| 
 			it.addr.sendMsg( '/unregistered', it.addr.port.asInteger );
 			it.addr.sendMsg( '/datanetwork/quit');
-		}
+		};
+		if ( logging ){
+			this.writeLogLine( "datanetwork stopped" );
+		};
 	}
 
+	// recording
+	initLog{ |fn|
+		fn = fn ? "SWDataNetworkOSCLog";
+		logfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
+		logging = true;
+	}
+
+	writeLogLine{ |line|
+		logfile.write( Date.localtime.asString );
+		logfile.write( "\t" );
+		logfile.write( line.asString );
+		logfile.write( "\n" );
+	}
+
+	closeLog{
+		logging = false;
+		logfile.close;
+	}
 }
 
 SWDataNetworkOSCClient{
@@ -606,7 +750,6 @@ SWDataNetworkOSCClient{
 	var <missedPongs = 0;
 	var <subscriptions;
 	var <setters;
-	var <>maxMissedPongs = 60;
 	var <>key;
 
 	*new{ |addr|
