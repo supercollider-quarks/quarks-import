@@ -52,11 +52,14 @@ Proto({
 		};
 	};
 	~stop = { |parms|
-//"abstractcmd: stop".debug;
 		var	notifyTime;
+
+//currentEnvironment.env.debug("abstractcmd: stop");
+
 		if(~isRunning) {
 			~done.(parms);
 			~clearDoneSignal.(parms);
+//"setting isRunning false".debug;
 			~isRunning = false;
 //"\nsending done notification".debug;
 //currentEnvironment.listVars;
@@ -148,14 +151,14 @@ PR(\abstractTLCommand).clone({
 	};
 	~done = { |parms|
 		var	msg;
-		if(~synthDesc.notNil and: { ~synthDesc.hasGate }) {
-			msg = ~node.setMsg(\gate, 0);
-		} {
-			msg = ~node.freeMsg;
-		};
 //">> synthCmd:done".debug;
 		if(~node.isPlaying) {
 //"sending release message".debug;
+			if(~synthDesc.notNil and: { ~synthDesc.hasGate }) {
+				msg = ~node.setMsg(\gate, 0);
+			} {
+				msg = ~node.freeMsg;
+			};
 			if(~latency != 0) {
 				s.sendBundle(~latency, msg);
 			} {
@@ -328,7 +331,7 @@ PR(\abstractTLCommand).clone({
 			if(~dur.isNumber and: { ~dur.isStrictlyPositive }) {
 				stopTime = thisThread.clock.beats + ~dur;
 				thisThread.clock.sched(~dur - 0.001, e {
-					~bps.do({ |bp| bp.stopNow(notifyTime: stopTime); });
+					~bps.copy.do({ |bp| bp.stopNow(notifyTime: stopTime); });
 				});
 			};
 		};
@@ -337,7 +340,8 @@ PR(\abstractTLCommand).clone({
 			// if iterator stops automatically and this command should NOT sync,
 			// then we don't want the bps to stop
 		var	timeSpecForStop = if(~stopAll != true) { NilTimeSpec.new };
-//[~name, parms].debug("bpcmd:done");
+//[~name, parms].debug("\n\nbpcmd:done");
+//thisThread.dumpBackTrace;
 		if(~shouldSync or: { parms.tryPerform(\at, \manualStop) == true }) {
 //"stopping bps".debug;
 				// bps will be removed from this array on each stopNow
@@ -466,8 +470,16 @@ Proto({
 			~isLoaded = true;
 		};
 	};
+	
+	~prUnload = {
+		if(~isLoaded) {
+			~unloadProcesses.();
+			~isLoaded = false;
+		};
+	};
 
 	~initProcesses = nil;		// user-supplied function to load resources
+	~unloadProcesses = nil;
 
 	~play = { |savedCmds|
 		if(~isRunning.().not) {
@@ -497,6 +509,7 @@ Proto({
 			~clearDoneSignal.();
 			~clock.schedAbs((notifyTime ?? { ~clock.beats }), e {
 //~clock.beats.debug("sending done notification at");
+//~savedCmds.debug("with these saved commands");
 				currentEnvironment.changed(\done, ~savedCmds);
 			});
 			if(thisThread === ~seqPlayer) {
@@ -564,8 +577,10 @@ Proto({
 			switch(what)
 				{ \done } {
 					obj.removeDependant(currentEnvironment);
-					~savedCmds = args;
+						// iterator might remove commands after this happens
+					~savedCmds = args.copy;
 //args.debug("section:update - savedcmds");
+//~savedCmds.debug("savedCmds variable");
 					if(~status == \sync) { ~condition.unhang };
 				}
 		};
@@ -767,6 +782,7 @@ Proto({
 					thisThread.clock.schedAbs(goTime, ~sectionRoutine = Routine({
 						~status = \playing;
 						while { ~isRunning.() and: { ~currentSection < ~sections.size } } {
+//~savedCmds.debug("playing section % with saved cmds".format(~sections[~currentSection].name));
 							~sections[~currentSection].play(~savedCmds);
 //"section sequencer: set savedCmds to nil".debug;
 							~savedCmds = nil;
@@ -820,6 +836,7 @@ Proto({
 	
 	~update = { |obj, what, args|
 //[obj, what, args].debug("section sequencer got update");
+		var	section;
 		if(obj === ~sections[~currentSection]) {
 			switch(what)
 				{ \done } {
@@ -837,6 +854,16 @@ Proto({
 					if(~sections[~currentSection + 1].notNil) {
 						~sections[~currentSection + 1].prInitProc;
 					}
+				}
+				{ \unload } {
+//[obj, what, args].debug("got unload message");
+					args.tryPerform(\at, \name).asArray.do { |sectName|
+//sectName.debug("checking");
+						if((section = ~sections.detect { |sct| sct.name == sectName }).notNil) {
+//sectName.debug("unloading one");
+							section.prUnload;
+						}
+					};
 				}
 		};
 	};
