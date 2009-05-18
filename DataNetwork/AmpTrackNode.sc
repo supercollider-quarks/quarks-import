@@ -253,6 +253,92 @@ LeakyNode : SWBusNode{
 	}
 }
 
+TimerNode : SWBusNode{
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc );
+
+		synthDef = (\TimerNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, posSlope1=1,posSlope2,negSlope=0.015, minValue=0.0;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			
+			Out.kr( out, Lag.kr( 
+				Timer.kr( In.kr( in, nc )*mul );
+				, lag) );
+		}).send(s);
+	}
+}
+
+FrictionNode : SWBusNode{
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc );
+
+		settings.put( \friction, 0.5 );
+		settings.put( \spring, 0.414 );
+		settings.put( \damp, 0.313 );
+		settings.put( \mass, 0.1 );
+		settings.put( \beltmass, 1 );
+
+		synthDef = (\FrictionNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, friction=0.5, spring=0.414, damp=0.313, mass =0.1, beltmass = 1;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			Out.kr( out, Lag.kr( Friction.kr( In.kr(in, nc ) * mul, friction, spring, damp, mass, beltmass), lag) );
+		}).send(s);
+	}
+}
+
+/*
+BallNode : SWBusNode{
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc );
+
+		settings.put( \gravity, 0.5 );
+		settings.put( \spring, 0.414 );
+		settings.put( \damp, 0.313 );
+		settings.put( \mass, 0.1 );
+		settings.put( \beltmass, 1 );
+
+		synthDef = (\FrictionNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, friction=0.5, spring=0.414, damp=0.313, mass =0.1, beltmass = 1|;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			Out.kr( out, Lag.kr( Ball.kr( In.kr(in, nc ) * mul, friction, spring, damp, mass, beltmass), lag) );
+		}).send(s);
+	}
+}
+*/
+
+MedianNode : SWBusNode{
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc );
+
+		settings.put( \length, 21 );
+
+		synthDef = (\MedianNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			Out.kr( out, Lag.kr( Median.kr(length, In.kr(in, nc ) * mul), lag) );
+		}).send(s);
+	}
+}
+
+MeanStdDevNode : SWBusNode{
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc*2 );
+
+		settings.put( \length, 50 );
+
+		synthDef = (\MeanStddevNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
+			var mean, stddev, input;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			input = In.kr(in, nc ) * mul;
+			mean = RunningSum.kr( input, length )/length;
+			stddev = StdDevUGen.kr( input, length, mean);
+			Out.kr( out, Lag.kr( mean ++ stddev , lag) );
+		}).send(s);
+	}
+}
+
+
 StdDevNode : SWBusNode{
 	initSynthDefAndBus{ |s,nc=1|
 		bus = Bus.control( s, nc );
@@ -481,6 +567,28 @@ SlopeNode : SWBusNode{
 			input = In.kr( in,nc );
 			Out.kr( out, 
 				Slope.kr( input )
+				* mul);
+		}).send(s);
+	}
+
+}
+
+SlewNode : SWBusNode{
+
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc );
+
+		settings.put( \upSlope, 1);
+		settings.put( \downSlope, 1);
+
+		// overload in subclass
+		synthDef = (\SlewNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=1, mul=1, gate=1, upSlope, downSlope;
+			var input;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			input = In.kr( in,nc );
+			Out.kr( out, 
+				Slew.kr( input, upSlope=1, downSlope=1 )
 				* mul);
 		}).send(s);
 	}
