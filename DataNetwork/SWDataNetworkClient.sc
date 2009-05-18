@@ -282,6 +282,9 @@ SWDataNetworkClient : SWDataNetwork{
 
 	// overloaded from base class
 	addExpected{ |id,label,size=nil,fromnw=false|
+		if ( fromnw.not, {
+			host.sendMsg( '/add/expected', NetAddr.langPort, id );
+		});
 		if ( this.isExpected( id ).not, {
 			expectedNodes = expectedNodes.add( id );
 		});
@@ -293,9 +296,6 @@ SWDataNetworkClient : SWDataNetwork{
 		});
 		if ( size.notNil, {
 			this.setData( id, Array.fill( size, 0 ), fromnw );
-		});
-		if ( fromnw.not, {
-			host.sendMsg( '/add/expected', NetAddr.langPort, id );
 		});
 	}
 

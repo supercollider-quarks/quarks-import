@@ -8,7 +8,7 @@
 \country: "Netherlands",
 \since: "2009",
 \helpdoc: "Laptop.html",
-\dependencies: ["DataNetwork"],
+\dependencies: ["SenseWorld DataNetwork"],
 \ext_dependancy: "MotionTrackOSC",
 \url: "http://www.nescivi.nl"
 )
