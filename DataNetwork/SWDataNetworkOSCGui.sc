@@ -72,7 +72,7 @@ SWDataNetworkOSCClientGui{
 		
 		sets = GUI.textField.new( cw, Rect( 0, 0, xsize - 75, 16 )).string_( client.setters.collect{ |it| it.id }.asArray.asString ).font_( font ).align_( \left ).resize_(5);
 		
-		watcher = SkipJack.new({ this.updateVals }, 1.0, { w.isClosed }, (\dataoscclientgui ++ client.addr).asSymbol, autostart: false );
+		watcher = SkipJack.new({ { this.updateVals }.defer }, 1.0, { w.isClosed }, (\dataoscclientgui ++ client.addr).asSymbol, autostart: false );
 
 		//	watcher.start;		
 		w.refresh;
@@ -101,7 +101,7 @@ SWDataNetworkOSCClientGui{
 	}
 
 	updateVals { 
-		{ 
+		//	{ 
 			mpongs.string_( client.missedPongs.asString );
 
 			nsub.string_( client.subscriptions.size.asString );
@@ -113,7 +113,7 @@ SWDataNetworkOSCClientGui{
 
 			if ( editKey.not ){ key.string_( client.key.asString ); };
 			//	slots.do{ |it| it.updateVals };
-		}.defer;
+			//	}.defer;
 	}
 
 	hide{
@@ -214,12 +214,14 @@ SWDataNetworkOSCGui{
 			};
 		};
  						
-		watcher = SkipJack.new({ this.updateVals }, 1.0, { w.isClosed }, (\datanetworkoscgui).asSymbol, autostart: false );
+		watcher = SkipJack.new({ {this.updateVals}.defer }, 1.0, { w.isClosed }, (\datanetworkoscgui).asSymbol, autostart: false );
 
 		watcher.start;		
 		w.refresh;
 
 		w.acceptsMouseOver = true;
+
+		w.onClose = { network.gui = nil };
 
 		network.gui = this;
 	}
@@ -273,10 +275,10 @@ SWDataNetworkOSCGui{
 	}
 
 	updateVals { 
-		{ 
+		//	{ 
 			//	if ( editKey.not ){key.string_( network.spec.name.asString );};
-			nodes.do{ |it| it.updateVals };
-		}.defer;
+		nodes.do{ |it| it.updateVals };
+		//	}.defer;
 	}
 
 	hide{

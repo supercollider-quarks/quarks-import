@@ -119,22 +119,25 @@ SWDataNetwork{
 		var ret = true;
 		var ret2;
 		var lasttime;
+		var node;
 		if ( verbose > 1, { [id,data].postln; } );
-		if ( nodes[id].isNil, {
+		node = nodes[id];
+		if ( node.isNil, {
 			ret = this.registerNode( id, data.size );
+			node = nodes[id];
 			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
 		});
 		if ( ret ) {
 			if ( recTime ){
-				lasttime = nodes[id].lasttime;
+				lasttime = node.lasttime;
 			};
-			ret2 = nodes[id].data_( data );
+			ret2 = node.data_( data );
 			if ( ret2 and: recTime){
-				this.writeTimeUpdate( id, nodes[id].lasttime - lasttime );
+				this.writeTimeUpdate( id, node.lasttime - lasttime );
 			};
 			if ( osc.notNil and: ret2, {
 				//	osc.sendData( id, data );
-				osc.sendDataNode( nodes[id] );
+				osc.sendDataNode( node );
 			});
 		};
 	}
