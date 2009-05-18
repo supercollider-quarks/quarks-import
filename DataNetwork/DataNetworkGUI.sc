@@ -85,7 +85,7 @@ SWDataSlotGui{
 
 		this.addGetButton;
 
-		watcher = SkipJack.new({ this.updateVals }, 1.0, { w.isClosed }, (\dataslotgui ++ slot.id).asSymbol, autostart: false );
+		watcher = SkipJack.new({ defer{ this.updateVals } }, 1.0, { w.isClosed }, (\dataslotgui ++ slot.id).asSymbol, autostart: false );
 
 		//	watcher.start;		
 		w.refresh;
@@ -104,7 +104,7 @@ SWDataSlotGui{
 	}
 
 	updateVals { 
-		{ 
+		//	{ 
 			val.value_( slot.value.round(0.001) );
 			if ( slot.map.notNil, {
 				slider.value_( slot.map.unmap( slot.value ) );
@@ -112,7 +112,7 @@ SWDataSlotGui{
 				slider.value_( slot.value );
 			});
 			if ( editKey.not ){ key.string_( slot.key.asString ); };
-		}.defer;
+			//	}.defer;
 	}
 
 	parent_{ |p|
@@ -241,11 +241,10 @@ SWDataNodeGui{
 
 		this.addSubGetButtons;
 
-		watcher = SkipJack.new({ this.updateVals }, 1.0, { w.isClosed }, (\datanodegui ++ node.id).asSymbol, autostart: false );
+		watcher = SkipJack.new({ defer{this.updateVals} }, 1.0, { w.isClosed }, (\datanodegui ++ node.id).asSymbol, autostart: false );
 
 		//	watcher.start;		
 		w.refresh;
-
 	}
 
 	// overload in subclass
@@ -331,11 +330,13 @@ SWDataNodeGui{
 	}
 
 	updateVals { 
-		{ 
-			elaps.value_( node.elapsed.round(0.001) );
+		//	{ 
+		elaps.value_( node.elapsed.round(0.001) );
+		if ( node.elapsed < watcher.dt ){
 			if ( editKey.not ){ key.string_( node.key.asString ); };
 			slots.do{ |it| it.updateVals };
-		}.defer;
+		};
+		//	}.defer;
 	}
 
 	hide{
@@ -464,7 +465,7 @@ SWDataNetworkGui{
 			};
 		};
  						
-		watcher = SkipJack.new({ this.updateVals }, 1.0, { w.isClosed }, (\datanetworkgui_ ++ network.spec.name).asSymbol, autostart: false );
+		watcher = SkipJack.new({ defer{ this.updateVals} }, 1.0, { w.isClosed }, (\datanetworkgui_ ++ network.spec.name).asSymbol, autostart: false );
 
 		watcher.start;		
 		w.refresh;
@@ -472,6 +473,8 @@ SWDataNetworkGui{
 		w.acceptsMouseOver = true;
 
 		network.gui = this;
+
+		w.onClose = { network.gui = nil };
 	}
 
 	// overload in subclass
@@ -547,12 +550,12 @@ SWDataNetworkGui{
 	}
 
 	updateVals { 
-		{ 
-			worry.value_( network.worrytime );
-			if ( editKey.not ){key.string_( network.spec.name.asString );};
-			nodes.do{ |it| it.updateVals };
-			bigNodes.do{ |it| it.updateVals };
-		}.defer;
+		//	{ 
+		worry.value_( network.worrytime );
+		if ( editKey.not ){key.string_( network.spec.name.asString );};
+		nodes.do{ |it| it.updateVals };
+		bigNodes.do{ |it| it.updateVals };
+		//	}.defer;
 	}
 
 	hide{
