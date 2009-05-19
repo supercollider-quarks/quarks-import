@@ -5,17 +5,20 @@ SWDataNetworkClient : SWDataNetwork{
 	var responders;
 	var <lasttime;
 
+	var <>name;
+
 	var <subscriptions,<setters;
 	
 	var <>autoregister = true;
 	// do not set unless you are the class itself
 	var <>registered = false;
 
-	*new{ |myip,hostip,reg=true|
-		^super.new.init.myInit( myip,hostip, reg );
+	*new{ |myip,hostip,name="",reg=true|
+		^super.new.init.myInit( myip,hostip,name, reg );
 	}
 
-	myInit{ |ip,hst,reg=true|
+	myInit{ |ip,hst,nm="",reg=true|
+		name = nm;
 		lasttime = Process.elapsedTime;
 		host = NetAddr( hst, NetAddr.langPort);
 		this.findHost;
@@ -146,7 +149,10 @@ SWDataNetworkClient : SWDataNetwork{
 				}{
 					this.subscribeNode( it );
 				}
-			}
+			};
+			setters.do{ |it|
+				this.addExpected( it, spec.findNode( it ) );
+			};
 		});
 	}
 
@@ -178,7 +184,7 @@ SWDataNetworkClient : SWDataNetwork{
 	/// OSC interface
 
 	register{
-		host.sendMsg( '/register', NetAddr.langPort );
+		host.sendMsg( '/register', NetAddr.langPort, name );
 	}
 
 	unregister{
