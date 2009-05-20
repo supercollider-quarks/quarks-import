@@ -114,6 +114,16 @@ Proto {
 		this.use({ result = ~asPattern.valueArray(args); });
 		^result
 	}
+	
+	embedInStream { arg ... args;
+		var result;
+		if(env[\canEmbed] == true) {
+			this.use({ result = ~embedInStream.valueArray(args); });
+			^result
+		} {
+			^this.yield;
+		}
+	}
 
 	play { arg ... args;
 		var result;
