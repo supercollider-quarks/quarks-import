@@ -1,7 +1,7 @@
 //redFrik
 
 //--changes090521
-//added sortFunc
+//added sortFunc and value_.  thanks miguel
 //--changes090114
 //bugfix: userview canfocus now set to false
 //--changes080827
@@ -71,6 +71,21 @@ PopUpTreeMenu : SCViewHolder {
 	//--instance methods
 	currentPath {
 		^lst.collect{|z| z[3][z[2].value]};
+	}
+	value_ {|path|
+		var tmp= tree;
+		if(path.every{|x| tmp= tmp[x]; tmp.notNil}, {	//check path valid
+			if(tmp.isEmpty, {
+				currentLeaf= path;
+				value= currentLeaf;
+				action.value(this, value);			//call action function
+				pop.items_([value.last.asString]);
+			}, {
+				(this.class.name++": node"+path.last+"is a submenu").warn;
+			});
+		}, {
+			(this.class.name++": path"+path+"does not exist").warn;
+		});
 	}
 	
 	//--overrides
