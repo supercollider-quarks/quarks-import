@@ -1,5 +1,7 @@
 //redFrik
 
+//--changes090521
+//added sortFunc
 //--changes090114
 //bugfix: userview canfocus now set to false
 //--changes080827
@@ -18,6 +20,7 @@
 PopUpTreeMenu : SCViewHolder {
 	var	<>tree, <value, <currentLeaf, <>action, <>openAction, <>closeAction,
 		<font, <bounds, <>hiliteColor,
+		<>sortFunc,
 		pop, usr, hgt, lst, add,
 		lastSelected= 0, xIndexLast, yIndexLast, parentWindow, mouseMoved;
 	*initClass {
@@ -146,7 +149,7 @@ PopUpTreeMenu : SCViewHolder {
 			subdict= this.prLookup(tree, addy);
 		});
 		if(subdict.size>0, {						//node not a leaf - create submenu
-			keys= subdict.keys.asArray.sort;
+			keys= subdict.keys.asArray.sort(sortFunc);
 			items= keys.collect{|z|					//assume only symbol keys in dict
 				if(subdict[z].size>0, {
 					z= (z++" >").asSymbol;			//add arrow to nodes with subnodes
