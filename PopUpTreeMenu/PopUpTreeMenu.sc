@@ -1,7 +1,7 @@
 //redFrik
 
 //--changes090521
-//added sortFunc and value_.  thanks miguel
+//added sortFunc, value_ and valueAction_.  thanks miguel
 //--changes090114
 //bugfix: userview canfocus now set to false
 //--changes080827
@@ -73,12 +73,26 @@ PopUpTreeMenu : SCViewHolder {
 		^lst.collect{|z| z[3][z[2].value]};
 	}
 	value_ {|path|
+		this.prValue_(path, false);
+	}
+	valueAction_ {|path|
+		this.prValue_(path, true);
+	}
+	
+	//--overrides
+	bounds_ {|argRect| bounds= argRect; pop.bounds_(bounds); usr.bounds_(bounds)}
+	font_ {|argFont| font= argFont; pop.font_(font); /*pop.refresh*/}
+	
+	//--private
+	prValue_ {|path, actionFlag|
 		var tmp= tree;
 		if(path.every{|x| tmp= tmp[x]; tmp.notNil}, {	//check path valid
 			if(tmp.isEmpty, {
 				currentLeaf= path;
 				value= currentLeaf;
-				action.value(this, value);			//call action function
+				if(actionFlag, {
+					action.value(this, value);		//call action function
+				});
 				pop.items_([value.last.asString]);
 			}, {
 				(this.class.name++": node"+path.last+"is a submenu").warn;
@@ -87,12 +101,6 @@ PopUpTreeMenu : SCViewHolder {
 			(this.class.name++": path"+path+"does not exist").warn;
 		});
 	}
-	
-	//--overrides
-	bounds_ {|argRect| bounds= argRect; pop.bounds_(bounds); usr.bounds_(bounds)}
-	font_ {|argFont| font= argFont; pop.font_(font); /*pop.refresh*/}
-	
-	//--private
 	prUserAction {|v, x, y|
 		var xIndex, yIndex;
 		if(lst.size==0, {							//check if at root level
