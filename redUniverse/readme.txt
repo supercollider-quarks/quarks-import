@@ -8,6 +8,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 //--
 
+090521 - RedWindow and RedJWindow now draws in the UserView - thanks Thor
 090514 - growth example and asPoint added to RedVector
 090510 - added RedLSystem and RedLTurtle classes
 	updated example 070-lsystem.scd
