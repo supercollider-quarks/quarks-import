@@ -27,12 +27,13 @@ RedJWindow : JSCWindow {
 		this.background_(Color.black);
 		mouse= RedVector2D[view.bounds.width/2, view.bounds.height/2];
 		userView= JSCUserView(this, view.bounds)
+			.relativeOrigin_(false)
 			.mouseMoveAction_({|v, x, y| mouse= RedVector2D[x, y]});
 	}
-	draw {|func| this.drawHook_(func)}
+	draw {|func| userView.drawFunc= func}
 	play {|fps= 40|
 		isPlaying= true;
-		{while{this.isOpen&&isPlaying} {this.refresh; fps.reciprocal.wait}}.fork(AppClock);
+		{while{this.isOpen&&isPlaying} {userView.refresh; fps.reciprocal.wait}}.fork(AppClock);
 	}
 	stop {isPlaying= false}
 	resize {|redVec| this.setInnerExtent(redVec[0], redVec[1])}
