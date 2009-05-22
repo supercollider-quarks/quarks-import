@@ -55,7 +55,7 @@ RedLTurtle {
 	}
 	makeWindow {|bounds, initAngle= 0, initTranslate|
 		var b= bounds ?? {Rect(100, 200, 700, 700)};
-		var win= GUI.window.new(this.class.name, b);
+		var win= GUI.window.new(this.class.name, b, false);
 		initTranslate= initTranslate ? Point(0.5, 0.5);
 		win.drawHook_{
 			GUI.pen.rotate(initAngle, b.width*0.5, b.height*0.5);
