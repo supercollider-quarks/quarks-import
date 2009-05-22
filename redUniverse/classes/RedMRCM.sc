@@ -16,6 +16,7 @@ RedMRCM {
 		var win= GUI.window.new(this.class.name, b, false);
 		win.drawHook_{
 			Pen.translate(b.width*0.5, b.height*0.5);
+			Pen.moveTo(Point(0, 0));
 			this.draw(b.width, b.height);
 			Pen.stroke;
 		};
