@@ -320,7 +320,7 @@ SWDataNetworkOSC{
 		var client;
 		client = this.findClient( addr );
 		if ( client.isNil, {
-			addr.sendMsg( '/error', "/subscribe/all" "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
+			addr.sendMsg( '/error', "/subscribe/all", "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first.");			
 		},{
 			network.nodes.do{ |it| 
 				client.subscribeNode( it.id );
@@ -498,7 +498,7 @@ SWDataNetworkOSC{
 		[addr,there].postln;
 		if ( there.notNil, { clients.remove( there ) } );
 		there2 = setters.findKeyForValue( addr );
-		if ( there2.notNil, { setters.removeAt( there ) } );
+		if ( there2.notNil, { setters.removeAt( there2 ) } );
 		addr.sendMsg( '/unregistered', addr.port.asInteger );
 
 		if ( gui.notNil ){

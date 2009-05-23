@@ -40,7 +40,8 @@ SWDataNetworkOSCClientGui{
 			try { decorator = w.decorator };
 		});
 
-		cw = GUI.compositeView.new( w, Rect( xpos, ypos, xsize, ysize ) ).resize_( 5 );
+		cw = GUI.compositeView.new( w, Rect( xpos, ypos, xsize, ysize ) );
+		// .resize_( 5 );
 		cw.decorator = FlowLayout(Rect( xpos, ypos, xsize, ysize), 2@2, 2@2);
 		cw.background = Color.white;
 		decorator = cw.decorator;
@@ -198,7 +199,7 @@ SWDataNetworkOSCGui{
 		logview = GUI.textView.new( w, Rect( 0, 0, nvsize, 60) ).editable_( false ).resize_(8).hasVerticalScroller_( true );
 
 		// nodeview:
-		ysize = SWDataNetworkOSCClientGui.ysize + 2 * network.clients.size + 2;
+		ysize = (SWDataNetworkOSCClientGui.ysize + 2) * network.clients.size + 2;
 		xsize =  1000;
 		nv2 = GUI.compositeView.new( nodeview, Rect( 0,0, xsize, ysize ) );
 
@@ -247,10 +248,10 @@ SWDataNetworkOSCGui{
 
 	
 	removeClient{ |client|
-		client.dump;
-		nodes.do{ |it| it.client.dump; (it.client == client).postln; };
-		nodes.removeAllSuchThat( { |it| it.client == client } ).postln;
-		nodes.postln;
+		//		client.dump;
+		//		nodes.do{ |it| it.client.dump; (it.client == client).postln; };
+		nodes.removeAllSuchThat( { |it| it.client == client } ); //.postln;
+		//		nodes.postln;
 
 		this.refreshClients;
 	}
@@ -259,6 +260,8 @@ SWDataNetworkOSCGui{
 		var newNodes = nodes.collect{ |it| it.client };
 		var nbn,sn;
 		nv2.removeAll;
+
+		nv2.children.postln;
 
 		ypos = -1 * SWDataNetworkOSCClientGui.ysize - 2;
 

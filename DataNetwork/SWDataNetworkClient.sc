@@ -215,6 +215,14 @@ SWDataNetworkClient : SWDataNetwork{
 		host.sendMsg( '/query/subscriptions', NetAddr.langPort );
 	}
 
+	subscribeAll{ 
+			host.sendMsg( '/subscribe/all', NetAddr.langPort );
+	}
+
+	unsubscribeAll{ 
+			host.sendMsg( '/unsubscribe/all', NetAddr.langPort );
+	}
+
 	subscribeNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
 			host.sendMsg( '/subscribe/node', NetAddr.langPort, node.id );
