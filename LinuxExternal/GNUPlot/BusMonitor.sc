@@ -58,9 +58,9 @@ BusMonitor{
 
 		StaticText.new( w, 150@20 ).string_( title );
 		
-		min = EZNumber.new(w, 60@20, label: "min", controlSpec: [-100,100,\lin].asSpec, action: { this.setRange( min.value, max.value ); }, initVal: 0, labelWidth: 25, numberWidth: 30 );
+		min = EZNumber.new(w, 60@20, label: "min", controlSpec: [-10000,10000,\lin].asSpec, action: { this.setRange( min.value, max.value ); }, initVal: 0, labelWidth: 25, numberWidth: 30 );
 		
-		max = EZNumber.new(w, 60@20, label: "max", controlSpec: [-100,100,\lin].asSpec, action: { this.setRange( min.value, max.value ); }, initVal: 1, labelWidth: 25, numberWidth: 30 );
+		max = EZNumber.new(w, 60@20, label: "max", controlSpec: [-10000,10000,\lin].asSpec, action: { this.setRange( min.value, max.value ); }, initVal: 1, labelWidth: 25, numberWidth: 30 );
 
 		Button.new(w,Rect(0,0,20,20)).states_( [[">", Color.blue],["[]", Color.red]]).action_({ |but| but.value.postln; if ( but.value == 1){ this.start }{ this.stop} } );
 
