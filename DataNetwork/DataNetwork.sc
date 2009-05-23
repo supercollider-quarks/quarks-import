@@ -18,6 +18,8 @@ SWDataNetwork{
 	var <>recTask;
 	var <logfile;
 
+
+	var <>recnodes;
 	var <recTime = false;
 	var <timelogfile;
 
@@ -218,15 +220,15 @@ SWDataNetwork{
 
 	// recording
 	initRecord{ |fn,dt=0.005|
-		var recordnodes;
+		//		var recordnodes;
 		fn = fn ? "SWDataNetworkLog";
 		logfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
 		
-		recordnodes = this.writeHeader;
+		recnodes = this.writeHeader;
 
 		recTask = Task.new( {
 			loop {
-				this.writeLine( dt, recordnodes );
+				this.writeLine( dt, recnodes );
 				dt.wait;
 			}
 		});
