@@ -407,6 +407,11 @@ SWDataNode{
 	}
 	*/
 
+	monitorClose{
+		busmonitor.cleanUp;
+		busmonitor = nil;
+	}
+
 	monitor{ |onoff=true|
 		if ( onoff, {
 			if ( busmonitor.isNil, { 
