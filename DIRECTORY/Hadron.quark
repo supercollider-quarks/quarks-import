@@ -4,7 +4,7 @@
 	\summary:		"A graphical patching system for live performance and composition.",
 	\author: 		"Batuhan Bozkurt",
 	\country: "Turkey",
-	\version:		1.1,
+	\version:		1.2,
 	\since: 		"2009",
 	\helpdoc:     "Hadron.html",
 	\url:         "http://www.earslap.com"
