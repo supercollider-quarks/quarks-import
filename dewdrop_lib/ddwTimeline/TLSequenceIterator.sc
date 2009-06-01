@@ -56,7 +56,8 @@ TLSequenceIterator {
 						{ item.isArray } {
 //"spawn".debug;
 							index = index + 1;
-							cmd = this.class.new(item, sequencer).play;
+							cmd = this.class.new(item, sequencer)
+								.play(argClock: thisThread.clock);
 							this.addActive(cmd);
 						}
 						{		// default, ignore unrecognized item

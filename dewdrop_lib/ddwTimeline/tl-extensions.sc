@@ -41,7 +41,7 @@
 
 + NotificationCenter {
 	*registrationsFor { |object, message, listener|
-		var	collection = Library.at(this);
+		var	collection = registrations; // Library.at(this);
 		[object, message, listener, nil].do({ |match, i|
 			if(collection.notNil and: { match.notNil }) {
 				collection = collection[match];
