@@ -62,7 +62,7 @@ SWDataNetwork{
 		if ( this.isExpected( id ).not, {
 			expectedNodes = expectedNodes.add( id );
 		});
-		if ( label.notNil, {
+		if ( label.notNil and: (label.asSymbol != \0 ), {
 			this.add( label, id );
 		},{
 			// maybe the label is already in the spec
@@ -120,6 +120,7 @@ SWDataNetwork{
 	setData{ |id,data|
 		var ret = true;
 		var ret2;
+		var returnCode; // success;
 		var lasttime;
 		var node;
 		if ( verbose > 1, { [id,data].postln; } );
@@ -134,14 +135,23 @@ SWDataNetwork{
 				lasttime = node.lasttime;
 			};
 			ret2 = node.data_( data );
-			if ( ret2 and: recTime){
-				this.writeTimeUpdate( id, node.lasttime - lasttime );
-			};
-			if ( osc.notNil and: ret2, {
-				//	osc.sendData( id, data );
-				osc.sendDataNode( node );
-			});
+			if ( ret2 ){
+				returnCode = 0;
+				if ( recTime ){
+					this.writeTimeUpdate( id, node.lasttime - lasttime );
+				};
+				if ( osc.notNil, {
+					//	osc.sendData( id, data );
+					osc.sendDataNode( node );
+				});
+			}{
+				returnCode = 2; // wrong number of slots;
+				if ( verbose > 1 ) { "wrong number of slots".postln; };
+			}
+		}{
+			returnCode = 1; // error registering node;
 		};
+		^returnCode;
 	}
 
 	/* This should not be necessary:
@@ -383,12 +393,16 @@ SWDataNode{
 		^data;
 	}
 
+	setLastTime{
+		lasttime = Process.elapsedTime;
+	}
+
 	data_{ |indata|
 		if ( indata.size == slots.size , {
 			data = indata * scale;
 			data.do{ |it,i| slots[i].value = it };
 			action.value( data, this );
-			lasttime = Process.elapsedTime;
+			this.setLastTime;
 			//	trigger.value;
 			^true;
 		});
