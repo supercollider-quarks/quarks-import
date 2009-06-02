@@ -147,7 +147,7 @@ SWDataNetworkOSCGui{
 	var <>w, <>network, <watcher;
 
 	var <key,<verb,<debug,<nodes,<bigNodes;
-	var <restore,<backup,<announce;
+	var <restore,<backup,<announce,<log;
 	var <nodeview,<nv2;
 	var <logview;
 	var <watch,<worry;
@@ -176,12 +176,11 @@ SWDataNetworkOSCGui{
 		announce = GUI.button.new( w, Rect( 0, 0, 80, 20 )).states_(
 			[ [ "ANNOUNCE", Color.black, Color.green ] ] ).action_( { network.announce } ).mouseOverAction_({ this.setInfo( "announce the network") });
 
-		//		key = GUI.textField.new( w, Rect( 0, 0, 200, 20 )).string_( network.spec.name.asString ).action_( { |tf| network.spec.name = tf.value; editKey = false; } ).mouseOverAction_({ this.setInfo( "the network spec name. Click to edit.") });
-
-		//		key.mouseDownAction = { editKey = editKey.not; };
-
 		verb = GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
-			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ] ] ).action_( { |but| network.verbose = but.value } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
+			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ], [ "V3", Color.red ] ] ).action_( { |but| network.verbose = but.value } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
+
+		log = GUI.button.new( w, Rect( 0, 0, 40, 20 )).states_(
+			[ [ "log >", Color.green ], ["log []", Color.red ] ] ).action_( { |but| if ( but.value == 1 ){ network.initLog }{ network.closeLog } } ).mouseOverAction_({ this.setInfo( "write a log to file") });
 
 		backup = GUI.button.new( w, Rect( 0, 0, 55, 20 )).states_(
 			[ [ "backup", Color.blue ] ] ).action_( { network.backupClients} ).mouseOverAction_({ this.setInfo( "backup client configuration") });

@@ -87,6 +87,8 @@ SWDataSlotGui{
 
 		watcher = SkipJack.new({ defer{ this.updateVals } }, 1.0, { w.isClosed }, (\dataslotgui ++ slot.id).asSymbol, autostart: false );
 
+		this.updateVals;
+
 		//	watcher.start;		
 		w.refresh;
 	}
