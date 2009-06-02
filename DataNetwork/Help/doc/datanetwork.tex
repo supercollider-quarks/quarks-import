@@ -59,7 +59,7 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/datanetwork/announce| & si & host, port no. & announce the network with its coordinates \\
 \verb|/datanetwork/quit| & si & host, port no. & inform that the host has quit \\
 
-\verb|/register| & i & port no. & register to the network as a client \\
+\verb|/register| & is & port no., name & register to the network as a client, the name is optional \\
 \verb|/registered| & i & port no. & reply to register to the network as a client \\
 
 \verb|/unregister| & i & port no. & unregister to the network as a client \\  
@@ -68,15 +68,15 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/ping| & i & port no. &  message to check if client is still there \\
 \verb|/pong| & i & port no. &  expected reply to the \verb|/ping| message \\
 
-\verb|/error| & s & error message & error occurred upon request \\
-\verb|/warn| & s & warn message & non fatal error occurred upon request \\  
+\verb|/error| & ssi & cause, error message, error ID & error occurred upon request (indicated by cause) \\
+\verb|/warn| & ssi & cause, warn message, error ID & non fatal error occurred upon request \\  
 
 \verb|/query/expected| & i & port no.& query which nodes are expected in the network (reply /info/expected) \\
 \verb|/query/nodes| & i & port no.& query which nodes are in the network (reply /info/node) \\
 \verb|/query/slots| & i & port no.& query which slots are in the network (reply /info/slot)\\
-\verb|/query/subscriptions| & i & port no.& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
 \verb|/query/clients| & i & port no.& query which clients are in the network (reply /info/client)\\
 \verb|/query/setters| & i & port no.& query which nodes the client is the setter of (reply /info/setter) \\
+\verb|/query/subscriptions| & i & port no.& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
 
 \verb|/info/expected| & is & node ID, node label & info about an expected node \\
 \verb|/info/node| & isi & node ID, node label, number of slots & info about a node \\
@@ -84,21 +84,25 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/info/client| & sis & ip, port no., hostname & info about a client \\
 \verb|/info/setter| & isi & node ID, node label, number of slots & info about a node the client is setting \\
 
+\verb|/subscribe/all| & i & port no. & subscribe to receive data from all nodes \\
+\verb|/unsubscribe/all| & i & port no. & unsubscribe from all nodes \\
+
 \verb|/subscribe/node| & ii & port no., node ID & subscribe to receive data from a node \\
 \verb|/subscribed/node| & ii & port no., node ID & reply to subscribe to receive data from a node \\
 
-\verb|/subscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
-\verb|/subscribed/slot| & iii & port no., node ID, slot ID & reply to subscribe to receive data from a slot \\  
-
 \verb|/unsubscribe/node| & ii & port no., node ID & unsubscribe to receive data from a node \\
 \verb|/unsubscribed/node| & ii & port no., node ID & reply to unsubscribe to receive data from a node \\
+
+\verb|/subscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
+\verb|/subscribed/slot| & iii & port no., node ID, slot ID & reply to subscribe to receive data from a slot \\  
 
 \verb|/unsubscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
 \verb|/unsubscribed/slot| & iii & port no., node ID, slot ID & reply to unsubscribe to receive data from a slot \\  
 
 \verb|/data/node| & iff..f & node ID, data values & node data \\
-\verb|/data/slot| & iif & node ID, slot ID, data value & slot data \\
 \verb|/get/node| & ii & port no., node ID & get data from a node (reply /data/node) \\
+
+\verb|/data/slot| & iif & node ID, slot ID, data value & slot data \\
 \verb|/get/slot| & iii & port no., node ID, slot ID & get data from a slot (reply /data/slot) \\
 
 \verb|/set/data| & iif..f & port no., node ID, data values & set data to a node  (reply /data/node)\\
@@ -108,9 +112,10 @@ See table \ref{oscinterface} for an overview of commands.
 
 \verb|/remove/node| & ii & port no., node ID & remove a node (only possible if client is setter) \\
 \verb|/removed/node| & ii & port no., node ID & reply to remove a node \\
+\verb|/remove/all| & i & port no. & remove all nodes the client is a setter of (generates /removed/node messages) \\
 
-\verb|/add/expected| & iisi & port no., node ID, node label, node size & add an expected node to the network (reply /info/expected) \\
- &  &  & if node size is given, the node is created as well (and generate and /info/node message) \\
+\verb|/add/expected| & iiis & port no., node ID, node size, node label & add an expected node to the network (reply /info/expected) \\
+ &  &  & if node size is given, the node is created as well (and generates a /info/node message) \\
 \hline
 \end{tabular}
 \end{center}
@@ -119,9 +124,36 @@ See table \ref{oscinterface} for an overview of commands.
 % \end{table}
 \end{sidewaystable}
 
-\section{Max implementation (by Harry Smoak)}
+\begin{table}
+\small
+\begin{center}
+\begin{tabular}{|rl|}
+ \hline
+  1 & "Client with IP"+addr.ip+"and port"+addr.port+"is not registered. Please register first" \\
+  2 & "Client with IP"+addr.ip+"and port"+addr.port+"is already registered. Please unregister first" \\
+  3 & "Client with IP"+addr.ip+"and port"+addr.port+"was not registered"  \\
+  4 & "Client with IP"+addr.ip+"and port"+addr.port+"is not the setter of node with id"+..  \\
+  5 & "Node with id"+..+"is not part of the network" \\
+  6 & "Node with id"+..+"is not expected to be part of the network"  \\
+  7 & "There are no expected nodes in the network" \\
+  8 & "There are no nodes in the network"  \\
+  9 & "There are no clients in the network"  \\
+ 10 & "Client with IP"+addr.ip+"and port"+addr.port+"has no setters"  \\
+ 11 & "Client with IP"+addr.ip+"and port"+addr.port+"has no subscriptions" \\
+ 12 & "Node with id"+...+"does not have"+..+"slots" \\
+ \hline
+ \end{tabular}
+\end{center}
+\caption{Error codes and strings}
+\label{errorcodes}
+\end{table}
+
+
+\section{Max implementation (by Harry Smoak, Joseph Malloch and Brett Bergmann)}
 In the Max implementation, there is a data \textit{sink}, which manages the connection to the network (registering, subscriptions, etc.), and gives the received data. There is a data \textit{source}, which can send data into the network. The subscriptions are handled by textfiles, as are the published data nodes, so they can be easily restored upon opening a max patch.
 The objects react to the announce message from the network to set the right host IP and port.
+
+Another option is to use the patch dn.node which gets data from 1 node.
 
 \section{SuperCollider implementation}
 
@@ -163,16 +195,42 @@ To add yourself to the group, execute as root (with instead of ``nescivi'' your 
  adduser nescivi netdev
 \end{verbatim}
 
-\subsection*{TODO (SuperCollider)}
-\begin{itemize}
- \item add client gui
- \item update the client in SC
- \item (discard) change expectedNodes to become a security option
-\end{itemize}
+% \subsection*{TODO (SuperCollider)}
+
+% \begin{itemize}
+%  \item (discard) change expectedNodes to become a security option
+% \end{itemize}
+
+\section*{Acknowledgments}\label{sec:acknowledgments}
+This software was created by
+
+\textbf{SuperCollider classes:}
+Marije Baalman (nescivi)  
+
+\textbf{Max patches:}
+Harry Smoak, 
+Joseph Malloch, 
+Brett Bergmann
+
+
+Developed as part of the "Sense/Stage" project and the "Papyrus" project between\\
+Design and Computation Arts, Fine Arts, Concordia University\\
+and\\
+Input Devices and Music Interaction Lab, Music Technology, McGill University
+
+This work was support by grants from the Social Sciences and Humanities Research Council of Canada and the Hexagram Institute for Research/Creation in Media Arts and Sciences, Montr\'eal, QC, Canada.
+
+(c) 2008-9 by the authors
+
+Released under the GNU/GPL (see COPYING file)
 
 \subsection*{ChangeLog}
 
 \begin{itemize}
+ \item 27/5/2009 - added remove all message. error codes for error and warn messages.
+ \item 19/5/2009 - performance improvement, fix bugs in gui, logging option for osc communication, logging option for update times, clients are now removed after a certain amount of missed pongs. Protection for non-numerical data coming in.
+ \item 18/5/2009 - added subscribe all and unsubscribe all messages.
+ \item 4/4/2009 - added client gui, and updated the client in SC.
  \item 2/4/2009 - added gui for connected clients
  \item 1/4/2009 - added help files and wii mote support, improved main gui
  \item 12/3/2009 - added pattern support
@@ -187,25 +245,5 @@ To add yourself to the group, execute as root (with instead of ``nescivi'' your 
 \end{itemize}
 
 
-\section*{Acknowledgments}\label{sec:acknowledgments}
-This software was created by
-
-SuperCollider classes:
-Marije Baalman (nescivi)  
-
-Max patches:
-Harry Smoak
-
-
-Developed as part of the "Sense/Stage" project and the "Papyrus" project between
-Design and Computation Arts, Fine Arts, Concordia University
-and
-Input Devices and Music Interaction Lab, Music Technology, McGill University
-
-This work was support by grants from the Social Sciences and Humanities Research Council of Canada and the Hexagram Institute for Research/Creation in Media Arts and Sciences, Montr\'eal, QC, Canada.
-
-(c) 2008-9 by the authors
-
-Released under the GNU/GPL (see COPYING file)
 
 \end{document}
