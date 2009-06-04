@@ -10,12 +10,12 @@
 
 GLOBOL {
 
-	classvar space, <isRunning = false, <numChannels;
+	classvar <space, <isRunning = false, <numChannels, <>numSpeakers;
 	classvar server, responder, <sender, id;
 	classvar <classmethdict;
 	classvar prevPreProcessor, prevNetFlag;
 	
-	*run { | n = 8 |
+	*run { | n = 8, numOutputs = 2 |
 		if(isRunning) { "GLOBOL IS RUNNING ALREADY!".warn; ^this };
 		prevPreProcessor = thisProcess.interpreter.preProcessor;
 		thisProcess.interpreter.preProcessor = { |string|
@@ -28,6 +28,7 @@ GLOBOL {
 			"''"; // BLOCK SC REPL
 		};
 		numChannels = n;
+		numSpeakers = numOutputs;
 		Server.local.options.numAudioBusChannels = n * 128;
 		space = ProxySpace.push(Server.local.reboot);
 		isRunning = true;
@@ -67,8 +68,12 @@ GLOBOL {
 		^join(collect(lines, { | line |
 			
 			var newline = String.new;
-						
+			
+			line = line.replace(":?",
+					".playN(%);".format((0..numSpeakers-1).wrapExtend(numChannels))
+			);			
 			line = line.replace(":", ".");
+			
 			line = " " ++ line ++ "  ";
 			
 			// FIND GLOBOL VARIABLES
