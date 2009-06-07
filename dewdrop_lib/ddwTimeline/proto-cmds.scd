@@ -1,5 +1,3 @@
-// need a way for iterator to tell bpcmd whether it stopped automatically or is manually killed
-
 // setcmd doesn't handle synthdesc right
 
 // h. james harkins - jamshark70@dewdrop-world.net
@@ -119,9 +117,9 @@ PR(\abstractTLCommand).clone({
 		~schedTime = ~quant.nextTimeOnGrid(thisThread.clock);
 		thisThread.clock.schedAbs(~schedTime, e {
 			if(~latency == 0) {
-				s.sendBundle(nil, ~node.newMsg(~target, ~args, ~addAction ? \addToHead))
+				s.sendBundle(nil, ~node.newMsg(~target, ~args, ~addAction ? \addToHead)/*.debug("synth message")*/)
 			} {
-				s.sendBundle(~latency, ~node.newMsg(~target, ~args, ~addAction ? \addToHead))
+				s.sendBundle(~latency, ~node.newMsg(~target, ~args, ~addAction ? \addToHead)/*.debug("synth message")*/)
 			};
 		});
 		NodeWatcher.register(~node, true);  // true == assumePlaying
@@ -165,6 +163,7 @@ PR(\abstractTLCommand).clone({
 				s.sendBundle(nil, msg);
 			};
 		};
+		~stopAction.value(parms);
 		~node.removeDependant(currentEnvironment);
 //"<< synthCmd:done".debug;
 	};
@@ -175,6 +174,33 @@ PR(\abstractTLCommand).clone({
 	};
 	~isSynth = true;
 }) => PR(\synthCmd);
+
+PR(\synthCmd).clone {
+	~superFire = ~fire;
+	~superDone = ~done;
+	~controlName = \level;
+	~outName = \out;
+	~fire = { |parms|
+		~server = ~mixer.server;
+		~target = ~mixer.fadergroup;
+			// this is really fucking stupid
+			// it's supposed to put all the parms into the environment (~setParms)
+			// but it's missing this one ???
+		~outName = parms.tryPerform(\at, \outName) ? \out;
+		~outName.envirPut(~mixer.controls[~controlName].index);
+//~mixer.debug("mixer to automate");
+//~mixer.controls[~controlName].index.debug(~outName);
+//~controlName.debug("watching");
+//currentEnvironment.listVars;
+		~mixer.watch(~controlName);
+		~superFire.(parms);
+	};
+	~done = { |parms|
+//~controlName.debug("stopped watching");
+		~mixer.stopWatching(~controlName);
+		~superDone.(parms);
+	};
+} => PR(\mixerAutoSynthCmd);
 
 PR(\abstractTLCommand).clone({
 	~fire = { |parms|
@@ -210,7 +236,9 @@ PR(\abstractTLCommand).clone({
 		~players = Array(~name.size);
 		~name.do({ |name|
 			if(Pdef(name).isActive) {
-				"Pdef(%) is already playing; ignored".format(name.asCompileString).warn;
+				if(parms.tryPerform(\at, \playWarning) != false) {
+					"Pdef(%) is already playing; ignored".format(name.asCompileString).warn;
+				};
 			} {
 				~pdefs.add(Pdef(name));
 				if(Pdef(name).clock !== thisThread.clock) {
@@ -291,18 +319,20 @@ PR(\abstractTLCommand).clone({
 		~bps = Array(~name.size);
 		~name.do({ |name|
 			if(BP(name).isPlaying) {
-				"BP(%) is already playing; ignored".format(name.asCompileString).warn;
+				if(parms.tryPerform(\at, \playWarning) != false) {
+					"BP(%) is already playing; ignored".format(name.asCompileString).warn;
+				};
 			} {
 				~bps.add(BP(name));
-				if(BP(name).clock !== thisThread.clock) {
-					thisThread.clock => BP(name);
-				};
+//				if(BP(name).clock !== thisThread.clock) {
+//					thisThread.clock => BP(name);
+//				};
 					// user hook to manipulate BP before play
 				~prepareBP.(BP(name));
 //name.debug("bpcmd - playing");
 //[thisThread.clock.beats, thisThread.clock.baseBarBeat, BP(name).eventSchedTime(~quant)].debug("now, basebar, go time");
 //~quant.dump;
-				thisThread.clock.schedAbs(BP(name).eventSchedTime(~quant), e {
+				/*thisThread*/ BP(name).clock.schedAbs(BP(name).eventSchedTime(~quant), e {
 						// if not running, cmd was stopped before BP fired
 						// so skip the .play
 					if(~isRunning) {
@@ -460,6 +490,7 @@ Proto({
 	~bps = nil;	// fill in with an array of BP names (symbols)
 	~status = \idle;
 	~autoSync = true;	// passed into TLSequenceIterator
+	~clock = TempoClock.default;
 
 	~isLoaded = false;
 
@@ -598,7 +629,9 @@ Proto({
 			iterator, /*updater, */quant;
 		if(seq.size > 0) {
 			~currentIterator = iterator = TLSequenceIterator(seq, currentEnvironment,
-				autoSync: ~autoSync).play(0, ~clock, ~savedCmds);
+					autoSync: ~autoSync)
+				.onStop_(item[\onStop])
+				.play(0, ~clock, ~savedCmds);
 			~savedCmds = nil;
 //"section playItem: set savedCmds to nil".debug;
 			iterator.addDependant(currentEnvironment);
@@ -697,14 +730,17 @@ Proto({
 	~currentSection = 0;
 	
 	~countOffBeats = 4;
-	~clock = TempoClock.default;
+//	~clock = TempoClock.default;
+		// sections could run on different clocks
+		// that could come back to haunt me...
+	~clock = { ~sections[~currentSection].tryPerform(\clock) ?? { TempoClock.default } };
 	~quant = Quant(1);	// start (to count off) on next whole bar
 	~sectionLeadTime = 0.9;	// how many beats before barline to kick off the section
 	
 	~autoReset = true;	// automatically reset all BPs?
 	~doNotReset = nil;	// collection of bp names NOT to reset
 	
-	~condition = Condition.new;
+//	~condition = Condition.new;
 	
 	~isRunning = { ~status != \idle };
 	
@@ -763,13 +799,14 @@ Proto({
 	};
 	
 	~countOffAndGo = {
-		var	goTime = ~quant.nextTimeOnGrid(~clock) + ~countOffBeats - ~sectionLeadTime,
+		var	clock = ~clock.value,
+			goTime = ~quant.nextTimeOnGrid(clock) + ~countOffBeats - ~sectionLeadTime,
 			started = false;
 
-//[~clock.baseBarBeat, ~clock.beats, ~quant.nextTimeOnGrid(~clock), goTime].debug("starting countoff - base beat, now, quant time, go time");
+//[clock.baseBarBeat, clock.beats, ~quant.nextTimeOnGrid(clock), goTime].debug("starting countoff - base beat, now, quant time, go time");
 
 		~status = \countingOff;
-		~clock.schedAbs(~quant.nextTimeOnGrid(~clock), ~countOffRoutine = Routine({
+		clock.schedAbs(~quant.nextTimeOnGrid(clock), ~countOffRoutine = Routine({
 			currentEnvironment.changed(\countoff, \init);
 				// count off first
 			~countOffBeats.do({ |count|
@@ -777,7 +814,7 @@ Proto({
 				if(started.not and: { goTime - thisThread.clock.beats < ~sectionLeadTime }) {
 					started = true;
 
-//[~clock.beats, goTime].debug("starting section player - now, go time");
+//[clock.beats, goTime].debug("starting section player - now, go time");
 
 					thisThread.clock.schedAbs(goTime, ~sectionRoutine = Routine({
 						~status = \playing;
@@ -788,7 +825,10 @@ Proto({
 							~savedCmds = nil;
 								// ~update method below will catch notifications
 							~sections[~currentSection].addDependant(currentEnvironment);
-							~condition.hang;
+								// note, this doesn't force-stop the routine
+								// just pauses it
+							nil.yield;
+//							~condition.hang;
 						};
 						~stop.(true);	// stop last section
 					}));
@@ -804,7 +844,7 @@ Proto({
 //				// so it should be OK to set this even off the barline
 //			thisThread.clock.setMeterAtBeat(~sections[~currentSection].startBeatsPerBar,
 //				thisThread.clock.beats);
-//[~clock.beatsPerBar, ~clock.baseBar, ~clock.baseBarBeat].debug("after setting initial meter");
+//[clock.beatsPerBar, clock.baseBar, clock.baseBarBeat].debug("after setting initial meter");
 		}));
 	};
 	
@@ -847,7 +887,8 @@ Proto({
 						~currentSection = ~currentSection + 1;
 //~currentSection.debug("section done, moving to");
 						currentEnvironment.changed(\section, ~currentSection);
-						~condition.unhang;
+						~clock.value.sched(0, ~sectionRoutine);
+//						~condition.unhang;
 					};
 				}
 				{ \initNext } {
