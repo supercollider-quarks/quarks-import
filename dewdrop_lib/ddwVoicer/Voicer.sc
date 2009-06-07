@@ -714,10 +714,11 @@ MonoPortaVoicer : Voicer {
 		(lat ? 0).isNegative.if({ lat = latency });
 		lastFreqs.remove(freq);
 		(lastFreqs.size > 0
-		and: { node.frequency != lastFreqs.last
-		and: { thisThread.seconds > node.lastTrigger } }).if({
-			nodes.at(0).set([\freq, lastFreqs.last], lat);
-			nodes.at(0).frequency = lastFreqs.last;
+		and: { thisThread.seconds > node.lastTrigger }).if({
+			if(node.frequency != lastFreqs.last) {
+				nodes.at(0).set([\freq, lastFreqs.last], lat);
+				nodes.at(0).frequency = lastFreqs.last;
+			};
 			^nodes.at(0)
 		}, {
 			^this.firstNodeFreq(freq).release(releaseGate, lat)
