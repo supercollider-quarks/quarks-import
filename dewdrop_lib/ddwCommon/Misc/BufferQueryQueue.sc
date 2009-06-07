@@ -23,7 +23,8 @@ BufferQueryQueue {
 	}
 	
 	*doQueue {	// reads file and gets info on the first queue item
-		var server, path, startFrame, numFrames, completionFunc, buffer, timeout, resp;
+		var	server, path, startFrame, numFrames, completionFunc, buffer, timeout, resp,
+			updater;
 			// get arguments
 		#server, path, startFrame, numFrames, completionFunc, buffer, timeout = queue.at(0);
 		server.serverRunning.not.if({
@@ -56,8 +57,17 @@ BufferQueryQueue {
 			};
 			queue.removeAt(0);		// drop first item from queue
 			(queue.size > 0).if({
-				this.doQueue	// still an item left? go back for that one
+				if(server.serverRunning) {
+					this.doQueue	// still an item left? go back for that one
 							// no need to clear this responder b/c it will be overwritten
+				} {
+					updater = Updater(server, { |what|
+						if(what == \serverRunning and: { server.serverRunning }) {
+							updater.remove;
+							this.doQueue;
+						};
+					});
+				};
 			}, {
 				isRunning = false;		// so I can start again with the next .add call
 			});
