@@ -1,4 +1,4 @@
-/******* by jostM Jan 24, 2008 version 1.24 *******/
+/******* by jostM June11, 2009 version 1.25 *******/
 TabbedView {
 	var labels,
 		labelColors,
@@ -8,6 +8,8 @@ TabbedView {
 		stringFocusedColor,
 		<>focusActions,
 		<>unfocusActions,
+		<focusFrameColor,
+		<>unfocusTabs=false,
 		tabWidth = \auto,
 		tabWidths,
 		scroll=false,
@@ -30,31 +32,31 @@ TabbedView {
 		<view;
 		
 	
-	*new{ arg w, bounds, labels, colors, name=" ", scroll=false;
-		^super.new.init(w, bounds, labels, colors, name, scroll );
+	*new{ arg parent, bounds, labels, colors, name=" ", scroll=false;
+		^super.new.init(parent, bounds, labels, colors, name, scroll );
 	}
 	
-	init{ arg w, bounds, lbls, colors, name, scr ;
-	
+	init{ arg parent, bounds, lbls, colors, name, scr ;
+		var w;
+		
+		w=parent;
 		w.isNil.if{ w = GUI.window.new(name,bounds).front;
 			bounds = w.view.bounds; 
 			resize = 5};
 			
 		//must be written this way, or nested views don't work with a nil bounds.
 		bounds.isNil.if{
-			(w.asView.relativeOrigin).if{
 					bounds = w.asView.bounds.moveTo(0,0);
-				}
-				{bounds = w.asView.bounds};
 		};
+		bounds=bounds.asRect;
 		
-		//try{relativeOrigin=FlowView.relativeOrigin};
 		view = GUI.compositeView.new(w,bounds).resize_(resize);
 		lbls= lbls ? ["tab1","tab2","tab3"];
 		scroll=scr;
 		labels = [];
 		focusActions = [];
 		unfocusActions = [];
+		focusFrameColor=Color.clear;
 		font=GUI.font.default;		
 		stringColor = Color.black;
 		stringFocusedColor = Color.white;
@@ -63,6 +65,7 @@ TabbedView {
 			labelColors = colors ? [Color.grey.alpha_(0.2)];
 			}{
 			labelColors = colors ? [Color(0.85,0.85,0.85)];
+			unfocusTabs=true; // unfocus Tabs if not Cocoa;
 			};
 		unfocusedColors = Array.fill(labelColors.size,{arg i;
 			var col;
@@ -104,11 +107,11 @@ TabbedView {
 		tabWidths=tabWidths.insert(index,50);	
 		
 		tab = GUI.userView.new(view); //bounds are set later
-		tab.relativeOrigin_(false);
 		tab.enabled = true;
+		tab.focusColor=focusFrameColor;
 		tab.mouseDownAction_({
 			this.focus(i);
-			tab.focus(false); 
+			unfocusTabs.if{tab.focus(false)}; 
 		});
 		tabViews = tabViews.insert(index, tab);
 		
@@ -124,11 +127,11 @@ TabbedView {
 		tabViews.do{ arg tab, i;
 			tab.mouseDownAction_({
 				this.focus(i);
-				tab.focus(false); 
+				unfocusTabs.if{tab.focus(false)}; 
 			});
 			tab.canReceiveDragHandler_({
 				this.focus(i);
-				tab.focus(false); 
+				unfocusTabs.if{tab.focus(false)}; 
 			});
 		};
 		this.updateViewSizes();
@@ -165,10 +168,7 @@ TabbedView {
 		tabLabelView.drawFunc = { arg tview;
 			var drawCenter,drawLeft,drawTop,drawRect,drawRight,
 					drawBottom,rotPoint,moveBy,rotPointText,drawRectText,drawRectText2;	
-		//	drawRect= if (relativeOrigin,tview.bounds.moveTo(0,0),tview.bounds);
-			if (tview.respondsTo(\absoluteBounds))
-				{drawRect= tview.absoluteBounds}
-				{drawRect= tview.bounds};
+			drawRect= tview.bounds.moveTo(0,0);
 			drawCenter=Point(drawRect.left+(drawRect.width/2),drawRect.top+(drawRect.height/2));
 			
 			([\top,\bottom].occurrencesOf(tabPosition)>0).if{
@@ -629,6 +629,8 @@ TabbedView {
 		 
 	}
 	
+	focusFrameColor_{arg color;focusFrameColor=color; tabViews.do{arg v; v.focusColor=focusFrameColor}}
+	
 	relativeOrigin{"TabbedView.relativeOrigin: relative origin settings  deprecated.".warn}
 	relativeOrigin_{"TabbedView.relativeOrigin_: relative origin settings deprecated.".warn}
 	
@@ -646,11 +648,11 @@ TabbedView {
 		tabViews.do{ arg tab, i;
 			tab.mouseDownAction_({
 				this.focus(i);
-				tab.focus(false); 
+				unfocusTabs.if{tab.focus(false)}; 
 			});
 			tab.canReceiveDragHandler_({
 				this.focus(i);
-				tab.focus(false); 
+				unfocusTabs.if{tab.focus(false)}; 
 			});
 		};
 		
@@ -662,9 +664,9 @@ TabbedView {
 		
 
 	// use these as examples to make your own class extentions according to your needs
-	*newBasic{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newBasic{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.new(w, bounds, labels, colors, name, scroll);
+		q=this.new(parent, bounds, labels, colors, name, scroll);
 		if( GUI.id === \cocoa)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 			q.backgrounds_([Color.white.alpha_(0.3)]);
@@ -676,14 +678,14 @@ TabbedView {
 		^q;
 	}
 	
-	*newRGBLabels{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newRGBLabels{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		"\nWarning: TabbedView.newRGBLabels deprecated. Use .newColorLabels instead".postln;
-		^this.newColorLabels(w, bounds, labels, colors, name, scroll);
+		^this.newColorLabels(parent, bounds, labels, colors, name, scroll);
 		}
 		
-	*newColorLabels{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newColorLabels{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.newBasic(w, bounds, labels, colors, name, scroll);
+		q=this.newBasic(parent, bounds, labels, colors, name, scroll);
 		q.labelColors_([Color.red,Color.blue,Color.yellow]);
 		if( GUI.id === \cocoa)  {
 			q.backgrounds_([Color.white.alpha_(0.3)]);
@@ -696,14 +698,14 @@ TabbedView {
 		^q;
 	}
 	
-	*newRGB{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newRGB{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		"\nWarning: TabbedView.newRGB  deprecated. Use .newColor instead".postln;
-		^this.newColor(w, bounds, labels, colors, name, scroll);
+		^this.newColor(parent, bounds, labels, colors, name, scroll);
 		}
 		
-	*newColor{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newColor{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.new(w, bounds, labels, colors, name, scroll);
+		q=this.new(parent, bounds, labels, colors, name, scroll);
 		q.labelColors_([Color.red,Color.blue,Color.yellow]);
 		if( GUI.id === \cocoa)  {
 			q.backgrounds_([Color.red.alpha_(0.1),
@@ -724,27 +726,27 @@ TabbedView {
 		^q;
 	}
 	
-	*newFlat{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newFlat{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.newBasic(w, bounds, labels, colors, name, scroll);
+		q=this.newBasic(parent, bounds, labels, colors, name, scroll);
 		q.tabHeight=14;
 		q.tabWidth= 70;
 		q.tabCurve=3;
 		^q;
 	}
 	
-	*newTall{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newTall{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.newBasic(w, bounds, labels, colors, name, scroll);
+		q=this.newBasic(parent, bounds, labels, colors, name, scroll);
 		q.tabHeight= 30;
 		q.tabWidth= 70;
 		q.tabCurve=3;
 	^q;
 	}
 	
-	*newTransparent{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newTransparent{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.new(w, bounds, labels, colors, name, scroll);
+		q=this.new(parent, bounds, labels, colors, name, scroll);
 		if( GUI.id === \cocoa)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 		}{	
@@ -755,9 +757,9 @@ TabbedView {
 		^q;
 	}
 	
-	*newPacked{ arg w, bounds, labels, colors, name=" ", scroll=false;
+	*newPacked{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
-		q=this.new(w, bounds, labels, colors, name, scroll);
+		q=this.new(parent, bounds, labels, colors, name, scroll);
 		if( GUI.id === \cocoa)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 			q.backgrounds_([Color.white.alpha_(0.3)]);
