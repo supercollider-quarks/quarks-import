@@ -22,7 +22,6 @@ TabbedView {
 		<resize = 1,
 		<tabPosition = \top,
 		<followEdges=true,
-		relativeOrigin=true,
 		<activeTab = 0,
 		focusHistory = 0,
 		<labelPadding = 20,
@@ -631,8 +630,6 @@ TabbedView {
 	
 	focusFrameColor_{arg color;focusFrameColor=color; tabViews.do{arg v; v.focusColor=focusFrameColor}}
 	
-	relativeOrigin{"TabbedView.relativeOrigin: relative origin settings  deprecated.".warn}
-	relativeOrigin_{"TabbedView.relativeOrigin_: relative origin settings deprecated.".warn}
 	
 	removeAt{ arg index;
 	
