@@ -1,0 +1,7 @@
++ SimpleNumber{
+
+	asControlInput{
+		^this.asFloat;
+	}
+
+}
