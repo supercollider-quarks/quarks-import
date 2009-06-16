@@ -8,6 +8,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 //--
 
+090616 - added example 102.  added RedWorld1 class
 090523 - moved some classes to folder 'additional'.  added RedPerlin
 090522 - added RedMRCM and RedIFS
 090521 - RedWindow and RedJWindow now draws in the UserView - thanks Thor

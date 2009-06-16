@@ -1,5 +1,8 @@
 // this file is part of redUniverse toolkit /redFrik
 
+//todo:
+//collision detection for redrock, groundplane etc
+
 
 //--base for all objects
 RedObject {
