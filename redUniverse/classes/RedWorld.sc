@@ -1,7 +1,7 @@
 // this file is part of redUniverse toolkit /redFrik
 
 
-//--world without walls
+//--world without walls (wrapping)
 RedWorld {
 	var <>dim, <>gravity,							//vectors
 		<>maxVel, <>damping,						//floats
@@ -30,6 +30,12 @@ RedWorld {
 	}
 	contains {|redObj|								//returns boolean if object inside world dim
 		^redObj.loc.any{|l, i| l-redObj.size<0 or:{l+redObj.size>dim[i]}}.not
+	}
+}
+
+//--world without walls (non wrapping)
+RedWorld1 : RedWorld {
+	contain {|redObj|								//just not contain object at all
 	}
 }
 
