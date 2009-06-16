@@ -16,8 +16,8 @@ p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0022f8}
-span.s3 {color: #0030f2}
+span.s2 {color: #083aec}
+span.s3 {color: #1142e6}
 span.s4 {color: #000000}
 span.s5 {text-decoration: underline}
 span.s6 {color: #0000bf}
@@ -60,24 +60,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6">//--</p>
-<p class="p7">w= <span class="s6">RedWindow</span>.new.front;</p>
-<p class="p7">w.close;</p>
-<p class="p8"><br></p>
-<p class="p6">//or better - for platform independet code...</p>
 <p class="p7"><span class="s6">GUI</span>.cocoa;</p>
-<p class="p7">w= <span class="s6">GUI</span>.redWindow.new.front;</p>
-<p class="p8"><br></p>
+<p class="p7">w= <span class="s6">RedWindow</span>.new.front;</p>
 <p class="p7">w.resize(<span class="s6">RedVector2D</span>[200, 200])</p>
 <p class="p7">w.background= <span class="s6">Color</span>.red</p>
 <p class="p8"><br></p>
-<p class="p7">w.draw{<span class="s6">GUI</span>.pen.fillOval(<span class="s6">Rect</span>.aboutPoint(175.rand@175.rand, 50, 50))}</p>
-<p class="p7">w.play(25)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">//25fps</span></p>
+<p class="p7">w.draw{<span class="s6">GUI</span>.pen.fillColor= <span class="s6">Color</span>.black; <span class="s6">GUI</span>.pen.fillOval(<span class="s6">Rect</span>.aboutPoint(175.rand@175.rand, 50, 50))}</p>
+<p class="p6"><span class="s4">w.play<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//start drawing</p>
 <p class="p7">w.stop</p>
 <p class="p8"><br></p>
 <p class="p6"><span class="s4">(<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mouse control</p>
 <p class="p7">w.draw{</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s6">var</span> radius= 100.rand;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s6">GUI</span>.pen.fillColor_(<span class="s6">Color</span>.blue(0.5, radius/100));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s6">GUI</span>.pen.fillColor= <span class="s6">Color</span>.blue(0.5, radius/100);</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s6">GUI</span>.pen.fillOval(<span class="s6">Rect</span>.aboutRedVector2D(w.mouse, radius))</p>
 <p class="p7">}</p>
 <p class="p7">)</p>
