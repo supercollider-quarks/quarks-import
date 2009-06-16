@@ -14,10 +14,10 @@ RedWindow : SCWindow {
 		this.prInit(name, argBounds, resizable, border, false, view, false);
 		
 		this.background_(Color.black);
-		mouse= RedVector2D[view.bounds.width/2, view.bounds.height/2];
-		userView= SCUserView(this, view.bounds)
-			.relativeOrigin_(false)
-			.mouseMoveAction_({|v, x, y| mouse= RedVector2D[x, y]});
+		mouse= RedVector2D[0, 0];
+		userView= SCUserView(this, Rect(0, 0, view.bounds.width, view.bounds.height))
+			.mouseDownAction_{|view, x, y| mouse= RedVector2D[x, y]}
+			.mouseMoveAction_{|view, x, y| mouse= RedVector2D[x, y]};
 	}
 	draw {|func| userView.drawFunc= func}
 	play {|fps= 40|

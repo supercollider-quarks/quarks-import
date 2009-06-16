@@ -14,12 +14,16 @@
 	obj= RedObject(world, loc, vel, acc, 1.5, 10);
 	
 	fric= Rect(0, height*0.4, width, 40);		//area with super friction
-	ff= 1.23;								//amount of friction
+	ff= 0.5;								//amount of friction
 	
 	//--loop
 	w.draw{
 		if(fric.containsPoint(obj.loc.asPoint), {
-			obj.addForce(obj.frictionForce(ff));
+			if(obj.vel.mag>0 and:{obj.vel.mag>obj.frictionForce(ff).mag}, {
+				obj.addForce(obj.frictionForce(ff));
+			}, {
+				obj.vel= obj.vel*0;		//stop object
+			});
 		});
 		obj.update;
 		world.contain(obj);

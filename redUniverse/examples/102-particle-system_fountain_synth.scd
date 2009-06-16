@@ -6,7 +6,7 @@
 s.waitForBoot{
 
 	var width= 300, height= 300, w, wgrav, world,
-		sys, makeParticle, n= 200;
+		sys, makeParticle, n= 200, tempMP;
 	
 	//--synthesis
 	SynthDef(\noise, {|out= 0, freq= 4000, amp= 0, pan= 0, rel= 0.02|
@@ -19,6 +19,7 @@ s.waitForBoot{
 	
 	//--world
 	w= GUI.redWindow.new("particlesystem fountain", Rect(128, 64, width, height)).front;
+	tempMP= w.mouse;
 	wgrav= RedVector2D[0, 0.4];						//world xy gravity
 	world= RedWorld1(RedVector2D[width, height], wgrav, 20, 1); //dim,grav,maxvel,damp
 	
@@ -57,7 +58,7 @@ s.waitForBoot{
 		//sys.objects.size.postln;
 		
 		//--mouse
-		if(w.mouse!=RedVector2D[width*0.5, height*0.5], {
+		if(w.mouse!=tempMP, {
 			world.gravity_(RedVector2D.newFrom(w.mouse/([width, height])-0.5));
 		});
 		
