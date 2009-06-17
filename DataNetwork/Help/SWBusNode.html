@@ -231,16 +231,37 @@ SWBusNodes provide a way to analyze or process data on an audio or control bus, 
 <DT><STRONG>ASRMulNode</STRONG></DT>
 	<DD>As above, but the sustain level of the envelope is the running maximum of the input signal.</DD>
 
+<DT><STRONG>SlewNode</STRONG></DT>
+	<DD>Limits the <em>upSlope</em> and <em>downSlope</em> of the signal. Based on the UGen <em>Slew</em>.</DD>
+
 <h4>- Derivatives - </h4>
 <DT><STRONG>SlopeNode</STRONG></DT>
 	<DD>Measures the rate of change per second. Based on the UGen <em>Slope</em>.</DD>
 
 
+
+
+<h4>- Metadata - </h4>
+
+<DT><STRONG>TimerNode</STRONG></DT>
+	<DD>Measures the time between updates of the bus. Based on the UGen <em>Timer</em>.</DD>
+
 <h4>- Statistics - </h4>
+<DT><STRONG>MeanStdDevNode</STRONG></DT>
+	<DD>Output the mean and standard deviation of the last number (parameter <em>length</em>; default 50) of samples. The <em>length</em> setting has to be set or changed before the synth is started. The first buses are the mean, the second half of the buses are the standard deviation. The mean will be a smoothed version of the signal. The standard deviation gives an impression of how much change there is in a signal. Based on the UGens <em>RunningSum</em> and <em>StdDevUGen</em>.</DD>
+
 <DT><STRONG>StdDevNode</STRONG></DT>
 	<DD>Output the standard deviation of the last number (parameter <em>length</em>; default 50) of samples. The <em>length</em> setting has to be set or changed before the synth is started. The standard deviation gives an impression of how much change there is in a signal. Based on the UGen <em>StdDevUGen</em>.</DD>
 <DT><STRONG>SumStdDevNode</STRONG></DT>
 	<DD>As <strong>StdDevNode</strong>, but mixes down the outputs to one channel.</DD>
+
+<DT><STRONG>MedianNode</STRONG></DT>
+	<DD>Output the median of the last number (parameter <em>length</em>; default 21) of samples. The <em>length</em> setting must be an odd number from 1 to 31. The output is a smoothed version of the signal, less sensitive to outliers. Based on the UGen <em>Median</em>.</DD>
+
+<h4>- Physics - </h4>
+
+<DT><STRONG>FrictionNode</STRONG></DT>
+	<DD>Inputs the input bus into a friction model, with adjustable <em>friction</em>, <em>spring</em>, <em>damp</em>, <em>mass</em> and <em>beltmass</em>. Based on the UGen <em>Friction</em>.</DD>
 
 <h4>- Gating and triggering - </h4>
 

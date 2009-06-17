@@ -131,7 +131,7 @@ SWDataNetwork</A></H2>
 </DD>
 <DT><STRONG>nodes (  )</STRONG></DT>
 <DD>returns an Array of the nodes of the network </DD>
-<DT><STRONG>removeNode ( name )</STRONG></DT>
+<DT><STRONG>removeNode ( id )</STRONG></DT>
 <DD>remove a node from the network. 
 </DD>
 
@@ -166,8 +166,6 @@ SWDataNetwork</A></H2>
 <DD>Returns the node or slot at <em>key</em></DD>
 <DT><STRONG>value ( key )</STRONG></DT>
 <DD>Get the value of the node or slot at <em>key</em></DD>
-<DT><STRONG>value_ ( key, value )</STRONG></DT>
-<DD>Get the value of the slot at <em>key</em></DD>
 <DT><STRONG>action_ ( key, action )</STRONG></DT>
 <DD>Set the action of the node or slot at <em>key</em></DD>
 
@@ -180,10 +178,10 @@ SWDataNetwork</A></H2>
 <DT><STRONG>freeBus ( key )</STRONG></DT>
 <DD>Free the bus of the node or slot at <em>key</em></DD>
 <DT><STRONG>createAllBuses ( server )</STRONG></DT>
-<DD>Creates buses for all nodes that are named in the spec on the specified <em>server</em></DD>
+<DD>Creates buses for all nodes and slots that are named in the spec on the specified <em>server</em></DD>
 <DT><STRONG>freeAllBuses (  )</STRONG></DT>
 <DD>Free all the buses that have been created.</DD>
-<DT><STRONG>createAllNodeBuses (  )</STRONG></DT>
+<DT><STRONG>createAllNodeBuses ( server )</STRONG></DT>
 <DD>create buses on the server for all nodes (Note difference with createAllBuses, which creates buses for all nodes that are named in the spec).
 </DD>
 
@@ -207,6 +205,8 @@ SWDataNetwork</A></H2>
 <DD>turn recording on or off</DD>
 <DT><STRONG>closeRecord (  )</STRONG></DT>
 <DD>close the recorded file</DD>
+<DT><STRONG>recnodes (  )</STRONG></DT>
+<DD><em>private</em> - The nodes which are being recorded.</DD>
 <DT><STRONG>writeHeader (  )</STRONG></DT>
 <DD><em>private</em> - write the header into the logfile</DD>
 <DT><STRONG>writeLine ( dt, recordnodes )</STRONG></DT>
@@ -217,6 +217,19 @@ SWDataNetwork</A></H2>
 <DD><em>private</em> - the task performing the file writing</DD>
 <DT><STRONG>logfile (  )</STRONG></DT>
 <DD><em>private</em> - the file into which data is written</DD>
+
+<h4>- Logging update times - </h4>
+
+<DT><STRONG>initTimeRecord ( fn )</STRONG></DT>
+<DD>initialize recording of the update times of the data. <em>fn</em> is the filename.</DD>
+<DT><STRONG>closeTimeRecord (  )</STRONG></DT>
+<DD>close the update time recorded file</DD>
+<DT><STRONG>writeTimeUpdate ( id, time )</STRONG></DT>
+<DD><em>private</em> - write one line of time update data to the log (format node id - update time)</DD>
+<DT><STRONG>recTime</STRONG></DT>
+<DD><em>private</em> whether currently recording update times or not</DD>
+<DT><STRONG>timelogfile (  )</STRONG></DT>
+<DD><em>private</em> - the file into which update time data is written</DD>
 
 <h4>- Graphical user interface - </h4>
 
@@ -247,11 +260,11 @@ SWDataNetwork</A></H2>
 <h4>- Debugging and verbosity - </h4>
 
 <DT><STRONG>debug_ ( onoff )</STRONG></DT>
-<DD>turn debugging on for all nodes. This will post all incoming data.
+<DD>turn debugging on for all slots. This will post all incoming data.
  </DD>
 
 <DT><STRONG>verbose (  )</STRONG></DT>
-<DD>posting of messages. There are various verbosity levels. 0 is no posts, higher number give more postings.</DD>
+<DD>posting of messages. There are various verbosity levels. 0 is no posts, 1 posts informational/warning messages, 2 posts all data coming in.</DD>
 <DT><STRONG>verbose_ (  )</STRONG></DT>
 <DD>Set the verbosity level.</DD>
 

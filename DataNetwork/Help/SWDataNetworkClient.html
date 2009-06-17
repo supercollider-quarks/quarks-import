@@ -41,15 +41,26 @@ This class is a subclass of SWDataNetwork, so the methods used in that class can
 
 <h3> - Methods - </h3>
 
-<DT><STRONG>*new( ip, hst )</STRONG></DT>
-<DD>Create a new client, with <em>ip</em> and <em>host</em>. <em>ip</em> should be a hostname or string (the NetAddr of it is created in the class). <em>host</em> should be a NetAddr representing the address of the host.</DD>
+<DT><STRONG>*new( hostip, name, reg )</STRONG></DT>
+<DD>Create a new client, connecting to <em>hostip</em>. <em>hostip</em> should be a hostname or string (the NetAddr of it is created in the class). <em>name</em> is the name that the client will have in the network. <em>reg</em> is a flag, whether or not to register rightaway to the host.</DD>
+
+<DT><STRONG>makeGui</STRONG></DT>
+<DD>Create a GUI for the client.</DD>
 
 
 <DT><STRONG>setHost ( ip, port )</STRONG></DT>
-<DD>Set the ip and port of the host. This will remove and then re-add the OSC responders with the new host NetAddr. This is the method called upon receiving the datanetwork announce message.</DD>
+<DD>Set the ip and port of the host. This is the method called upon receiving the datanetwork announce message. This then calls resetHost.</DD>
+
+<DT><STRONG>resetHost ( addr )</STRONG></DT>
+<DD>Set the ip and port of the host. This will remove and then re-add the OSC responders with the new host NetAddr.</DD>
 
 <DT><STRONG>findHost ( ip )</STRONG></DT>
 <DD>Try to find the host, based on the given IP (if none is given, the method will use the IP of the previous host). The client will then get the port number from the file in which it is written by the host (access with curl through http).</DD>
+
+<DT><STRONG>lostHost (  )</STRONG></DT>
+<DD>Posts a message when the DataNetwork host has quit.</DD>
+
+
 
 <DT><STRONG>tryReconnect</STRONG></DT>
 <DD>Try to find the host (with the method findHost), and register again to that host.</DD>
@@ -84,13 +95,16 @@ This class is a subclass of SWDataNetwork, so the methods used in that class can
 <DD>Add a label in the spec of the network. This is the same as in SWDataNetwork. However, if called from an OSC message, then <em>fromnw</em> is set to true and the changes are not sent back to the host.</DD>
 
 
+<DT><STRONG>removeNode ( id, fromnw )</STRONG></DT>
+<DD>Remove datanode in the network. This is the same as in SWDataNetwork. However, if called from an OSC message, then <em>fromnw</em> is set to true and the changes are not sent back to the host.</DD>
+
 
 <h4> - Methods to interface with the remote host </h4>
 
 <DT><STRONG>register (  )</STRONG></DT>
 <DD>Register to the network.</DD>
 <DT><STRONG>unregister (  )</STRONG></DT>
-<DD>Unregister from the network.</DD>
+<DD>Unregister from the network. This method is called automatically when sclang stops (or library is recompiled).</DD>
 
 <h4> - Sending query messages - </h4>
 
@@ -110,19 +124,28 @@ This class is a subclass of SWDataNetwork, so the methods used in that class can
 <h4> - Subscribing and unsubscribing to nodes - </h4>
 
 
+<DT><STRONG>subscribeAll (  )</STRONG></DT>
+<DD>Subscribe to all nodes.</DD>
+
+<DT><STRONG>unsubscribeAll (  )</STRONG></DT>
+<DD>Unsubscribe from all nodes currently subscribed to.</DD>
+
+<DT><STRONG>removeAll (  )</STRONG></DT>
+<DD>Remove all nodes this client is a setter of.</DD>
+
 <DT><STRONG>subscribeNode ( node )</STRONG></DT>
-<DD>Subscribe to a node.</DD>
+<DD>Subscribe to a node. <em>node</em> can be an instance of SWDataNode or a node ID.</DD>
 <DT><STRONG>unsubscribeNode ( node )</STRONG></DT>
-<DD>Unsubscribe from a node.</DD>
+<DD>Unsubscribe from a node. <em>node</em> can be an instance of SWDataNode or a node ID.</DD>
 <DT><STRONG>subscribeSlot ( slot )</STRONG></DT>
-<DD>Subscribe to a slot.</DD>
+<DD>Subscribe to a slot. <em>slot</em> can be an instance of SWDataNode or a slot ID (Array of size 2).</DD>
 <DT><STRONG>unsubscribeSlot ( slot )</STRONG></DT>
-<DD>Unsubscribe from a slot</DD>
+<DD>Unsubscribe from a slot. <em>slot</em> can be an instance of SWDataNode or a slot ID (Array of size 2).</DD>
 
 <DT><STRONG>getNode ( node )</STRONG></DT>
-<DD>Get data from a node just one single time.</DD>
+<DD>Get data from a node just one single time. <em>node</em> can be an instance of SWDataNode or a node ID.</DD>
 <DT><STRONG>getSlot ( slot )</STRONG></DT>
-<DD>Get data from a slot just one single time.</DD>
+<DD>Get data from a slot just one single time. <em>slot</em> can be an instance of SWDataNode or a slot ID (Array of size 2).</DD>
 
 
 <h4> - Private methods called from OSC messages; these message automatically update the data in the network - </h4>
