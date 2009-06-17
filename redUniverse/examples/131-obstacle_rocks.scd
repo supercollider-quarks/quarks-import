@@ -23,7 +23,7 @@
 		GUI.pen.width_(1);
 		world.objects.do{|o, i|						//iterate all objects in this world
 			o.addForce(o.world.gravity);			//add gravity
-			world.objects.do{|oo, j| if(i!=j, {o.collide(oo)})};
+			world.objects.copyToEnd(i+1).do{|oo| o.collide(oo, 10)};
 			o.update;								//object update
 			world.contain(o);						//keep within world borders
 			
@@ -32,7 +32,7 @@
 				GUI.pen.fillColor_(Color.blue(1, 0.5));
 				GUI.pen.fillOval(Rect.aboutRedObject2D(o));
 			}, {
-				GUI.pen.strokeColor_(Color.grey(0.7, 0.5));
+				GUI.pen.strokeColor_(Color.grey(0.7, 0.9));
 				GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
 			});
 		}

@@ -13,11 +13,11 @@
 	//--objects
 	trg= RedObject(world, RedVector2D[width*0.5, height*0.5]);
 	objs= {
-		var mass= 3.0.rand;
+		var mass= 2.0.rand+1;
 		RedObject(world, RedVector2D[width.rand, height.rand], RedVector2D[0, 0], RedVector2D[0, 0], mass, mass*10);
 	}.dup(n);
 	sprs= objs.collect{|obj|
-		RedSpring(obj, trg, 0.3, 0.9, 100.rand);		//object, target, stiffness, damping, length
+		RedSpring(obj, trg, 0.3, 0.9, 150.rand);		//object, target, stiffness, damping, length
 	};
 	
 	//--loop

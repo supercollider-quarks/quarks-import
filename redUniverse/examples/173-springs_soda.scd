@@ -2,7 +2,7 @@
 //mouse drags around balls
 
 (
-	var width= 300, height= 300, w, world, wgrav, objs, sprs, over, n= 10;
+	var width= 300, height= 300, w, world, wgrav, sprs, over, n= 10;
 	
 	//--world
 	w= GUI.redWindow.new("soda springs", Rect(128, 64, width, height)).front;
@@ -10,20 +10,20 @@
 	world= RedWorld3(RedVector2D[width, height], wgrav, 30, 0.8); //dim,grav,maxvel,damp
 	
 	//--objects
-	objs= {
+	{
 		var mass= 2.rrand(5);
 		RedObject(world, RedVector2D[width.rand, height.rand], RedVector2D[0, 0], RedVector2D[0, 0], mass, mass*2);
 	}.dup(n);
-	sprs= objs.collect{|obj, i|
+	sprs= world.objects.collect{|obj, i|
 		[
 			//object, target, stiffness, damping, length
-			RedSpring(obj, objs.wrapAt(i-1), 0.95, 0.5, 25.rrand(50)),
-			RedSpring(obj, objs.wrapAt(i+1), 0.95, 0.5, 25.rrand(50))
+			RedSpring(obj, world.objects.wrapAt(i-1), 0.95, 0.5, 25.rrand(50)),
+			RedSpring(obj, world.objects.wrapAt(i+1), 0.95, 0.5, 25.rrand(50))
 		]
 	}.flat;
 	w.userView.mouseDownAction= {|view, x, y|
 		w.mouse= RedVector2D[x, y];
-		over= objs.detect{|o| o.containsLoc(w.mouse)};
+		over= world.objects.detect{|o| o.containsLoc(w.mouse)};
 	};
 	w.userView.mouseUpAction= {|view, x, y|
 		over= nil;
@@ -44,8 +44,9 @@
 			GUI.pen.stroke;
 		};
 		
-		objs.do{|obj|
+		world.objects.do{|obj, i|
 			obj.addForce(world.gravity);
+			//world.objects.do{|oo, j| if(i!=j, {obj.collide(oo)})};
 			obj.update;
 			world.contain(obj);
 			
