@@ -2,6 +2,7 @@
 
 //todo:
 //collision detection for redrock, groundplane etc
+//spring: now euler method but use runge-kutta method instead - mention which in the helpfile
 
 
 //--base for all objects
@@ -33,7 +34,20 @@ RedObject {
 	}
 	frictionForce {|constant| ^vel.normalize*constant}	//watch out for NaN here if vel is zero
 	viscosityForce {|constant| ^vel*constant}
+	spring {|redObj, stiffness= 0.1, damping= 0.9, length= 0|
+		var targetLoc, delta, angle;
+		if(length==0, {
+			targetLoc= redObj.loc;
+		}, {
+			delta= loc-redObj.loc;
+			angle= delta[1].atan2(delta[0]);
+			targetLoc= redObj.loc+(RedVector2D[cos(angle), sin(angle)]*length);
+		});
+		this.addForce((targetLoc-loc)*stiffness);
+		vel= vel*damping;
+	}
 	contains {|redObj| ^loc.distance(redObj.loc)<(size+redObj.size)}
+	containsLoc {|aLoc| ^loc.distance(aLoc)<size}
 	collide {|redObj|
 		var normal, change, aLoc, bLoc, safety= 0;
 		if(this.contains(redObj), {
