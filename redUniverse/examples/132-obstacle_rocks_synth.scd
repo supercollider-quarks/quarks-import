@@ -3,8 +3,7 @@
 
 (
 s.waitForBoot{
-	var width= 300, height= 300, w, wgrav, world, n= 6,
-		rocks= 10;
+	var width= 300, height= 300, w, wgrav, world, n= 6, nRocks= 15, rocks, objs;
 	
 	//--synthesis
 	SynthDef(\pmdrim, {|out= 0, freq= 400, freq2= 200, dur= 0.1, amp= 1, pan= 0|
@@ -21,31 +20,59 @@ s.waitForBoot{
 	world= RedWorld3(RedVector2D[width, height], wgrav, 15, 0.5); //dim,grav,maxvel,damp
 	
 	//--objects
-	{
+	objs= {
 		var loc= RedVector2D[250, 10].rand;			//initial xy location
 		var vel= RedVector2D[3.5, 0].rand;			//initial velocity
 		var acc= RedVector2D[0, 0];					//initial acceleration
-		RedObject(world, loc, vel, acc, 1.5, 10); //world,loc,vel,acc,mass,size
+		RedObject(world, loc, vel, acc, 1.5, 12); //world,loc,vel,acc,mass,size
 	}.dup(n);
-	{RedRock(world, RedVector2D[width.rand, height].rand)}.dup(rocks);
+	rocks= {
+		RedRock(world, RedVector2D[width.rand.round(50), (height*0.5).rand.round(50)+(height*0.4)])
+	}.dup(nRocks);
 	
 	//--loop
 	w.draw{
+		GUI.pen.strokeColor= Color.grey(0.7, 0.9);
+		objs.do{|o, i|
+			o.addForce(o.world.gravity);			//add gravity
+			objs.copyToEnd(i+1).do{|oo| o.collide(oo)};
+			o.update;								//object update
+			world.contain(o);						//keep within world borders
+			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+		};
+		GUI.pen.stroke;
+		
+		GUI.pen.fillColor= Color.blue(1, 0.5);
+		rocks.do{|o, i|
+			objs.do{|oo, j|
+				if(o.collide(oo, 10), {
+					Synth(\pmdrim, [
+						\freq, (height-oo.loc[1]/height).linexp(0, 0.5, 200, 400),
+						\freq2, (j/n).linexp(200, 300),
+						\amp, 0.2,
+						\pan, oo.loc[0]/width*2-1
+					]);
+				});
+			};
+			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+		};
+		GUI.pen.fill;
+		
+		/*
 		world.objects.do{|o, i|						//iterate all objects in this world
 			o.addForce(o.world.gravity);			//add gravity
-			world.objects.do{|oo, j|
-				if(i!=j, {						//do not collide with yourself
-					if(o.collide(oo), {
-						if(oo.species!=o.species, {
-							Synth(\pmdrim, [
-								\freq, (height-o.loc[1]/height).linexp(0, 1, 100, 400),
-								\freq2, (i/n).linexp(200, 300),
-								\amp, 0.1,
-								\pan, o.loc[0]/width*2-1
-							]);
-						});
+			world.objects.copyToEnd(i+1).do{|oo|
+				if(o.isKindOf(RedRock).not, {
+				if(o.collide(oo, 10), {
+//					if(oo.species!=o.species, {
+						Synth(\pmdrim, [
+							\freq, (height-o.loc[1]/height).linexp(0, 0.5, 200, 400),
+							\freq2, (i/n).linexp(200, 300),
+							\amp, 0.1,
+							\pan, o.loc[0]/width*2-1
+						]);
 					});
-				})
+				});
 			};
 			o.update;								//object update
 			world.contain(o);						//keep within world borders
@@ -55,10 +82,11 @@ s.waitForBoot{
 				GUI.pen.fillColor_(Color.blue(1, 0.5));
 				GUI.pen.fillOval(Rect.aboutRedObject2D(o));
 			}, {
-				GUI.pen.strokeColor_(Color.grey(0.7, 0.5));
+				GUI.pen.strokeColor_(Color.grey(0.7, 0.9));
 				GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
 			});
 		}
+		*/
 	}.play;
 }
 )

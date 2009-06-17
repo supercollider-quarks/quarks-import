@@ -11,14 +11,15 @@
 	world= RedWorld1(RedVector2D[width, height], wgrav, 30, 0.8); //dim,grav,maxvel,damp
 	
 	//--objects
-	trg= RedObject(world, RedVector2D[width*0.5, height*0.5]);
-	objs= {
-		RedObject(world, RedVector2D[width*0.5, height*0.5], RedVector2D[0, 0], RedVector2D[0, 0], 1.5, 5);
+	trg= RedObject(world, RedVector2D[width*0.5, height*0.3]);
+	objs= {|i|
+		RedObject(world, RedVector2D[width*0.5+i, height*0.3+i], RedVector2D[0, 0], RedVector2D[0, 0], 1.5, 5);
 	}.dup(n);
+	
 	sprs= objs.collect{|obj, i|
 		var t;
 		if(i==0, {t= trg}, {t= objs[i-1]});			//connect springs in a chain
-		RedSpring(obj, t, 0.6, 0.4, 10);				//object, target, stiffness, damping, length
+		RedSpring(obj, t, 0.4, 0.5, 8);				//object, target, stiffness, damping, length
 	};
 	
 	//--loop

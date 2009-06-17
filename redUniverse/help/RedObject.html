@@ -12,15 +12,15 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024b5}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #062cb0}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {text-decoration: underline ; color: #0022f8}
+span.s2 {text-decoration: underline ; color: #0030f2}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0022f8}
-span.s6 {color: #0000ff}
+span.s5 {color: #0030f2}
+span.s6 {color: #0022f8}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -51,8 +51,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns true if two objects touch.<span class="Apple-converted-space">  </span>see size below</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>containsLoc(location)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns true if location (<a href="RedVector.html"><span class="s6">RedVector</span></a>) is within the object.</p>
-<p class="p1"><span class="Apple-tab-span">	</span><b>collide(redObj)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>collide(redObj, safety)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>collision detection.<span class="Apple-converted-space">  </span>add acceleration vector to both objects if they touch.<span class="Apple-converted-space">  </span>returns boolean.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>safety is how many times the method should nudge objects apart.<span class="Apple-converted-space">  </span>default is 3.</p>
 <p class="p3"><span class="Apple-tab-span">	</span></p>
 <p class="p1"><span class="s4">instance variables:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;world</b></p>

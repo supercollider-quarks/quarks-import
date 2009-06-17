@@ -22,6 +22,7 @@
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
 			world.objects.do{|oo, j| if(i!=j, {o.collide(oo)})};
+			//world.objects.copyToEnd(i+1).do{|oo| o.collide(oo)};//faster but less accurate
 			o.update;
 			world.contain(o);
 			
