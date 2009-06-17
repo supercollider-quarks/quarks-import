@@ -63,6 +63,8 @@ Base class for a data node
 	<DD></DD>
 <DT><STRONG>scale_ (  )</STRONG></DT>
 	<DD>The scaling factor for the data</DD>
+<DT><STRONG>setLastTime (  )</STRONG></DT>
+	<DD>sets the last time the node</DD>
 <DT><STRONG>lasttime (  )</STRONG></DT>
 	<DD>The last time the node was updated</DD>
 <DT><STRONG>elapsed (  )</STRONG></DT>
@@ -98,6 +100,9 @@ Base class for a data node
 <DT><STRONG>databus (  )</STRONG></DT>
 	<DD>The instance of DataBus for this node. A DataBus updates the data on the control bus on a regular time interval.</DD>
 
+<DT><STRONG>kr (  )</STRONG></DT>
+	<DD>JITLib support. This creates the bus (if not already present) and provides an In.kr around the bus.</DD>
+
 
 <h4>- Debugging and monitoring - </h4>
 
@@ -106,6 +111,10 @@ Base class for a data node
 
 <DT><STRONG>monitor ( onoff )</STRONG></DT>
 	<DD>Monitor the data in a plot. This uses the GNUPlot to plot the data and the interface class GNUPlot and BusMonitor, which can be found in the GNUPlot quark.</DD>
+
+<DT><STRONG>monitorClose (  )</STRONG></DT>
+	<DD>Cleans up the monitor (closing the pipe to GNUPlot).</DD>
+
 
 <DT><STRONG>busmonitor (  )</STRONG></DT>
 	<DD>Reference to the BusMonitor instance for monitoring the node.</DD>

@@ -38,6 +38,12 @@ These classes implement the client representation in the OSC interface. It is us
 <DT><STRONG>*new ( address )</STRONG></DT>
 <DD>Create a new OSC client with the given address.</DD>
 
+<DT><STRONG>key (  )</STRONG></DT>
+<DD></DD>
+
+<DT><STRONG>key_ (  )</STRONG></DT>
+<DD>Human readable name for the client.</DD>
+
 <DT><STRONG>addr (  )</STRONG></DT>
 <DD>The NetAddr (IP address and port) of this client.</DD>
 <DT><STRONG>missedPongs (  )</STRONG></DT>
@@ -48,10 +54,15 @@ These classes implement the client representation in the OSC interface. It is us
 <DT><STRONG>setters (  )</STRONG></DT>
 <DD>Nodes of which this client is the setter.</DD>
 
-<DT><STRONG>maxMissedPongs (  )</STRONG></DT>
-<DD></DD>
-<DT><STRONG>maxMissedPongs_ (  )</STRONG></DT>
-<DD>Maximum amount of pings that can remained unanswered before the client is disconnected.</DD>
+<DT><STRONG>nodeSubs (  )</STRONG></DT>
+<DD>Nodes to which this client is subscribed.</DD>
+
+<DT><STRONG>slotSubs (  )</STRONG></DT>
+<DD>Slots to which this client is subscribed.</DD>
+
+<DT><STRONG>slotNodesSubs (  )</STRONG></DT>
+<DD>Slots to which this client is subscribed, organised by nodes.</DD>
+
 
 <DT><STRONG>ping (  )</STRONG></DT>
 <DD>Send a ping</DD>
@@ -64,6 +75,9 @@ These classes implement the client representation in the OSC interface. It is us
 <DD></DD>
 <DT><STRONG>setterQuery (  )</STRONG></DT>
 <DD></DD>
+<DT><STRONG>checkForSetter ( node )</STRONG></DT>
+<DD></DD>
+
 <DT><STRONG>subscriptionQuery (  )</STRONG></DT>
 <DD></DD>
 <DT><STRONG>subscribeNode ( id )</STRONG></DT>
@@ -74,6 +88,7 @@ These classes implement the client representation in the OSC interface. It is us
 <DD></DD>
 <DT><STRONG>unsubscribeSlot ( id1, id2 )</STRONG></DT>
 <DD></DD>
+
 <DT><STRONG>newExpected ( node )</STRONG></DT>
 <DD></DD>
 <DT><STRONG>newNode ( node )</STRONG></DT>
@@ -83,6 +98,9 @@ These classes implement the client representation in the OSC interface. It is us
 <DT><STRONG>nodeRemoved ( id )</STRONG></DT>
 <DD></DD>
 <DT><STRONG>sendData ( id, data )</STRONG></DT>
+<DD> --- old version --- </DD>
+
+<DT><STRONG>sendDataNode ( node )</STRONG></DT>
 <DD></DD>
 
 </DL>

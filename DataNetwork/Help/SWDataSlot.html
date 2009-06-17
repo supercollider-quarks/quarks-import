@@ -35,8 +35,8 @@ Base class for a data slot.
 <h3>- Methods - </h3>
 <P>
 <DL>
-<DT><STRONG>*new ( ident )</STRONG></DT>
-	<DD>Create a new instance of a slot with identifier <em>ident</em></DD>
+<DT><STRONG>*new ( id )</STRONG></DT>
+	<DD>Create a new instance of a slot with identifier <em>id</em></DD>
 
 <h4>- Identifier and label - </h4>
 
@@ -63,7 +63,7 @@ Base class for a data slot.
 <DT><STRONG>action_ (  )</STRONG></DT>
 	<DD>Function to be performed each time the data is set</DD>
 
-<h4>- Scaling mapping and calibrating - </h4>
+<h4>- Scaling, mapping and calibrating - </h4>
 
 <DT><STRONG>scale (  )</STRONG></DT>
 	<DD></DD>
@@ -93,7 +93,7 @@ Base class for a data slot.
 	<DD>Return the Bus object.</DD>
 
 <DT><STRONG>kr (  )</STRONG></DT>
-	<DD>JITLib support. This creates the bus and provides an In.kr around the bus.</DD>
+	<DD>JITLib support. This creates the bus (if not already present) and provides an In.kr around the bus.</DD>
 
 <h4>- Debugging and monitoring - </h4>
 
@@ -102,6 +102,9 @@ Base class for a data slot.
 
 <DT><STRONG>monitor ( onoff )</STRONG></DT>
 	<DD>Monitor the data in a plot. This uses the GNUPlot to plot the data and the interface class GNUPlot and BusMonitor, which can be found in the GNUPlot quark.</DD>
+
+<DT><STRONG>monitorClose (  )</STRONG></DT>
+	<DD>Cleans up the monitor (closing the pipe to GNUPlot).</DD>
 
 <DT><STRONG>busmonitor (  )</STRONG></DT>
 	<DD>Reference to the BusMonitor instance for monitoring the slot.</DD>
