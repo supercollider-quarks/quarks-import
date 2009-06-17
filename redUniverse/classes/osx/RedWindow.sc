@@ -1,7 +1,10 @@
 // this file is part of redUniverse toolkit /redFrik
 
+//todo:
+//mouseDownAction etc.  now mouse is lost if setting userView.mouseDownAction
+
 RedWindow : SCWindow {
-	var <mouse, <isPlaying= false, <userView;
+	var <>mouse, <isPlaying= false, <userView;
 	*new {|name= "redWindow", bounds, resizable= false, border= true, server, scroll= false|
 		^super.new.initSCWindow(name, bounds, resizable, border, scroll)
 	}

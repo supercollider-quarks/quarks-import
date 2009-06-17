@@ -3,7 +3,7 @@
 //this class can also be used with osx-swing.  just copy it to the osx folder
 
 RedJWindow : JSCWindow {
-	var <mouse, <isPlaying= false, <userView;
+	var <>mouse, <isPlaying= false, <userView;
 	*new {|name= "redWindow", bounds, resizable= false, border= true, server, scroll= false|
 		^super.new.initSCWindow(name, bounds, resizable, border, scroll, server)
 	}

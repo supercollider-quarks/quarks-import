@@ -12,16 +12,15 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #083aec}
-span.s3 {color: #1949e0}
+span.s2 {color: #1142e6}
+span.s3 {color: #214fdb}
 span.s4 {color: #000000}
 span.s5 {text-decoration: underline}
-span.s6 {color: #0000bf}
-span.s7 {color: #bf0000}
+span.s6 {color: #0019ba}
+span.s7 {color: #ad1d13}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -51,7 +50,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>boolean</p>
 <p class="p3"><br></p>
 <p class="p1"><span class="s5">instance variables:</span></p>
-<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;mouse</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;mouse</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns a RedVector for mouse x and y position.<span class="Apple-converted-space">  </span>click&amp;drag in window to set position.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;isPlaying</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if the window is updating</p>
@@ -64,11 +63,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">w= <span class="s6">RedJWindow</span>.new.front;</p>
 <p class="p7">w.resize(<span class="s6">RedVector2D</span>[200, 200])</p>
 <p class="p7">w.background= <span class="s6">Color</span>.red</p>
-<p class="p8"><br></p>
+<p class="p5"><br></p>
 <p class="p7">w.draw{<span class="s6">GUI</span>.pen.fillColor= <span class="s6">Color</span>.black; <span class="s6">GUI</span>.pen.fillOval(<span class="s6">Rect</span>.aboutPoint(175.rand@175.rand, 50, 50))}</p>
 <p class="p6"><span class="s4">w.play<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//start drawing</p>
 <p class="p7">w.stop</p>
-<p class="p8"><br></p>
+<p class="p5"><br></p>
 <p class="p6"><span class="s4">(<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mouse control</p>
 <p class="p7">w.draw{</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s6">var</span> radius= 100.rand;</p>
