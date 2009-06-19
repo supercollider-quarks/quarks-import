@@ -1,5 +1,8 @@
 //redFrik
 
+//--changes090619
+//now using the redirect classes instead of GUI
+//took out relativeOrigin and rewrote to use sc3.3.1 userview x/y mouse positions
 //--changes090521
 //added sortFunc, value_ and valueAction_.  thanks miguel
 //--changes090114
@@ -33,11 +36,11 @@ PopUpTreeMenu : SCViewHolder {
 		var dec;
 		lst= List.new;							//one array in here for each submenu
 		tree= (\nil: ());							//default tree
-		font= GUI.font.new("Monaco", 9);
+		font= Font("Monaco", 9);
 		hiliteColor= Color.grey;
 		
 		//--create popUpMenu.  visible when submenus not open
-		pop= GUI.popUpMenu.new(argParent, argBounds)
+		pop= PopUpMenu(argParent, argBounds)
 			.font_(font)
 			.background_(Color.clear)
 			.stringColor_(Color.black);
@@ -51,8 +54,8 @@ PopUpTreeMenu : SCViewHolder {
 			dec.shift(bounds.left-dec.left, bounds.top-dec.top);
 		});
 		
-		//--create useView on top of popUpMenu.  any decorator is bypassed with shift above
-		usr= GUI.userView.new(argParent, bounds).relativeOrigin_(true);
+		//--create userView on top of popUpMenu.  any decorator is bypassed with shift above
+		usr= UserView(argParent, bounds);
 		usr.mouseDownAction_({|v, x, y| mouseMoved= false; this.prUserAction(v, x, y)});
 		usr.mouseMoveAction_({|v, x, y| mouseMoved= true; this.prUserAction(v, x, y)});
 		usr.mouseUpAction_({|v, x, y| this.prUserActionEnd(v, x, y)});
@@ -102,6 +105,7 @@ PopUpTreeMenu : SCViewHolder {
 		});
 	}
 	prUserAction {|v, x, y|
+		var relativePoint= usr.bounds.origin+Point(x, y);
 		var xIndex, yIndex;
 		if(lst.size==0, {							//check if at root level
 			openAction.value(this, x, y);
@@ -109,7 +113,7 @@ PopUpTreeMenu : SCViewHolder {
 			xIndex= 0;							//force y update below
 			xIndexLast= 0;
 		}, {										//at some sub level
-			xIndex= lst.detectIndex{|z| z[0].containsPoint(Point(x, y))};
+			xIndex= lst.detectIndex{|z| z[0].containsPoint(relativePoint)};
 			if(xIndex.notNil, {
 				if(xIndex!=xIndexLast, {
 					if(xIndex>xIndexLast, {			//open a submenu if moving right
@@ -124,7 +128,7 @@ PopUpTreeMenu : SCViewHolder {
 			});
 		});
 		if(xIndex.notNil, {
-			yIndex= (y-lst[xIndex][0].top).div(hgt).min(lst[xIndex][2].items.size-1);
+			yIndex= (y-(lst[xIndex][0].top-bounds.top)).div(hgt).min(lst[xIndex][2].items.size-1);
 			if(yIndex!=yIndexLast, {
 				if(lst.size-1>xIndex, {				//close a submenu if open
 					lst.last[1].close;
@@ -142,7 +146,8 @@ PopUpTreeMenu : SCViewHolder {
 		});
 	}
 	prUserActionEnd {|v, x, y|
-		var xIndex= lst.detectIndex{|z| z[0].containsPoint(Point(x, y))};
+		var relativePoint= usr.bounds.origin+Point(x, y);
+		var xIndex= lst.detectIndex{|z| z[0].containsPoint(relativePoint)};
 		if(xIndex.isNil, {							//mouse released outside menu tree
 			//nil.postln;
 		}, {										//mouse released on node
@@ -192,8 +197,8 @@ PopUpTreeMenu : SCViewHolder {
 				bounds= bounds.moveBy(0, screenBounds.top);
 				screenBounds= this.prToScreen(bounds);
 			});
-			window= GUI.window.new("", screenBounds, false, false).front;
-			listView= GUI.listView.new(window, Rect(0, 0, bounds.width, bounds.height))
+			window= Window("", screenBounds, false, false).front;
+			listView= ListView(window, Rect(0, 0, bounds.width, bounds.height))
 				.font_(pop.font)
 				.background_(pop.background)
 				.stringColor_(pop.stringColor)
