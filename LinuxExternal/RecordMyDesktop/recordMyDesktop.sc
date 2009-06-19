@@ -9,12 +9,13 @@ RecordMyDesktop{
 		all = IdentityDictionary.new;
 	}
 
-	*new{ |name|
-		^super.new.init(name);
+	*new{ |name,v=30,s=5|
+		^super.new.init(name,v,s);
 	}
 
-	init{ |name|
-		pid = ("recordmydesktop -use-jack SuperCollider:out_1 SuperCollider:out_2 -v_quality 30 -s_quality 5 -o" + name ++ ".ogv --on-the-fly-encoding").unixCmd;
+	init{ |name,v=30,s=5|
+		name = name ? ("RecordMyDesktop"++Date.localtime.stamp);
+		pid = ("recordmydesktop -use-jack SuperCollider:out_1 SuperCollider:out_2 -v_quality"+v+"-s_quality"+s+"-o" + name ++ ".ogv --on-the-fly-encoding").unixCmd;
 		all.put( name, this );
 	}
 
