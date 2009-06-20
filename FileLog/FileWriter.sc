@@ -32,9 +32,9 @@ FileWriter : File {
 	writeLine{ |array|
 		if ( timeStamp ){
 			if ( timebase == \local ){
-				this.write( Date.localtime.stamp );
+				this.write( Date.localtime.stamp.perform( stringMethod ) );
 			}{ // gm
-				this.write( Date.gmtime.stamp );
+				this.write( Date.gmtime.stamp.perform( stringMethod ) );
 			};
 			this.write( delimiter );
 		};

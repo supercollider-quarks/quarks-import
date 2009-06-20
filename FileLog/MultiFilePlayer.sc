@@ -33,4 +33,13 @@ MultiFilePlayer : MultiFileReader{
 		};
 		^curFile.readAt( line );
 	}
+
+	readAtInterpret{ |fileid, line|
+		if ( curid != fileid ){
+			if ( this.openFile( fileid ).isNil ){
+				^nil;
+			};
+		};
+		^curFile.readAtInterpret( line );
+	}
 }
