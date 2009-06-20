@@ -47,75 +47,7 @@ SWDataNetwork{
 		this.watch( false );
 	}
 
-	removeNode{ |name|
-		nodes.removeAt( name );
-		if ( osc.notNil, {
-			osc.nodeRemoved( name );
-		});
-	}
-
-	isExpected{ |id|
-		^expectedNodes.indexOf( id ).notNil;
-	}
-
-	addExpected{ |id,label,size=nil|
-		if ( this.isExpected( id ).not, {
-			expectedNodes = expectedNodes.add( id );
-		});
-		if ( label.notNil and: (label.asSymbol != \0 ), {
-			this.add( label, id );
-		},{
-			// maybe the label is already in the spec
-			label = spec.findNode( id );
-		});
-		if ( osc.notNil, {
-			osc.newExpected( id, label );
-		});
-		if ( size.notNil, {
-			this.setData( id, Array.fill( size, 0 ) );
-		})
-	}
-
-	registerNode{ |id,sz|
-		var ret,key;
-		ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
-		if ( ret ) {
-			nodes.put( id, SWDataNode.new( id,sz ) );
-			if ( osc.notNil, {
-				osc.newNode( nodes[id] );
-			});
-			if ( gui.notNil, {
-				gui.addNode( nodes[id] );
-			});
-			key = spec.findNode( id );
-			if ( key.notNil, {this.at( key ).key = key; });
-			sz.do{ |it| 
-				key = spec.findSlot( id, it );
-				if ( key.notNil, {this.at( key ).key = key; });
-			};
-		}{
-			if ( verbose > 0 , {("node with id"+id+"and size"+sz+"is not expected to be part of the network" ).postln;});
-		};
-		^ret;
-	}
-
-	worrytime_{ |wt|
-		worrytime = wt;
-		watcher.dt = wt/10;
-	}
-
-	watch{ |onoff=true|
-		if ( onoff, { watcher.start }, { watcher.stop; } );
-	}
-
-	createAllNodeBuses{
-		nodes.do{ |it| it.createBus };
-	}
-
-	debug_{ |onoff|
-		nodes.do{ |sl|
-			sl.do{ |slt| slt.debug_( onoff ) } };
-	}
+	/// --------- NODE control ---------
 
 	setData{ |id,data|
 		var ret = true;
@@ -171,6 +103,66 @@ SWDataNetwork{
 	}
 	*/
 
+	registerNode{ |id,sz|
+		var ret,key;
+		ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
+		if ( ret ) {
+			nodes.put( id, SWDataNode.new( id,sz ) );
+			if ( osc.notNil, {
+				osc.newNode( nodes[id] );
+			});
+			if ( gui.notNil, {
+				gui.addNode( nodes[id] );
+			});
+			key = spec.findNode( id );
+			if ( key.notNil, {this.at( key ).key = key; });
+			sz.do{ |it| 
+				key = spec.findSlot( id, it );
+				if ( key.notNil, {this.at( key ).key = key; });
+			};
+		}{
+			if ( verbose > 0 , {("node with id"+id+"and size"+sz+"is not expected to be part of the network" ).postln;});
+		};
+		^ret;
+	}
+
+	removeNode{ |id|
+		nodes.removeAt( id );
+		if ( osc.notNil, {
+			osc.nodeRemoved( id );
+		});
+	}
+
+	/// -------- expected nodes -----------
+
+	addExpected{ |id,label,size=nil|
+		if ( this.isExpected( id ).not, {
+			expectedNodes = expectedNodes.add( id );
+		});
+		if ( label.notNil and: (label.asSymbol != \0 ), {
+			this.add( label, id );
+		},{
+			// maybe the label is already in the spec
+			label = spec.findNode( id );
+		});
+		if ( osc.notNil, {
+			osc.newExpected( id, label );
+		});
+		if ( size.notNil, {
+			this.setData( id, Array.fill( size, 0 ) );
+		})
+	}
+
+	isExpected{ |id|
+		^expectedNodes.indexOf( id ).notNil;
+	}
+
+	//---- spec (labeling and so on) ---------
+
+	setSpec{ |name|
+		spec.fromFile( name );
+	}
+
 	// direct access to spec:
 
 	add{ |key, slot|
@@ -188,6 +180,8 @@ SWDataNetwork{
 		});
 	}
 
+	// ---- named access to nodes, values and actions -------
+
 	at{ |key|
 		^spec.at( key );
 	}
@@ -196,16 +190,20 @@ SWDataNetwork{
 		^spec.value( key );
 	}
 
-	bus{ |key|
-		^spec.bus( key );
-	}
-
+	/* THIS should not be allowed! use setData instead.
 	value_{ |key,value|
 		spec.value_( key, value );
 	}
+	*/
 
 	action_{ |key,action|
 		spec.action_( key, action );
+	}
+
+	//---- -- node bus control -------------
+
+	bus{ |key|
+		^spec.bus( key );
 	}
 
 	createBus{ |key,server|
@@ -224,9 +222,23 @@ SWDataNetwork{
 		spec.freeAllBuses;
 	}
 
-	setSpec{ |name|
-		spec.fromFile( name );
+	createAllNodeBuses{ |server|
+		nodes.do{ |it| it.createBus(server) };
 	}
+
+	// --------- data input control -------
+
+	worrytime_{ |wt|
+		worrytime = wt;
+		watcher.dt = wt/10;
+	}
+
+	watch{ |onoff=true|
+		if ( onoff, { watcher.start }, { watcher.stop; } );
+	}
+
+
+	// ------- data logging and recording --------
 
 	// recording
 	initRecord{ |fn,dt=0.005|
@@ -308,6 +320,14 @@ SWDataNetwork{
 		timelogfile.close;
 	}
 
+
+	// ------------ Debugging -------------
+
+	debug_{ |onoff|
+		nodes.do{ |sl|
+			sl.do{ |slt| slt.debug_( onoff ) } };
+	}
+
 	// add interfaces:
 
 	makeGui{
@@ -323,22 +343,22 @@ SWDataNetwork{
 
 // a DataNode are a collection of slots which are physically connected to each other, e.g. data gathered from the same device.
 SWDataNode{
-	var <slots;
-	var <>databus;
+
 	var <id;
-	var <lasttime;
-	var <>restartAction;
 	var <>key;
 
-	var <>action;
-
-	//	var <>trigger;
-
-	var <>scale = 1;
-
+	var <slots;
 	var <data;
+	var <>scale = 1;
+	var <lasttime;
+
+	var <>action;
+	var <>restartAction;
 
 	var >bus;
+	var <>databus;
+
+	//	var <>trigger;
 
 	// monitoring support
 	var <busmonitor;
@@ -360,42 +380,7 @@ SWDataNode{
 		//		trigger = {};
 	}
 
-	elapsed{
-		^(Process.elapsedTime - lasttime );
-	}
-
-	createBus{ |s|
-		if ( bus.isNil, {
-			s = s ? Server.default;
-			databus = DataBus.new( { slots.collect{ |it| it.value } }, slots.size, s )
-		});
-	}
-
-	bus{
-		if ( bus.notNil, { ^bus } );
-		if ( databus.isNil, { ^nil } );
-		^databus.bus;
-	}
-
-	freeBus{
-		if ( bus.notNil, { bus.free; },
-			{
-			if ( databus.notNil, { databus.free;});
-			});
-	}
-
-	debug_{ |onoff|
-		slots.do{ |sl|
-			sl.do{ |slt| slt.debug_( onoff ) } };
-	}
-
-	value{
-		^data;
-	}
-
-	setLastTime{
-		lasttime = Process.elapsedTime;
-	}
+	// -------- slots and data -------
 
 	data_{ |indata|
 		if ( indata.size == slots.size , {
@@ -421,9 +406,54 @@ SWDataNode{
 	}
 	*/
 
-	monitorClose{
-		busmonitor.cleanUp;
-		busmonitor = nil;
+
+	value{
+		^data;
+	}
+
+	setLastTime{
+		lasttime = Process.elapsedTime;
+	}
+
+	elapsed{
+		^(Process.elapsedTime - lasttime );
+	}
+
+	// --- Bus support ---
+
+	createBus{ |s|
+		if ( bus.isNil, {
+			s = s ? Server.default;
+			databus = DataBus.new( { slots.collect{ |it| it.value } }, slots.size, s )
+		});
+	}
+
+	bus{
+		if ( bus.notNil, { ^bus } );
+		if ( databus.isNil, { ^nil } );
+		^databus.bus;
+	}
+
+	freeBus{
+		if ( bus.notNil, { bus.free; bus = nil; },
+			{
+			if ( databus.notNil, { databus.free; databus = nil; });
+			});
+	}
+
+// JITLib support
+	kr{
+		var b;
+		this.createBus;
+		b = this.bus;
+		^In.kr( b, b.numChannels );
+	}
+
+	// ---------- debugging and monitoring -------
+
+	debug_{ |onoff|
+		slots.do{ |sl|
+			sl.do{ |slt| slt.debug_( onoff ) } };
 	}
 
 	monitor{ |onoff=true|
@@ -435,15 +465,24 @@ SWDataNode{
 			busmonitor.start;
 		}, { busmonitor.stop; });
 	}
+
+	monitorClose{
+		busmonitor.cleanUp;
+		busmonitor = nil;
+	}
+
 }
 
 SWDataSlot{
-	var <value;
-	var <bus;
-	var <>action;
-	var <>key;
-	var debugAction;
 	var <>id;
+	var <>key;
+
+	var <value;
+	var <>action;
+
+	var <bus;
+	var debugAction;
+
 	var <>scale=1;
 	var <map;
 	var <range;
@@ -462,6 +501,19 @@ SWDataSlot{
 		value = 0;
 	}
 
+	// ------ data and action -----
+	value_{ |val|
+		value = val * scale;
+		// map to control spec from input range after scaling
+		if ( map.notNil, { value = map.map( range.unmap( value ) ) } );
+		action.value( value );
+		debugAction.value( value );
+		if ( bus.notNil, { bus.set( value ) } );
+	}
+
+
+	/// -------- scaling, mapping and calibrating --------
+
 	map_{ |mp|
 		if( range.isNil){
 			// input range after scaling:
@@ -477,6 +529,24 @@ SWDataSlot{
 		};
 		range = mp;
 	}
+
+	// currently only does minimum:
+	calibrate{ |steps=100| // about two seconds currently
+		var calib,values;
+		values = Array.new( steps );
+		range = [0,1].asSpec;
+		calib = Routine{ 
+			var mean;
+			steps.do{ |it,i| values.add( this.value ); it.yield; };
+			mean = values.sum / values.size;
+			range.minval = mean;
+			this.debug_( false );
+			"calibration done".postln;
+		};
+		debugAction = { calib.next };
+	}
+
+	// --- bus support ----
 
 	createBus{ |s|
 		s = s ? Server.default;
@@ -500,14 +570,7 @@ SWDataSlot{
 		^In.kr( bus );
 	}
 
-	value_{ |val|
-		value = val * scale;
-		// map to control spec from input range after scaling
-		if ( map.notNil, { value = map.map( range.unmap( value ) ) } );
-		action.value( value );
-		debugAction.value( value );
-		if ( bus.notNil, { bus.set( value ) } );
-	}
+	/// ------- debugging and monitoring ------
 
 	debug_{ |onoff|
 		if ( onoff, {
@@ -517,21 +580,6 @@ SWDataSlot{
 		});
 	}
 
-	// currently only does minimum:
-	calibrate{ |steps=100| // about two seconds currently
-		var calib,values;
-		values = Array.new( steps );
-		range = [0,1].asSpec;
-		calib = Routine{ 
-			var mean;
-			steps.do{ |it,i| values.add( this.value ); it.yield; };
-			mean = values.sum / values.size;
-			range.minval = mean;
-			this.debug_( false );
-			"calibration done".postln;
-		};
-		debugAction = { calib.next };
-	}
 
 	monitor{ |onoff=true|
 		if ( onoff, {
@@ -542,6 +590,12 @@ SWDataSlot{
 			busmonitor.start;
 		}, { busmonitor.stop; });
 	}
+
+	monitorClose{
+		busmonitor.cleanUp;
+		busmonitor = nil;
+	}
+
 }
 
 
@@ -573,6 +627,19 @@ SWDataNetworkSpec{
 			{ testfile.close;  unixCmd("rm" + folder.escapeChar($ ) +/+ testname) }
 	}
 
+	*saveAll{
+		var file, res = false;
+		var filename;
+		filename = folder +/+ "allspecs.info";
+		file = File(filename, "w"); 
+		if (file.isOpen) { 
+			res = file.write(all.asCompileString);
+			file.close;
+		};
+		^res;
+	}
+
+
 	*new { |netw|
 		^super.new.init(netw);
 	}
@@ -582,12 +649,30 @@ SWDataNetworkSpec{
 		map = IdentityDictionary.new;
 	}
 
-	add{ |key, slot|
-		map.put( key, slot );
-		if ( this.at( key ).notNil, {
-			this.at( key ).key = key;
-		});
+	save{ |name|
+		var file, res = false;
+		var filename;
+		all.add( name.asSymbol );
+		this.name = name;
+		filename = folder +/+ name ++ ".spec";
+		file = File(filename, "w"); 
+		if (file.isOpen) { 
+			res = file.write(map.asCompileString);
+			file.close;
+		};
+		this.class.saveAll;
+		^res;
 	}
+
+	fromFile { |name| 
+		var slot;
+		this.name = name;
+		map = (folder +/+ name++".spec").load;
+		map.keysValuesDo{ |key,it|
+			slot = this.at( key );
+			if ( slot.notNil, { slot.key = key; } );
+		}
+	} 
 
 	findNode{ |id|
 		^map.findKeyForValue( id );
@@ -599,6 +684,19 @@ SWDataNetworkSpec{
 		^keySlot;
 		//		^map.findKeyForValue( [id1,id2] );
 	}
+
+
+
+	// --- the methods below can all be accessed from the network directly ----
+
+	add{ |key, slot|
+		map.put( key, slot );
+		if ( this.at( key ).notNil, {
+			this.at( key ).key = key;
+		});
+	}
+
+	// ------- named access to nodes, slots
 
 	// returns the slot or node
 	at{ |key|
@@ -620,12 +718,14 @@ SWDataNetworkSpec{
 		^this.at(key).value;
 	}
 
+	/* // this should not be allowed!
 	value_{ |key,value|
 		var slot;
 		slot = this.at(key);
 		slot.value_(value);
 		^slot;
 	}
+	*/
 
 	action_{ |key,action|
 		var slot;
@@ -633,6 +733,8 @@ SWDataNetworkSpec{
 		slot.action_(action);
 		^slot;		
 	}
+
+	//-------- node bus control ---------
 
 	bus{ |key|
 		^this.at(key).bus;
@@ -646,15 +748,14 @@ SWDataNetworkSpec{
 		this.at( key ).freeBus;
 	}
 
-	/*	setAllActions{ |action|
-		map.do{ |it|
-			device.slots.at( it[0] ).at( it[1] ).action_( action );
-		};
-		}*/
 
 	createAllBuses{ |server|
 		map.do{ |it|
-			network.nodes.at( it[0] ).slots.at( it[1] ).createBus( server );
+			if ( it.isKindOf( Array ), {
+				network.nodes.at( it[0] ).slots.at( it[1] ).createBus( server );
+			},{
+				network.nodes.at( it ).createBus( server );
+			});
 		};
 	}
 
@@ -664,41 +765,12 @@ SWDataNetworkSpec{
 		};
 	}
 
-	save{ |name|
-		var file, res = false;
-		var filename;
-		all.add( name.asSymbol );
-		this.name = name;
-		filename = folder +/+ name ++ ".spec";
-		file = File(filename, "w"); 
-		if (file.isOpen) { 
-			res = file.write(map.asCompileString);
-			file.close;
-		};
-		this.class.saveAll;
-		^res;
-	}
 
-	*saveAll{
-		var file, res = false;
-		var filename;
-		filename = folder +/+ "allspecs.info";
-		file = File(filename, "w"); 
-		if (file.isOpen) { 
-			res = file.write(all.asCompileString);
-			file.close;
+	/*	setAllActions{ |action|
+		map.do{ |it|
+			device.slots.at( it[0] ).at( it[1] ).action_( action );
 		};
-		^res;
-	}
+		}*/
 
-	fromFile { |name| 
-		var slot;
-		this.name = name;
-		map = (folder +/+ name++".spec").load;
-		map.keysValuesDo{ |key,it|
-			slot = this.at( key );
-			if ( slot.notNil, { slot.key = key; } );
-		}
-	} 
 
 }

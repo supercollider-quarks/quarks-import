@@ -139,6 +139,8 @@ SWDataNetworkClient : SWDataNetwork{
 		responders.do{ |it| it.remove };
 	}
 
+	/// ---- host interaction ---
+
 	setHost{ |ip,port|
 		host = NetAddr( ip.asString, port );
 		this.resetHost;
@@ -182,12 +184,77 @@ SWDataNetworkClient : SWDataNetwork{
 		this.resetHost;
 	}
 
+	// ------------
+
 	worryAboutTime{
 		if ( Process.elapsedTime - lasttime > worrytime,
 			{
 				this.tryReconnect;
 			});
 	}
+
+	// overloaded from base class
+	addExpected{ |id,label,size=nil,fromnw=false|
+		if ( fromnw.not, {
+			host.sendMsg( '/add/expected', NetAddr.langPort, id, size, label );
+		},{
+			if ( this.isExpected( id ).not, {
+				expectedNodes = expectedNodes.add( id );
+			});
+			if ( label.notNil and: (label.asSymbol != \0 ), {
+				this.add( label, id, fromnw );
+			},{
+				// maybe the label is already in the spec
+				label = spec.findNode( id );
+			});
+			if ( size.notNil, {
+				this.setData( id, Array.fill( size, 0 ), fromnw );
+			});
+		});
+	}
+
+	// overloaded from base class
+	setData{ |id,data,fromnw=false|
+		var ret = true;
+		if ( verbose > 1, { [id,data].postln; } );
+		if ( nodes[id].isNil, {
+			ret = this.registerNode( id, data.size );
+			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
+		});
+		if ( ret ) { 
+			nodes[id].data = data;
+			if ( fromnw.not, {
+				this.sendData( id, data );
+			});
+		};
+	}
+
+	// overloaded from base class
+	add{ |key, slot,fromnw=false|
+		var ns;
+		spec.add( key, slot );
+		if ( fromnw.not, {
+			ns = this.at( key );
+			if ( ns.isKindOf( SWDataNode ),{
+				this.labelNode( ns );
+			});
+			if ( ns.isKindOf( SWDataSlot ),{
+				this.labelSlot( ns );
+			});
+		});
+	}
+
+	// overloaded from base class
+	removeNode{ |id,fromnw=false|
+		if ( verbose > 0, { ("remove" + id).postln; });
+		if ( fromnw.not )
+		{ 
+			host.sendMsg( '/remove/node', NetAddr.langPort, id.asInteger );}
+		{
+			nodes.removeAt( id.asInteger );			
+		};	
+	}
+
 
 	/// OSC interface
 
@@ -198,6 +265,8 @@ SWDataNetworkClient : SWDataNetwork{
 	unregister{
 		host.sendMsg( '/unregister', NetAddr.langPort );
 	}
+
+	// Querying ---
 
 	queryExpected{
 		host.sendMsg( '/query/expected', NetAddr.langPort );
@@ -215,13 +284,16 @@ SWDataNetworkClient : SWDataNetwork{
 		host.sendMsg( '/query/setters', NetAddr.langPort );
 	}
 
+	querySubscriptions{
+		host.sendMsg( '/query/subscriptions', NetAddr.langPort );
+	}
+
 	queryClients{
 		host.sendMsg( '/query/clients', NetAddr.langPort );
 	}
 
-	querySubscriptions{
-		host.sendMsg( '/query/subscriptions', NetAddr.langPort );
-	}
+
+	// -- Subscribing --
 
 	subscribeAll{ 
 			host.sendMsg( '/subscribe/all', NetAddr.langPort );
@@ -267,29 +339,6 @@ SWDataNetworkClient : SWDataNetwork{
 		}
 	}
 
-	labelNode{ |node|
-		host.sendMsg( '/label/node', NetAddr.langPort, node.id, node.key );
-	}
-
-	labelSlot{ |slot|
-		host.sendMsg( '/label/slot', NetAddr.langPort, slot.id[0], slot.id[1], slot.key );
-	}
-
-	// overloaded from base class
-	add{ |key, slot,fromnw=false|
-		var ns;
-		spec.add( key, slot );
-		if ( fromnw.not, {
-			ns = this.at( key );
-			if ( ns.isKindOf( SWDataNode ),{
-				this.labelNode( ns );
-			});
-			if ( ns.isKindOf( SWDataSlot ),{
-				this.labelSlot( ns );
-			});
-		});
-	}
-
 	getNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
 			host.sendMsg( '/get/node', NetAddr.langPort, node.id );
@@ -306,30 +355,7 @@ SWDataNetworkClient : SWDataNetwork{
 		}
 	}
 
-	// overloaded from base class
-	addExpected{ |id,label,size=nil,fromnw=false|
-		if ( fromnw.not, {
-			host.sendMsg( '/add/expected', NetAddr.langPort, id, size, label );
-		},{
-			if ( this.isExpected( id ).not, {
-				expectedNodes = expectedNodes.add( id );
-			});
-			if ( label.notNil and: (label.asSymbol != \0 ), {
-				this.add( label, id, fromnw );
-			},{
-				// maybe the label is already in the spec
-				label = spec.findNode( id );
-			});
-			if ( size.notNil, {
-				this.setData( id, Array.fill( size, 0 ), fromnw );
-			});
-		});
-	}
-
-	sendPong{
-		host.sendMsg( '/pong', NetAddr.langPort );
-		lasttime = Process.elapsedTime;
-	}
+	// ----------
 
 	nodeInfo{ |msg|
 		this.addExpected( msg[0], msg[1], fromnw: true );
@@ -356,36 +382,7 @@ SWDataNetworkClient : SWDataNetwork{
 		nodes.at( msg[0] ).setLastTime;
 	}
 
-	// overloaded from base class
-	removeNode{ |id,fromnw=false|
-		if ( verbose > 0, { ("remove" + id).postln; });
-		if ( fromnw.not )
-		{ 
-			host.sendMsg( '/remove/node', NetAddr.langPort, id.asInteger );}
-		{
-			nodes.removeAt( id.asInteger );			
-		};	
-	}
-
-	// overloaded from base class
-	setData{ |id,data,fromnw=false|
-		var ret = true;
-		if ( verbose > 1, { [id,data].postln; } );
-		if ( nodes[id].isNil, {
-			ret = this.registerNode( id, data.size );
-			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
-		});
-		if ( ret ) { 
-			nodes[id].data = data;
-			if ( fromnw.not, {
-				this.sendData( id, data );
-			});
-		};
-	}
-
-	sendData{ |id, data|
-		host.sendMsg( '/set/data', NetAddr.langPort, id, *data );
-	}
+	// ----
 
 	unsubscribeNodeInfo{ |msg|
 		("unsubscribed node"+msg).postln;
@@ -424,6 +421,30 @@ SWDataNetworkClient : SWDataNetwork{
 			gui.setSetter( msg[0] );
 		};
 	}
+
+	// ---
+
+	labelNode{ |node|
+		host.sendMsg( '/label/node', NetAddr.langPort, node.id, node.key );
+	}
+
+	labelSlot{ |slot|
+		host.sendMsg( '/label/slot', NetAddr.langPort, slot.id[0], slot.id[1], slot.key );
+	}
+
+	//-------------
+
+	sendData{ |id, data|
+		host.sendMsg( '/set/data', NetAddr.langPort, id, *data );
+	}
+
+
+	sendPong{
+		host.sendMsg( '/pong', NetAddr.langPort );
+		lasttime = Process.elapsedTime;
+	}
+
+	// -------
 
 	makeGui{
 		^SWDataNetworkClientGui.new( this );
