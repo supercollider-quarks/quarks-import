@@ -5,10 +5,14 @@ SWDataNetworkLog{
 
 	var <network;
 
-	var logfile;
-	var reader;
+	var <reader;
+
 	var playnodes;
 	var playTask;
+
+	var <timeMap;
+	var <curTime;
+	var <deltaT=0;
 
 	*new{ |fn,network|
 		^super.new.init( fn,network );
@@ -16,9 +20,17 @@ SWDataNetworkLog{
 
 	init{ |fn,netw|
 		network = netw ? SWDataNetwork.new;
-		logfile =  File(fn, "r");
-		reader = TabFileReader.new( logfile );
+		this.open( fn );
+	}
+
+	open{ |fn|
+		if ( playTask.notNil ){ playTask.stop; };
+		if ( reader.notNil ){ reader.close; };
+
+		reader = TabFilePlayer.new( fn );
+
 		this.readHeader;
+
 		playTask = Task{
 			var dt = 0;
 			while( { dt.notNil }, {
@@ -26,7 +38,53 @@ SWDataNetworkLog{
 				dt.wait;
 			});
 		};
+		// timeMap maps the time elapsed to the line number in the file
+		//		timeMap = Order.new;
+		//		timeMap.put( 0, 1 );
+
 	}
+
+	goToTime{ |newtime|
+		var line;
+		if ( deltaT == 0 ){
+			deltaT = this.readLine;
+		};
+		line = floor( newtime / deltaT );
+		curTime = line * deltaT;
+		// assuming dt is constant.
+		// header is line 1
+		reader.goToLine( line.asInteger + 1 )
+	}
+
+	play{
+		playTask.start;
+	}
+
+	pause{
+		playTask.pause;
+	}
+
+	resume{
+		playTask.resume;
+	}
+
+	stop{
+		playTask.stop;
+		this.reset;
+	}
+
+	reset{
+		curTime = 0;
+		reader.reset;
+		this.readHeader;
+		playTask.reset;
+	}
+
+	close{
+		playTask.stop;
+		reader.close;
+	}
+
 
 	readHeader{
 		var spec,playset,playids;
@@ -43,34 +101,22 @@ SWDataNetworkLog{
 		playids.do{ |it,i| playnodes.put( it, playnodes[it].add( i ) ) };
 	}
 
-	readLine{
+	readLine{ |update=true|
 		var dt,line,data;
 		line = reader.next.drop(-1).collect{ |it| it.interpret };
 		dt = line.first;
-		data = line.drop( 1 );
-		playnodes.keysValuesDo{ |key,it|
-			network.setData( key, data.at( it ) );
+		if ( update ){
+			data = line.drop( 1 );
+			playnodes.keysValuesDo{ |key,it|
+				network.setData( key, data.at( it ) );
+			};
+		};
+		if( dt.notNil ){ 
+			deltaT = dt;
+			curTime = curTime + dt;
+			//	timeMap.put( curTime, reader.currentLine );
 		};
 		^dt;
-	}
-
-	play{
-		playTask.play;
-	}
-
-	stop{
-		playTask.stop;
-	}
-
-	reset{
-		reader.reset;
-		this.readHeader;
-		playTask.reset;
-	}
-
-	close{
-		reader.close;
-		logfile.close;
 	}
 
 }
