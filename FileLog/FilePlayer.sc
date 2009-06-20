@@ -62,12 +62,12 @@ FilePlayer : FileReader {
 		);
 	}
 
-	readAtLine{ |line|
+	readAt{ |line|
 		this.goToLine( line );
 		^this.next;
 	}
 
-	readAtLineInterpret{ |line|
+	readAtInterpret{ |line|
 		this.goToLine( line );
 		^this.nextInterpret;
 	}
