@@ -69,7 +69,7 @@ MultiFileReader{
 			this.closeFile;
 		};
 
-		line = indexFile.readAtLine( ind );
+		line = indexFile.readAt( ind );
 
 		if ( line.isNil ){
 			("File with id"+ind+"does not exist").warn;
