@@ -71,7 +71,10 @@
 <DT><STRONG>next</STRONG></DT>
 <DD>Read the next line.</DD>
 
-<DT><STRONG>readAtLine(line)</STRONG></DT>
+<DT><STRONG>nextInterpret</STRONG></DT>
+<DD>Read the next line and interpret the result (element by element). <em>Note: this is an extension to FileReader, so it can be used in that class too.</em></DD>
+
+<DT><STRONG>readAt(line)</STRONG></DT>
 <DD>Read at the given line number</DD>
 
 <DT><STRONG>goToLine(line)</STRONG></DT>
@@ -114,11 +117,11 @@ f.close;
 
 a.next;
 
-a.readAtLine( 10 );
+a.readAt( 10 );
 
-a.readAtLine( 5 );
+a.readAt( 5 );
 
 <span class="comment-delimiter">// </span><span class="comment">returns nil: (no more lines)
-</span>a.readAtLine( 20 );</pre>
+</span>a.readAt( 20 );</pre>
 <hr><p>This helpfile was created with the class HelpFile2</p>
  </body></html>

@@ -79,6 +79,13 @@ and <a href="MultiFilePlayer.html">MultiFilePlayer</a>
 <h3>Accessing Instance and Class Variables</h3>
 <DL>
 
+<DT><STRONG>next</STRONG><DT>
+<DD>Read the next line in the files</DD>
+
+<DT><STRONG>nextInterpret</STRONG><DT>
+<DD>Read the next line in the files and interpret</DD>
+
+
 <DT><STRONG>openFile(ind)</STRONG></DT>
 <DD>Open a file from the bundle.<DL>
 <DT><EM>ind</EM></DT>
@@ -122,11 +129,15 @@ and <a href="MultiFilePlayer.html">MultiFilePlayer</a>
 <DT><STRONG>indexFile</STRONG></DT>
 <DD>The file instance of the index file</DD>
 
+<DT><STRONG>indexfn</STRONG></DT>
+<DD>The filename of the index file.</DD>
+
 <DT><STRONG>curFile</STRONG></DT>
 <DD>The instance of the currently open file.</DD>
 
-<DT><STRONG>indexfn</STRONG></DT>
-<DD>The filename of the index file.</DD>
+<DT><STRONG>curid</STRONG></DT>
+<DD>ID of the currently open file.</DD>
+
 
 
 </DL>
@@ -154,8 +165,17 @@ m = <span class="type">MultiFileWriter</span>.new( <span class="string">"testfil
 
 n = <span class="type">MultiFileReader</span>.new( <span class="string">"testfile15.tar"</span>);
 
-a = n.openFile( 1 );
-a.next;
+n.next;
+n.next;
+n.next;
+
+<span class="comment-delimiter">// </span><span class="comment">MultiFileReader will automatically jump to the next file, if we</span>
+<span class="comment-delimiter">// </span><span class="comment">are at the end of the current file.</span>
+
+
+<span class="comment-delimiter">// </span><span class="comment">Jump to another file, and continue reading from there:</span>
+n.openFile( 1 );
+n.next;
 
 n.closeFile;
 

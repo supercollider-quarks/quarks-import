@@ -11,8 +11,6 @@
 // uses unzip and tar for unzipping and unbundling
 
 MultiFilePlayer : MultiFileReader{
-
-	var <curid = -1;
 	
 	*new{ |fn,fc|
 		^super.new(fn, fc ? TabFilePlayer );
@@ -29,15 +27,10 @@ MultiFilePlayer : MultiFileReader{
 
 	readAt{ |fileid, line|
 		if ( curid != fileid ){
-			this.closeFile;
-			curid = -1;
 			if ( this.openFile( fileid ).isNil ){
-				("File with id"+fileid+"does not exist").warn;
 				^nil;
 			};
-			curid = fileid;
 		};
-		^curFile.readAtLine( line );
+		^curFile.readAt( line );
 	}
-
 }

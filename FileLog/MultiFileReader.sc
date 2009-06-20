@@ -25,6 +25,7 @@ MultiFileReader{
 	var <zipSingle;
 
 	var <curFile;
+	var <curid = -1;
 	
 	*new{ |fn,fc|
 		^super.new.init(fn).fileClass_( fc ? TabFileReader );
@@ -61,10 +62,19 @@ MultiFileReader{
 
 	openFile{ |ind|
 		var line, path;
+
+		if ( curid == ind ){
+			^curFile;
+		}{
+			this.closeFile;
+		};
+
 		line = indexFile.readAtLine( ind );
 
 		if ( line.isNil ){
-			^nil
+			("File with id"+fileid+"does not exist").warn;
+			curid = -1;
+			^nil;
 		};
 
 		path = line.last;
@@ -76,18 +86,44 @@ MultiFileReader{
 			("gzip -d" + fileName +/+ path ).systemCmd;
 			path = PathName( line.last ).fileNameWithoutExtension;
 		};
-		^curFile = fileClass.new( fileName +/+ path );
+		
+		curFile = fileClass.new( fileName +/+ path );
+		if ( curFile.isNil ){
+			("File with id"+fileid+"does not exist").warn;
+			curid = -1;
+		}{
+			curid = ind;
+		};
+		^curFile;
 	}
 
 	closeFile{
 		if ( curFile.notNil ){
 			curFile.close;
+			curid = -1;
 		};
 	}
 
 	close{
 		indexFile.close;
 		this.closeFile;
+	}
+
+	next{
+		var res;
+		if ( curFile.isNil ){
+			this.openFile( 0 );
+		};
+		res = curFile.next;
+		if ( res.isNil ){
+			this.openFile( curid + 1 );
+			res = curFile.next;
+		}
+		^res;
+	}
+
+	nextInterpret{
+		^this.next.collect( _.interpret );
 	}
 
 }
