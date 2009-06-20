@@ -72,7 +72,7 @@ MultiFileReader{
 		line = indexFile.readAtLine( ind );
 
 		if ( line.isNil ){
-			("File with id"+fileid+"does not exist").warn;
+			("File with id"+ind+"does not exist").warn;
 			curid = -1;
 			^nil;
 		};
@@ -89,7 +89,7 @@ MultiFileReader{
 		
 		curFile = fileClass.new( fileName +/+ path );
 		if ( curFile.isNil ){
-			("File with id"+fileid+"does not exist").warn;
+			("File with id"+ind+"does not exist").warn;
 			curid = -1;
 		}{
 			curid = ind;
