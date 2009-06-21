@@ -21,22 +21,23 @@
 			// need bounds relative to parent's bounds
 		var new, maxpt, comparept, mybounds, used;
 		mybounds = this.bounds;
-		if(view.tryPerform(\relativeOrigin) ? false) {
+			// FlowViews are only relative now; this test is deprecated
+//		if(view.tryPerform(\relativeOrigin) ? false) {
 			maxpt = Point(0, 0);
-		} {
-			maxpt = mybounds.leftTop;
-		};
+//		} {
+//			maxpt = mybounds.leftTop;
+//		};
 		this.children.do({ arg c;
 			comparept = c.findRightBottom;
 			maxpt = maxpt.max(comparept);
 		});
-		if(view.tryPerform(\relativeOrigin) ? false) {
+//		if(view.tryPerform(\relativeOrigin) ? false) {
 			new = mybounds.resizeTo(maxpt.x + this.decorator.margin.x,
 				maxpt.y + this.decorator.margin.y);
-		} {
-			new = mybounds.resizeTo(maxpt.x - mybounds.left + this.decorator.margin.x,
-				maxpt.y - mybounds.top + this.decorator.margin.y);
-		};
+//		} {
+//			new = mybounds.resizeTo(maxpt.x - mybounds.left + this.decorator.margin.x,
+//				maxpt.y - mybounds.top + this.decorator.margin.y);
+//		};
 		this.bounds_(new, reflow: false);	// don't reflow unless asked
 		^new
 	}

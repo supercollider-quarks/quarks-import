@@ -18,7 +18,7 @@ ToggleTextField : SCViewAdapter {
 
 	init { arg argParent, argBounds;
 		view = GUI.compositeView.new(argParent, argBounds);
-		try { view.relativeOrigin_(argParent.relativeOrigin) };
+//		try { view.relativeOrigin_(argParent.relativeOrigin) };
 		bounds = view.bounds;
 		enabledButton = GUI.button.new(view, this.buttonBounds)
 			.states_([
@@ -95,19 +95,19 @@ ToggleTextField : SCViewAdapter {
 	}
 	
 	buttonBounds {
-		^if(view.tryPerform(\relativeOrigin) ? false) {
-			Rect(0, 0, buttonWidth, bounds.height)
-		} {
-			Rect(bounds.left, bounds.top, buttonWidth, bounds.height)
-		}
+//		if(view.tryPerform(\relativeOrigin) ? false) {
+			^Rect(0, 0, buttonWidth, bounds.height)
+//		} {
+//			Rect(bounds.left, bounds.top, buttonWidth, bounds.height)
+//		}
 	}
 	
 	textBounds {
-		^if(view.tryPerform(\relativeOrigin) ? false) {
-			Rect(buttonWidth + 5, 0, bounds.width - buttonWidth - 5, bounds.height)
-		} {
-			Rect(bounds.left + buttonWidth + 5, bounds.top,
-				bounds.width - buttonWidth - 5, bounds.height)
-		}
+//		if(view.tryPerform(\relativeOrigin) ? false) {
+			^Rect(buttonWidth + 5, 0, bounds.width - buttonWidth - 5, bounds.height)
+//		} {
+//			Rect(bounds.left + buttonWidth + 5, bounds.top,
+//				bounds.width - buttonWidth - 5, bounds.height)
+//		}
 	}
 }
