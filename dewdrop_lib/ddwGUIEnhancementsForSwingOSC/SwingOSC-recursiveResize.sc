@@ -6,15 +6,11 @@
 		children.do({ arg c;
 			c.recursiveResize;
 		});
-//		this.tryPerform(\reflowAll);
-//		this.tryPerform(\resizeToFitContents).isNil.if({
-//			this.tryPerform(\resizeToFit);
-//		});
 	}
 	
 	findRightBottom {
 		var origin = this.bounds.leftTop, maxpt;
-		if(this.tryPerform(\relativeOrigin) ? false) {
+		if(relativeOrigin ? false) {
 			maxpt = Point(0, 0);
 		} {
 			maxpt = origin;
@@ -22,7 +18,7 @@
 		children.do({ arg c;
 			maxpt = maxpt.max(c.findRightBottom);
 		});
-		if(this.tryPerform(\relativeOrigin) ? false) {
+		if(relativeOrigin ? false) {
 			maxpt = maxpt + origin;
 		};
 		if(decorator.notNil) {

@@ -11,7 +11,7 @@
 		// a containerview can find the lowest-right point occupied by its children
 	findRightBottom {
 		var origin = this.bounds.leftTop, maxpt;
-		if(this.tryPerform(\relativeOrigin) ? false) {
+		if(relativeOrigin ? false) {
 			maxpt = Point(0, 0);
 		} {
 			maxpt = origin;
@@ -19,7 +19,7 @@
 		children.do({ arg c;
 			maxpt = maxpt.max(c.findRightBottom);
 		});
-		if(this.tryPerform(\relativeOrigin) ? false) {
+		if(relativeOrigin ? false) {
 			maxpt = maxpt + origin;
 		};
 		if(decorator.notNil) {
