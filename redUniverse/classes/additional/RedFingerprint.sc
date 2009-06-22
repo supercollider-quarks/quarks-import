@@ -19,13 +19,13 @@ RedFingerprint {
 		});
 	}
 	draw {|length= 1|
-		GUI.pen.moveTo(points[0]*length);
-		points.do{|x| GUI.pen.lineTo(x*length)};
-		GUI.pen.stroke;
+		Pen.moveTo(points[0]*length);
+		points.do{|x| Pen.lineTo(x*length)};
+		Pen.stroke;
 	}
 	
 	makeWindow {|name, bounds, scale= 1, background, color, width= 1|
-		var win, w, h, centerX, centerY;
+		var win, usr, w, h, centerX, centerY;
 		name= name ?? {"fingerprint"+points.size+"points"};
 		bounds= bounds ?? {Rect(128, 64, 300, 300)};
 		w= bounds.width;
@@ -33,13 +33,14 @@ RedFingerprint {
 		centerX= w/2;
 		centerY= h/2;
 		scale= scale*centerX.min(centerY);
-		win= GUI.window.new(name, bounds, false);
-		win.view.background= background ?? {Color(0.2, 0.1843, 0.2235)};
+		win= Window(name, bounds, false);
+		usr= UserView(win, Rect(0, 0, bounds.width, bounds.height));
+		usr.background= background ?? {Color(0.2, 0.1843, 0.2235)};
 		color= color ?? {Color.white};
-		win.drawHook= {
-			GUI.pen.width_(width);
-			GUI.pen.translate(centerX, centerY);
-			GUI.pen.strokeColor_(color);
+		usr.drawFunc= {
+			Pen.width= width;
+			Pen.translate(centerX, centerY);
+			Pen.strokeColor= color;
 			this.draw(scale);
 		};
 		^win.front;

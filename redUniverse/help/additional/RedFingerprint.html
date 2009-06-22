@@ -5,25 +5,24 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.43">
+<meta name="CocoaVersion" content="949.46">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #062cb0}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #083aec}
+span.s2 {color: #1142e6}
 span.s3 {text-decoration: underline}
 span.s4 {color: #000000}
-span.s5 {color: #062cb0}
-span.s6 {color: #902f20}
+span.s5 {color: #0000bf}
+span.s6 {color: #bf0000}
 span.s7 {color: #606060}
-span.s8 {color: #45691f}
-span.s9 {color: #0024b5}
-span.s10 {color: #3b6c19}
+span.s8 {color: #007300}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -62,171 +61,171 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">GUI.cocoa;</p>
 <p class="p5">GUI.swing;</p>
 <p class="p5">*/</p>
-<p class="p4"><br></p>
+<p class="p6"><br></p>
 <p class="p5"><span class="s4">l= {1.0.rand}.dup(100)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//an array with random values</p>
 <p class="p5"><span class="s4">a= </span><span class="s5">RedFingerprint</span><span class="s4">(l)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//a fingerprint object</p>
-<p class="p6">a.points<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//coordinates</span></p>
-<p class="p6">a.makeWindow<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//plot</span></p>
+<p class="p7">a.points<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//coordinates</span></p>
+<p class="p7">a.makeWindow<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//plot</span></p>
 <p class="p5"><span class="s4">a.makeWindow(scale:0.33)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//same data but smaller scale</p>
-<p class="p4"><br></p>
-<p class="p6">l= <span class="s5">Env</span>.perc.asSignal</p>
-<p class="p7"><span class="s4">a= </span>RedFingerprint<span class="s4">(l)</span></p>
-<p class="p6">a.makeWindow</p>
-<p class="p6">l= <span class="s5">Env</span>.sine.asSignal</p>
-<p class="p7"><span class="s4">a= </span>RedFingerprint<span class="s4">(l)</span></p>
-<p class="p6">a.makeWindow</p>
-<p class="p4"><br></p>
-<p class="p6">l= <span class="s5">Wavetable</span>.sineFill(256, [1, 0.5, 2/3]).asSignal</p>
-<p class="p7"><span class="s4">a= </span>RedFingerprint<span class="s4">(l)</span></p>
-<p class="p6">a.makeWindow</p>
-<p class="p4"><br></p>
+<p class="p6"><br></p>
+<p class="p7">l= <span class="s5">Env</span>.perc.asSignal</p>
+<p class="p8"><span class="s4">a= </span>RedFingerprint<span class="s4">(l)</span></p>
+<p class="p7">a.makeWindow</p>
+<p class="p7">l= <span class="s5">Env</span>.sine.asSignal</p>
+<p class="p8"><span class="s4">a= </span>RedFingerprint<span class="s4">(l)</span></p>
+<p class="p7">a.makeWindow</p>
+<p class="p6"><br></p>
+<p class="p7">l= <span class="s5">Wavetable</span>.sineFill(256, [1, 0.5, 2/3]).asSignal</p>
+<p class="p8"><span class="s4">a= </span>RedFingerprint<span class="s4">(l)</span></p>
+<p class="p7">a.makeWindow</p>
+<p class="p6"><br></p>
 <p class="p5"><span class="s4">l= </span><span class="s5">Array</span><span class="s4">.series(90, 0.1, 0.1)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//90 values between 0.1 and 9</p>
-<p class="p7"><span class="s4">a= </span>RedFingerprint<span class="s4">(l, </span>true<span class="s4">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">//normalize</span></p>
-<p class="p6">a.makeWindow</p>
-<p class="p6">l= l.normalize</p>
-<p class="p7"><span class="s4">a= </span>RedFingerprint<span class="s4">(l, </span>true<span class="s4">)</span></p>
-<p class="p6">a.makeWindow</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
+<p class="p8"><span class="s4">a= </span>RedFingerprint<span class="s4">(l, </span>true<span class="s4">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s6">//normalize</span></p>
+<p class="p7">a.makeWindow</p>
+<p class="p7">l= l.normalize</p>
+<p class="p8"><span class="s4">a= </span>RedFingerprint<span class="s4">(l, </span>true<span class="s4">)</span></p>
+<p class="p7">a.makeWindow</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
 <p class="p5">//--shortcuts</p>
-<p class="p6">{1.0.rand}.dup(100).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Array</span>.series(90, 0.1, 0.1).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Array</span>.series(90, 0.1, 0.1).normalize.fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Array</span>.series(300, 0.1, 0.1).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Pseq</span>([13, 0, 3, 3.44], 2).fingerprint.makeWindow</p>
-<p class="p4"><br></p>
-<p class="p6"><span class="s5">Env</span>.perc.fingerprint(<span class="s5">true</span>, 200).makeWindow</p>
-<p class="p6"><span class="s5">Env</span>.perc(0.4).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Env</span>.perc(0.4, curve:2).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Env</span>.perc(0.4, curve:-2).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Env</span>.sine.fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Env</span>.adsr.fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Wavetable</span>.sineFill(512, 1/[1, 2, 3, 4]).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Wavetable</span>.chebyFill(65, [0.3, -0.8, -2.1]).fingerprint.makeWindow</p>
-<p class="p6"><span class="s5">Wavetable</span>.chebyFill_old(128, {1.0.rand2}.dup(8)).fingerprint.makeWindow</p>
-<p class="p4"><br></p>
-<p class="p6">a= <span class="s5">Env</span>.adsr(0.2, 0.02).fingerprint</p>
-<p class="p6">a.makeWindow(background: <span class="s5">Color</span>.red(0.5, 0.5), width: 5)</p>
-<p class="p6">a.makeWindow(scale: 0.75, background: <span class="s5">Color</span>.white, color: <span class="s5">Color</span>.red, width: 10)</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
+<p class="p7">{1.0.rand}.dup(100).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Array</span>.series(90, 0.1, 0.1).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Array</span>.series(90, 0.1, 0.1).normalize.fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Array</span>.series(300, 0.1, 0.1).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Pseq</span>([13, 0, 3, 3.44], 2).fingerprint.makeWindow</p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s5">Env</span>.perc.fingerprint(<span class="s5">true</span>, 200).makeWindow</p>
+<p class="p7"><span class="s5">Env</span>.perc(0.4).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Env</span>.perc(0.4, curve:2).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Env</span>.perc(0.4, curve:-2).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Env</span>.sine.fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Env</span>.adsr.fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Wavetable</span>.sineFill(512, 1/[1, 2, 3, 4]).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Wavetable</span>.chebyFill(65, [0.3, -0.8, -2.1]).fingerprint.makeWindow</p>
+<p class="p7"><span class="s5">Wavetable</span>.chebyFill_old(128, {1.0.rand2}.dup(8)).fingerprint.makeWindow</p>
+<p class="p6"><br></p>
+<p class="p7">a= <span class="s5">Env</span>.adsr(0.2, 0.02).fingerprint</p>
+<p class="p7">a.makeWindow(background: <span class="s5">Color</span>.red(0.5, 0.5), width: 5)</p>
+<p class="p7">a.makeWindow(scale: 0.75, background: <span class="s5">Color</span>.white, color: <span class="s5">Color</span>.red, width: 10)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
 <p class="p5">//--animation</p>
-<p class="p6">(</p>
-<p class="p6"><span class="s5">var</span> win, cnt= 0, width= 400, height= 400;</p>
-<p class="p6"><span class="s5">var</span> rf= <span class="s5">RedFingerprint</span>(<span class="s5">Env</span>.perc(0.3, 0.3, 1, -2).asSignal);</p>
-<p class="p6">win= <span class="s5">GUI</span>.redWindow.new(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, width, height)).front;</p>
-<p class="p6">win.draw{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.translate(width*0.5, height*0.5);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.strokeColor_(<span class="s5">Color</span>.white);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>rf.array= rf.array.rotate(cnt);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>rf.calc;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>rf.draw(width*0.25);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>cnt= cnt+1;</p>
-<p class="p6">};</p>
-<p class="p6">win.play(30);</p>
-<p class="p6">)</p>
-<p class="p4"><br></p>
-<p class="p6">(</p>
-<p class="p6"><span class="s5">var</span> win, cnt= 0, width= 400, height= 400;</p>
-<p class="p6">win= <span class="s5">GUI</span>.redWindow.new(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, width, height)).front;</p>
-<p class="p6">win.draw{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">var</span> a= sin(cnt.fold(0, 100)/2pi).linlin(-1, 1, 0.01, 1);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">var</span> b= sin(cnt.fold(0, 90)/2pi).linlin(-1, 1, 0.1, cnt.fold(0, 50)/25);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">var</span> rf= <span class="s5">RedFingerprint</span>(<span class="s5">Wavetable</span>.sineFill(256, 1/[1, 2, a, b]).asSignal);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.translate(width*0.5, height*0.5);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.strokeColor_(<span class="s5">Color</span>.white);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>rf.draw(width*0.5);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>cnt= cnt+0.25;</p>
-<p class="p6">};</p>
-<p class="p6">win.play(30);</p>
-<p class="p6">)</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="s5">var</span> win, cnt= 0, width= 400, height= 400;</p>
+<p class="p7"><span class="s5">var</span> rf= <span class="s5">RedFingerprint</span>(<span class="s5">Env</span>.perc(0.3, 0.3, 1, -2).asSignal);</p>
+<p class="p7">win= <span class="s5">RedWindow</span>(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, width, height)).front;</p>
+<p class="p7">win.draw{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.translate(width*0.5, height*0.5);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.strokeColor= <span class="s5">Color</span>.white;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>rf.array= rf.array.rotate(cnt);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>rf.calc;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>rf.draw(width*0.25);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>cnt= cnt+1;</p>
+<p class="p7">};</p>
+<p class="p7">win.play(30);</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7"><span class="s5">var</span> win, cnt= 0, width= 400, height= 400;</p>
+<p class="p7">win= <span class="s5">RedWindow</span>(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, width, height)).front;</p>
+<p class="p7">win.draw{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> a= sin(cnt.fold(0, 100)/2pi).linlin(-1, 1, 0.01, 1);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> b= sin(cnt.fold(0, 90)/2pi).linlin(-1, 1, 0.1, cnt.fold(0, 50)/25);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> rf= <span class="s5">RedFingerprint</span>(<span class="s5">Wavetable</span>.sineFill(256, 1/[1, 2, a, b]).asSignal);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.translate(width*0.5, height*0.5);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.strokeColor= <span class="s5">Color</span>.white;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>rf.draw(width*0.5);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>cnt= cnt+0.25;</p>
+<p class="p7">};</p>
+<p class="p7">win.play(30);</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
 <p class="p5">//--sound</p>
-<p class="p6">(</p>
-<p class="p6">s.waitForBoot{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">var</span> n= 5, scale= 190,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win, cnt= 200, wt0, wt1, syn, rf;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s5">var</span> b= <span class="s5">Buffer</span>.alloc(s, 256, 1);</p>
-<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>SynthDef<span class="s4">(</span><span class="s8">\wormsnd</span><span class="s4">, {</span>|out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">Pan2</span>.ar(<span class="s5">Osc</span>.ar(bufnum, freq, 0, amp), pan));</p>
-<p class="p6"><span class="Apple-tab-span">	</span>}).send(s);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>s.sync;</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>syn= <span class="s5">Synth</span>(<span class="s8">\wormsnd</span>, [<span class="s8">\bufnum</span>, b.bufnum, <span class="s8">\amp</span>, 1]);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>s.sync;</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>win= <span class="s5">GUI</span>.redWindow.new(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, 400, 400));</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.background= <span class="s5">Color</span>.white;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.front;</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>wt1= <span class="s5">Wavetable</span>.chebyFill_old(b.numFrames, {10.0.rand2}.dup(n));</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.draw{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(cnt==200, {</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt1;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>n= 50.linrand+2;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt1= <span class="s5">Wavetable</span>.chebyFill_old(b.numFrames, {10.0.rand2}.dup(n));</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= 0;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt0.blend(wt1, cnt/1000);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.sine1(wt0);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s8">\freq</span>, wt0.mean*100+100);</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf= <span class="s5">RedFingerprint</span>(wt0.asSignal);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.width_(2);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.translate(win.bounds.width*0.5, win.bounds.height*0.5);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">GUI</span>.pen.strokeColor_(<span class="s5">Color</span>.blue(0.5, 0.5));</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf.draw(scale);</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= cnt+1;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>};</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.play(30);</p>
-<p class="p6">};</p>
-<p class="p6">)</p>
-<p class="p4"><br></p>
-<p class="p6">(</p>
-<p class="p6">s.waitForBoot{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s9">var</span> n= 60, scale= 120,</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win, cnt= 5, wt0, wt1, syn, rf;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="s9">var</span> b= <span class="s9">Buffer</span>.alloc(s, 256, 1);</p>
-<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span>SynthDef<span class="s4">(</span><span class="s8">\wormsnd</span><span class="s4">, {</span>|out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">Pan2</span>.ar(<span class="s5">Osc</span>.ar(bufnum, freq, 0, amp), pan));</p>
-<p class="p6"><span class="Apple-tab-span">	</span>}).send(s);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>s.sync;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>syn= <span class="s9">Synth</span>(<span class="s10">\wormsnd</span>, [<span class="s10">\bufnum</span>, b.bufnum]);</p>
-<p class="p6"><span class="Apple-tab-span">	</span>s.sync;</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>win= <span class="s9">GUI</span>.redWindow.new(<span class="s7">"fingerprint"</span>, <span class="s9">Rect</span>(100, 100, 320, 240));</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.background= <span class="s9">Color</span>.black;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.front;</p>
-<p class="p4"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span>wt1= <span class="s9">Wavetable</span>.chebyFill_old(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.draw{</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(cnt%8%6!=0, {</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s10">\amp</span>, 1);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(cnt%5==(0), {</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt1;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>n= 1.rrand(10);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt1= <span class="s9">Wavetable</span>.chebyFill_old(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= 0;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt0.blend(wt1, cnt/(wt1[0]*3000+30));</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.sine1(wt0);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s10">\freq</span>, wt0.mean*(wt0[0]*500)+80);</p>
-<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf= <span class="s9">RedFingerprint</span>(wt0.asSignal);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">GUI</span>.pen.width_(2);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">GUI</span>.pen.translate(win.bounds.width*0.5, win.bounds.height*0.5);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">GUI</span>.pen.strokeColor_(<span class="s9">Color</span>.white);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf.draw(scale);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, {</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s10">\amp</span>, 0);</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(0.2.coin, {cnt= cnt-1});</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= cnt+1;</p>
-<p class="p6"><span class="Apple-tab-span">	</span>};</p>
-<p class="p6"><span class="Apple-tab-span">	</span>win.play(30);</p>
-<p class="p6">};</p>
-<p class="p6">)</p>
+<p class="p7">(</p>
+<p class="p7">s.waitForBoot{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> n= 5, scale= 190,</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win, cnt= 200, wt0, wt1, syn, rf;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> b= <span class="s5">Buffer</span>.alloc(s, 256, 1);</p>
+<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span></span>SynthDef<span class="s4">(</span><span class="s8">\wormsnd</span><span class="s4">, {</span>|out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">Pan2</span>.ar(<span class="s5">Osc</span>.ar(bufnum, freq, 0, amp), pan));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>s.sync;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>syn= <span class="s5">Synth</span>(<span class="s8">\wormsnd</span>, [<span class="s8">\bufnum</span>, b.bufnum, <span class="s8">\amp</span>, 1]);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>s.sync;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>win= <span class="s5">RedWindow</span>(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, 400, 400));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.background= <span class="s5">Color</span>.white;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.front;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>wt1= <span class="s5">Wavetable</span>.chebyFill_old(b.numFrames, {10.0.rand2}.dup(n));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.draw{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(cnt==200, {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>n= 50.linrand+2;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt1= <span class="s5">Wavetable</span>.chebyFill_old(b.numFrames, {10.0.rand2}.dup(n));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= 0;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt0.blend(wt1, cnt/1000);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.sine1(wt0);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s8">\freq</span>, wt0.mean*100+100);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf= <span class="s5">RedFingerprint</span>(wt0.asSignal);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.width= 2;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.translate(win.bounds.width*0.5, win.bounds.height*0.5);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.strokeColor= <span class="s5">Color</span>.blue(0.5, 0.5);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf.draw(scale);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= cnt+1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>};</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.play(30);</p>
+<p class="p7">};</p>
+<p class="p7">)</p>
+<p class="p6"><br></p>
+<p class="p7">(</p>
+<p class="p7">s.waitForBoot{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> n= 60, scale= 120,</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win, cnt= 5, wt0, wt1, syn, rf;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s5">var</span> b= <span class="s5">Buffer</span>.alloc(s, 256, 1);</p>
+<p class="p8"><span class="s4"><span class="Apple-tab-span">	</span></span>SynthDef<span class="s4">(</span><span class="s8">\wormsnd</span><span class="s4">, {</span>|out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Out</span>.ar(out, <span class="s5">Pan2</span>.ar(<span class="s5">Osc</span>.ar(bufnum, freq, 0, amp), pan));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>}).send(s);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>s.sync;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>syn= <span class="s5">Synth</span>(<span class="s8">\wormsnd</span>, [<span class="s8">\bufnum</span>, b.bufnum]);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>s.sync;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>win= <span class="s5">RedWindow</span>(<span class="s7">"fingerprint"</span>, <span class="s5">Rect</span>(100, 100, 320, 240));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.background= <span class="s5">Color</span>.black;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.front;</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span>wt1= <span class="s5">Wavetable</span>.chebyFill_old(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.draw{</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(cnt%8%6!=0, {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s8">\amp</span>, 1);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(cnt%5==(0), {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>n= 1.rrand(10);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt1= <span class="s5">Wavetable</span>.chebyFill_old(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= 0;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wt0= wt0.blend(wt1, cnt/(wt1[0]*3000+30));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.sine1(wt0);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s8">\freq</span>, wt0.mean*(wt0[0]*500)+80);</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf= <span class="s5">RedFingerprint</span>(wt0.asSignal);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.width= 2;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.translate(win.bounds.width*0.5, win.bounds.height*0.5);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.strokeColor= <span class="s5">Color</span>.white;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rf.draw(scale);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}, {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.set(<span class="s8">\amp</span>, 0);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(0.2.coin, {cnt= cnt-1});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cnt= cnt+1;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>};</p>
+<p class="p7"><span class="Apple-tab-span">	</span>win.play(30);</p>
+<p class="p7">};</p>
+<p class="p7">)</p>
 </body>
 </html>

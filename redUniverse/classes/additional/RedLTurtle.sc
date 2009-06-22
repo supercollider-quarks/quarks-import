@@ -21,32 +21,32 @@ RedLTurtle {
 		}, {
 			this.prDrawSys(lsystem.production, 0);
 		});
-		GUI.pen.stroke;
+		Pen.stroke;
 	}
 	defaultCommands {
 		^(
 			$F: {|depth, depthLength, index|
-				GUI.pen.line(Point(0, 0), Point(0, depthLength.neg));
-				GUI.pen.translate(0, depthLength.neg);
+				Pen.line(Point(0, 0), Point(0, depthLength.neg));
+				Pen.translate(0, depthLength.neg);
 			},
 			$G: {|depth, depthLength, index|
-				GUI.pen.translate(0, depthLength.neg);
+				Pen.translate(0, depthLength.neg);
 			},
 			$+: {
-				GUI.pen.rotate(theta/360*2pi+noise.rand2);
+				Pen.rotate(theta/360*2pi+noise.rand2);
 			},
 			$-: {
-				GUI.pen.rotate(theta/360* -2pi+noise.rand2)
+				Pen.rotate(theta/360* -2pi+noise.rand2)
 			},
 			$[: {
-				GUI.pen.push;
+				Pen.push;
 			},
 			$]: {
-				GUI.pen.pop;
+				Pen.pop;
 			},
 			$|: {|depth, depthLength, index|
-				GUI.pen.line(Point(0, 0), Point(0, depthLength.neg));
-				GUI.pen.translate(0, depthLength.neg);
+				Pen.line(Point(0, 0), Point(0, depthLength.neg));
+				Pen.translate(0, depthLength.neg);
 			}
 		);
 	}
@@ -55,11 +55,12 @@ RedLTurtle {
 	}
 	makeWindow {|bounds, initAngle= 0, initTranslate|
 		var b= bounds ?? {Rect(100, 200, 700, 700)};
-		var win= GUI.window.new(this.class.name, b, false);
+		var win= Window(this.class.name, b, false);
+		var usr= UserView(win, Rect(0, 0, b.width, b.height));
 		initTranslate= initTranslate ? Point(0.5, 0.5);
-		win.drawHook_{
-			GUI.pen.rotate(initAngle, b.width*0.5, b.height*0.5);
-			GUI.pen.translate(b.width*initTranslate.x, b.height*(1-initTranslate.y));
+		usr.drawFunc= {
+			Pen.rotate(initAngle, b.width*0.5, b.height*0.5);
+			Pen.translate(b.width*initTranslate.x, b.height*(1-initTranslate.y));
 			this.draw;
 		};
 		win.front;
