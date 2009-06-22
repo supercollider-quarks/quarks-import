@@ -5,11 +5,11 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.43">
+<meta name="CocoaVersion" content="949.46">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d2217}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #8f2a1d}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
@@ -18,7 +18,7 @@ p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-h
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 9.0px Monaco}
 span.s3 {text-decoration: underline ; color: #001fe8}
-span.s4 {text-decoration: underline ; color: #9d2217}
+span.s4 {text-decoration: underline ; color: #8f2a1d}
 span.s5 {color: #000000}
 span.s6 {color: #bf0000}
 span.s7 {color: #0000bf}
@@ -63,30 +63,33 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><br></p>
 <p class="p6">//--1d pen test</p>
 <p class="p7">(</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> width= 300, height= 300, w, a, persistance= 0.75, octaves= 8;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> width= 300, height= 300, w, u, a, persistance= 0.75, octaves= 8;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>w= <span class="s7">Window</span>(<span class="s8">"perlin test 1d"</span>, <span class="s7">Rect</span>(128, 64, width, height), <span class="s7">false</span>);</p>
-<p class="p7"><span class="Apple-tab-span">	</span>w.view.background= <span class="s7">Color</span>.black;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>u= <span class="s7">UserView</span>(w, <span class="s7">Rect</span>(0, 0, width, height));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>u.background= <span class="s7">Color</span>.black;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>a= <span class="s7">RedPerlin</span>.new;</p>
-<p class="p7"><span class="Apple-tab-span">	</span>w.drawHook= {</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor_(<span class="s7">Color</span>.white);</p>
+<p class="p7"><span class="Apple-tab-span">	</span>u.drawFunc= {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor= <span class="s7">Color</span>.white;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>width.do{<span class="s7">|x|</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeRect(<span class="s7">Rect</span>.aboutPoint(<span class="s7">Point</span>(x, a.noise1D(x/width, persistance, octaves)*0.5+0.5*height), 1, 1));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.addRect(<span class="s7">Rect</span>.aboutPoint(<span class="s7">Point</span>(x, a.noise1D(x/width, persistance, octaves)*0.5+0.5*height), 1, 1));</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.stroke;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>};</p>
 <p class="p7"><span class="Apple-tab-span">	</span>w.front;</p>
 <p class="p7">)</p>
 <p class="p8"><br></p>
 <p class="p6">//--2d pen test</p>
 <p class="p7">(</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> width= 160, height= 120, w, a, persistance= 0.75, octaves= 8, scale= 2;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> width= 160, height= 120, w, a, u, persistance= 0.75, octaves= 8, scale= 2;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>w= <span class="s7">Window</span>(<span class="s8">"perlin test 2d"</span>, <span class="s7">Rect</span>(128, 64, width*scale, height*scale), <span class="s7">false</span>);</p>
-<p class="p7"><span class="Apple-tab-span">	</span>w.view.background= <span class="s7">Color</span>.black;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>u= <span class="s7">UserView</span>(w, <span class="s7">Rect</span>(0, 0, w.bounds.width, w.bounds.height));</p>
+<p class="p7"><span class="Apple-tab-span">	</span>u.background= <span class="s7">Color</span>.black;</p>
 <p class="p7"><span class="Apple-tab-span">	</span>a= <span class="s7">RedPerlin</span>.new;</p>
-<p class="p7"><span class="Apple-tab-span">	</span>w.drawHook= {</p>
+<p class="p7"><span class="Apple-tab-span">	</span>u.drawFunc= {</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>height.do{<span class="s7">|y|</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>width.do{<span class="s7">|x|</span></p>
-<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//Pen.strokeColor_(Color.grey(a.noise2D(x, y, persistance, octaves)));</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor_(<span class="s7">Color</span>.grey(a.noise2D(x/width, y/height, persistance, octaves)));</p>
+<p class="p6"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//Pen.strokeColor= Color.grey(a.noise2D(x, y, persistance, octaves));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor= <span class="s7">Color</span>.grey(a.noise2D(x/width, y/height, persistance, octaves));</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeRect(<span class="s7">Rect</span>.aboutPoint(x@y*scale, scale, scale));</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
@@ -96,20 +99,22 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><br></p>
 <p class="p6">//--many windows 2d</p>
 <p class="p7">(</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> width= 80, height= 60, w, a, r, persistance, octaves, ws= [];</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> width= 80, height= 60, a, r, persistance, octaves, ws= [];</p>
 <p class="p5"><span class="s5"><span class="Apple-tab-span">	</span>r= </span>Routine<span class="s5">{</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a= <span class="s7">RedPerlin</span>.new;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>8.do{<span class="s7">|wy|</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>8.do{<span class="s7">|wx|</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">var</span> w, u;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>persistance= 0.1*wx+0.25;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>octaves= 1*wy+2;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[<span class="s9">\persistance</span>, persistance, <span class="s9">\octaves</span>, octaves].postln;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w= <span class="s7">Window</span>(<span class="s8">"p"</span>++persistance+<span class="s8">"o"</span>++octaves, <span class="s7">Rect</span>(width*wx+128, height*wy+64, width, height), <span class="s7">false</span>, <span class="s7">false</span>);</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.view.background= <span class="s7">Color</span>.black;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>w.drawHook= {</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>u= <span class="s7">UserView</span>(w, <span class="s7">Rect</span>(0, 0, w.bounds.width, w.bounds.height));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>u.background= <span class="s7">Color</span>.black;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>u.drawFunc= {</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>height.do{<span class="s7">|y|</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>width.do{<span class="s7">|x|</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor_(<span class="s7">Color</span>.grey(a.noise2D(x/width, y/height, persistance, octaves)));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor= <span class="s7">Color</span>.grey(a.noise2D(x/width, y/height, persistance, octaves));</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeRect(<span class="s7">Rect</span>.aboutPoint(x@y, 1, 1));</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
@@ -133,15 +138,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span>u.background= <span class="s7">Color</span>.black;</p>
 <p class="p5"><span class="s5"><span class="Apple-tab-span">	</span>r= </span>Routine<span class="s5">{</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a= <span class="s7">RedPerlin</span>.new;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.spook_(12);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.spook= 12;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>frames.do{<span class="s7">|z|</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>0.001.wait;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(1/25).wait;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(<span class="s8">"frame:"</span>+z).postln;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>u.refresh;</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>u.drawFunc= {</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>height.do{<span class="s7">|y|</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>width.do{<span class="s7">|x|</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor_(<span class="s7">Color</span>.grey(a.noise3D(x/width, y/height, z/frames, persistance, octaves, 0)));</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor= <span class="s7">Color</span>.grey(a.noise3D(x/width, y/height, z/frames, persistance, octaves, 0));</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeRect(<span class="s7">Rect</span>.aboutPoint(x@y*scale, scale, scale));</p>
 <p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
