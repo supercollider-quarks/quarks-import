@@ -18,7 +18,7 @@ HJHObjectGui : ObjectGui {
 					margin: 		2@2,
 					buttonHeight:	17
 				));
-			GUI.setSkin(\dewdrop);
+//			GUI.setSkin(\dewdrop);
 		}
 	}
 
