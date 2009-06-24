@@ -57,10 +57,11 @@ RedObject {
 		if(this.contains(redObj), {
 			aLoc= loc;
 			bLoc= redObj.loc;
-			while({safety>0 and:{this.contains(redObj)}}, {
+			while({
 				loc= loc-vel;
 				redObj.loc= redObj.loc-redObj.vel;
 				safety= safety-1;
+				safety>0 and:{this.contains(redObj)};
 			});
 			normal= (redObj.loc-loc).normalize;
 			change= normal.dot(vel-redObj.vel)*normal;
