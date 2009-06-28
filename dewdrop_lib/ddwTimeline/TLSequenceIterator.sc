@@ -119,24 +119,32 @@ TLSequenceIterator {
 		if(cmd.isRunning) {
 			cmd = cmd.copy;
 		};
-		this.addActive(cmd);
 		parms ?? { parms = () };
 		parms.putAll((sequencer: sequencer, iterator: this));
 		cmd.play(parms);
+		this.addActive(cmd);
 		^cmd
 	}
 	
 	addActive { |cmd|
 //		var	updater;
 //"\n\n>> TLSequenceIterator:addActive".debug;
-//(try { cmd.env } { cmd }).debug("added command");
+//(try { cmd.env } { cmd }).debug("checking command");
 //cmd.dump;
 //this.dumpBackTrace;
-		activeCmds.add(cmd);
-		NotificationCenter.registerOneShot(cmd, \done, ("stopped" ++ this.hash).asSymbol,
-		{	|parms, resumeTime|
-			this.cmdStopped(cmd, parms, resumeTime);
-		});
+			// in section sequencing, a command could end while it's being passed
+			// into the new iterator
+			// so we must be sure not to add commands that already died
+		if(cmd.isRunning ? false) {
+//"adding cmd".debug;
+			activeCmds.add(cmd);
+			NotificationCenter.registerOneShot(cmd, \done, ("stopped" ++ this.hash).asSymbol,
+			{	|parms, resumeTime|
+				this.cmdStopped(cmd, parms, resumeTime);
+			});
+//		} {
+//"cmd was not running, not added".debug;
+//		};
 //		updater = Updater(cmd, { |obj, what, parms, resumeTime|
 ////[obj, what].debug("activecmd updater");
 //			if(what == \done) {
