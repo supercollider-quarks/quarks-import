@@ -142,9 +142,7 @@ TLSequenceIterator {
 			{	|parms, resumeTime|
 				this.cmdStopped(cmd, parms, resumeTime);
 			});
-//		} {
-//"cmd was not running, not added".debug;
-//		};
+		};
 //		updater = Updater(cmd, { |obj, what, parms, resumeTime|
 ////[obj, what].debug("activecmd updater");
 //			if(what == \done) {
