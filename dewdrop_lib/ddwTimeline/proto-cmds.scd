@@ -75,11 +75,11 @@ Proto({
 	};
 	~setParms = { |parms|
 		var	e = currentEnvironment.env;
-		if(e.proto.isNil) {
-			e.proto = ();
-		};
+//		if(e.proto.isNil) {
+//			e.proto = ();
+//		};
 		parms.respondsTo(\keysValuesDo).if({
-			e.proto.putAll(parms);
+			e/*.proto*/.putAll(parms);
 		});
 	};
 }, parentKeys: #[isTLCommand, shouldSync]) => PR(\abstractTLCommand);
