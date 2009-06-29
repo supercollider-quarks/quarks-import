@@ -5,7 +5,7 @@
 		sys;
 	
 	//--world
-	w= GUI.redWindow.new("wave test1", Rect(128, 64, width, height)).front;
+	w= RedWindow("wave test1", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.4];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.01); //dim,grav,maxvel,damp
 	
@@ -27,9 +27,9 @@
 		sys.update;
 		
 		//--render
-		GUI.pen.fillColor_(Color.grey(1, 0.4));
+		Pen.fillColor= Color.grey(1, 0.4);
 		sys.do{|o, i|
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

@@ -11,7 +11,7 @@
 	
 	//--world
 	RedUniverse.clear;
-	~win= GUI.redWindow.new("livecoding worlds test", Rect(128, 164, width, height)).front;
+	~win= RedWindow("livecoding worlds test", Rect(128, 164, width, height)).front;
 	~world= RedWorld.new; //dim,grav,maxvel,damp
 	
 	//--objects
@@ -26,9 +26,9 @@
 	//--loop
 	~win.draw{
 		if(~world.gravity[0]>1, {
-			~win.background_(Color.red(1, 0.5));
+			~win.background= Color.red(1, 0.5);
 		}, {
-			~win.background_(Color.blue(~world.gravity[1], 0.5));
+			~win.background= Color.blue(~world.gravity[1], 0.5);
 		});
 		~world.objects.do{|o, i|
 			if(i!=0, {
@@ -42,8 +42,8 @@
 			~world.contain(o);
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(1-(i/~n), 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(1-(i/~n), 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

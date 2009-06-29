@@ -7,8 +7,8 @@
 		maxTotal= 600;						//also decides when to stop
 	
 	//--world
-	w= GUI.redWindow.new("growth", Rect(128, 64, width, height)).front;
-	w.background_(Color.white);
+	w= RedWindow("growth", Rect(128, 64, width, height)).front;
+	w.background= Color.white;
 	wgrav= RedVector2D[0, 0];					//world xy gravity
 	world= RedWorld(RedVector2D[width, height], wgrav, 99, 0); //dim,grav,maxvel,damp
 	
@@ -23,8 +23,8 @@
 	//--loop
 	w.draw{
 		var free, frozen;
-		//GUI.pen.setSmoothing(false);
-		GUI.pen.strokeColor_(Color.black);
+		//Pen.setSmoothing(false);
+		Pen.strokeColor= Color.black;
 		
 		//--separate free and frozen objects
 		free= world.objects.select{|o| o.vel!=still};
@@ -47,9 +47,9 @@
 		
 		//--render all objects
 		world.objects.do{|o, i|						//iterate all objects in this world
-			GUI.pen.addRect(Rect.aboutRedObject2D(o));
+			Pen.addRect(Rect.aboutRedObject2D(o));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play(40);
 )
 

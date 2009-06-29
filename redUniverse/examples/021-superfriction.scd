@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, world, acc, vel, loc, obj, fric, ff;
 	
 	//--world
-	w= GUI.redWindow.new("superfriction test", Rect(128, 64, width, height)).front;
+	w= RedWindow("superfriction test", Rect(128, 64, width, height)).front;
 	world= RedWorld(RedVector2D[width, height], 0, 30, 0.8); //dim,grav,maxvel,damp
 	
 	//--objects
@@ -29,9 +29,9 @@
 		world.contain(obj);
 		
 		//--render
-		GUI.pen.fillColor_(Color.green);
-		GUI.pen.fillRect(fric);
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.strokeRect(Rect.aboutRedObject2D(obj));
+		Pen.fillColor= Color.green;
+		Pen.fillRect(fric);
+		Pen.strokeColor= Color.white;
+		Pen.strokeRect(Rect.aboutRedObject2D(obj));
 	}.play;
 )

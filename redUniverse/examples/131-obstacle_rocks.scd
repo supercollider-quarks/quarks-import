@@ -5,7 +5,7 @@
 		rocks= 10;
 	
 	//--world
-	w= GUI.redWindow.new("rocks test", Rect(128, 64, width, height)).front;
+	w= RedWindow("rocks test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];					//world xy gravity
 	world= RedWorld3(RedVector2D[width, height], wgrav, 15, 0.5); //dim,grav,maxvel,damp
 	
@@ -20,7 +20,7 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.width_(1);
+		Pen.width= 1;
 		world.objects.do{|o, i|						//iterate all objects in this world
 			o.addForce(o.world.gravity);			//add gravity
 			world.objects.copyToEnd(i+1).do{|oo| o.collide(oo, 10)};
@@ -29,11 +29,11 @@
 			
 			//--render
 			if(o.isKindOf(RedRock), {
-				GUI.pen.fillColor_(Color.blue(1, 0.5));
-				GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+				Pen.fillColor= Color.blue(1, 0.5);
+				Pen.fillOval(Rect.aboutRedObject2D(o));
 			}, {
-				GUI.pen.strokeColor_(Color.grey(0.7, 0.9));
-				GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
+				Pen.strokeColor= Color.grey(0.7, 0.9);
+				Pen.strokeOval(Rect.aboutRedObject2D(o));
 			});
 		}
 	}.play;

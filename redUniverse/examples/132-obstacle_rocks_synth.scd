@@ -15,7 +15,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("rocks pinball test", Rect(128, 64, width, height)).front;
+	w= RedWindow("rocks pinball test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];					//world xy gravity
 	world= RedWorld3(RedVector2D[width, height], wgrav, 15, 0.5); //dim,grav,maxvel,damp
 	
@@ -32,17 +32,17 @@ s.waitForBoot{
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor= Color.grey(0.7, 0.9);
+		Pen.strokeColor= Color.grey(0.7, 0.9);
 		objs.do{|o, i|
 			o.addForce(o.world.gravity);			//add gravity
 			objs.copyToEnd(i+1).do{|oo| o.collide(oo)};
 			o.update;								//object update
 			world.contain(o);						//keep within world borders
-			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 		
-		GUI.pen.fillColor= Color.blue(1, 0.5);
+		Pen.fillColor= Color.blue(1, 0.5);
 		rocks.do{|o, i|
 			objs.do{|oo, j|
 				if(o.collide(oo, 10), {
@@ -54,9 +54,9 @@ s.waitForBoot{
 					]);
 				});
 			};
-			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
-		GUI.pen.fill;
+		Pen.fill;
 		
 		/*
 		world.objects.do{|o, i|						//iterate all objects in this world
@@ -79,15 +79,14 @@ s.waitForBoot{
 			
 			//--render
 			if(o.isKindOf(RedRock), {
-				GUI.pen.fillColor_(Color.blue(1, 0.5));
-				GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+				Pen.fillColor= Color.blue(1, 0.5);
+				Pen.fillOval(Rect.aboutRedObject2D(o));
 			}, {
-				GUI.pen.strokeColor_(Color.grey(0.7, 0.9));
-				GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
+				Pen.strokeColor= Color.grey(0.7, 0.9);
+				Pen.strokeOval(Rect.aboutRedObject2D(o));
 			});
 		}
 		*/
 	}.play;
 }
 )
-

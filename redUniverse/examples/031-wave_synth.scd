@@ -16,7 +16,7 @@ s.waitForBoot{
 	
 	//--world
 	RedUniverse.clear;
-	w= GUI.redWindow.new("wave test synths", Rect(128, 64, width, height)).front;
+	w= RedWindow("wave test synths", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.04];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.2); //dim,grav,maxvel,damp
 	
@@ -44,12 +44,12 @@ s.waitForBoot{
 		sys.update;
 		
 		//--render
-		GUI.pen.fillColor_(Color.grey(1, 0.4));
+		Pen.fillColor= Color.grey(1, 0.4);
 		sys.do{|o, i|
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
-	w.onClose_{synths.do{|x| x.free}};
+	w.onClose= {synths.do{|x| x.free}};
 })
 
 

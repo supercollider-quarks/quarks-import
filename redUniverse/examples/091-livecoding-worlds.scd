@@ -10,7 +10,7 @@
 	~n= 8;
 	
 	//--world
-	~win= GUI.redWindow.new("boids test3", Rect(128, 164, width, height)).front;
+	~win= RedWindow("boids test3", Rect(128, 164, width, height)).front;
 	wgrav= RedVector2D[0, 0];
 	~world= RedWorld(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
 	
@@ -37,8 +37,8 @@
 			~world.contain(o);
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(1-(i/~n), 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(1-(i/~n), 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )
@@ -52,14 +52,14 @@
 
 //back to a world without gravity
 (
-~world= RedUniverse.migrateAll(~world, RedWorld(RedVector2D[400, 400], RedVector2D[0, 0], 10, 0.99));
+~world= RedUniverse.migrateAll(~world, RedWorld(RedVector2D[300, 300], RedVector2D[0, 0], 10, 0.99));
 ~win.resize(~world.dim);
 )
 
 
 //--changing the whole main loop function.  behaviour, colours and shapes
 (
-~win.background_(Color.red);
+~win.background= Color.red;
 ~win.draw{
 	~world.objects.do{|o, i|
 		if(i!=0, {
@@ -73,8 +73,8 @@
 		~world.contain(o);
 		
 		//--render
-		GUI.pen.fillColor_(Color.yellow(1-(i/~n), 0.5));
-		GUI.pen.fillRect(Rect.aboutRedVector2D(o.loc, o.size*2.5));
+		Pen.fillColor= Color.yellow(1-(i/~n), 0.5);
+		Pen.fillRect(Rect.aboutRedVector2D(o.loc, o.size*2.5));
 	};
 }
 )

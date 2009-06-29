@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, world, acc, vel, loc, obj, visc, vv;
 	
 	//--world
-	w= GUI.redWindow.new("viscosity test", Rect(128, 64, width, height)).front;
+	w= RedWindow("viscosity test", Rect(128, 64, width, height)).front;
 	world= RedWorld(RedVector2D[width, height], 0, 30); //dim,grav,maxvel,damp
 	
 	//--objects
@@ -25,9 +25,9 @@
 		world.contain(obj);
 		
 		//--render
-		GUI.pen.fillColor_(Color.yellow);
-		GUI.pen.fillRect(visc);
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.strokeRect(Rect.aboutRedObject2D(obj));
+		Pen.fillColor= Color.yellow;
+		Pen.fillRect(visc);
+		Pen.strokeColor= Color.white;
+		Pen.strokeRect(Rect.aboutRedObject2D(obj));
 	}.play;
 )

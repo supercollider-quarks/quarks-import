@@ -6,7 +6,7 @@
 		sys;
 	
 	//--world
-	w= GUI.redWindow.new("particlesystem test", Rect(128, 64, width, height)).front;
+	w= RedWindow("particlesystem test", Rect(128, 64, width, height)).front;
 	world= RedWorld3(RedVector2D[width, height], 0, 20, -0.25); //dim,grav,maxvel,damp
 	
 	//--system
@@ -14,7 +14,7 @@
 	
 	//--loop
 	w.draw{
-		world.gravity_(RedVector2D.newFrom(w.mouse/([width, height])-0.5));
+		world.gravity= RedVector2D.newFrom(w.mouse/([width, height])-0.5);
 		
 		//--add new particles and update old
 		sys.add(RedParticle(world, w.mouse+5.rand2, 0, RedVector2D[2.rand2, 10.rand], 1.5, 5.rand).age_(40.rrand(50)));
@@ -23,8 +23,8 @@
 		
 		//--render
 		sys.do{|o|								//iterate all particles in the system
-			GUI.pen.fillColor_(Color.grey((o.age/50), 1));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey((o.age/50), 1);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

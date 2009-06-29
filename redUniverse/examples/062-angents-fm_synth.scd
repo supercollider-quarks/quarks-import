@@ -73,7 +73,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("agents test tekno", Rect(128, 64, width, height)).front;
+	w= RedWindow("agents test tekno", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld(RedVector2D[width, height], wgrav, 8, 0.1); //dim,grav,maxvel,damp
 	
@@ -82,7 +82,7 @@ s.waitForBoot{
 		var loc= RedVector2D[width, height].rand;
 		var obj= RedAgent(world, loc, RedVector2D[0.5, 0.5].rand2, nil, 1, 10)
 			.maxForce_(1.2).wchange_(0.9).wdistance_(5).wradius_(10);
-		obj.state_((								//init state with random values
+		obj.state= (								//init state with random values
 			\fmamount: 0,
 			\fmsend: 1,
 			\rmamount: 0,
@@ -96,7 +96,7 @@ s.waitForBoot{
 			\pol: [-1, 1].choose,
 			\amp: Pseq({1.0.rand2.round(0.25).clip(0, 1)}.dup(16), inf).asStream,
 			\level: 0
-		));
+		);
 	};
 	objsFunc.dup(n);								//create n agents for startup
 	
@@ -120,7 +120,7 @@ s.waitForBoot{
 			world.remove(replace);
 			objsFunc.value;						//die and replace with new one
 		});
-		world.gravity_(w.mouse/RedVector2D[width, height]-0.5);
+		world.gravity= w.mouse/RedVector2D[width, height]-0.5;
 		world.objects.do{|o, i|
 			o.addForceWander2D;
 			o.addForceSeek(world.objects.wrapAt(i-1).loc);
@@ -150,11 +150,11 @@ s.waitForBoot{
 			);
 			
 			//--render
-			GUI.pen.fillColor_(Color.yellow(o.state[\level]*0.85+0.15, 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.yellow(o.state[\level]*0.85+0.15, 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
-	w.onClose_{
+	w.onClose= {
 		Tdef(\seq).stop;
 		fmbusses.free;
 		rmbusses.free;

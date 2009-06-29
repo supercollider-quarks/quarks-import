@@ -12,7 +12,7 @@
 	}.dup(nWaves);
 	
 	//--world
-	w= GUI.redWindow.new("wave phase test", Rect(128, 64, width, height)).front;
+	w= RedWindow("wave phase test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.4];
 	world= RedWorld(RedVector2D[width, height], wgrav, 20, 0.8); //dim,grav,maxvel,damp
 	
@@ -43,9 +43,9 @@
 		world.objects.do{|o, i| o.addForce(world.gravity); o.update; world.contain(o)};
 		
 		//--render
-		GUI.pen.fillColor_(Color.green(1, 0.4));
+		Pen.fillColor= Color.green(1, 0.4);
 		world.objects.do{|o, i|
-			GUI.pen.fillRect(Rect.aboutRedObject2D(o));
+			Pen.fillRect(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

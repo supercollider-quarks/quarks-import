@@ -5,7 +5,7 @@
 	var width= 300, height= 300, w, world, wgrav, sprs, over, n= 10;
 	
 	//--world
-	w= GUI.redWindow.new("soda springs", Rect(128, 64, width, height)).front;
+	w= RedWindow("soda springs", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 30, 0.8); //dim,grav,maxvel,damp
 	
@@ -39,9 +39,9 @@
 			spr.update;
 			
 			//--render springs
-			GUI.pen.strokeColor= Color.grey;
-			GUI.pen.line(spr.object.loc.asPoint, spr.target.loc.asPoint);
-			GUI.pen.stroke;
+			Pen.strokeColor= Color.grey;
+			Pen.line(spr.object.loc.asPoint, spr.target.loc.asPoint);
+			Pen.stroke;
 		};
 		
 		world.objects.do{|obj, i|
@@ -52,11 +52,11 @@
 			
 			//--render objects
 			if(obj==over, {
-				GUI.pen.fillColor= Color.red;
+				Pen.fillColor= Color.red;
 			}, {
-				GUI.pen.fillColor= Color.grey(0.8, 0.5);
+				Pen.fillColor= Color.grey(0.8, 0.5);
 			});
-			GUI.pen.fillOval(Rect.aboutRedObject2D(obj));
+			Pen.fillOval(Rect.aboutRedObject2D(obj));
 		};
 	}.play;
 )

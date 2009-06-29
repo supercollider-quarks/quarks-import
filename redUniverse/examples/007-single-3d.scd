@@ -4,7 +4,7 @@
 	var width= 300, height= 300, depth= 300, w, wgrav, world, n= 1;
 	
 	//--world
-	w= GUI.redWindow.new("single 3d test", Rect(128, 64, width, height)).front;
+	w= RedWindow("single 3d test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector3D[0.1, 0.98, 0];
 	world= RedWorld3(RedVector3D[width, height, depth], wgrav, 20, 0.05); //dim,maxvel,grav,damp
 	//world= RedWorld(RedVector3D[width, height, depth], wgrav, 20, 0.99); //dim,grav,maxvel,damp
@@ -19,19 +19,19 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.white);
+		Pen.strokeColor= Color.white;
 		world.objects.do{|o|
 			o.addForce(o.world.gravity);
 			o.update;
 			world.contain(o);
-			//GUI.pen.addRect(Rect.aboutPoint(o.loc.asPoint, o.size, o.size));
-			//GUI.pen.addRect(Rect.aboutPoint(w.mouse.asPoint, o.size, o.size));
-			GUI.pen.addRect(Rect.aboutRedVector3D(o.loc, o.size, width, height, depth, 1.25, 0.5));
-			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.25, 0.4));
-			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.15, 0.3));
-			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.05, 0.2));
-			GUI.pen.addRect(Rect.aboutRedObject3D(o, 1.00, 0.1));
+			//Pen.addRect(Rect.aboutPoint(o.loc.asPoint, o.size, o.size));
+			//Pen.addRect(Rect.aboutPoint(w.mouse.asPoint, o.size, o.size));
+			Pen.addRect(Rect.aboutRedVector3D(o.loc, o.size, width, height, depth, 1.25, 0.5));
+			Pen.addRect(Rect.aboutRedObject3D(o, 1.25, 0.4));
+			Pen.addRect(Rect.aboutRedObject3D(o, 1.15, 0.3));
+			Pen.addRect(Rect.aboutRedObject3D(o, 1.05, 0.2));
+			Pen.addRect(Rect.aboutRedObject3D(o, 1.00, 0.1));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play;
 )

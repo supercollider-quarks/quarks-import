@@ -19,7 +19,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("3d test", Rect(128, 64, width, height)).front;
+	w= RedWindow("3d test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector3D[0.1, 0.98, 0.1];
 	world= RedWorld3(RedVector3D[width, height, depth], wgrav, 20, 0.1); //dim,grav,maxvel,damp
 	//world= RedWorld2(RedVector3D[width, height, depth], wgrav, 20, 0.92); //dim,grav,maxvel,damp
@@ -33,10 +33,10 @@ s.waitForBoot{
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.grey(0.5));
-		GUI.pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, depth], width/2, width, height, depth, ff, ss));
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, 0], width/2, width, height, depth, ff, ss));
+		Pen.strokeColor= Color.grey(0.5);
+		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, depth], width/2, width, height, depth, ff, ss));
+		Pen.strokeColor= Color.white;
+		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, 0], width/2, width, height, depth, ff, ss));
 		world.objects.do{|o, i|
 			var flag= false, dep;
 			o.addForce(world.gravity);
@@ -57,9 +57,9 @@ s.waitForBoot{
 			});
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(dep, 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject3D(o, ff, ss));
+			Pen.fillColor= Color.grey(dep, 0.5);
+			Pen.fillOval(Rect.aboutRedObject3D(o, ff, ss));
 		};
 	}.play;
-	w.onClose_{synths.do{|x| x.free}};
+	w.onClose= {synths.do{|x| x.free}};
 })

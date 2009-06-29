@@ -7,7 +7,8 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
-
+090629 - helpfiles and examples now uses view redirect instead of GUI
+	bugfix for RedWindow and RedJWindow resize
 090624 - optimised collision detection.  added distance line example
 090617 - added RedObject:spring and RedSpring helper class.  also added spring examples and RedObject:containsLoc
 090616 - added example 102.  added RedWorld1 class.  RedWindow and RedJWindow removed relativeOrigin
