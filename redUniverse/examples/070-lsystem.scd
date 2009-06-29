@@ -5,7 +5,7 @@
 		cnt= 0, lsys, lplot;
 	
 	//--world
-	w= GUI.redWindow.new("lsystem test", Rect(128, 64, width, height)).front;
+	w= RedWindow("lsystem test", Rect(128, 64, width, height)).front;
 	
 	//lsys= RedLSystem("F", ($F: "-[-F+F+F]+[+F-F-F]"));
 	//lsys= RedLSystem("F", ($F: "F[+F--F]+F"));
@@ -24,8 +24,8 @@
 		lsys.next;
 		
 		//--render
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.translate(width*0.5, height*0.8);
+		Pen.strokeColor= Color.white;
+		Pen.translate(width*0.5, height*0.8);
 		lplot.draw;
 	}.play;
 )

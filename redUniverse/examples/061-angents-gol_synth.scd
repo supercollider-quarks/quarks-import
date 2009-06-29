@@ -17,7 +17,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("agents test ca2", Rect(128, 64, width, height)).front;
+	w= RedWindow("agents test ca2", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	//world= RedWorld(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
 	world= RedWorld3(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
@@ -26,7 +26,7 @@ s.waitForBoot{
 	{|i|
 		var loc= RedVector2D[px+15, py+15];
 		var obj= RedAgent(world, loc, RedVector2D[0.5, 0.5].rand2, nil, 1, 10);
-		obj.state_((\cell: 2.rand, \neighbours: 0));
+		obj.state= (\cell: 2.rand, \neighbours: 0);
 		px= px+(obj.size*2-1);
 		if(px>(width*0.9), {
 			px= 0;
@@ -44,7 +44,7 @@ s.waitForBoot{
 	
 	//--loop
 	w.draw{
-		world.gravity_(w.mouse/RedVector2D[width, height]-0.5);
+		world.gravity= w.mouse/RedVector2D[width, height]-0.5;
 		world.objects.do{|o, i|
 			var neighbours= 0;
 			world.objects.do{|oo, j|
@@ -82,9 +82,9 @@ s.waitForBoot{
 			);
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(o.state[\cell]*0.85+0.15, 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(o.state[\cell]*0.85+0.15, 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
-	w.onClose_{synths.do{|x| x.free}};
+	w.onClose= {synths.do{|x| x.free}};
 })

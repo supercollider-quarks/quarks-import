@@ -15,8 +15,9 @@ RedIFS {
 	}
 	makeWindow {|bounds|
 		var b= bounds ?? {Rect(100, 200, 400, 400)};
-		var win= GUI.window.new(this.class.name, b, false);
-		win.drawHook_{
+		var win= Window(this.class.name, b, false);
+		var usr= UserView(win, Rect(0, 0, b.width, b.height));
+		usr.drawFunc= {
 			Pen.translate(b.width*0.5, b.height*0.5);
 			Pen.moveTo(Point(0, 0));
 			this.draw(b.width, b.height);

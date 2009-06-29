@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, wgrav, world, n= 1;
 	
 	//--world
-	w= GUI.redWindow.new("vector test", Rect(128, 64, width, height)).front;
+	w= RedWindow("vector test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[-0.4, 0.98];					//world xy gravity
 	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.25); //dim,grav,maxvel,damp
 	
@@ -18,14 +18,14 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.white);
+		Pen.strokeColor= Color.white;
 		world.objects.do{|o|						//iterate all objects in this world
 			o.addForce(o.world.gravity);			//add gravity
 			o.update;								//object update
 			world.contain(o);						//keep within world borders
 			
 			//--render
-			GUI.pen.strokeRect(Rect.aboutRedObject2D(o));
+			Pen.strokeRect(Rect.aboutRedObject2D(o));
 		}
 	}.play;
 )

@@ -6,7 +6,7 @@
 		rep;
 	
 	//--world
-	w= GUI.redWindow.new("repulsive test2", Rect(128, 64, width, height)).front;
+	w= RedWindow("repulsive test2", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.1];
 	world= RedWorld(RedVector2D[width, height], wgrav, 5); //dim,grav,maxvel,damp
 	
@@ -19,10 +19,10 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.green);
+		Pen.strokeColor= Color.green;
 		rep.loc= w.mouse;
-		GUI.pen.strokeRect(Rect.aboutRedObject2D(rep));
-		GUI.pen.strokeColor_(Color.white);
+		Pen.strokeRect(Rect.aboutRedObject2D(rep));
+		Pen.strokeColor= Color.white;
 		world.objects.do{|o|
 			if(o!=rep, {
 				o.addForce(o.gravityForce(rep).neg);
@@ -31,9 +31,9 @@
 				world.contain(o);
 				
 				//--render
-				GUI.pen.addRect(Rect.aboutRedObject2D(o));
+				Pen.addRect(Rect.aboutRedObject2D(o));
 			});
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play;
 )

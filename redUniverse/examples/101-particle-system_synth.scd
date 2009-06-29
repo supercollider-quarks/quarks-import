@@ -19,12 +19,12 @@ s.waitForBoot{
 	synths= ();									//keep track of synths with this dictionary
 	
 	//--world
-	w= GUI.redWindow.new("particlesystem test2", Rect(128, 64, width, height)).front;
+	w= RedWindow("particlesystem test2", Rect(128, 64, width, height)).front;
 	world= RedWorld3(RedVector2D[width, height], 0, 20, 1.25); //dim,grav,maxvel,damp
 	
 	//--system
 	sys= RedParticleSystem.new;
-	sys.removeAction_{|o| synths.at(o.hash).release};	//free synth when particle dies
+	sys.removeAction= {|o| synths.at(o.hash).release};	//free synth when particle dies
 	
 	//--loop
 	w.draw{
@@ -47,14 +47,14 @@ s.waitForBoot{
 		};
 		
 		//--mouse
-		world.gravity_(RedVector2D.newFrom(w.mouse/([width, height])-0.5));
+		world.gravity= RedVector2D.newFrom(w.mouse/([width, height])-0.5);
 		
 		//--render
 		sys.do{|o|								//iterate all particles
-			GUI.pen.fillColor_(Color.grey(o.age/50, 1));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(o.age/50, 1);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
-	w.onClose_{synths.do{|x| x.free}};
+	w.onClose= {synths.do{|x| x.free}};
 }
 )

@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, wgrav, world;
 	
 	//--world
-	w= GUI.redWindow.new("rock test", Rect(128, 64, width, height)).front;
+	w= RedWindow("rock test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0];						//world xy gravity
 	world= RedWorld3(RedVector2D[width, height], wgrav, 3, 0); //dim,grav,maxvel,damp
 	
@@ -15,15 +15,15 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.white);
+		Pen.strokeColor= Color.white;
 		world.objects.do{|o, i|						//iterate all objects in this world
 			world.objects.copyToEnd(i+1).do{|oo| o.collide(oo)};
 			o.update;								//object update
 			world.contain(o);						//keep within world borders
 			
 			//--render
-			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play;
 )

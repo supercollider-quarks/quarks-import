@@ -18,7 +18,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("bounce test", Rect(128, 64, width, height)).front;
+	w= RedWindow("bounce test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[-0.1, 0.98];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.1); //dim,grav,maxvel,damp
 	//world= RedWorld(RedVector2D[width, height], wgrav, 20, 0.9); //dim,grav,maxvel,damp
@@ -47,8 +47,8 @@ s.waitForBoot{
 			world.contain(o);
 			
 			//--render
-			GUI.pen.strokeColor_(Color.grey(o.mass/4, 0.7));
-			GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
+			Pen.strokeColor= Color.grey(o.mass/4, 0.7);
+			Pen.strokeOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 })

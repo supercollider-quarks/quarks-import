@@ -24,7 +24,7 @@ RedJWindow : JSCWindow {
 		dataptr		= this.id;
 		this.prInit( name, argBounds, resizable, border, scroll ); // , view );
 		
-		this.background_(Color.black);
+		this.background= Color.black;
 		mouse= RedVector2D[0, 0];
 		userView= JSCUserView(this, Rect(0, 0, view.bounds.width, view.bounds.height))
 			.mouseDownAction_{|view, x, y| mouse= RedVector2D[x, y]}
@@ -36,7 +36,10 @@ RedJWindow : JSCWindow {
 		{while{this.isOpen&&isPlaying} {userView.refresh; fps.reciprocal.wait}}.fork(AppClock);
 	}
 	stop {isPlaying= false}
-	resize {|redVec| this.setInnerExtent(redVec[0], redVec[1])}
-	background_ {|color| view.background_(color)}
+	resize {|redVec|
+		this.setInnerExtent(redVec[0], redVec[1]);
+		userView.bounds= Rect(0, 0, redVec[0], redVec[1]);
+	}
+	background_ {|color| view.background= color}
 	isOpen {^this.isClosed.not}
 }

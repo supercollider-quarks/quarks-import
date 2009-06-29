@@ -5,7 +5,7 @@
 		f= 1.25, s= 0.25;
 	
 	//--world
-	w= GUI.redWindow.new("multi 3d test", Rect(128, 64, width, height)).front;
+	w= RedWindow("multi 3d test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector3D[0.1, 0.1, 0.1];
 	world= RedWorld3(RedVector3D[width, height, depth], wgrav, 20, 0.01); //dim,grav,maxvel,damp
 	//world= RedWorld2(RedVector3D[width, height, depth], wgrav, 20, 0.92); //dim,grav,maxvel,damp
@@ -18,18 +18,18 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.grey(0.5));
-		GUI.pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, depth], width/2, width, height, depth, f, s));
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, 0], width/2, width, height, depth, f, s));
+		Pen.strokeColor= Color.grey(0.5);
+		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, depth], width/2, width, height, depth, f, s));
+		Pen.strokeColor= Color.white;
+		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, 0], width/2, width, height, depth, f, s));
 		world.objects.do{|o|
 			o.addForce(world.gravity);
 			o.update;
 			world.contain(o);
 			
 			//--render
-			GUI.pen.strokeColor_(Color.grey(depth-o.loc[2]/(depth/2)));
-			GUI.pen.strokeRect(Rect.aboutRedObject3D(o, f, s));
+			Pen.strokeColor= Color.grey(depth-o.loc[2]/(depth/2));
+			Pen.strokeRect(Rect.aboutRedObject3D(o, f, s));
 		};
 	}.play;
 )

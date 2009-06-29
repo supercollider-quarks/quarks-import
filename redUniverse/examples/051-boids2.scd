@@ -5,7 +5,7 @@
 	var width= 300, height= 300, w, wgrav, world, n= 50;
 	
 	//--world
-	w= GUI.redWindow.new("boids test2", Rect(128, 64, width, height)).front;
+	w= RedWindow("boids test2", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld(RedVector2D[width, height], wgrav, 15, 0.05); //dim,grav,maxvel,damp
 	
@@ -32,8 +32,8 @@
 			world.contain(o);
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(1-(i/n), 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(1-(i/n), 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

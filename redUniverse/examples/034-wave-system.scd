@@ -5,7 +5,7 @@
 		sys, spook= 0;
 	
 	//--world
-	w= GUI.redWindow.new("wavesystem test", Rect(128, 64, width, height)).front;
+	w= RedWindow("wavesystem test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld(RedVector2D[width, height], wgrav, 20, 0.2); //dim,grav,maxvel,damp
 	
@@ -29,13 +29,13 @@
 		sys.update;
 		
 		//--render
-		GUI.pen.fillColor_(Color.grey(1, 0.5));
-		//GUI.pen.strokeColor_(Color.grey(1, 0.5));
-		//GUI.pen.moveTo(sys.objects[0].loc.asPoint);
+		Pen.fillColor= Color.grey(1, 0.5);
+		//Pen.strokeColor= Color.grey(1, 0.5);
+		//Pen.moveTo(sys.objects[0].loc.asPoint);
 		sys.do{|o, i|
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
-			//GUI.pen.lineTo(o.loc.asPoint);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
+			//Pen.lineTo(o.loc.asPoint);
 		};
-		//GUI.pen.stroke;
+		//Pen.stroke;
 	}.play;
 )

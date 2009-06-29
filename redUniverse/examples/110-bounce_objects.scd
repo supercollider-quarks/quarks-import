@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, wgrav, world, n= 18;
 	
 	//--world
-	w= GUI.redWindow.new("bounce test", Rect(128, 64, width, height)).front;
+	w= RedWindow("bounce test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[-0.1, 0.38];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.92); //dim,grav,maxvel,damp
 	
@@ -16,8 +16,8 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.grey(0.7, 0.5));
-		GUI.pen.width_(2);
+		Pen.strokeColor= Color.grey(0.7, 0.5);
+		Pen.width= 2;
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
 			o.addForce(o.frictionForce(-0.3));
@@ -32,8 +32,8 @@
 			world.contain(o);
 			
 			//--render
-			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play;
 )

@@ -6,7 +6,7 @@
 		rule, px= 0, py= 0;
 	
 	//--world
-	w= GUI.redWindow.new("agents test ca", Rect(128, 64, width, height)).front;
+	w= RedWindow("agents test ca", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.08];
 	//world= RedWorld(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
 	world= RedWorld3(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
@@ -15,7 +15,7 @@
 	world.objects= {|i|
 		var loc= RedVector2D[px+15, py+15];
 		var obj= RedAgent(world, loc, RedVector2D[0.5, 0.5].rand2, nil, 1, 10); //world,loc,vel,acc,mass,size
-		obj.state_((\cell: 2.rand, \neighbours: 0));
+		obj.state= (\cell: 2.rand, \neighbours: 0);
 		px= px+(obj.size*2-1);
 		if(px>(width*0.9), {
 			px= 0;
@@ -62,8 +62,8 @@
 			world.contain(o);
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(o.state[\cell]*0.85+0.15, 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(o.state[\cell]*0.85+0.15, 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

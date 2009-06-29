@@ -5,7 +5,7 @@
 		att;
 	
 	//--world
-	w= GUI.redWindow.new("attractor test1", Rect(128, 64, width, height)).front;
+	w= RedWindow("attractor test1", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.25); //dim,grav,maxvel,damp
 	
@@ -18,9 +18,9 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.green);
-		GUI.pen.strokeOval(Rect.aboutRedObject2D(att));
-		GUI.pen.strokeColor_(Color.white);
+		Pen.strokeColor= Color.green;
+		Pen.strokeOval(Rect.aboutRedObject2D(att));
+		Pen.strokeColor= Color.white;
 		world.objects.do{|o|
 			if(o!=att, {
 				o.addForce(o.gravityForce(att));
@@ -29,9 +29,9 @@
 				world.contain(o);
 				
 				//--render
-				GUI.pen.addRect(Rect.aboutRedObject2D(o));
+				Pen.addRect(Rect.aboutRedObject2D(o));
 			});
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play;
 )

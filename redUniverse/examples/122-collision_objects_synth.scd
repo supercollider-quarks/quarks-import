@@ -17,7 +17,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("collision test2", Rect(128, 64, width, height)).front;
+	w= RedWindow("collision test2", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[-0.1, 0.98];					//world xy gravity
 	world= RedWorld3(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
 	
@@ -33,7 +33,7 @@ s.waitForBoot{
 	//--loop
 	w.draw{
 		var set;
-		GUI.pen.width_(3);
+		Pen.width= 3;
 		set= Set.new;
 		world.objects.do{|o, i|
 			o.addForce(world.gravity);
@@ -48,8 +48,8 @@ s.waitForBoot{
 			world.contain(o);
 			
 			//--render
-			GUI.pen.strokeColor_(Color.grey(o.mass/5));
-			GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
+			Pen.strokeColor= Color.grey(o.mass/5);
+			Pen.strokeOval(Rect.aboutRedObject2D(o));
 		};
 		set.do{|indexes|
 			var o= world.objects[indexes[0]];
@@ -64,6 +64,6 @@ s.waitForBoot{
 			);
 		};
 	}.play;
-	w.onClose_{synths.do{|x| x.free}};
+	w.onClose= {synths.do{|x| x.free}};
 }
 )

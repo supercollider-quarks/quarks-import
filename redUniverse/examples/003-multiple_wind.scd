@@ -5,7 +5,7 @@
 		wind, cnt= 0, amp= 0.5, period= 400;
 	
 	//--world
-	w= GUI.redWindow.new("wind test", Rect(128, 64, width, height)).front;
+	w= RedWindow("wind test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 7, 0.01); //dim,grav,maxvel,damp
 	//world= RedWorld(RedVector2D[width, height], wgrav, 5); //dim,grav,maxvel,damp
@@ -29,8 +29,8 @@
 			world.contain(o);
 			
 			//--render
-			GUI.pen.strokeColor_(Color.grey(o.mass/4));
-			GUI.pen.strokeRect(Rect.aboutRedObject2D(o));
+			Pen.strokeColor= Color.grey(o.mass/4);
+			Pen.strokeRect(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

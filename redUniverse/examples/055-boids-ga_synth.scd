@@ -44,7 +44,7 @@ RedGAPhenome(c[0]).asSynthDef2.play(s, [\amp, 0.1])
 		synths;
 	
 	//--world
-	w= GUI.redWindow.new("boids test ga-synths", Rect(128, 64, width, height)).front;
+	w= RedWindow("boids test ga-synths", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 10, 0.1); //dim,grav,maxvel,damp
 	
@@ -63,8 +63,8 @@ RedGAPhenome(c[0]).asSynthDef2.play(s, [\amp, 0.1])
 	//--loop
 	w.draw{
 		4.do{|i|
-			GUI.pen.fillColor_(Color.red(0.5, i+1/4));
-			GUI.pen.fillOval(Rect.aboutRedVector2D(w.mouse, 4-i/3*25));
+			Pen.fillColor= Color.red(0.5, i+1/4);
+			Pen.fillOval(Rect.aboutRedVector2D(w.mouse, 4-i/3*25));
 		};
 		world.objects.do{|o, i|
 			var amp= 0;
@@ -82,11 +82,11 @@ RedGAPhenome(c[0]).asSynthDef2.play(s, [\amp, 0.1])
 			synths[i].set(\amp, amp);
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(amp.max(0.1), 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(amp.max(0.1), 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 		
 	}.play;
-	w.onClose_{synths.do{|x| x.free}};
+	w.onClose= {synths.do{|x| x.free}};
 	}.play(AppClock);
 )

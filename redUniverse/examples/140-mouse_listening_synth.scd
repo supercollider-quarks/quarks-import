@@ -7,7 +7,7 @@ s.waitForBoot{
 	var width= 640, height= 480, w, world, n= 10, synths;
 	
 	//--world
-	w= GUI.redWindow.new("listening pos test", Rect(128, 64, width, height)).front;
+	w= RedWindow("listening pos test", Rect(128, 64, width, height)).front;
 	world= RedWorld3(RedVector2D[width, height], damping:0.5);		 //dim,grav,maxvel,damp
 	
 	//--synthesis
@@ -32,10 +32,10 @@ s.waitForBoot{
 	
 	//--loop
 	w.draw{
-		GUI.pen.width_(1);
+		Pen.width= 1;
 		4.do{|i|
-			GUI.pen.fillColor_(Color.grey(0.4, i+1/(4)));
-			GUI.pen.fillOval(Rect.aboutRedVector2D(w.mouse, (4-i)/3*50));
+			Pen.fillColor= Color.grey(0.4, i+1/(4));
+			Pen.fillOval(Rect.aboutRedVector2D(w.mouse, (4-i)/3*50));
 		};
 		world.objects.do{|o, i|						//iterate all objects in this world
 			o.addForceWander2D;
@@ -52,9 +52,9 @@ s.waitForBoot{
 			);
 			
 			//--render
-			GUI.pen.strokeColor_(Color.grey(0.7, 0.5));
-			GUI.pen.strokeOval(Rect.aboutRedObject2D(o));
+			Pen.strokeColor= Color.grey(0.7, 0.5);
+			Pen.strokeOval(Rect.aboutRedObject2D(o));
 		}
 	}.play;
-	w.onClose_{world.objects.do{|o| o.state.at(\synth).free}};
+	w.onClose= {world.objects.do{|o| o.state.at(\synth).free}};
 })

@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, wgrav, world, n= 10;
 	
 	//--world
-	w= GUI.redWindow.new("attractor test3", Rect(128, 64, width, height)).front;
+	w= RedWindow("attractor test3", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld3(RedVector2D[width, height], wgrav, 6, 0.02); //dim,grav,maxvel,damp
 	
@@ -28,8 +28,8 @@
 			world.contain(o);						//keep object within the world
 			
 			//--render
-			GUI.pen.fillColor_(Color.grey(1-(o.mass/12), 0.5));
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillColor= Color.grey(1-(o.mass/12), 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 	}.play;
 )

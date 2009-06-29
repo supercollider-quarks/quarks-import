@@ -18,7 +18,7 @@ s.waitForBoot{
 	s.sync;
 	
 	//--world
-	w= GUI.redWindow.new("particlesystem fountain", Rect(128, 64, width, height)).front;
+	w= RedWindow("particlesystem fountain", Rect(128, 64, width, height)).front;
 	mp= w.mouse;
 	wgrav= RedVector2D[0, 0.4];						//world xy gravity
 	world= RedWorld1(RedVector2D[width, height], wgrav, 20, 1); //dim,grav,maxvel,damp
@@ -59,15 +59,15 @@ s.waitForBoot{
 		
 		//--mouse
 		if(w.mouse!=mp, {
-			world.gravity_(RedVector2D.newFrom(w.mouse/([width, height])-0.5));
+			world.gravity= RedVector2D.newFrom(w.mouse/([width, height])-0.5);
 		});
 		
 		//--render
-		GUI.pen.strokeColor= Color.white;
+		Pen.strokeColor= Color.white;
 		sys.do{|o|								//iterate all particles
-			GUI.pen.addOval(Rect.aboutRedObject2D(o));
+			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play(40);
 }
 )

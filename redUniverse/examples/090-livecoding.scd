@@ -7,22 +7,22 @@
 	var width= 300, height= 300, wgrav;
 	
 	//--world
-	~win= GUI.redWindow.new("livecoding test", Rect(128, 64, width, height)).front;
+	~win= RedWindow("livecoding test", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[-0.4, 0.98];
 	~world= RedWorld3(RedVector2D[width, height], wgrav, 20, 0.25); //dim,grav,maxvel,damp
 	
 	//--loop
 	~win.draw{
-		GUI.pen.strokeColor_(Color.white);
+		Pen.strokeColor= Color.white;
 		~world.objects.do{|o|
 			o.addForce(o.world.gravity);
 			o.update;
 			o.world.contain(o);
 			
 			//--render
-			GUI.pen.strokeRect(Rect.aboutRedObject2D(o));
+			Pen.strokeRect(Rect.aboutRedObject2D(o));
 		};
-		//GUI.pen.strokeRect(Rect.aboutRedVector2D(~win.mouse, 10));
+		//Pen.strokeRect(Rect.aboutRedVector2D(~win.mouse, 10));
 	}.play;
 )
 

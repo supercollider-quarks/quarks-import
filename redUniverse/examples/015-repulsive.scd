@@ -4,7 +4,7 @@
 	var width= 300, height= 300, w, wgrav, world, rep, obj;
 	
 	//--world
-	w= GUI.redWindow.new("repulsive test1", Rect(128, 64, width, height)).front;
+	w= RedWindow("repulsive test1", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
 	world= RedWorld2(RedVector2D[width, height], wgrav, 10); //dim,grav,maxvel,damp
 	
@@ -20,9 +20,9 @@
 		world.contain(obj);
 		
 		//--render
-		GUI.pen.strokeColor_(Color.green);
-		GUI.pen.strokeRect(Rect.aboutRedObject2D(rep));
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.strokeRect(Rect.aboutRedObject2D(obj));
+		Pen.strokeColor= Color.green;
+		Pen.strokeRect(Rect.aboutRedObject2D(rep));
+		Pen.strokeColor= Color.white;
+		Pen.strokeRect(Rect.aboutRedObject2D(obj));
 	}.play;
 )

@@ -5,7 +5,7 @@
 		ploc;
 	
 	//--world
-	w= GUI.redWindow.new("pendulum test 1d", Rect(128, 64, width, height)).front;
+	w= RedWindow("pendulum test 1d", Rect(128, 64, width, height)).front;
 	wgrav= RedVector[0.5];
 	world= RedWorld(RedVector[width], wgrav, 20, 0.02); //dim,grav,maxvel,damp
 	
@@ -20,8 +20,8 @@
 	
 	//--loop
 	w.draw{
-		GUI.pen.strokeColor_(Color.white);
-		GUI.pen.width_(1);
+		Pen.strokeColor= Color.white;
+		Pen.width= 1;
 		world.objects.do{|o|
 			o.addForceAngular1D(world.gravity);
 			//o.addForce(world.gravity);
@@ -30,12 +30,12 @@
 			a= o;
 			
 			//--render
-			GUI.pen.translate(0, height/2);
+			Pen.translate(0, height/2);
 			ploc= o.pendulumLoc1D.asPoint;
-			GUI.pen.line(o.loc.asPoint, ploc);
-			GUI.pen.addOval(Rect.aboutPoint(ploc, o.size/5, o.size/5));
+			Pen.line(o.loc.asPoint, ploc);
+			Pen.addOval(Rect.aboutPoint(ploc, o.size/5, o.size/5));
 		};
-		GUI.pen.stroke;
+		Pen.stroke;
 	}.play;
 )
 

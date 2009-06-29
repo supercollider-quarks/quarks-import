@@ -7,7 +7,7 @@ s.waitForBoot{
 		syn, buf, bus, human;
 	
 	//--world
-	w= GUI.redWindow.new("track test1", Rect(128, 64, width, height)).front;
+	w= RedWindow("track test1", Rect(128, 64, width, height)).front;
 	world= RedWorld3(RedVector2D[width, height], damping:0.5); //dim,grav,maxvel,damp
 	
 	//--synthesis
@@ -38,15 +38,15 @@ s.waitForBoot{
 		var loc= RedVector2D[width, height].rand;		//initial xy location
 		var mass= 2.rrand(20);
 		var a= RedAgent(world, loc, RedVector2D[0.001, 0.001].rand2, nil, mass, mass); //world,loc,vel,acc,mass,size
-		a.maxForce_(1);
-		a.wdistance_(2);
-		a.wchange_(0.9);
-		a.state_((
+		a.maxForce= 1;
+		a.wdistance= 2;
+		a.wchange= 0.9;
+		a.state= (
 			\synth: Synth(\beating),
 			\prefFreq: mass.linexp(2, 20, 2000, 200),	//a favourite pitch depends on mass
 			\target: nil							//location for that pitch if found
-		));
-		a.sense_{
+		);
+		a.sense= {
 			var listen= human.state.freq;
 			if(listen>0 and:{(a.state.prefFreq-listen).abs<100}, {
 				a.state.target= human.loc;
@@ -60,7 +60,7 @@ s.waitForBoot{
 				a.addForceWander2D;
 			});
 		};
-		a.act_{
+		a.act= {
 			if(a.state.target.notNil, {
 				a.addForceArrive(a.state.target);
 			});
@@ -68,15 +68,15 @@ s.waitForBoot{
 		
 	}.dup(n);
 	human= RedAgent(world, RedVector2D[100, 100]);
-	human.state_((
+	human.state= (
 		\event: 0,
 		\deltax: 0,
 		\freq: 0,
 		\amp: 0,
 		\timbre: 0,
 		\centroid: 0
-	));
-	human.sense_{									//listen and update state
+	);
+	human.sense= {								//listen and update state
 		bus.getn(6, {|arr|
 			human.state.event= arr[0];
 			human.state.deltax= arr[1];
@@ -97,19 +97,19 @@ s.waitForBoot{
 			
 			//--render
 			if(o.state.event.notNil, {
-				GUI.pen.fillColor_(Color.blue(0.7, 0.5));
+				Pen.fillColor= Color.blue(0.7, 0.5);
 			}, {
 				if(o.state.target.notNil, {
-					GUI.pen.fillColor_(Color.yellow);
+					Pen.fillColor= Color.yellow;
 				}, {
-					GUI.pen.fillColor_(Color.grey(0.7, 0.5));
+					Pen.fillColor= Color.grey(0.7, 0.5);
 				});
 			});
-			GUI.pen.fillOval(Rect.aboutRedObject2D(o));
+			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 		//human.state.freq.postln;
 	}.play;
-	w.onClose_{
+	w.onClose= {
 		syn.free;
 		bus.free;
 		buf.free;

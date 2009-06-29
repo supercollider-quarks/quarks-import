@@ -5,7 +5,7 @@
 	var width= 300, height= 300, w, world, wgrav, objs, sprs, trg, mp, n= 8;
 	
 	//--world
-	w= GUI.redWindow.new("more springs", Rect(128, 64, width, height)).front;
+	w= RedWindow("more springs", Rect(128, 64, width, height)).front;
 	mp= w.mouse;
 	wgrav= RedVector2D[0, 0];						//no gravity
 	world= RedWorld1(RedVector2D[width, height], wgrav, 30, 0.8); //dim,grav,maxvel,damp
@@ -30,9 +30,9 @@
 			spr.update;
 			
 			//--render springs
-			GUI.pen.strokeColor= Color.grey;
-			GUI.pen.line(spr.object.loc.asPoint, spr.target.loc.asPoint);
-			GUI.pen.stroke;
+			Pen.strokeColor= Color.grey;
+			Pen.line(spr.object.loc.asPoint, spr.target.loc.asPoint);
+			Pen.stroke;
 		};
 		
 		objs.do{|obj|
@@ -41,12 +41,12 @@
 			world.contain(obj);
 			
 			//--render objects
-			GUI.pen.fillColor= Color.grey(0.5, 0.5);
-			GUI.pen.fillOval(Rect.aboutRedObject2D(obj));
+			Pen.fillColor= Color.grey(0.5, 0.5);
+			Pen.fillOval(Rect.aboutRedObject2D(obj));
 		};
 		
 		//--render mouse
-		GUI.pen.fillColor= Color.red;
-		GUI.pen.fillOval(Rect.aboutRedObject2D(trg));
+		Pen.fillColor= Color.red;
+		Pen.fillOval(Rect.aboutRedObject2D(trg));
 	}.play;
 )

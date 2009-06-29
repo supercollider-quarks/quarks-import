@@ -16,7 +16,7 @@ RedWindow : SCWindow {
 		view= SCTopView(nil, argBounds.moveTo(0, 0));
 		this.prInit(name, argBounds, resizable, border, false, view, false);
 		
-		this.background_(Color.black);
+		this.background= Color.black;
 		mouse= RedVector2D[0, 0];
 		userView= SCUserView(this, Rect(0, 0, view.bounds.width, view.bounds.height))
 			.mouseDownAction_{|view, x, y| mouse= RedVector2D[x, y]}
@@ -28,7 +28,10 @@ RedWindow : SCWindow {
 		{while{this.isOpen&&isPlaying} {userView.refresh; fps.reciprocal.wait}}.fork(AppClock);
 	}
 	stop {isPlaying= false}
-	resize {|redVec| this.setInnerExtent(redVec[0], redVec[1])}
-	background_ {|color| view.background_(color)}
+	resize {|redVec|
+		this.setInnerExtent(redVec[0], redVec[1]);
+		userView.bounds= Rect(0, 0, redVec[0], redVec[1]);
+	}
+	background_ {|color| view.background= color}
 	isOpen {^this.isClosed.not}
 }
