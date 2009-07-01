@@ -771,6 +771,7 @@ Proto({
 			currentEnvironment.changed(\countoff, nil);
 		} {
 			~sections[~currentSection].stop/*(nil, manualStop)*/;
+			~sections[~currentSection].removeDependant(currentEnvironment);
 				// must force manual stop for last section at end of piece
 				// but this didn't work
 			if(lastSection ? false) { ~sections.last.stop(nil, true) };
@@ -791,7 +792,7 @@ Proto({
 //section.debug(">> loadResources");
 			// must add 1 because do runs from 0 to n-1
 		(section+1).do({ |sect|
-			if(~sections[sect].isLoaded.not.debug("section % needs to load".format(sect))) {
+			if(~sections[sect].isLoaded.not/*.debug("section % needs to load".format(sect))*/) {
 				~sections[sect].prInitProc;
 			};
 		});
