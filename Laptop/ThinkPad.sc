@@ -20,6 +20,8 @@ ThinkPad : Laptop {
 
 	initHdaps{
 		hdaps = GeneralHID.open( GeneralHID.findBy( 4116, 20564, "hdaps/input0" ) );
+		//		hdaps = GeneralHID.open( GeneralHID.findBy( 0, 0, "isa1600/input0" ) );
+
 		hdaps.add( \tiltx, [3,0]);
 		hdaps.add( \tilty, [3,1]);
 
