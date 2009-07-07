@@ -8,7 +8,7 @@
 */
 
 // writes multiple files from disk, as created by MultiFileWriter,
-// uses unzip and tar for unzipping and unbundling
+// uses gzip and tar for unzipping and unbundling
 
 MultiFileReader{
 
@@ -60,8 +60,20 @@ MultiFileReader{
 		//	extension = PathName(line.last).fileNameWithoutExtension
 	}
 
+	readIndexLine{ |ind|
+		ind = ind ? curid;
+		^indexFile.readAt( ind );
+	}
+
+	reset{
+		this.openFile( 0 );
+		curFile.reset;
+	}
+
 	openFile{ |ind|
 		var line, path;
+
+		//	("opening file"+ind+",curid"+curid).postln;
 
 		if ( curid == ind ){
 			^curFile;
@@ -69,14 +81,26 @@ MultiFileReader{
 			this.closeFile;
 		};
 
-		line = indexFile.readAt( ind );
+		line = this.readIndexLine( ind );
+
+		//		"line".postln;
+		//		line.postcs;
+		//		line.size.postln;
 
 		if ( line.isNil ){
 			("File with id"+ind+"does not exist").warn;
 			curid = -1;
+			curFile = nil;
 			^nil;
 		};
 
+		if ( line.size < 2 ){
+			("File with id"+ind+"does not exist").warn;
+			curid = -1;
+			curFile = nil;
+			^nil;
+		};
+	
 		path = line.last;
 
 		if ( tarBundle ){
@@ -88,12 +112,14 @@ MultiFileReader{
 		};
 		
 		curFile = fileClass.new( fileName +/+ path );
+		//		curFile.postln;
 		if ( curFile.isNil ){
 			("File with id"+ind+"does not exist").warn;
 			curid = -1;
 		}{
 			curid = ind;
 		};
+		//	[curid,curFile].postln;
 		^curFile;
 	}
 
@@ -109,6 +135,12 @@ MultiFileReader{
 		this.closeFile;
 	}
 
+	skipToNextFile{
+		this.openFile( curid + 1 );
+		// return true if file exists.
+		^curFile.notNil;
+	}
+
 	next{
 		var res;
 		if ( curFile.isNil ){
@@ -116,9 +148,9 @@ MultiFileReader{
 		};
 		res = curFile.next;
 		if ( res.isNil ){
-			this.openFile( curid + 1 );
+			this.skipToNextFile;
 			res = curFile.next;
-		}
+		};
 		^res;
 	}
 

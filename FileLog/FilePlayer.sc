@@ -10,7 +10,8 @@
 FilePlayer : FileReader {
 
 	var <currentLine = 0;
-	var lineMap;
+	var <lineMap;
+	var <>headerSize = 0;
 
 	*new { | pathOrFile, skipEmptyLines=false, skipBlanks=false,  delimiter |
 		var stream;
@@ -37,9 +38,17 @@ FilePlayer : FileReader {
 		^res;
 	}
 
+	readHeader{ |hs|
+		headerSize = hs ? headerSize;
+		this.reset;
+		^headerSize.collect{ |it| this.next };
+	}
+
 	setCurrentLine{ |cl|
 		currentLine = cl;
-		lineMap.put( currentLine, stream.pos );
+		if ( cl != lineMap.last and: cl >= headerSize ){
+			lineMap.put( currentLine - headerSize, stream.pos );
+		};
 		//	[ currentLine, stream.pos].postln;
 	}
 
@@ -50,6 +59,7 @@ FilePlayer : FileReader {
 			{ 
 				stream.pos = pos;
 				currentLine = line;
+				^true
 			},
 			{ 
 				ind = lineMap.slotFor( line );
@@ -57,17 +67,25 @@ FilePlayer : FileReader {
 				lmap = lineMap.indices.at( ind );
 				stream.pos = lineMap.at( lmap );
 				//	[ind, lmap, stream.pos, line, line-lmap ].postln;
-				this.skipNextN( line - lmap );
+				^this.skipNextN( line - lmap ).notNil;
 			}
 		);
 	}
 
 	readAt{ |line|
+		^this.readAtLine( line );
+	}
+
+	readAtInterpret{ |line|
+		^this.readAtLineInterpret( line );
+	}
+
+	readAtLine{ |line|
 		this.goToLine( line );
 		^this.next;
 	}
 
-	readAtInterpret{ |line|
+	readAtLineInterpret{ |line|
 		this.goToLine( line );
 		^this.nextInterpret;
 	}
@@ -76,6 +94,10 @@ FilePlayer : FileReader {
 		^stream.length;
 	}
 
+
+	makeGui{ |parent|
+		^FilePlayerGui.new( this, parent );
+	}
 }
 
 TabFilePlayer : FilePlayer { 
