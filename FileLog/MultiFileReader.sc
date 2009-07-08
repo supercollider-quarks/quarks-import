@@ -46,7 +46,6 @@ MultiFileReader{
 			indexfn = pathDir +/+ fileName ++ "_index";
 			this.openIndexFile;
 		};
-		
 	}
 
 	openIndexFile{
@@ -104,7 +103,8 @@ MultiFileReader{
 		path = line.last;
 
 		if ( tarBundle ){
-			("tar -f" + pathDir +/+ fileName ++ ".tar" + "-x" + fileName +/+ path ).systemCmd;
+			this.extractFromTar( path );
+			//	("tar -f" + pathDir +/+ fileName ++ ".tar" + "-x" + fileName +/+ path ).systemCmd;
 		};
 		if ( zipSingle ){
 			("gzip -d" + fileName +/+ path ).systemCmd;
@@ -121,6 +121,10 @@ MultiFileReader{
 		};
 		//	[curid,curFile].postln;
 		^curFile;
+	}
+
+	extractFromTar{ |path|
+			("tar -f" + pathDir +/+ fileName ++ ".tar" + "-x" + fileName +/+ path ).systemCmd;
 	}
 
 	closeFile{
