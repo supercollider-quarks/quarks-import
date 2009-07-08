@@ -17,9 +17,9 @@ SWDataNetwork{
 
 	var <>recTask;
 	var <logfile;
-
-
+	var <reclines = 0;
 	var <>recnodes;
+
 	var <recTime = false;
 	var <timelogfile;
 
@@ -49,16 +49,31 @@ SWDataNetwork{
 
 	/// --------- NODE control ---------
 
+	checkDataType{ |data|
+		var type;
+		if ( data.first.isKindOf( SimpleNumber ) ){
+			type = 0;
+		};
+		if ( data.first.isKindOf( Symbol ) or: data.first.isKindOf( String ) ){
+			type = 1;
+		};
+		if ( type.isNil ){ type = 0; }; // proper error catching later
+		^type;
+	}
+
 	setData{ |id,data|
 		var ret = true;
 		var ret2;
 		var returnCode; // success;
 		var lasttime;
-		var node;
+		var node,type;
 		if ( verbose > 1, { [id,data].postln; } );
 		node = nodes[id];
+
+		
 		if ( node.isNil, {
-			ret = this.registerNode( id, data.size );
+			type = this.checkDataType( data );
+			ret = this.registerNode( id, data.size, type );
 			node = nodes[id];
 			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
 		});
@@ -103,11 +118,16 @@ SWDataNetwork{
 	}
 	*/
 
-	registerNode{ |id,sz|
+	registerNode{ |id,sz,type|
 		var ret,key;
 		ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
 		if ( ret ) {
-			nodes.put( id, SWDataNode.new( id,sz ) );
+			if ( type == 0 ){
+				nodes.put( id, SWDataNode.new( id,sz ) );
+			};
+			if ( type == 1 ){
+				nodes.put( id, SWDataStringNode.new( id,sz ) );
+			};
 			if ( osc.notNil, {
 				osc.newNode( nodes[id] );
 			});
@@ -135,7 +155,7 @@ SWDataNetwork{
 
 	/// -------- expected nodes -----------
 
-	addExpected{ |id,label,size=nil|
+	addExpected{ |id,label,size=nil,type=0|
 		if ( this.isExpected( id ).not, {
 			expectedNodes = expectedNodes.add( id );
 		});
@@ -149,8 +169,12 @@ SWDataNetwork{
 			osc.newExpected( id, label );
 		});
 		if ( size.notNil, {
-			this.setData( id, Array.fill( size, 0 ) );
-		})
+			if ( type == 0 ){
+				this.setData( id, Array.fill( size, 0 ) );
+			}{
+				this.setData( id, Array.fill( size, {'0'} ) );
+			};
+		});
 	}
 
 	isExpected{ |id|
@@ -241,19 +265,39 @@ SWDataNetwork{
 	// ------- data logging and recording --------
 
 	// recording
-	initRecord{ |fn,dt=0.005|
+	initRecord{ |fn,dt=0.025,stamp=false,break=36000|
 		//		var recordnodes;
 		fn = fn ? "SWDataNetworkLog";
-		logfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
-		
-		recnodes = this.writeHeader;
+
+		fn = fn++"_"++Date.localtime.stamp;
+
+		// save a spec if none is given:
+		if ( spec.name.isNil ){
+			spec.save( fn );
+		}{
+			spec.save;
+		};
+
+		logfile = MultiFileWriter.new( fn ++ ".txt" );
+		//	logfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
+				//		recnodes = this.writeHeader;
+
+		// copies the spec to the directory into which we are writing our log
+		spec.copyFile( logfile.pathDir );
 
 		recTask = Task.new( {
 			loop {
-				this.writeLine( dt, recnodes );
-				dt.wait;
+				logfile.open;
+				logfile.curFile.stringMethod = \asCompileString;
+				logfile.curFile.timeStamp = stamp;
+				recnodes = this.writeHeader;
+				break.do{ |it|
+					this.writeLine( dt, recnodes );
+					dt.wait;
+				};
+				logfile.close;
 			}
-		});
+		} );
 	}
 
 	record{ |onoff|
@@ -271,48 +315,67 @@ SWDataNetwork{
 	}
 
 	writeHeader{
-		var recordnodes;
+		var recordnodes,recslots;
 		// this tells the spec used for the recording:
-		logfile.write( spec.name.asString );
-		logfile.write( "\n" );
+		logfile.writeLine( [spec.name] );
+		//		logfile.write( "\n" );
+		//		logfile.write( "time\t" );
 
-		logfile.write( "time\t" );
-		// this creates a header with the ids of the node slots
 		recordnodes = nodes.collect{ |node|
-			node.slots.do{ |it| logfile.write( it.id.asCompileString ); logfile.write( "\t" ); };
+			//			node.slots.do{ |it| logfile.write( it.id.asCompileString ); logfile.write( "\t" ); };
 			node.id;
-		};
-		logfile.write( "\n" );
+		}.asArray;
+
+		// this creates a header with the ids of the node slots
+		recslots = recordnodes.collect{ |nodeid|
+			nodes[nodeid].slots.collect{ |it| it.id };
+		}.flatten;
+		
+		//	logfile.write( "\n" );
+
+		logfile.writeLine( [ "time" ] ++ recslots );
 		^recordnodes;
 	}
 
 	writeLine{ |dt,recordnodes|
-		logfile.write( dt.asString );
-		logfile.write( "\t" );
-		recordnodes.do{ |it|
+		var data;
+		/*
+			logfile.write( dt.asString );
+			logfile.write( "\t" );
+			recordnodes.do{ |it|
 			nodes[it].slots.collect{ |slot| slot.value }.do{ |dat|
-				logfile.write( dat.asCompileString );
-				logfile.write( "\t" );
+			logfile.write( dat.asCompileString );
+			logfile.write( "\t" );
 			}; 
-		};
-		logfile.write( "\n" );
+			};
+			logfile.write( "\n" );
+		*/
+		data = recordnodes.collect{ |it|
+			nodes[it].slots.collect{ |slot| slot.value }
+		}.flatten; 
+
+		logfile.writeLine( [dt] ++ data);
 	}
 
 
 	/// log update times
 
 	// recording
-	initTimeRecord{ |fn|
+	initTimeRecord{ |fn,stamp=false|
 		fn = fn ? "SWDataNetworkUpdateLog";
-		timelogfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
+		timelogfile =  TabFileWriter(fn++"_"++Date.localtime.stamp++".txt").timeStamp_(stamp);
+		//		timelogfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
 		recTime = true;
 	}
 
 	writeTimeUpdate{ |id,time|
+		timelogfile.writeLine( [id,time]);
+		/*
 		timelogfile.write( id.asString );
 		timelogfile.write( "\t" );
 		timelogfile.write( time.asString );
 		timelogfile.write( "\n" );
+		*/
 	}
 
 	closeTimeRecord{
@@ -346,6 +409,7 @@ SWDataNode{
 
 	var <id;
 	var <>key;
+	var <type = 0;
 
 	var <slots;
 	var <data;
@@ -372,12 +436,16 @@ SWDataNode{
 		lasttime = 0;
 		slots = Array.fill( maxs, 0 );
 		data = Array.fill( maxs, 0 );
-		slots.do{ |it,i| slots.put( i, SWDataSlot.new([id,i]) ); };
 		// the restart action should contain what should be done if the node does not provide data anymore
 		restartAction = {};
 		action = {};
 		lasttime = Process.elapsedTime;
 		//		trigger = {};
+		this.initSlots;
+	}
+
+	initSlots{
+		slots.do{ |it,i| slots.put( i, SWDataSlot.new([id,i]) ); };
 	}
 
 	// -------- slots and data -------
@@ -476,6 +544,7 @@ SWDataNode{
 SWDataSlot{
 	var <>id;
 	var <>key;
+	var <type = 0;
 
 	var <value;
 	var <>action;
@@ -653,7 +722,7 @@ SWDataNetworkSpec{
 		var file, res = false;
 		var filename;
 		all.add( name.asSymbol );
-		this.name = name;
+		this.name = name ? this.name;
 		filename = folder +/+ name ++ ".spec";
 		file = File(filename, "w"); 
 		if (file.isOpen) { 
@@ -668,6 +737,20 @@ SWDataNetworkSpec{
 		var slot;
 		this.name = name;
 		map = (folder +/+ name++".spec").load;
+		map.keysValuesDo{ |key,it|
+			slot = this.at( key );
+			if ( slot.notNil, { slot.key = key; } );
+		}
+	}
+
+	copyFile{ |target|
+		("cp"+(folder +/+ name++".spec")+target).unixCmd;
+	}
+
+	fromFileName { |fn| 
+		var slot;
+		this.name = name;
+		map = (fn++".spec").load;
 		map.keysValuesDo{ |key,it|
 			slot = this.at( key );
 			if ( slot.notNil, { slot.key = key; } );

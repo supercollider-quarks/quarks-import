@@ -7,12 +7,16 @@ SWDataNetworkLog{
 
 	var <reader;
 
-	var playnodes;
+	var <playnodes;
 	var playTask;
 
 	var <timeMap;
-	var <curTime;
+	var <curTime=0;
 	var <deltaT=0;
+
+	var <fileClass;
+	var <hasStamp = false;
+	var <hasExtraTab = false;
 
 	*new{ |fn,network|
 		^super.new.init( fn,network );
@@ -20,14 +24,34 @@ SWDataNetworkLog{
 
 	init{ |fn,netw|
 		network = netw ? SWDataNetwork.new;
+		this.checkFileClass( fn );
 		this.open( fn );
+	}
+
+	checkFileClass{ |fn|
+		var tar,txt;
+		var path = PathName(fn);
+		tar = (path.extension == "tar");
+		txt = (path.extension == "txt");
+		if ( tar ){
+			fileClass = MultiFilePlayer;
+		}{
+			if ( txt ){
+				fileClass = TabFilePlayer;
+			}{
+				fileClass = MultiFilePlayer;
+			}
+		};
+		//		[tar, txt, fileClass].postln;
 	}
 
 	open{ |fn|
 		if ( playTask.notNil ){ playTask.stop; };
 		if ( reader.notNil ){ reader.close; };
 
-		reader = TabFilePlayer.new( fn );
+		reader = fileClass.new( fn );
+
+		//		reader.dump;
 
 		this.readHeader;
 
@@ -45,15 +69,24 @@ SWDataNetworkLog{
 	}
 
 	goToTime{ |newtime|
-		var line;
+		var line,oldid;
 		if ( deltaT == 0 ){
 			deltaT = this.readLine;
 		};
 		line = floor( newtime / deltaT );
 		curTime = line * deltaT;
 		// assuming dt is constant.
-		// header is line 1
-		reader.goToLine( line.asInteger + 1 )
+
+		if ( fileClass == MultiFilePlayer ){
+			oldid = reader.curid;
+			reader.goToLine( line.asInteger );
+			// header may have changed:
+			if ( oldid != reader.curid ){
+				this.readHeader;
+			};
+		}{
+			reader.goToLine( line.asInteger );
+		};
 	}
 
 	play{
@@ -89,34 +122,82 @@ SWDataNetworkLog{
 	readHeader{
 		var spec,playset,playids;
 		var playslots;
-		spec = reader.next.first;
-		if ( spec != "nil", { 
-			network.setSpec( spec );
-		});
+		var header;
+
 		playnodes = Dictionary.new;
-		playslots = reader.next.drop(1).drop( -1 ).collect{ |it| it.interpret };
+
+		header = reader.readHeader(hs:2);
+		spec = header[0].last.interpret;
+		if ( spec.notNil, { 
+			network.setSpec( spec );
+			// if spec was not local, it may be included in the tar-ball
+			if ( network.spec.isNil ){
+				reader.extractFromTar( spec ++ ".spec" );
+				network.spec.fromFileName( reader.pathDir +/+ spec );
+			};
+		});
+
+		playslots = header[1].drop(1).collect{ |it| it.interpret };
+
+		if ( fileClass == TabFilePlayer ){
+			// backwards compatibility (there was an extra tab written at the end)
+			playslots = playslots.drop(-1);
+			hasExtraTab = true;
+		};
+
+		if ( playslots.first == "time" ){
+			// date stamps in the first column:
+			playslots.drop(1);
+			hasStamp = true;
+		};
+
 		playset = Set.new;
-		playids = playslots.collect{ |it| it.first }.do{ |it,i| playset.add( it ); } ;
-		playset.do{ |it| network.addExpected( it ); playnodes.put( it, Array.new ) };
-		playids.do{ |it,i| playnodes.put( it, playnodes[it].add( i ) ) };
+		playids = playslots.collect{ |it| it.first }.do{ 
+			|it,i| playset.add( it );
+		};
+		playset.do{ |it| 
+			network.addExpected( it );
+			playnodes.put( it, Array.new )
+		};
+		playids.do{ |it,i| 
+			playnodes.put( it, playnodes[it].add( i ) )
+		};
 	}
 
 	readLine{ |update=true|
-		var dt,line,data;
-		line = reader.next.drop(-1).collect{ |it| it.interpret };
-		dt = line.first;
+		var dt,line,data,nd;
+		var oldid;
+		if ( hasExtraTab ){
+			line = reader.nextInterpret.drop(-1);
+		}{
+			oldid = reader.curid;
+			line = reader.nextInterpret;
+			// header may have changed:
+			if ( oldid != reader.curid ){
+				this.readHeader;
+			};
+		};
+		if ( line.isNil ){
+			"At end of data".postln;
+			^nil;
+		};
+		if ( hasStamp ){
+			nd = 2;
+			dt = line[1];
+		}{
+			nd = 1;
+			dt = line.first;
+		};
 		if ( update ){
-			data = line.drop( 1 );
+			//	data = line.drop( nd );
 			playnodes.keysValuesDo{ |key,it|
-				network.setData( key, data.at( it ) );
+				network.setData( key, line.at( it + nd ) );
 			};
 		};
 		if( dt.notNil ){ 
 			deltaT = dt;
 			curTime = curTime + dt;
-			//	timeMap.put( curTime, reader.currentLine );
 		};
 		^dt;
 	}
-
 }
