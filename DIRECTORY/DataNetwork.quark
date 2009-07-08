@@ -6,7 +6,7 @@
 	\organization:		"Concordia University, Montreal",
 	\country: 		"Canada",
 	\helpdoc:		"Help/SenseWorldDataNetwork.html",
-	\dependencies:	["GNUPlot","SenseWorld","NetLib"],
+	\dependencies:	["GNUPlot","SenseWorld","NetLib","FileLog"],
 	\since: 		"2008",
-	\version:		"0.2"
+	\version:		"0.3"
 )
