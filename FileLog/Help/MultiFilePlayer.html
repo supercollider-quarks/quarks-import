@@ -80,12 +80,52 @@
 <h3>Accessing Instance and Class Variables</h3>
 <DL>
 
-<DT><STRONG>readAt(fileid,line)</STRONG></DT>
+<DT><STRONG>readAtLine(line)</STRONG></DT>
+<DD>Read at (cumulative) line number <em>line</em></DD>
+
+<DT><STRONG>readAtLineInterpret(line)</STRONG></DT>
+<DD>As readAtLine, but interpret the result.</DD>
+
+<DT><STRONG>readAt(line,fileid)</STRONG></DT>
 <DD>Read from file with <em>fileid</em>, at line number <em>line</em></DD>
 
-<DT><STRONG>readAtInterpret(fileid,line)</STRONG></DT>
+<DT><STRONG>readAtInterpret(line,fileid)</STRONG></DT>
 <DD>Read from file with <em>fileid</em>, at line number 
 <em>line</em>, and interpret the result (element by element).</DD>
+
+
+<DT><STRONG>makeGui</STRONG></DT>
+<DD>Create a MultiFilePlayerGui for this MultiFilePlayer.</DD>
+
+
+<DT><STRONG>fileClass_</STRONG></DT>
+<DD></DD>
+
+<DT><STRONG>fileClass</STRONG></DT>
+<DD>The Class used to open the individual files; this has to be a <a href="FilePlayer.html">FilePlayer</a>, or one of its subclasses.</DD>
+
+
+<DT><STRONG>headerSize_</STRONG></DT>
+<DD></DD>
+
+<DT><STRONG>headerSize</STRONG></DT>
+<DD>Size of the file header (data labels).</DD>
+
+<DT><STRONG>readHeader(fileid, hs)</STRONG></DT>
+<DD>Read the header of file <em>fileid</em>. <em>hs</em> will set the headerSize.</DD>
+
+<DT><STRONG>lineMap</STRONG></DT>
+<DD>A map of which cumulative line index is at the start of which file. Used internally.</DD>
+
+
+<DT><STRONG>currentLine</STRONG></DT>
+<DD>Get the current line we are at, adjusted for the header size.</DD>
+
+<DT><STRONG>goToLine( lineid )</STRONG></DT>
+<DD>Go to the specified line.</DD>
+
+
+
 
 </DL>
 
@@ -112,13 +152,13 @@ m = <span class="type">MultiFileWriter</span>.new( <span class="string">"testfil
 
 n = <span class="type">MultiFilePlayer</span>.new( <span class="string">"testfile15.tar"</span>);
 
-n.readAt( 2, 4)
+n.readAt( 4, 2 );
 
-n.readAt( 2, 10)
+n.readAt( 10 , 2 );
 
-n.readAt( 0, 2)
+n.readAt( 2, 0 );
 
-n.readAt( 1, 4)
+n.readAt( 4, 1 );
 
 n.closeFile;
 
