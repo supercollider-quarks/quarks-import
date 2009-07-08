@@ -91,6 +91,7 @@ MultiFilePlayer : MultiFileReader{
 	readHeader{ |fileid,hs|
 		headerSize = hs ? headerSize;
 		fileid = fileid ? curid;
+		if ( fileid == - 1 ){ fileid = 0 };
 		this.openFile( fileid );
 		^curFile.readHeader(headerSize);
 		//	^headerSize.collect{ |it| this.next };
