@@ -10,6 +10,8 @@ SWDataSlotGui{
 
 	var <xsize = 150;
 	var <editKey = false;
+	var decorator;
+
 
 	//	var <monitor;
 
@@ -23,7 +25,6 @@ SWDataSlotGui{
 	
 	init {
 		var xsize, ysize;
-		var decorator;
 
 		//	ysize = 80;
 
@@ -58,6 +59,42 @@ SWDataSlotGui{
 		key.mouseDownAction = { editKey = editKey.not; };
 		//		decorator.nextLine;
 
+		if ( slot.type == 0 ){
+			this.buildNumberGui;
+		}{
+			this.buildStringGui;
+		};
+
+		watcher = SkipJack.new({ defer{ this.updateVals } }, 1.0, { w.isClosed }, (\dataslotgui ++ slot.id).asSymbol, autostart: false );
+
+		this.updateVals;
+
+		//	watcher.start;		
+		w.refresh;
+	}
+
+	buildStringGui{
+		//		val = GUI.numberBox.new( cw, Rect( 0, 0, 35, 16 )).value_( slot.value ).font_( font );
+
+		// spacer
+		decorator.shift( 35 + decorator.gap.x, 0 );
+
+		debug = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
+			[ [ "Db", Color.blue ], ["Db", Color.red ] ] ).action_( {
+				|but| if ( but.value == 1, { slot.debug_( true ) }, { slot.debug_( false ) } ); } ).font_( font );
+
+		this.addSubButton;
+		this.addGetButton;
+
+		decorator.nextLine;
+		
+		val = GUI.staticText.new( cw, Rect( 0, 0, 205, 16 )).font_( font ).background_( Color.white );
+
+		
+	}
+
+
+	buildNumberGui{
 		val = GUI.numberBox.new( cw, Rect( 0, 0, 35, 16 )).value_( slot.value ).font_( font );
 		
 		debug = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
@@ -84,13 +121,7 @@ SWDataSlotGui{
 		slider = GUI.slider.new( cw, Rect( 0, 0, 205, 16 ) );
 
 		this.addGetButton;
-
-		watcher = SkipJack.new({ defer{ this.updateVals } }, 1.0, { w.isClosed }, (\dataslotgui ++ slot.id).asSymbol, autostart: false );
-
-		this.updateVals;
-
-		//	watcher.start;		
-		w.refresh;
+		
 	}
 
 	// overload in subclass
@@ -106,14 +137,18 @@ SWDataSlotGui{
 	}
 
 	updateVals { 
-		//	{ 
+		//	{
+		if ( slot.type == 0 ){
 			val.value_( slot.value.round(0.001) );
 			if ( slot.map.notNil, {
 				slider.value_( slot.map.unmap( slot.value ) );
 			},{
 				slider.value_( slot.value );
 			});
-			if ( editKey.not ){ key.string_( slot.key.asString ); };
+		}{
+			val.string_( slot.value );
+		};
+		if ( editKey.not ){ key.string_( slot.key.asString ); };
 			//	}.defer;
 	}
 
@@ -121,8 +156,10 @@ SWDataSlotGui{
 		parent = p;
 		val.mouseOverAction = { parent.setInfo( "current value of the slot" ) };
 		debug.mouseOverAction = { parent.setInfo( "turn on debugging" ) };
-		mon.mouseOverAction = { parent.setInfo( "monitor data of this slot" ) };
-		bus.mouseOverAction = { parent.setInfo( "create bus for this slot" ) };
+		if ( slot.type == 0 ){
+			mon.mouseOverAction = { parent.setInfo( "monitor data of this slot" ) };
+			bus.mouseOverAction = { parent.setInfo( "create bus for this slot" ) };
+		};
 		key.mouseOverAction = { parent.setInfo( "label of this slot. Click to edit." ) };	}
 
 	hide{
@@ -224,22 +261,24 @@ SWDataNodeGui{
 			[ [ "Db", Color.blue ], ["Db", Color.red ] ] ).action_( {
 				|but| if ( but.value == 1, { node.debug_( true ) }, { node.debug_( false ) } ); } ).font_( font );
 
-		mon = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
-			[ [ "Mon", Color.blue ], ["Mon", Color.red ] ] ).action_( {
-				|but| 
-				node.monitor( but.value.booleanValue );
-				if ( but.value.booleanValue ){
-					node.busmonitor.makeGui( node.key.asString );
-				}
-			} ).font_( font );
-
-		bus = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
-			[ [ "Bus", Color.blue ], ["Bus", Color.red ] ] ).action_( {
-				|but| if ( but.value == 1, {
-					node.createBus
-				}, { 
-					node.freeBus; });
-			} ).font_( font );
+		if ( node.type == 0 ){
+			mon = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
+				[ [ "Mon", Color.blue ], ["Mon", Color.red ] ] ).action_( {
+					|but| 
+					node.monitor( but.value.booleanValue );
+					if ( but.value.booleanValue ){
+						node.busmonitor.makeGui( node.key.asString );
+					}
+				} ).font_( font );
+			
+			bus = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
+				[ [ "Bus", Color.blue ], ["Bus", Color.red ] ] ).action_( {
+					|but| if ( but.value == 1, {
+						node.createBus
+					}, { 
+						node.freeBus; });
+				} ).font_( font );
+		};
 
 		this.addSubGetButtons;
 
@@ -257,8 +296,10 @@ SWDataNodeGui{
 		parent = p;
 		elaps.mouseOverAction = { parent.setInfo( "time elapsed since last update" ) };
 		debug.mouseOverAction = { parent.setInfo( "turn on debugging" ) };
-		mon.mouseOverAction = { parent.setInfo( "monitor data of this node" ) };
-		bus.mouseOverAction = { parent.setInfo( "create bus for this node" ) };
+		if ( node.type == 0 ){
+			mon.mouseOverAction = { parent.setInfo( "monitor data of this node" ) };
+			bus.mouseOverAction = { parent.setInfo( "create bus for this node" ) };
+		};
 		key.mouseOverAction = { parent.setInfo( "label of this node. Click to edit." ) };
 		if ( expandBut.notNil ){
 			expandBut.mouseOverAction = { parent.setInfo( "show node with slots" ) };

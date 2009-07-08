@@ -215,10 +215,12 @@ SWDataNetworkClient : SWDataNetwork{
 
 	// overloaded from base class
 	setData{ |id,data,fromnw=false|
+		var type;
 		var ret = true;
 		if ( verbose > 1, { [id,data].postln; } );
 		if ( nodes[id].isNil, {
-			ret = this.registerNode( id, data.size );
+			type = this.checkDataType( data );
+			ret = this.registerNode( id, data.size, type );
 			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
 		});
 		if ( ret ) { 
@@ -359,7 +361,7 @@ SWDataNetworkClient : SWDataNetwork{
 
 	nodeInfo{ |msg|
 		this.addExpected( msg[0], msg[1], fromnw: true );
-		this.registerNode( msg[0], msg[2] );
+		this.registerNode( msg[0], msg[2], msg[3] );
 		//	"node info ".post; msg.postln;
 		if ( msg[1] != 0,{
 			this.add( msg[1], msg[0], true );

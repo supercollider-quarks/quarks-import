@@ -79,8 +79,8 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/query/subscriptions| & i & port no.& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
 
 \verb|/info/expected| & is & node ID, node label & info about an expected node \\
-\verb|/info/node| & isi & node ID, node label, number of slots & info about a node \\
-\verb|/info/slot| & iis & node ID, slot ID, slot label & info about a slot \\
+\verb|/info/node| & isii & node ID, node label, number of slots, node type & info about a node \\
+\verb|/info/slot| & iis & node ID, slot ID, slot label, slot type & info about a slot \\
 \verb|/info/client| & sis & ip, port no., hostname & info about a client \\
 \verb|/info/setter| & isi & node ID, node label, number of slots & info about a node the client is setting \\
 
@@ -100,12 +100,16 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/unsubscribed/slot| & iii & port no., node ID, slot ID & reply to unsubscribe to receive data from a slot \\  
 
 \verb|/data/node| & iff..f & node ID, data values & node data \\
+\verb|/data/node| & iss..s & node ID, string data values & node data \\
 \verb|/get/node| & ii & port no., node ID & get data from a node (reply /data/node) \\
 
 \verb|/data/slot| & iif & node ID, slot ID, data value & slot data \\
+\verb|/data/slot| & iis & node ID, slot ID, string data value & slot data \\
 \verb|/get/slot| & iii & port no., node ID, slot ID & get data from a slot (reply /data/slot) \\
 
-\verb|/set/data| & iif..f & port no., node ID, data values & set data to a node  (reply /data/node)\\
+\verb|/set/data| & iif..f & port no., node ID, data values & set data to a node (reply /data/node)\\
+\verb|/set/data| & iis..s & port no., node ID, string data values & set data to a node\\
+\verb|/set/stringdata| & iis..s & port no., node ID, string data values & set data to a node (reply /data/node)\\
 
 \verb|/label/node| & iis & port no., node ID, node label & set label to a node \\
 \verb|/label/slot| & iiis & port no., node ID, slot ID, slot label & set label to a slot \\
@@ -114,8 +118,9 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/removed/node| & ii & port no., node ID & reply to remove a node \\
 \verb|/remove/all| & i & port no. & remove all nodes the client is a setter of (generates /removed/node messages) \\
 
-\verb|/add/expected| & iiis & port no., node ID, node size, node label & add an expected node to the network (reply /info/expected) \\
+\verb|/add/expected| & iiisi & port no., node ID, node size, node label, node type & add an expected node to the network (reply /info/expected) \\
  &  &  & if node size is given, the node is created as well (and generates a /info/node message) \\
+ &  &  & node type is 0: float, 1: string (default is 0) \\
 \hline
 \end{tabular}
 \end{center}

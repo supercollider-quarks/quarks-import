@@ -557,7 +557,7 @@ SWDataNetworkOSC{
 			this.warnMsg( addr, "/query/nodes", 8 );
 		});
 		network.nodes.keysValuesDo{ |key,node|
-			addr.sendMsg( '/info/node', key, node.key, node.slots.size );
+			addr.sendMsg( '/info/node', key, node.key, node.slots.size, node.type );
 		};
 
 		this.logMsg( "/query/nodes from client with IP"+addr.ip+"and port"+addr.port );
@@ -569,7 +569,7 @@ SWDataNetworkOSC{
 		});
 		network.nodes.keysValuesDo{ |key,node|
 			node.slots.do{ |it,i|
-				addr.sendMsg( '/info/slot', key, i, it.key );
+				addr.sendMsg( '/info/slot', key, i, it.key, it.type );
 			};
 		};
 
@@ -628,6 +628,7 @@ SWDataNetworkOSC{
 		if ( there.isNil, {
 			this.errorMsg( addr, "/set/data", 1);
 		},{
+			// node id:
 			msg[0] = msg[0].asInteger;
 			node = network.nodes.at( msg[0] );
 			//	node.postln;
@@ -643,7 +644,8 @@ SWDataNetworkOSC{
 							{
 								this.errorMsg( addr, "/set/data", 6, msg );
 							}, {
-								network.setData( msg[0], msg.copyToEnd( 1 ).asFloat );
+								network.setData( msg[0], msg.copyToEnd( 1 ) );
+								// .asFloat ); // no conversion, since it can be a string node now.
 								// has to look up the newly created node:
 								there.addSetter( network.nodes.at( msg[0] ) );
 								// only send data back to sender first time the node is set, for confirmation:
@@ -659,7 +661,8 @@ SWDataNetworkOSC{
 					// it's an already existing node (less checks, more efficient!)
 					if ( there.checkForSetter( node ) ){
 						// client is the setter:
-						code = network.setData( msg[0], msg.copyToEnd( 1 ).asFloat );
+						code = network.setData( msg[0], msg.copyToEnd( 1 ) );
+						//.asFloat ); // can be a string node now.
 						if ( code != 0 ){ // error occured:
 							if ( code == 1 ){
 								this.errorMsg( addr, "/set/data", 6, msg );
@@ -768,7 +771,7 @@ SWDataNetworkOSC{
 				setters.put( msg[0], addr );
 			});
 		if ( setters.at( msg[0] ) == addr, {
-			network.addExpected( msg[0], msg[2], msg[1] );
+			network.addExpected( msg[0], msg[2], msg[1], msg[3] );
 			if ( msg[1].notNil, {
 				client = this.findClient( addr );
 				if ( client.notNil ){
@@ -983,14 +986,14 @@ SWDataNetworkOSCClient{
 	}
 
 	newNode{ |node|
-		addr.sendMsg( '/info/node', node.id, node.key, node.slots.size );
+		addr.sendMsg( '/info/node', node.id, node.key, node.slots.size. node.type );
 		node.slots.do{ |it,i|
 			this.newSlot( it );
 		};
 	}
 
 	newSlot{ |slot|
-		addr.sendMsg( '/info/slot', slot.id[0], slot.id[1], slot.key );
+		addr.sendMsg( '/info/slot', slot.id[0], slot.id[1], slot.key, slot.type );
 	}
 
 	nodeRemoved{ |id|
