@@ -28,7 +28,7 @@ The data network is built up from different elements:
  \item [DataSlot] a slot is a single data stream
 \end{description}
 
-Data on the network is set by calling the function method \verb|setData| with as arguments the node ID and an array of data values. The ID is an unique identifier (an integer). The function can be called for example by a class instance that parses serial data.
+Data on the network is set by calling the function method \verb|setData| with as arguments the node ID and an array of data values (either numbers (floats) or strings). The ID is an unique identifier (an integer). The function can be called for example by a class instance that parses serial data.
 
 Each \textbf{DataNode} and each \textbf{DataSlot} can be given a label, so that their functionality becomes more human understandable.
 
@@ -109,7 +109,6 @@ See table \ref{oscinterface} for an overview of commands.
 
 \verb|/set/data| & iif..f & port no., node ID, data values & set data to a node (reply /data/node)\\
 \verb|/set/data| & iis..s & port no., node ID, string data values & set data to a node\\
-\verb|/set/stringdata| & iis..s & port no., node ID, string data values & set data to a node (reply /data/node)\\
 
 \verb|/label/node| & iis & port no., node ID, node label & set label to a node \\
 \verb|/label/slot| & iiis & port no., node ID, slot ID, slot label & set label to a slot \\
@@ -200,6 +199,8 @@ To add yourself to the group, execute as root (with instead of ``nescivi'' your 
  adduser nescivi netdev
 \end{verbatim}
 
+On OSX the default path for http files is: \verb|/Library/WebServer/Documents/|.
+
 % \subsection*{TODO (SuperCollider)}
 
 % \begin{itemize}
@@ -232,6 +233,9 @@ Released under the GNU/GPL (see COPYING file)
 \subsection*{ChangeLog}
 
 \begin{itemize}
+ \item ------------- v 0.3 --------------
+ \item 9/7/2009 - improved data logging and playback support. Added string data nodes (adds a type tag to some osc messages). Logging now saves the spec with labels.
+ \item ------------- v 0.2 --------------
  \item 27/5/2009 - added remove all message. error codes for error and warn messages.
  \item 19/5/2009 - performance improvement, fix bugs in gui, logging option for osc communication, logging option for update times, clients are now removed after a certain amount of missed pongs. Protection for non-numerical data coming in.
  \item 18/5/2009 - added subscribe all and unsubscribe all messages.
