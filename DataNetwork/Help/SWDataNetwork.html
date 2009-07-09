@@ -126,8 +126,8 @@ SWDataNetwork</A></H2>
 <DT><STRONG>setData ( id, data )</STRONG></DT>
 <DD>Set the data for a node. This registers a node if it does not yet exist. The size of the data array determines the amount of slots the node will have. Subsequent calls to this method for this same node ID will have to have the same size of the data array.
 </DD>
-<DT><STRONG>registerNode ( id, sz )</STRONG></DT>
-<DD>register a node in the network with a specific size. If a node is not expected (see below), then it cannot be registered.
+<DT><STRONG>registerNode ( id, sz, type )</STRONG></DT>
+<DD>register a node in the network with a specific size and type (0: float, 1: string). If a node is not expected (see below), then it cannot be registered.
 </DD>
 <DT><STRONG>nodes (  )</STRONG></DT>
 <DD>returns an Array of the nodes of the network </DD>
@@ -135,10 +135,15 @@ SWDataNetwork</A></H2>
 <DD>remove a node from the network. 
 </DD>
 
+<DT><STRONG>checkDataType ( data )</STRONG></DT>
+<DD>Checks the data type (float: 0, string: 1) for the data, by looking at the first element in the array. Called by setData if a node is set for the first time.
+</DD>
+
+
 <h4>- Expected nodes - </h4>
 
-<DT><STRONG>addExpected ( id, label, size )</STRONG></DT>
-<DD>add an expected node to the network. Label (the key the node will have in the spec) and size are optional. If size is specified, a node will be created with <em>size</em> number of slots; the value of each slot will be initialized with 0.
+<DT><STRONG>addExpected ( id, label, size, type )</STRONG></DT>
+<DD>add an expected node to the network. Label (the key the node will have in the spec) and size are optional. If size is specified, a node will be created with <em>size</em> number of slots, of <em>type</em> (default 0); the value of each slot will be initialized with 0.
  </DD>
 
 <DT><STRONG>isExpected ( id )</STRONG></DT>
@@ -199,8 +204,15 @@ SWDataNetwork</A></H2>
 
 <h4>- Data logging and recording - </h4>
 
-<DT><STRONG>initRecord ( fn, dt )</STRONG></DT>
-<DD>initialize recording the data. <em>fn</em> is the filename. <em>dt</em> is the time interval at which to write lines of data.</DD>
+<DT><STRONG>initRecord ( fn, dt, stamp, break )</STRONG></DT>
+<DD>initialize recording the data. This uses a MultiFileWriter to write to multiple files. Afterwards you can replay the log with <a href="SWDataNetworkLog.html">SWDataNetworkLog</a>.
+<DL>
+  <DT>fn (default "SWDataNetworkLog")</DT><DD>is the base filename. A date stamp gets automatically added to the filename. The MultiFileWriter will create a folder with that name, and temporarily store the data in that folder.</DD>
+  <DT>dt (default 0.025)</DT><DD>is the time interval at which to write lines of data.</DD>
+  <DT>stamp (default false)</DT><DD>determines whether or not to add a date stamp to the beginning of each line.</DD>
+<DT>break (default 36000)</DT><DD>is the number of lines after which to start a new file. The defaults come down to a new file every 15 minutes.</DD>
+</DL>
+</DD>
 <DT><STRONG>record ( onoff )</STRONG></DT>
 <DD>turn recording on or off</DD>
 <DT><STRONG>closeRecord (  )</STRONG></DT>
@@ -220,14 +232,14 @@ SWDataNetwork</A></H2>
 
 <h4>- Logging update times - </h4>
 
-<DT><STRONG>initTimeRecord ( fn )</STRONG></DT>
-<DD>initialize recording of the update times of the data. <em>fn</em> is the filename.</DD>
+<DT><STRONG>initTimeRecord ( fn, stamp )</STRONG></DT>
+<DD>initialize recording of the update times of the data. <em>fn</em> is the filename. <em>stamp</em> is whether or not to precede each line with a Date stamp (default is false).</DD>
 <DT><STRONG>closeTimeRecord (  )</STRONG></DT>
 <DD>close the update time recorded file</DD>
 <DT><STRONG>writeTimeUpdate ( id, time )</STRONG></DT>
 <DD><em>private</em> - write one line of time update data to the log (format node id - update time)</DD>
 <DT><STRONG>recTime</STRONG></DT>
-<DD><em>private</em> whether currently recording update times or not</DD>
+<DD><em>private</em> - whether currently recording update times or not</DD>
 <DT><STRONG>timelogfile (  )</STRONG></DT>
 <DD><em>private</em> - the file into which update time data is written</DD>
 

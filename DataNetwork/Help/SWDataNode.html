@@ -40,6 +40,9 @@ Base class for a data node
 <DT><STRONG>*new( ident, maxs )</STRONG></DT>
 	<DD>Create a new data node with ID <em>ident</em> and <em>maxs</em> slots</DD>
 
+<DT><STRONG>initSlots( )</STRONG></DT>
+	<DD>Initializes the slots for this node with <a href="SWDataSlot.html">SWDataSlots</a>.</DD>
+
 <h4>- Identifier and label - </h4>
 
 <DT><STRONG>id (  )</STRONG></DT>
@@ -47,7 +50,9 @@ Base class for a data node
 <DT><STRONG>key (  )</STRONG></DT>
 	<DD>The label of the node</DD>
 <DT><STRONG>key_ (  )</STRONG></DT>
-	<DD>Set the label of the node (done internally when a mapping is added with the method <em>add</em> of SWDataNetwork</DD>
+	<DD>Set the label of the node (done internally when a mapping is added with the method <em>add</em> of SWDataNetwork)</DD>
+<DT><STRONG>type (  )</STRONG></DT>
+	<DD>The type of the node. 0 is number (float), 1 is string (see the subclass <a href="SWDataStringNode.html">SWDataStringNode</a>).</DD>
 
 <h4>- Slots and data - </h4>
 
