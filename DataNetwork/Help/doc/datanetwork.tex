@@ -157,7 +157,7 @@ See table \ref{oscinterface} for an overview of commands.
 In the Max implementation, there is a data \textit{sink}, which manages the connection to the network (registering, subscriptions, etc.), and gives the received data. There is a data \textit{source}, which can send data into the network. The subscriptions are handled by textfiles, as are the published data nodes, so they can be easily restored upon opening a max patch.
 The objects react to the announce message from the network to set the right host IP and port.
 
-Another option is to use the patch dn.node which gets data from 1 node.
+The Max patch dn.node can receive data from any number of nodes, as it takes multiple arguments (i.e. the object "dn.node 10 12 15" would subscribe to data from nodes 10, 12 and 15)
 
 \section{SuperCollider implementation}
 
