@@ -89,13 +89,13 @@
 				filesproduced = filesproduced.add(outfilepath);
 				
 				// Plot the output buffer if requested (would need to load from output sound file)
-				if(plot, {
-					var psfr; // Please ignore SC's warning about not inlining this function.
-					psfr = SoundFile.new;
-					psfr.openRead(outfilepath);
-					{
-						psfr.plot;
-					}.defer;
+				if(plot, { { var psfr; // ws 09 prevent inlining warning
+						psfr = SoundFile.new;
+						psfr.openRead(outfilepath);
+						{
+							psfr.plot;
+						}.defer;
+					}.value;
 				});
 			});
 		});
