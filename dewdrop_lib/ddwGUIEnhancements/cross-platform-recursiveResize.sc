@@ -8,6 +8,7 @@
 	}
 }
 
+// despite "SC" prefix, SCViewHolder is not a cocoa view! Thus not osx-specific
 + SCViewHolder {
 	findRightBottom { 
 		var	out;
@@ -53,7 +54,11 @@
 	}
 }
 
-+ Object { isActive { ^false } }		// non-views should reply with false
++ Object {
+		// non-views should reply with false
+	isActive { ^false }
+	isView { ^false }
+}
 
 + StartRow {
 	recursiveResize { ^nil }
