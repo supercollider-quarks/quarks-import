@@ -122,6 +122,8 @@
 	
 }
 
+/*
+
 +String {
 	// a markov set would maybe be better
 	
@@ -164,4 +166,6 @@
 		^String.rand(length, nCapitals).asSymbol
 	}
 }
+
+*/
 
