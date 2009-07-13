@@ -44,30 +44,32 @@
 		var hostname = this.myIP(prefix);
 		^NetAddr(hostname, port )
 	}
-
-	/**broadcastIP { |prefix="",device=""|
-		var  res,k,delimiter=$ ;
-		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
-		res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
-
-		if(res.size > 1) { postln("the first of those devices were chosen: " ++ res) };
-		res.do{ |it,i|
-			k = it.find(delimiter.asString) ?? { it.size } - 1;
-			res[i] = (it[0..k]);
-		};
-		^res.first
-	}*/
-	
-	// this works much better
 	
 	*broadcastIP { arg prefix = "", device = "";
-		var line, pipe;
-		pipe = Pipe("% ifconfig % | grep broadcast | awk '{print $NF}'"
-			.format(prefix, device), 
-			"r"
-		);
-		{ line = pipe.getLine }.protect { pipe.close };
-		^line
+		
+		^Platform.case(
+			\linux, {
+				var  res,k,delimiter=$ ;
+				res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
+				res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
+		
+				if(res.size > 1) { postln("the first of those devices were chosen: " ++ res) };
+				res.do{ |it,i|
+					k = it.find(delimiter.asString) ?? { it.size } - 1;
+					res[i] = (it[0..k]);
+				};
+				res.first
+			},
+			\osx, {
+				var line, pipe;
+				pipe = Pipe("% ifconfig % | grep broadcast | awk '{print $NF}'"
+					.format(prefix, device), 
+					"r"
+				);
+				{ line = pipe.getLine }.protect { pipe.close };
+				line
+			}
+		)
 	}
 	
 	*broadcast { arg port = 57120, prefix="", device = "";
