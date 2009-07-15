@@ -4,7 +4,7 @@
 // =====================================================================
 
 (
-q = Quarks.local.findQuark("Warp").info;
+q = Quarks.local.findQuark("Dimple").info;
 
 (
 ~header = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"> \n 
@@ -24,15 +24,15 @@ q = Quarks.local.findQuark("Warp").info;
 
 (
 ~string = "";
-(Quarks.local.path +/+ q.path +/+ "help/*.*").pathMatch.collect{ |it|
+(Quarks.local.path +/+ q.path +/+ "Help/*.*").pathMatch.collect{ |it|
 PathName( it ).asRelativePath( Quarks.local.path +/+ q.path +/+ "Help" );
 }.do{ |it| 
-	~string = ~string + "<A href=\""++it++"\">"++it++"<\A><br>\n";
+	~string = ~string + "<A href=\""++it++"\">"++it++"</A><br>\n";
 };
 );
 
 
-f = File.new( Quarks.local.path +/+ q.path +/+ "help/" ++ q.name ++".html", "w" );
+f = File.new( Quarks.local.path +/+ q.path +/+ "Help/" ++ q.name ++".html", "w" );
 f.write( ~header );
 f.write( ~string );
 f.write( ~footer );
