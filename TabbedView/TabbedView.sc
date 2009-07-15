@@ -1,4 +1,6 @@
-/******* by jostM June11, 2009 version 1.25 *******/
+/******* by jostM July 15, 2009 version 1.26 *******/
+/** thanks to sciss for cross platform bug fixes **/
+
 TabbedView {
 	var labels,
 		labelColors,
@@ -30,6 +32,8 @@ TabbedView {
 		<>swingFactor,
 		<view;
 		
+	var context, pen;
+		
 	
 	*new{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		^super.new.init(parent, bounds, labels, colors, name, scroll );
@@ -38,8 +42,11 @@ TabbedView {
 	init{ arg parent, bounds, lbls, colors, name, scr ;
 		var w;
 		
+		context = GUI.current;
+		pen     = context.pen;
+		
 		w=parent;
-		w.isNil.if{ w = GUI.window.new(name,bounds).front;
+		w.isNil.if{ w = Window(name,bounds).front;
 			bounds = w.view.bounds; 
 			resize = 5};
 			
@@ -49,14 +56,14 @@ TabbedView {
 		};
 		bounds=bounds.asRect;
 		
-		view = GUI.compositeView.new(w,bounds).resize_(resize);
+		view = CompositeView(w,bounds).resize_(resize);
 		lbls= lbls ? ["tab1","tab2","tab3"];
 		scroll=scr;
 		labels = [];
 		focusActions = [];
 		unfocusActions = [];
 		focusFrameColor=Color.clear;
-		font=GUI.font.default;		
+		font=Font.default;		
 		stringColor = Color.black;
 		stringFocusedColor = Color.white;
 		swingFactor=Point(0.52146,1.25); 		
@@ -105,7 +112,7 @@ TabbedView {
 			
 		tabWidths=tabWidths.insert(index,50);	
 		
-		tab = GUI.userView.new(view); //bounds are set later
+		tab = context.userView.new(view); //bounds are set later
 		tab.enabled = true;
 		tab.focusColor=focusFrameColor;
 		tab.mouseDownAction_({
@@ -114,15 +121,20 @@ TabbedView {
 		});
 		tabViews = tabViews.insert(index, tab);
 		
-		scroll.if{container = GUI.scrollView.new(view).resize_(5)}
-		{container = GUI.compositeView.new(view,view.bounds).resize_(5)}; //bounds are set later
+		scroll.if{
+				container = context.scrollView.new(view).resize_(5)
+			}{
+				container = context.compositeView.new(view,view.bounds).resize_(5)
+			}; //bounds are set later
+			
 		container.background = backgrounds[i%backgrounds.size];
-		
 		
 		views = views.insert(index,container);
 		
 		focusActions = focusActions.insert(index,{});
+		
 		unfocusActions = unfocusActions.insert(index,{});
+		
 		tabViews.do{ arg tab, i;
 			tab.mouseDownAction_({
 				this.focus(i);
@@ -133,7 +145,9 @@ TabbedView {
 				unfocusTabs.if{tab.focus(false)}; 
 			});
 		};
+		
 		this.updateViewSizes();
+		
 		^this.views[index];
 
 	}
@@ -184,58 +198,58 @@ TabbedView {
 			drawTop=drawCenter.y-(drawRect.height/2);
 			drawRight=drawCenter.x+(drawRect.width/2);
 			drawBottom=drawCenter.y+(drawRect.height/2);
-			GUI.pen.use{
-				GUI.pen.rotate(rot1,drawCenter.x,drawCenter.y);
-					GUI.pen.width_(1);
-				GUI.pen.color_(background);
+			pen.use{
+				pen.rotate(rot1,drawCenter.x,drawCenter.y);
+					pen.width_(1);
+				pen.color_(background);
 				([\top,\bottom].occurrencesOf(tabPosition)>0).if{
-					GUI.pen.addWedge( (drawLeft + tabCurve)@(drawTop + tabCurve),
+					pen.addWedge( (drawLeft + tabCurve)@(drawTop + tabCurve),
 						tabCurve, pi, pi/2);
-					GUI.pen.addWedge( (drawRight - tabCurve)@(drawTop + tabCurve),
+					pen.addWedge( (drawRight - tabCurve)@(drawTop + tabCurve),
 						tabCurve, 0, (pi/2).neg);
 						
-					GUI.pen.addRect( Rect(drawLeft + tabCurve, 
+					pen.addRect( Rect(drawLeft + tabCurve, 
 								drawTop,
 								drawRect.width - tabCurve - tabCurve, 
 								tabCurve) 
 								);
-					GUI.pen.addRect( Rect(drawLeft, 
+					pen.addRect( Rect(drawLeft, 
 								drawTop+tabCurve,
 								drawRect.width,
 								drawRect.height-tabCurve)
 							);
 				}{
-					GUI.pen.addWedge( (drawLeft+drawRect.width - tabCurve)
+					pen.addWedge( (drawLeft+drawRect.width - tabCurve)
 						@(drawTop + tabCurve),
 						tabCurve, -pi/2, pi/2);
-					GUI.pen.addWedge( (drawLeft+drawRect.width - tabCurve)
+					pen.addWedge( (drawLeft+drawRect.width - tabCurve)
 						@(drawTop + drawRect.height - tabCurve),
 						tabCurve, 0, pi/2);
 						
-					GUI.pen.addRect( Rect(drawLeft+drawRect.width - tabCurve , 
+					pen.addRect( Rect(drawLeft+drawRect.width - tabCurve , 
 								drawTop + tabCurve,
 								tabCurve, 
 								drawRect.height - tabCurve - tabCurve) 
 								);
-					GUI.pen.addRect( Rect(drawLeft, 
+					pen.addRect( Rect(drawLeft, 
 								drawTop,
 								drawRect.width-tabCurve,
 								drawRect.height)
 							);
 				};
-				GUI.pen.fill;
+				pen.fill;
 
-				GUI.pen.rotate(rot2,drawCenter.x,drawCenter.y);
-				GUI.pen.font_(font);
-				GUI.pen.color_(strColor);
+				pen.rotate(rot2,drawCenter.x,drawCenter.y);
+				pen.font_(font);
+				pen.color_(strColor);
 				
 				//Pen.setShadow(0@0.neg, 5, Color.white.alpha_(1));
 
 				followEdges.if{
- 					GUI.pen.stringCenteredIn(label, 
+ 					pen.stringCenteredIn(label, 
  						drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
  					}{
- 					GUI.pen.stringLeftJustIn(label, 
+ 					pen.stringLeftJustIn(label, 
  						drawRectText.insetAll((labelPadding/2)-2,0,0,0).moveBy(0,1));
  				};
 			};
@@ -280,15 +294,15 @@ TabbedView {
 	}
 	
 	stringBounds { |string, font|
-		(GUI.id === \swing).if{
+		(context === \swing).if{
 		^Rect(0, 0, string.size * font.size * swingFactor.x, font.size * swingFactor.y);
 		}{
-		^GUI.stringBounds(string, font);
+		^context.stringBounds(string, font);
 		}
 	}
 	
 	updateViewSizes{
-		
+		{
 		left = 0;
 		top  = 0;
 		
@@ -300,14 +314,6 @@ TabbedView {
 					{ tabWidths[i] = tabWidth };
 					
 			};
-//		{ /////This is a sloppy swing font width calculation
-//			if ( tabHeight == \auto ){ tbht = (font.size+6)}{tbht=tabHeight};
-//			tabViews.do{ arg tab, i; 
-//				if ( tabWidth.asSymbol == \auto )
-//					{ tabWidths[i] = (labels[i].size * swingFactor*font.size*0.09)+ labelPadding }
-//					{ tabWidths[i] = tabWidth };
-//			};
-//		};
 
 		
 		switch(tabPosition)
@@ -327,6 +333,7 @@ TabbedView {
 				};
 			};
 		};
+		}.fork(AppClock);
 	}
 	
 	
