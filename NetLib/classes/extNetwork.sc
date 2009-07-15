@@ -1,10 +1,25 @@
 
 +NetAddr {
+
+	*ifconfigPath{ |prefix=""|
+		if ( prefix == "" ){
+			Platform.case(
+				\linux, { prefix = "/sbin/"}
+			);
+		};
+		if ( prefix == "" ){
+			^"ifconfig";
+			}{
+			^(prefix+/+"ifconfig");
+		};
+	}
+
 	// check this again!!
 	*myIP { |prefix="",device=""|
 		var j, k, res, bc;
 		// prefix argument, since on Linux ifconfig does not lie in the user's path, but in /sbin/, so it can be passed as an argument (nescivi, April 2008)
-		res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "inet");
+		
+		res = Pipe.findValuesForKey( (this.ifconfigPath(prefix)+device), "inet");
 		bc = this.broadcastIP( prefix, device );
 
 		if ( res.notNil, {
@@ -46,12 +61,11 @@
 	}
 	
 	*broadcastIP { arg prefix = "", device = "";
-		
 		^Platform.case(
 			\linux, {
 				var  res,k,delimiter=$ ;
-				res = Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "broadcast");
-				res = res ++ Pipe.findValuesForKey(prefix+/+"ifconfig"+device, "Bcast", $:);
+				res = Pipe.findValuesForKey( this.ifconfigPath(prefix)+device, "broadcast");
+				res = res ++ Pipe.findValuesForKey( this.ifconfigPath(prefix)+device, "Bcast", $:);
 		
 				if(res.size > 1) { postln("the first of those devices were chosen: " ++ res) };
 				res.do{ |it,i|
@@ -62,8 +76,8 @@
 			},
 			\osx, {
 				var line, pipe;
-				pipe = Pipe("% ifconfig % | grep broadcast | awk '{print $NF}'"
-					.format(prefix, device), 
+				pipe = Pipe( (this.ifconfigPath(prefix)+"% | grep broadcast | awk '{print $NF}'")
+					.format(device), 
 					"r"
 				);
 				{ line = pipe.getLine }.protect { pipe.close };
