@@ -53,7 +53,7 @@ TestMcldUGens : UnitTest {
 //			rnddata = {1.0.rand}.dup(100).postcs;
 //			rnddata = 100.collect{|v| (v*0.01).sin};
 			rndbuf = Buffer.loadCollection(Server.default, rnddata);
-			0.3.wait;
+			0.5.wait;
 			Server.default.sync;
 //			rndbuf.plot;
 			[
