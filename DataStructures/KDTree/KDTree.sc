@@ -412,17 +412,83 @@ highestUniqueId {
 
 // Entropy estimate of distribution via nearest-neighbour distances.
 // See Beirlant et al (1997), "Nonparametric entropy estimation: An overview", sec 2.4
-// The estimate is calculated in nats but converted to bits before being returned (in keeping with my other entropy methods)
 entropyNN {
 	var n, nats;
 	n = this.size.asFloat;
 	
 	// for each entry, res.value[1] is the NN distance
-	nats = this.allNearest.sumF{|res| log(n * res.value[1])} 
-			/ n
+	nats = this.allNearest.sumF{|res| if(res.value[1]==0, 0, {log(n * res.value[1])}) 
 			+ 1.2703628454615 // == log(2) + the Euler constant
-	
-	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
+			} / n
+
+	^nats	
+//	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
 }
+// Entropy estimate of distribution via nearest-neighbour distances, in BITS by default.
+// See J. Victor. Binless strategies for estimation of information from neural data. Physical Review E, 66(5):51903, 2002.
+/*
+entropyNN { |units=\bits|
+	var n, val, r, sa, constant;
+	r = this.location.size; // num dims
+	n = this.size.asFloat; // num data
+	
+	// Area of a unit hypersphere in this space - see http://mathworld.wolfram.com/Hypersphere.html
+	sa = if(r.odd){
+		(2**((r+1)/2) * pi**((r+1)/2))
+			/
+		(r-2, r-4 .. 1).product // Double factorial
+	}{
+		(2 * (pi**(r/2)))
+			/
+		if(r==2){1}{(((r/2)-1) .. 1).product} // factorial
+	}; 
+	
+	// To each element we must add...
+	constant = log2(sa * (n - 1.0) / r)
+		 + (0.57721566490153 / log(2)); // 0.57721566490153 == Euler-Mascheroni constant
+	
+	"entropyNN: % dims, % points, spherearea=%, constant=%".format(r, n, sa, constant).postln;
+	
+	// for each entry, res.value[1] is the NN distance
+	val = (r/n) * this.allNearest.sumF{|res|
+		if(res.value[1]==0, 0, {log2(res.value[1])})
+		+
+		constant
+	};
+
+	^units.switch(
+		\nats, 
+			{ val * 0.69314718055995 }, // Convert to nats, multiply by log(2)
+		// bits is default:
+			val 
+		);
+//	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
+}
+*/
+/*
+// Entropy estimate of distribution via nearest-neighbour distances, in BITS by default.
+// See J. Kybic. Incremental updating of nearest neighbor-based high-dimensional entropy estimation. In Proceedings of the International Conference on Acoustics, Speech, and Signal Processing (ICASSP’06), volume 3, 2006.
+entropyNN { |units=\bits|
+	var n, val, d, constant;
+	d = this.location.size; // num dims
+	n = this.size.asFloat; // num data
+	
+	constant = 0.57721566490153 // == Euler-Mascheroni constant
+		+ log((2**d) * (n - 1));
+	
+	val = this.allNearest.sumF{|res|
+		if(res.value[1]==0, 0, {d * log(res.value[1])})
+		+ constant
+	} / n;
+	
+	^units.switch(
+		\bits, 
+			{ val * 1.442695040889 }, // Convert to bits, multiply by 1/log(2)
+		// nats is default:
+			val 
+		);
+//	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
+}
+*/
 
 } // End class
