@@ -119,26 +119,34 @@ SWDataNetwork{
 	*/
 
 	registerNode{ |id,sz,type|
-		var ret,key;
+		var ret,key,nnode;
 		ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
 		if ( ret ) {
 			if ( type == 0 ){
-				nodes.put( id, SWDataNode.new( id,sz ) );
+				nnode = SWDataNode.new( id,sz );
 			};
 			if ( type == 1 ){
-				nodes.put( id, SWDataStringNode.new( id,sz ) );
+				nnode = SWDataStringNode.new( id,sz );
 			};
-			if ( osc.notNil, {
-				osc.newNode( nodes[id] );
-			});
-			if ( gui.notNil, {
-				gui.addNode( nodes[id] );
-			});
-			key = spec.findNode( id );
-			if ( key.notNil, {this.at( key ).key = key; });
-			sz.do{ |it| 
-				key = spec.findSlot( id, it );
+			if ( nnode.notNil ){
+				nodes.put( id, nnode );
+			//	nodes.postcs;
+			//	nodes[id].postcs;
+				if ( osc.notNil, {
+					osc.newNode( nnode );
+				});
+				if ( gui.notNil, {
+					gui.addNode( nnode );
+				});
+				key = spec.findNode( id );
 				if ( key.notNil, {this.at( key ).key = key; });
+				sz.do{ |it| 
+					key = spec.findSlot( id, it );
+					if ( key.notNil, {this.at( key ).key = key; });
+				};
+			}{
+				if ( verbose > 0 , {("node with id"+id+"has unknown type"+type ).postln;});
+				ret = 13; // error code for wrong type
 			};
 		}{
 			if ( verbose > 0 , {("node with id"+id+"and size"+sz+"is not expected to be part of the network" ).postln;});

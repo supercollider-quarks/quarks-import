@@ -16,7 +16,12 @@ SWDataSlotGui{
 	//	var <monitor;
 
 	*initClass{
-		StartUp.add( { this.font = GUI.font.new( "Lucida Sans", 9 ); } );
+		StartUp.add( {
+		Platform.case( 
+				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
+				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
+				)
+		} );
 	}
 
 	*new { |slot, w| 
@@ -210,7 +215,12 @@ SWDataNodeGui{
 	var <editKey = false;
 
 	*initClass{
-		StartUp.add( { this.font = GUI.font.new( "Lucida Sans", 9 ); } );
+		StartUp.add( { 
+			Platform.case( 
+				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
+				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
+				)
+			} );
 		slottype = SWDataSlotGui;
 	}
 
@@ -426,7 +436,12 @@ SWDataNetworkGui{
 	var xpos, ypos;
 
 	*initClass{
-		StartUp.add( { this.font = GUI.font.new( "Lucida Sans", 9 ); } );
+		StartUp.add( { 
+		Platform.case( 
+				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
+				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
+				)
+		} );
 		slottype = SWDataSlotGui;
 		nodetype = SWDataNodeGui;
 	}
