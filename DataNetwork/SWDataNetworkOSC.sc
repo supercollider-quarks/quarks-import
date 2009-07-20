@@ -345,6 +345,7 @@ SWDataNetworkOSC{
 		}
 	}
 	newNode{ |node|
+		//	node.postcs;
 		clients.do{ |it|
 			it.newNode( node );
 		}
@@ -802,7 +803,8 @@ SWDataNetworkOSC{
 			9, { string = "There are no clients in the network" },
 			10, { string = "Client with IP"+addr.ip+"and port"+addr.port+"has no setters"},
 			11, { string = "Client with IP"+addr.ip+"and port"+addr.port+"has no subscriptions" },
-			12, { string = "Node with id"+msg[0]+"does not have"+(msg.size-1)+"slots" }
+			12, { string = "Node with id"+msg[0]+"does not have"+(msg.size-1)+"slots" },
+			13, { string = "Node with id"+msg[0]+"has wrong type"+msg[3] }
 		);	
 		^string;
 	}
@@ -986,7 +988,8 @@ SWDataNetworkOSCClient{
 	}
 
 	newNode{ |node|
-		addr.sendMsg( '/info/node', node.id, node.key, node.slots.size. node.type );
+		//	node.dump;
+		addr.sendMsg( '/info/node', node.id, node.key, node.slots.size, node.type );
 		node.slots.do{ |it,i|
 			this.newSlot( it );
 		};
