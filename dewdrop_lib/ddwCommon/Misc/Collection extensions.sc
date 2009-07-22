@@ -318,7 +318,11 @@
 + Buffer {
 	plotWavetable { |name, bounds|
 		this.getToFloatArray(wait: 0.05, action: { |v|
-			{ v[0, 2..].plot(name, bounds) }.defer
+			defer {
+				var	result = FloatArray.new(v.size div: 2);
+				v.pairsDo({ |a, b| result.add(a+b) });
+				result.plot;
+			}
 		});
 	}
 }

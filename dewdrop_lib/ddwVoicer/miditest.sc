@@ -54,17 +54,21 @@
 				{ #[\freq, \gate, \out].includes(cname.name).not }
 			).if({
 				i = argNames.detectIndex({ |name| name == cname.name });
-				parg = patch.args[i];
-				socket.addControl(
-					nil,		// socket will allocate a controller for me
-					argNames[i],
-					(name == \pb).if(1, patch.args[i].value),
-//						(name == \pb).if(
-//							[7.midiratio.reciprocal, 7.midiratio, \exponential, 0, 1],
-//							parg.tryPerform(\spec) ?? { patch.argSpecs[i] }),
-					parg.tryPerform(\spec) ?? { patch.argSpecs[i] },
-					ctlChannel
-				);
+					// you might have added NamedControls in the Instr func
+					// which will not have specs and shouldn't turn into midi controls
+				if(i.notNil) {
+					parg = patch.args[i];
+					socket.addControl(
+						nil,		// socket will allocate a controller for me
+						argNames[i],
+						(name == \pb).if(1, patch.args[i].value),
+//							(name == \pb).if(
+//								[7.midiratio.reciprocal, 7.midiratio, \exponential, 0, 1],
+//								parg.tryPerform(\spec) ?? { patch.argSpecs[i] }),
+						parg.tryPerform(\spec) ?? { patch.argSpecs[i] },
+						ctlChannel
+					);
+				};
 			});
 		});
 			// make stop button

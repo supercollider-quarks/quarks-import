@@ -84,7 +84,12 @@ SynthVoicerNode {
 		bundle = List.new;
 			// assemble arguments
 		args2 = initArgs ++ [\gate, gate, \t_gate, gate];
-		args = (args ? []).flat;
+			// an arg could be a one-dimensional array
+			// but it shouldn't have more dimensions than that
+		args = (args ? []);
+		(1, 3 .. args.size-1).do { |i|
+			if(args[i].respondsTo(\flat)) { args[i] = args[i].flat };
+		};
 		(args.at(0).notNil).if({ args2 = args2 ++ args });
 		freq.notNil.if({ args2 = args2 ++ [\freq, freq] });
 			// make synth object
