@@ -14,6 +14,9 @@
 // uses gzip and tar for zipping and bundling
 
 MultiFileWriter{
+
+	classvar <>maxFileLength = 30;
+
 	var <pathDir;
 	var <fileName;
 	var <extension;
@@ -28,6 +31,7 @@ MultiFileWriter{
 	var <index = 0;
 
 	var <>fileClass;
+	var <>stringMethod = \asString;
 
 
 	*new{ |fn|
@@ -40,18 +44,36 @@ MultiFileWriter{
 		extension = path.extension;
 		pathDir = PathName(path.asAbsolutePath).pathOnly;
 		if ( PathName(pathDir).files.size > 0 ){
-			("mkdir"+pathDir+/+fileName).unixCmd;
+			("mkdir"+pathDir+/+fileName).systemCmd;
 			pathDir = pathDir +/+ fileName;
 		};
 		pathDir = pathDir +/+ "/";
 	}
 
+	createPosixFn{ |fn,app,ext|
+		var newfn = fn ++ app;
+		if ( newfn.size < maxFileLength ){
+			^(newfn++ext);
+		}{
+			newfn = ( fn ++ app ).keep( maxFileLength - app.size );
+			newfn = newfn ++ app ++ ext;
+			^newfn;
+		};
+	}
+
 	open{
 		var indexFile;
-		var indexfn = pathDir +/+ fileName ++ "_index";
-		curfn = PathName(pathDir).pathOnly +/+ fileName ++ "_" ++ index ++ "_" ++ Date.localtime.stamp ++ "." ++ extension;
+		var indexfn = pathDir +/+ this.createPosixFn( fileName, "_index", "");
+		curfn = PathName(pathDir).pathOnly +/+ this.createPosixFn( fileName, "_" ++ index ++ "_" ++ Date.localtime.stamp, "." ++ extension );
 		indexFile = TabFileWriter.new( indexfn, "a", true );
+		//	indexFile.dump;
+		//	indexfn.postcs;
 		curFile = fileClass.new( curfn, "w" );
+		//	curFile.dump;
+		//	curfn.postcs;
+		if ( fileClass.isKindOf( FileWriter ) ){
+			curFile.stringMethod = stringMethod;
+		};
 		if ( zipSingle ){
 			indexFile.writeLine( [ index, PathName(curfn).fileName ++ ".gz" ]);
 		}{
@@ -61,25 +83,28 @@ MultiFileWriter{
 	}
 
 	close{
-		var newf = pathDir +/+ PathName(curfn).fileName;
-		curFile.close;
-		index = index + 1;
-		fork{
-			//		Task({
-			if ( zipSingle ){
-				( 
-					"mv" + curfn + pathDir ++ ";" +
-					"gzip" + newf ++ ";"
-					// + "rm" + newf // file is removed automagically
-				).unixCmd;
-				newf = newf ++ ".gz";
-			}{
-				(
-					"mv" + curfn + pathDir ++ ";"
-				).unixCmd;
+		var newf;
+		if ( curFile.isOpen ){
+			newf= pathDir +/+ PathName(curfn).fileName;
+			curFile.close;
+			index = index + 1;
+			fork{
+				//		Task({
+				if ( zipSingle ){
+					( 
+						"mv" + curfn + pathDir ++ ";" +
+						"gzip" + newf ++ ";"
+						// + "rm" + newf // file is removed automagically
+					).unixCmd;
+					newf = newf ++ ".gz";
+				}{
+					(
+						"mv" + curfn + pathDir ++ ";"
+					).unixCmd;
+				};
+				1.0.wait;
+				this.createTarBundle( newf );
 			};
-			1.0.wait;
-			this.createTarBundle( newf );
 		};
 		//		}).play(AppClock);
 	}
