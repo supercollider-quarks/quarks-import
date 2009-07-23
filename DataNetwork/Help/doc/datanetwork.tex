@@ -145,6 +145,8 @@ See table \ref{oscinterface} for an overview of commands.
  10 & "Client with IP"+addr.ip+"and port"+addr.port+"has no setters"  \\
  11 & "Client with IP"+addr.ip+"and port"+addr.port+"has no subscriptions" \\
  12 & "Node with id"+...+"does not have"+..+"slots" \\
+ 12 & "Node with id"+...+"does not have"+..+"slots" \\
+ 13 & "Node with id"+...+"has wrong type"+... \\
  \hline
  \end{tabular}
 \end{center}
@@ -165,7 +167,6 @@ The SuperCollider implementation is done in a set of classes.
 
 Documentation for these is available in HTML format.
 
-
 \section{Installation}
 
 \subsection{SuperCollider Quark}
@@ -173,11 +174,47 @@ Documentation for these is available in HTML format.
 The DataNetwork can be most easily installed from SuperCollider's Quarks extension management system.
 This also includes the client patches for other software environments.
 
+To install the classes, do the following inside SuperCollider:
+
+\begin{verbatim}
+ Within SuperCollider do the following:
+// check out all quarks:
+Quarks.checkoutAll;
+
+// or update them all to the latest version:
+Quarks.update;
+
+ // install the SenseWorld DataNetwork quark
+// - this will install all other quarks that are needed
+Quarks.install("SenseWorld DataNetwork");
+
+// recompile the library 
+
+//---------------- host -----------------------
+ // On OSX, add this to the startup file (or execute it each time)
+SWDataNetworkOSC.httppath = "/Library/WebServer/Documents/";
+
+ // create a network:
+x = SWDataNetwork.new;
+// add the OSC interface
+x.addOSCInterface;
+
+//---------------- client ----------------------
+
+// create a network client:
+y = SWDataNetworkClient.new( ~hostip, "myname" );
+
+ 
+// For more help, access the helpfile:
+SenseWorldDataNetwork
+\end{verbatim}
+
+
 \subsection{Apache}
 
 You need to install a webserver such as Apache on the host system.
 
-(package apache2 on Debian/Ubuntu)
+(package apache2 on Debian/Ubuntu; usually available on OSX)
 
 The general files will be put in \verb|/var/www|.
 You have to make this directory writable by the user by executing (as root)
@@ -199,7 +236,7 @@ To add yourself to the group, execute as root (with instead of ``nescivi'' your 
  adduser nescivi netdev
 \end{verbatim}
 
-On OSX the default path for http files is: \verb|/Library/WebServer/Documents/|.
+On OSX the default path for http files is: \verb|/Library/WebServer/Documents/|. You may have to enable ``Web Sharing'' in the ``Sharing'' settings in the System Preferences.
 
 % \subsection*{TODO (SuperCollider)}
 

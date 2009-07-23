@@ -287,6 +287,7 @@ SWDataNetwork{
 		};
 
 		logfile = MultiFileWriter.new( fn ++ ".txt" );
+		logfile.stringMethod = \asCompileString;
 		//	logfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
 				//		recnodes = this.writeHeader;
 
@@ -296,11 +297,11 @@ SWDataNetwork{
 		recTask = Task.new( {
 			loop {
 				logfile.open;
-				logfile.curFile.stringMethod = \asCompileString;
 				logfile.curFile.timeStamp = stamp;
-				recnodes = this.writeHeader;
+				this.writeHeader;
+				//	recnodes.dump;
 				break.do{ |it|
-					this.writeLine( dt, recnodes );
+					this.writeLine( dt );
 					dt.wait;
 				};
 				logfile.close;
@@ -313,39 +314,40 @@ SWDataNetwork{
 			recTask.reset.play;
 		}{
 			recTask.stop;
+			logfile.close;
 		};
 	}
 
 	closeRecord{
 		this.record( false );
-		logfile.close;
+		//	logfile.close;
 		recTask = Task.new( {} );
 	}
 
 	writeHeader{
-		var recordnodes,recslots;
+		var recslots;
 		// this tells the spec used for the recording:
 		logfile.writeLine( [spec.name] );
 		//		logfile.write( "\n" );
 		//		logfile.write( "time\t" );
 
-		recordnodes = nodes.collect{ |node|
+		recnodes = nodes.collect{ |node|
 			//			node.slots.do{ |it| logfile.write( it.id.asCompileString ); logfile.write( "\t" ); };
 			node.id;
 		}.asArray;
 
 		// this creates a header with the ids of the node slots
-		recslots = recordnodes.collect{ |nodeid|
+		recslots = recnodes.collect{ |nodeid|
 			nodes[nodeid].slots.collect{ |it| it.id };
 		}.flatten;
 		
 		//	logfile.write( "\n" );
 
 		logfile.writeLine( [ "time" ] ++ recslots );
-		^recordnodes;
+		//	^recordnodes;
 	}
 
-	writeLine{ |dt,recordnodes|
+	writeLine{ |dt|
 		var data;
 		/*
 			logfile.write( dt.asString );
@@ -358,7 +360,7 @@ SWDataNetwork{
 			};
 			logfile.write( "\n" );
 		*/
-		data = recordnodes.collect{ |it|
+		data = recnodes.collect{ |it|
 			nodes[it].slots.collect{ |slot| slot.value }
 		}.flatten; 
 
@@ -403,6 +405,10 @@ SWDataNetwork{
 
 	makeGui{
 		^SWDataNetworkGui.new( this );
+	}
+
+	makeBasicGui{
+		^SWDataNetworkBaseGui.new( this );
 	}
 
 	addOSCInterface{
