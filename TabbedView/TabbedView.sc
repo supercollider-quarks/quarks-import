@@ -1,4 +1,4 @@
-/******* by jostM July 15, 2009 version 1.26 *******/
+/******* by jostM July 26, 2009 version 1.27 *******/
 /** thanks to sciss for cross platform bug fixes **/
 
 TabbedView {
@@ -294,7 +294,7 @@ TabbedView {
 	}
 	
 	stringBounds { |string, font|
-		(context === \swing).if{
+		(context.id === \swing).if{
 		^Rect(0, 0, string.size * font.size * swingFactor.x, font.size * swingFactor.y);
 		}{
 		^context.stringBounds(string, font);
@@ -302,7 +302,6 @@ TabbedView {
 	}
 	
 	updateViewSizes{
-		{
 		left = 0;
 		top  = 0;
 		
@@ -333,7 +332,6 @@ TabbedView {
 				};
 			};
 		};
-		}.fork(AppClock);
 	}
 	
 	

@@ -14,32 +14,30 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a41c14}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0018b8}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #8d261b}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0922b2}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0018b8}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a41c14}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 12.0px Helvetica}
 span.s3 {font: 14.0px Helvetica}
 span.s4 {font: 11.0px Monaco}
 span.s5 {color: #000000}
-span.s6 {color: #0018b8}
+span.s6 {color: #0922b2}
 span.s7 {color: #606060}
-span.s8 {color: #a41c14}
-span.s9 {color: #356f14}
-span.s10 {font: 10.0px Monaco; color: #0018b8}
+span.s8 {color: #8d261b}
+span.s9 {color: #476c1d}
+span.s10 {font: 10.0px Monaco; color: #0922b2}
 span.s11 {font: 10.0px Monaco}
-span.s12 {color: #0000bf}
-span.s13 {color: #bf0000}
+span.s12 {color: #0018b8}
+span.s13 {color: #a41c14}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><span class="s1"><b>TabbedView<span class="Apple-converted-space">  </span></b></span><b>an array of CompositeViews (or ScrollViews) with tabs for switching<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
-<p class="p3">by jostM, <span class="Apple-converted-space">  </span>July 15, 2009 version 1.26</p>
+<p class="p3">by jostM, <span class="Apple-converted-space">  </span>July 26, 2009 version 1.27</p>
 <p class="p3">Change history at bottom.</p>
 <p class="p4"><span class="Apple-converted-space">  </span></p>
 <p class="p1"><b>Class Methods</b></p>
@@ -248,9 +246,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-converted-space">     </span></p>
 <p class="p6">(<span class="Apple-converted-space"> </span></p>
 <p class="p10"><span class="s5">v=</span>TabbedView<span class="s5">.new();</span></p>
-<p class="p11"><br></p>
-<p class="p12"><span class="s5">v.unfocusTabs_(</span><span class="s12">false</span><span class="s5">);<span class="Apple-converted-space">  </span></span>// default is false on Cocoa, true otherwise;</p>
-<p class="p13">v.focusFrameColor_(<span class="s12">Color</span>.red); <span class="s13">//cocoa only</span></p>
+<p class="p5"><br></p>
+<p class="p11"><span class="s5">v.unfocusTabs_(</span><span class="s12">false</span><span class="s5">);<span class="Apple-converted-space">  </span></span>// default is false on Cocoa, true otherwise;</p>
+<p class="p6">v.focusFrameColor_(<span class="s12">Color</span>.red); <span class="s13">//cocoa only</span></p>
 <p class="p5"><br></p>
 <p class="p6">)</p>
 <p class="p5"><br></p>
@@ -277,7 +275,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p3"><b>set font<span class="Apple-converted-space"> </span></b></p>
 <p class="p4"><br></p>
-<p class="p3">Swing fonts only work within certain limits for now.</p>
+<p class="p3">Swing fonts only work within certain limits for now. use <b>swingFactor_ <span class="Apple-converted-space"> </span></b> to adjust the conversion.</p>
 <p class="p4"><br></p>
 <p class="p6">(</p>
 <p class="p6">v=<span class="s6">TabbedView</span>.newBasic.font_(<span class="s6">GUI</span>.font.new(<span class="s7">"Monaco"</span>,9)).tabHeight_(18);</p>
@@ -397,6 +395,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3">Jun 11, 2009 :<span class="Apple-converted-space">  </span>Version 1.25; <span class="Apple-converted-space">  </span>removed all calls to relativeOrigin. focusFrameColor_(color) and unfocusTabs_(bool). <span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arg w changed to parent</p>
 <p class="p3">July 15, 2009: Version 1.26; GUI context change<span class="Apple-converted-space">  </span>bug fixed (thanks to sciss).<span class="Apple-converted-space">  </span>Font calculations put in an AppClock.</p>
+<p class="p3">July 26, 2009: Version 1.27; removed AppClock and returned to factored font calculation for swing. AppClock causes<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>flow layout problems</p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
