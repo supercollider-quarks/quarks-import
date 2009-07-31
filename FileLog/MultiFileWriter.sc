@@ -63,7 +63,7 @@ MultiFileWriter{
 
 	open{
 		var indexFile;
-		var indexfn = pathDir +/+ this.createPosixFn( fileName, "_index", "");
+		var indexfn = pathDir +/+ fileName ++ "_index";
 		curfn = PathName(pathDir).pathOnly +/+ this.createPosixFn( fileName, "_" ++ index ++ "_" ++ Date.localtime.stamp, "." ++ extension );
 		indexFile = TabFileWriter.new( indexfn, "a", true );
 		//	indexFile.dump;
