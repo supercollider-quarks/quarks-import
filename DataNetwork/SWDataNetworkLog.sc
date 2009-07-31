@@ -127,7 +127,7 @@ SWDataNetworkLog{
 		playnodes = Dictionary.new;
 
 		header = reader.readHeader(hs:2);
-		spec = header[0].last.interpret;
+		spec = header[0].last;
 		if ( spec.notNil, { 
 			network.setSpec( spec );
 			// if spec was not local, it may be included in the tar-ball
@@ -168,10 +168,11 @@ SWDataNetworkLog{
 		var dt,line,data,nd;
 		var oldid;
 		if ( hasExtraTab ){
-			line = reader.nextInterpret.drop(-1);
+			line = reader.nextInterpretTry.drop(-1);
 		}{
 			oldid = reader.curid;
-			line = reader.nextInterpret;
+			line = reader.nextInterpretTry;
+			//	line.postcs;
 			// header may have changed:
 			if ( oldid != reader.curid ){
 				this.readHeader;

@@ -58,6 +58,10 @@ SWDataStringSlot : SWDataSlot{
 		//	if ( bus.notNil, { bus.set( value ) } );
 	}
 
+	logvalue{
+		^value.asCompileString;
+	}
+
 	map_{ |mp|
 		^this.shouldNotImplement;
 	}

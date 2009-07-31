@@ -51,6 +51,10 @@ SWDataNetwork{
 
 	checkDataType{ |data|
 		var type;
+		//		data.postcs;
+		if ( data.first.isNil ){
+			type = -1;
+		};
 		if ( data.first.isKindOf( SimpleNumber ) ){
 			type = 0;
 		};
@@ -120,7 +124,11 @@ SWDataNetwork{
 
 	registerNode{ |id,sz,type|
 		var ret,key,nnode;
-		ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
+		if ( type == -1){
+			ret = false;
+		}{
+			ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
+		};
 		if ( ret ) {
 			if ( type == 0 ){
 				nnode = SWDataNode.new( id,sz );
@@ -294,6 +302,9 @@ SWDataNetwork{
 		// copies the spec to the directory into which we are writing our log
 		spec.copyFile( logfile.pathDir );
 
+		// save a tab readable version of the spec:
+		spec.saveAsTabs( logfile.pathDir +/+ logfile.fileName ++ "_header.txt");
+
 		recTask = Task.new( {
 			loop {
 				logfile.open;
@@ -361,7 +372,7 @@ SWDataNetwork{
 			logfile.write( "\n" );
 		*/
 		data = recnodes.collect{ |it|
-			nodes[it].slots.collect{ |slot| slot.value }
+			nodes[it].slots.collect{ |slot| slot.logvalue }
 		}.flatten; 
 
 		logfile.writeLine( [dt] ++ data);
@@ -405,6 +416,10 @@ SWDataNetwork{
 
 	makeGui{
 		^SWDataNetworkGui.new( this );
+	}
+
+	makeLogGui{
+		^SWDataNetworkLogGui.new( this );
 	}
 
 	makeBasicGui{
@@ -594,6 +609,10 @@ SWDataSlot{
 		if ( bus.notNil, { bus.set( value ) } );
 	}
 
+	logvalue{
+		^value;
+	}
+
 
 	/// -------- scaling, mapping and calibrating --------
 
@@ -730,6 +749,23 @@ SWDataNetworkSpec{
 	init{ |netw|
 		network = netw;
 		map = IdentityDictionary.new;
+	}
+
+	saveAsTabs{ |path|
+		var file,mynodes,myslots;
+		file = TabFileWriter.new( path, "w" );
+		
+		mynodes = network.nodes.collect{ |node|
+			node.id;
+		}.asArray;
+
+		// this creates a header with the ids of the node slots
+		myslots = mynodes.collect{ |nodeid|
+			network.nodes[nodeid].slots.collect{ |it| [it.id,it.key] };
+		}.flatten.flop;
+		file.writeLine( myslots[0] );
+		file.writeLine( myslots[1] );
+		file.close;
 	}
 
 	save{ |name|

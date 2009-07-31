@@ -464,7 +464,7 @@ SWDataNetworkGui{
 		};
 
 
-		key = GUI.textField.new( w, Rect( 0, 0, 200, 20 )).string_( network.spec.name.asString ).action_( { |tf| network.spec.name = tf.value; editKey = false; } ).mouseOverAction_({ this.setInfo( "the network spec name. Click to edit.") });
+		key = GUI.textField.new( w, Rect( 0, 0, 250, 20 )).string_( network.spec.name.asString ).action_( { |tf| network.spec.name = tf.value; editKey = false; } ).mouseOverAction_({ this.setInfo( "the network spec name. Click to edit.") });
 
 		key.mouseDownAction = { editKey = editKey.not; };
 
@@ -487,7 +487,11 @@ SWDataNetworkGui{
 			[ [ "OSC", Color.blue ] ] ).action_( {
 				|but| if ( network.osc.notNil, { network.osc.makeGui } ); } ).mouseOverAction_({ this.setInfo( "create a window with the osc clients") });
 
-		info = GUI.staticText.new( w, Rect( 0, 0, 400, 16 )).align_( \center );
+		GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
+			[ [ "log", Color.blue ] ] ).action_( {
+				|but| network.makeLogGui } ).mouseOverAction_({ this.setInfo( "create a window to log the data from the nodes") });
+
+		info = GUI.staticText.new( w, Rect( 0, 0, 316, 16 )).align_( \center );
 
 		w.view.decorator.nextLine;
 
