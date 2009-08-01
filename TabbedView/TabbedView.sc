@@ -1,4 +1,4 @@
-/******* by jostM July 26, 2009 version 1.27 *******/
+/******* by jostM Aug 01, 2009 version 1.28 *******/
 /** thanks to sciss for cross platform bug fixes **/
 
 TabbedView {
