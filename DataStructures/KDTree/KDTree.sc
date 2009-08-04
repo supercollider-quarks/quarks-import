@@ -412,17 +412,22 @@ highestUniqueId {
 
 // Entropy estimate of distribution via nearest-neighbour distances.
 // See Beirlant et al (1997), "Nonparametric entropy estimation: An overview", sec 2.4
-entropyNN {
+entropyNN { |tooclose = 0.0000001|
 	var n, nats;
 	n = this.size.asFloat;
-	
 	// for each entry, res.value[1] is the NN distance
+	
+	// THIS IS FROM BEIRLANT:
+	/*
 	nats = this.allNearest.sumF{|res| if(res.value[1]==0, 0, {log(n * res.value[1])}) 
 			+ 1.2703628454615 // == log(2) + the Euler constant
-			} / n
+	*/
+	// This is Kybic's "robustified" version (ICASSP 2006)
+	nats = 0 - this.allNearest.sumF{|res| log(n * res.value[1])} 
+			/ n
+			+ 1.2703628454615 // == log(2) + the Euler constant
 
-	^nats	
-//	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
+	^ nats * 1.442695040889 // convert to bits, multiply by 1/log(2)
 }
 // Entropy estimate of distribution via nearest-neighbour distances, in BITS by default.
 // See J.ÊVictor. Binless strategies for estimation of information from neural data. Physical Review E, 66(5):51903, 2002.
