@@ -4,7 +4,7 @@ OscGroupClient {
 	classvar <>program;
 	
 	*new {arg serveraddress, username, password, groupname, grouppassword, serverport = 22242,
-			localtoremoteport = 22243, localtxport = 22244, localrxport = 57120;
+			localtoremoteport = 22243, localtxport = 22244, localrxport;
 		^super.newCopyArgs(serveraddress, username, password, groupname, grouppassword, serverport,
 			localtoremoteport, localtxport, localrxport).init;
 		}
@@ -15,6 +15,9 @@ OscGroupClient {
 	
 	init {
 		responders = IdentityDictionary.new;
+		localrxport.isNil.if({
+			localrxport = NetAddr.langPort;
+			});
 		}
 		
 	join { 
