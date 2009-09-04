@@ -23,12 +23,12 @@ RedMstGUI {
 			));
 			skin= GUI.skins.redMstGUI;
 		});
-		fnt= GUI.font.new(skin.fontSpecs[0], size);
+		fnt= Font(skin.fontSpecs[0], size);
 		colBack= skin.background;
 		colFore= skin.foreground;
 		colBack2= colBack.complementary.alpha_(0.3);
 		colFore2= colFore.complementary.alpha_(0.7);
-		win= GUI.window.new("RedMst", Rect(300, GUI.window.screenBounds.height-50, size*9.5+20, size*6+25), false)
+		win= Window("RedMst", Rect(300, Window.screenBounds.height-50, size*9.5+20, size*6+25), false)
 			.alpha_(skin.unfocus ? 0.9)
 			.front;
 		win.view.background_(colBack);
@@ -42,15 +42,15 @@ RedMstGUI {
 			);
 		};
 		
-		guiPlay= GUI.button.new(win, Rect(0, 0, size*4, size*1.5))
+		guiPlay= Button(win, (size*4)@(size*1.5))
 			.canFocus_(false)
 			.states_([["play", colFore, colBack], ["stop", colBack, colFore]])
 			.action_{|view| if(view.value==1, {RedMst.play}, {RedMst.stop})};
-		guiPrev= GUI.button.new(win, Rect(0, 0, size*1.5, size*1.5))
+		guiPrev= Button(win, (size*1.5)@(size*1.5))
 			.canFocus_(false)
 			.states_([["<", colFore, colBack]])
 			.action_{|view| RedMst.prev};
-		guiNext= GUI.button.new(win, Rect(0, 0, size*1.5, size*1.5))
+		guiNext= Button(win, (size*1.5)@(size*1.5))
 			.canFocus_(false)
 			.states_([[">", colFore, colBack]])
 			.action_{|view| RedMst.next};
@@ -58,15 +58,15 @@ RedMstGUI {
 		this.prInitMetro(size);
 		win.view.decorator.nextLine;
 		
-		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("sect:");
-		guiSection= GUI.staticText.new(win, Rect(0, 0, size*2, size*1.5));
-		guiMaxSection= GUI.staticText.new(win, Rect(0, 0, size*3.25, size*1.5));
+		StaticText(win, (size*4)@(size*1.5)).string_("sect:");
+		guiSection= StaticText(win, (size*2)@(size*1.5));
+		guiMaxSection= StaticText(win, (size*3.25)@(size*1.5));
 		win.view.decorator.nextLine;
-		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("bpm:");
-		guiTempo= GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5));
+		StaticText(win, (size*4)@(size*1.5)).string_("bpm:");
+		guiTempo= StaticText(win, (size*4)@(size*1.5));
 		win.view.decorator.nextLine;
-		GUI.staticText.new(win, Rect(0, 0, size*4, size*1.5)).string_("quant:");
-		guiQuant= GUI.staticText.new(win, Rect(0, 0, size*1.5, size*1.5));
+		StaticText(win, (size*4)@(size*1.5)).string_("quant:");
+		guiQuant= StaticText(win, (size*1.5)@(size*1.5));
 		win.view.decorator.nextLine;
 		
 		this.prInitUser(size);
@@ -125,16 +125,15 @@ RedMstGUI {
 
 RedMstGUI2 : RedMstGUI {
 	prInitMetro {|size|
-		guiMetro= GUI.userView.new(win, Rect(0, 0, size*1.5, size*1.5))
-			.relativeOrigin_(true)
+		guiMetro= UserView(win, (size*1.5)@(size*1.5))
 			.drawFunc_{|view|
 				var midPnt= Point(view.bounds.height, view.bounds.width)*0.5;
 				var inner= view.bounds.height*0.3;
 				var outer= view.bounds.height*0.5;
 				var slice= 2pi/RedMst.clock.beatsPerBar;
-				GUI.pen.color_(colFore);
+				Pen.color_(colFore);
 				RedMst.clock.beatsPerBar.do{|x|
-					GUI.pen.addAnnularWedge(
+					Pen.addAnnularWedge(
 						midPnt,
 						inner,
 						outer,
@@ -142,26 +141,26 @@ RedMstGUI2 : RedMstGUI {
 						slice
 					)
 				};
-				GUI.pen.stroke;
-				GUI.pen.addAnnularWedge(
+				Pen.stroke;
+				Pen.addAnnularWedge(
 					midPnt,
 					inner,
 					outer,
 					1.5pi,
 					RedMst.clock.beatInBar/RedMst.clock.beatsPerBar*2pi
 				);
-				GUI.pen.fill;
+				Pen.fill;
 				if(RedMst.isJumping, {
-					GUI.pen.fillColor_(colFore2);
+					Pen.fillColor_(colFore2);
 				});
-				GUI.pen.addAnnularWedge(
+				Pen.addAnnularWedge(
 					midPnt,
 					0,
 					inner*0.8,
 					1.5pi,
 					2pi*(RedMst.quant-(RedMst.clock.nextTimeOnGrid(RedMst.quant)-RedMst.clock.beats))/RedMst.quant;
 				);
-				GUI.pen.fill;
+				Pen.fill;
 			};
 	}
 	prInitTask {|size|
@@ -204,35 +203,34 @@ RedMstGUI2 : RedMstGUI {
 RedMstGUI3 : RedMstGUI2 {
 	prInitUser {|size|
 		var fnt2= fnt.copy.size_(9);
-		guiUser= GUI.userView.new(win, Rect(0, 0, win.bounds.width-7, 0))
-			.relativeOrigin_(true)
+		guiUser= UserView(win, (win.bounds.width-7)@0)
 			.drawFunc_{|view|
 				var w, h, str;
 				if(RedMst.tracks.notEmpty, {
 					w= view.bounds.width/(RedMst.maxSection+1);
 					h= size;//view.bounds.height/RedMst.tracks.size;
-					GUI.pen.font_(fnt2);
+					Pen.font_(fnt2);
 					RedMst.tracks.do{|trk, y|
-						GUI.pen.color_(colFore);
-						GUI.pen.strokeRect(Rect(0, y*h, view.bounds.width, h*0.9));
+						Pen.color_(colFore);
+						Pen.strokeRect(Rect(0, y*h, view.bounds.width, h*0.9));
 						if(trk.sections.includes(inf), {
 							(RedMst.maxSection+1).do{|x|
-								GUI.pen.fillRect(Rect(x*w, y*h, w, h*0.9));
+								Pen.fillRect(Rect(x*w, y*h, w, h*0.9));
 							};
 						}, {
 							trk.sections.do{|x|
-								GUI.pen.fillRect(Rect(x*w, y*h, w, h*0.9));
+								Pen.fillRect(Rect(x*w, y*h, w, h*0.9));
 							};
 						});
 						str= trk.key.asString+"("++trk.item.class++")";
-						GUI.pen.fillColor_(colFore2);
-						GUI.pen.stringAtPoint(str, Point(0, y*h));
+						Pen.fillColor_(colFore2);
+						Pen.stringAtPoint(str, Point(0, y*h));
 					};
-					GUI.pen.fillColor_(colBack2);
-					GUI.pen.fillRect(Rect(RedMst.section*w, 0, w, view.bounds.height-(h*0.1)));
+					Pen.fillColor_(colBack2);
+					Pen.fillRect(Rect(RedMst.section*w, 0, w, view.bounds.height-(h*0.1)));
 					if(RedMst.isJumping, {
 						if((RedMst.clock.beats*2).asInteger%2==0, {
-							GUI.pen.fillRect(Rect(RedMst.jumpSection*w, 0, w, view.bounds.height-(h*0.1)));
+							Pen.fillRect(Rect(RedMst.jumpSection*w, 0, w, view.bounds.height-(h*0.1)));
 						});
 					});
 				});
@@ -256,7 +254,7 @@ RedMstGUI3 : RedMstGUI2 {
 						lastNumTracks= RedMst.tracks.size;
 						win.bounds= win.bounds.setExtent(
 							win.bounds.width,
-							(size*6+25+(lastNumTracks*size)).min(GUI.window.screenBounds.height-50)
+							(size*6+25+(lastNumTracks*size)).min(Window.screenBounds.height-50)
 						);
 						guiUser.bounds= guiUser.bounds.setExtent(
 							guiUser.bounds.width,

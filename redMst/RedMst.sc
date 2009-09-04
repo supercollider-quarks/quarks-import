@@ -1,5 +1,10 @@
 //redFrik - released under gnu gpl license
 
+//--changes 090904:
+//wrote RedSeq
+//--changes 090613:
+//removed relativeOrigin_(true) in all gui classes
+//no longer use the GUI redirect (GUI.button.new became Button) in all gui classes
 //--changed 090507:
 //added isJumping and jumpSection to RedMst
 //various updates to RedMstGUI: resize window, blinking jump section, etc, RedMstGUI2, RedMstGUI3
@@ -32,7 +37,7 @@
 //first release on the mailinglist
 
 //--todo:
-//RedSeq.  also extra gui class with esc key for next, section data, playing tracks etc
+//RedSeq.  RedSeqGUI class with esc key for next, section data, playing tracks etc
 //test RedTrk and RedTrk2 with Pbindf, Pmono and Pfx
 //possible bug with RedTrk2 and addAction.  it now differs from RedTrk
 //somehow start quant 0 so one don't have to wait for 1 whole period
