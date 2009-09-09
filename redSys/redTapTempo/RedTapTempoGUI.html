@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #0000ff}
+span.s3 {text-decoration: underline}
+span.s4 {color: #214fdb}
+span.s5 {color: #000000}
+span.s6 {color: #0000bf}
+span.s7 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedTapTempoGUI</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>average tempo of the last n taps/clicks</b></p>
+<p class="p2"><br></p>
+<p class="p1">see also: <a href="RedMix/RedMixGUI.html"><span class="s2">RedMixGUI</span></a></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s3">class methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*new(clock, n, timeout, server, parent, position)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>clock - provide a <a href="SC://TempoClock"><span class="s2">TempoClock</span></a>.<span class="Apple-converted-space">  </span>nil creates a TempoClock internally.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>n - number of taps to average.<span class="Apple-converted-space">  </span>default= 4.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>timeout - time after n counter is reset.<span class="Apple-converted-space">  </span>default= 3 seconds.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>server - for monitor synth.<span class="Apple-converted-space">  </span>default= Server.default.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>parent - window, composite view or nil</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>position - <a href="SC://Point"><span class="s4">Point</span></a> or nil</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s3">instance methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>tempo</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in bps.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>tempo_(bps)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set tempo.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>monitor_(bool)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>monitorAmp_(val)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>monitorBus_(index)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>default monitor bus is 7.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>close</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>closes the window if open and stop internal task.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>def</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>return the synthdef.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s3">class variables:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span>*<b>def</b></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s3">instance variables:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;parent</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;clock</b></p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><br></p>
+<p class="p4">//--</p>
+<p class="p5"><span class="s5">a= </span>RedTapTempoGUI<span class="s5">();</span></p>
+<p class="p6">a.tempo;</p>
+<p class="p6">a.tempo= 2;</p>
+<p class="p6">a.monitor= <span class="s6">true</span>;</p>
+<p class="p6">a.monitorBus= 0;</p>
+<p class="p6">a.monitorAmp= 0.2;</p>
+<p class="p6">a.monitor= <span class="s6">false</span>;</p>
+<p class="p6">a.close;</p>
+<p class="p7"><br></p>
+<p class="p4">//--</p>
+<p class="p6">(</p>
+<p class="p6">w= <span class="s6">Window</span>(<span class="s7">"hgf"</span>, <span class="s6">Rect</span>(100, 200, 500, 500));</p>
+<p class="p6">w.front;</p>
+<p class="p6">v= <span class="s6">CompositeView</span>(w, <span class="s6">Rect</span>(10, 10, 400, 400)).background_(<span class="s6">Color</span>.blue).decorator= <span class="s6">FlowLayout</span>(<span class="s6">Rect</span>(0, 0, 300, 300));</p>
+<p class="p5"><span class="s5">c= </span>TempoClock<span class="s5">(1.4);</span></p>
+<p class="p6">a= <span class="s6">RedTapTempoGUI</span>(c, parent:v);</p>
+<p class="p6">)</p>
+<p class="p6">c.tempo= 2.2</p>
+</body>
+</html>

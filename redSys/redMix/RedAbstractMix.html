@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {text-decoration: underline ; color: #6f7999}
+span.s3 {color: #3b5fc8}
+span.s4 {text-decoration: underline ; color: #4062c4}
+span.s5 {color: #000000}
+span.s6 {text-decoration: underline}
+span.s7 {color: #0030f2}
+span.s8 {color: #0024b5}
+span.s9 {color: #3b6c19}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedAbstractMix<span class="Apple-tab-span">	</span></b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>abstract class</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>do not instantiate.<span class="Apple-converted-space">  </span>use its subclasses.</b></p>
+<p class="p2"><br></p>
+<p class="p1">req: <a href="../../quarks/Conductor/help/Conductor-Help/Conductor.html"><span class="s2">Conductor</span></a> quark</p>
+<p class="p1">see also: <a href="RedMix.html"><span class="s3">RedMix</span></a><span class="s3">,</span> <a href="RedMixGUI.html"><span class="s4">RedMixGUI</span></a>,</p>
+<p class="p3"><span class="s5"><span class="Apple-tab-span">	</span><a href="RedMixStereo.html"><span class="s6">RedMixStereo</span></a>, <a href="RedMixStereoMono.html"><span class="s6">RedMixStereoMono</span></a></span></p>
+<p class="p3"><span class="s5"><span class="Apple-tab-span">	</span><a href="../../_egnaKlasser/RedMatrixMixer/RedMatrixMixer.html"><span class="s6">RedMatrixMixer</span></a>, <a href="../RedMixer/RedMixer.html"><span class="s6">RedMixer</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">class methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*new(inA, inB, out, group, lag)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>inA - first <span class="s6">mono</span> input.<span class="Apple-converted-space">  </span>default= 0.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inB - second <span class="s6">mono</span> input.<span class="Apple-converted-space">  </span>default= 2.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>out - stereo output.<span class="Apple-converted-space">  </span>default= 0.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>group - nil boots the default server and uses the defaultGroup.<span class="Apple-converted-space">  </span>adds to tail.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - ramp for mix controllers in seconds.<span class="Apple-converted-space">  </span>default= 0.05.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">instance methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>free</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>free the mixer synth.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>gui(parent, position)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a <a href="RedMixGUI.html"><span class="s7">RedMixGUI</span></a>.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">instance variables:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;group</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the group in use.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;cvs</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dictionary of CVs:</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inA - input bus offset</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inB - second bus offset</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>out - output bus offset</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>mix - mix control -1 to 1</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>amp - volume 0 to 1</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - ramp time in seconds for mix and amp</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;args</b></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">subclass responsibility:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>*def</b></p>
+<p class="p2"><br></p>
+<p class="p4"><br></p>
+<p class="p5">//--</p>
+<p class="p6">a= <span class="s8">RedMixMono</span>(2, 4, 0);</p>
+<p class="p6">b= <span class="s8">Pbind</span>(<span class="s9">\degree</span>, <span class="s8">Pseq</span>([0, 1, 5, 4, 3], <span class="s8">inf</span>), <span class="s9">\dur</span>, 0.25, <span class="s9">\pan</span>, -1, <span class="s9">\out</span>, 2).play;</p>
+<p class="p6">c= <span class="s8">Pbind</span>(<span class="s9">\degree</span>, <span class="s8">Pseq</span>([10, 11, 16, 15], <span class="s8">inf</span>), <span class="s9">\dur</span>, 0.25, <span class="s9">\pan</span>, -1, <span class="s9">\out</span>, 4).play;</p>
+<p class="p4"><br></p>
+<p class="p6">a.cvs.mix.value= -0.9;</p>
+<p class="p6">a.cvs.mix.value= 0.9;</p>
+<p class="p6">a.cvs.lag.value= 2;</p>
+<p class="p6">a.cvs.mix.value= 0;</p>
+<p class="p6">a.cvs.amp.value= 0.2;</p>
+<p class="p6">a.args</p>
+<p class="p6">a.gui</p>
+<p class="p4"><br></p>
+<p class="p6">b.stop;</p>
+<p class="p6">c.stop;</p>
+<p class="p6">a.free;</p>
+</body>
+</html>

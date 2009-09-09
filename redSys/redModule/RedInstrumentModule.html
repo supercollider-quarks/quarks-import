@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+span.s1 {font: 12.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {text-decoration: underline ; color: #566db2}
+span.s4 {text-decoration: underline}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>RedInstrumentModule</b><span class="s1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>abstract class</b></span></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><b>Inherits from: </b><a href="RedAbstractModule.html"><b>RedAbstractModule</b></a></span></p>
+<p class="p2"><br></p>
+<p class="p4"><b>do not instantiate.<span class="Apple-converted-space">  </span>use its subclasses.</b></p>
+<p class="p2"><br></p>
+<p class="p4">req: <a href="../../quarks/Conductor/help/Conductor-Help/Conductor.html"><span class="s3">Conductor</span></a> quark</p>
+<p class="p3"><span class="s2">see also: <a href="RedAbstractModule.html"><span class="s4">RedAbstractModule</span></a> <a href="RedEffectModule.html"><span class="s4">RedEffectModule</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s4">instance methods:</span></p>
+<p class="p2"><br></p>
+<p class="p4"><b><span class="Apple-tab-span">	</span>prepareForPlay(server)</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if no group given (*new method), then use the server defaultGroup.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>free</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>remove module from RedAbstractModule.all.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stops all voices.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>gui(parent, position)</b></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a <a href="RedInstrumentModuleGUI.html"><span class="s4">RedInstrumentModuleGUI</span></a>.</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>play(key, args, addAction)</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>for all instruments.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>addAction - default is \addToHead.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>stop(key)</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>for all instruments.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>stopAll</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>stop all voices for all keys</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>synth(key)</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>return a synth object for a certain key</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s4">instance variables:</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>&lt;voices</b></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a List of instrument objects that are currently playing.</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s4">subclass responsibility:</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><b>*def</b></p>
+<p class="p2"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//--</p>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #083aec}
+span.s3 {color: #062cb0}
+span.s4 {color: #0000bf}
+span.s5 {color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedAutoScale</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>scales an unknown signal to a known range</b></p>
+<p class="p2"><br></p>
+<p class="p1">uses <a href="SC://RunningMin"><span class="s2">RunningMin</span></a> and <a href="SC://RunningMax"><span class="s2">RunningMax</span></a> as scaling range and can scale signals automatically to a specified range.</p>
+<p class="p3"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*ar(in, lo, hi, inLo, inHi, reset)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*kr(in, lo, hi, inLo, inHi, reset)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in - input signal</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lo and hi - desired output range</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>inLo and inHi - predefined min- and maximum input range</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reset - a trigger that reset range</p>
+<p class="p3"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*new(lo, hi, inLo, inHi)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>reset</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>autoScale(val)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;lo</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;hi</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;inLo</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;inHi</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;min</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;max</b></p>
+<p class="p3"><br></p>
+<p class="p3"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p4">//--</p>
+<p class="p5">s.boot;</p>
+<p class="p6"><br></p>
+<p class="p4">//basic usage</p>
+<p class="p5">a= {<span class="s3">SinOsc</span>.ar(<span class="s3">RedAutoScale</span>.kr(<span class="s3">MouseX</span>.kr, 200, 400).round(50))}.play</p>
+<p class="p5">a.free</p>
+<p class="p6"><br></p>
+<p class="p4">//mouse button reset range</p>
+<p class="p5">a= {<span class="s3">SinOsc</span>.ar(<span class="s3">RedAutoScale</span>.kr(<span class="s3">MouseX</span>.kr, 200, 400, reset:<span class="s3">MouseButton</span>.kr).round(50))}.play</p>
+<p class="p5">a.free</p>
+<p class="p6"><br></p>
+<p class="p4">//predefined minimum input range</p>
+<p class="p5">a= {<span class="s3">SinOsc</span>.ar(<span class="s3">RedAutoScale</span>.kr(<span class="s3">MouseX</span>.kr(-10, 10), 200, 400, -5, 5, <span class="s3">MouseButton</span>.kr).round(50))}.play</p>
+<p class="p5">a.free</p>
+<p class="p6"><br></p>
+<p class="p7">//--</p>
+<p class="p8">a= <span class="s4">RedAutoScale</span>(-10, 10);</p>
+<p class="p7"><span class="s5">a.autoScale(100.rand.postln)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//repeat.<span class="Apple-converted-space">  </span>eventually 0 will be -10 and 99 will be 10</p>
+<p class="p8">a.min</p>
+<p class="p8">a.max</p>
+</body>
+</html>

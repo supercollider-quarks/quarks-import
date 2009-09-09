@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
+p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #062cb0}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #45691f}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {text-decoration: underline ; color: #4062c4}
+span.s3 {color: #000000}
+span.s4 {text-decoration: underline}
+span.s5 {text-decoration: underline ; color: #1744d2}
+span.s6 {text-decoration: underline ; color: #1e49cd}
+span.s7 {color: #355ccc}
+span.s8 {color: #062cb0}
+span.s9 {color: #45691f}
+span.s10 {color: #902f20}
+span.s11 {color: #0019ba}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedMatrixMixer<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>mix any number of input and output channels</b></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">req: <a href="../../Conductor/help/Conductor-Help/Conductor.html"><span class="s2">Conductor</span></a> quark</p>
+<p class="p3"><span class="s3">see also: <a href="RedMatrixMixerGUI.html"><span class="s4">RedMatrixMixerGUI</span></a> <a href="../RedEffectsRack/RedEffectsRack.html"><span class="s5">RedEffectsRack</span></a> <a href="../../_experimental/RedMixer/RedMixer.html"><span class="s6">RedMixer</span></a></span></p>
+<p class="p4"><br></p>
+<p class="p5"><span class="s4">class methods:</span></p>
+<p class="p4"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*new(nIn, nOut, in, out, group, lag)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>nIn - number of in busses</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>nOut - number of out busses</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in - offset of first in bus</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>out - offset of first out bus</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group - nil boots the default server and creates a group after the defaultGroup.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - for amplitudes in seconds</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s4">instance methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>def</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>generate a synthdef.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>defaults</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>revert all cvs to their defaults.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>free</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>synths</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>gui(position)</b></p>
+<p class="p3"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a <a href="RedMatrixMixerGUI.html"><span class="s4">RedMatrixMixerGUI</span></a> for this <a href="RedMatrixMixer.html"><span class="s4">RedMatrixMixer</span></a>.</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>position - <a href="SC://Point"><span class="s7">Point</span></a></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s4">instance variables:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;group</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>the group in use.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;cvs</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dictionary of CVs:</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in - input bus offset</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>out - output bus offset</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - mix lag time in seconds (linear)</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>o0, o1... oN - as many as out busses.<span class="Apple-converted-space">  </span>an array of amplitudes (as many as in busses)</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;args</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;nIn</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;nOut</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;synth</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the mixer synth.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;os</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>list of all amplitude control cv objects.<span class="Apple-converted-space">  </span>.cvs.o0, .cvs.o1, .cvs.02... etc.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;defString</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>not useful - just for show-off.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><br></p>
+<p class="p7">//--</p>
+<p class="p7"><span class="s3">a= </span><span class="s8">RedMatrixMixer</span><span class="s3">(4, 2, 0, 0);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//4 channels in, 2 channels out</p>
+<p class="p8">(</p>
+<p class="p9">SynthDef<span class="s3">(</span><span class="s9">\redMatrixMixerTest</span><span class="s3">, {</span>|out= 0, freq= 400, gate= 1, amp= 0.5|</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s8">var</span> e= <span class="s8">EnvGen</span>.kr(<span class="s8">Env</span>.asr(0.01, 1, 0.01), gate, doneAction:2);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s8">var</span> z= <span class="s8">SinOsc</span>.ar(freq, 0, amp);</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s8">Out</span>.ar(out, z*e);</p>
+<p class="p8">}).memStore;</p>
+<p class="p8">)</p>
+<p class="p8">(</p>
+<p class="p9"><span class="s3">b= </span>Pbind<span class="s3">(</span></p>
+<p class="p10"><span class="s3"><span class="Apple-tab-span">	</span></span>\instrument<span class="s3">, </span>\redMatrixMixerTest<span class="s3">,</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s9">\degree</span>, <span class="s8">Pseq</span>([0, 1, 5, 4, 3, 4], <span class="s8">inf</span>),</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s9">\dur</span>, 0.25,</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s9">\amp</span>, 0.7,</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s9">\out</span>, <span class="s8">Pseq</span>([0, 1, 2, 3], <span class="s8">inf</span>)</p>
+<p class="p8">).play;</p>
+<p class="p8">)</p>
+<p class="p6"><br></p>
+<p class="p8">a.gui;</p>
+<p class="p7"><span class="s3">a.cvs.o0.value= [1, 0, 0.3, 0];<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//in0 to out0 with full amp, in2 to out0 with 0.3 amp</p>
+<p class="p7"><span class="s3">a.cvs.o1.value= [0, 1, 0, 0.2];<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//in1 to out1 with full amp, in3 to out1 with 0.2 amp</p>
+<p class="p7"><span class="s3">a.cvs.in.value= 1;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//change to listen to input busses to 1-4</p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s3">a.cvs.out.value= 1;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//left channel still outputs because the pbinds plays there</p>
+<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//and no ReplaceOut is blocking it</p>
+<p class="p8">a.cvs.out.value= 0;</p>
+<p class="p8">a.cvs.in.value= 0;</p>
+<p class="p6"><br></p>
+<p class="p8">a.cvs.lag.value= 3;</p>
+<p class="p8">a.cvs.o0.value= [0, 1, 1, 0.3];<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">//change mix with a 3 second lag</span></p>
+<p class="p8">a.cvs.o1.value= [1, 0, 0, 0.2];</p>
+<p class="p8">a.os;</p>
+<p class="p6"><br></p>
+<p class="p8">a.defString</p>
+<p class="p8">a.def</p>
+<p class="p6"><br></p>
+<p class="p8">a.defaults</p>
+<p class="p8">a.free;</p>
+<p class="p8">b.stop;</p>
+<p class="p6"><br></p>
+<p class="p11">//--</p>
+<p class="p11"><span class="s3">a= </span><span class="s11">RedMatrixMixer</span><span class="s3">(24, 22, 0, 0);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//14 channels in, 12 channels out</p>
+<p class="p8">a.defString</p>
+<p class="p8">a.free</p>
+</body>
+</html>
