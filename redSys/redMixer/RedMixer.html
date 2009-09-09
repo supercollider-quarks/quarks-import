@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #723b2a; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {text-decoration: underline ; color: #4a67bc}
+span.s3 {color: #000000}
+span.s4 {color: #1949e0}
+span.s5 {text-decoration: underline ; color: #254ec8}
+span.s6 {text-decoration: underline}
+span.s7 {color: #193ba4}
+span.s8 {color: #2f58d1}
+span.s9 {color: #0000bf}
+span.s10 {color: #007300}
+span.s11 {color: #bf0000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedMixer</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create and hold multiple RedMixerChannel</b></p>
+<p class="p2"><br></p>
+<p class="p1">A mixer that can mix any number of channels into one or more subgroups.</p>
+<p class="p2"><br></p>
+<p class="p1">req: <a href="../../Conductor/help/Conductor-Help/Conductor.html"><span class="s2">Conductor</span></a> quark</p>
+<p class="p3"><span class="s3">see also: <a href="RedMixerChannel.html"><span class="s4">RedMixerChannel</span></a>, <a href="RedMixerGUI.html"><span class="s5">RedMixerGUI</span></a>, <a href="../RedEffectsRack/RedEffectsRack.html"><span class="s6">RedEffectsRack</span></a>, <a href="../RedMatrixMixer/RedMatrixMixer.html"><span class="s6">RedMatrixMixer</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">class methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*new(inputChannels, outputChannels, group, lag)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>inputChannels - array of input channels.<span class="Apple-converted-space">  </span>default [[0, 1], [2, 3], [4, 5], [6, 7]].</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a maching array of RedMixerChannel <span class="s6">channels</span> will be created.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>outputChannels - array of output channels.<span class="Apple-converted-space">  </span>default [[0, 1]]</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a maching array of RedMixerChannel <span class="s6">mixers</span> will be created (think subgroups).</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>group - nil boots the default server and creates a group after the defaultGroup.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note: passed in groups are not freed when this RedMixer instance is freed.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - for eq settings, balance and volume.<span class="Apple-converted-space">  </span>in seconds.<span class="Apple-converted-space">  </span>default= 0.05.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">instance methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>mixer</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>see &lt;mixers.<span class="Apple-converted-space">  </span>shortcut for mixers[0] as in the normal case only this one mixer is used (no subgroups).</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>free</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>free synths and, if created, the internal group.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>defaults</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>revert all channels, mixers and this class's cvs to their defaults.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>gui(position)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a <a href="RedMixerGUI.html"><span class="s7">RedMixerGUI</span></a>.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>position - <a href="SC://Point"><span class="s8">Point</span></a></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>inputChannels</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>return an array with current inputChannels</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>inputChannels_(arr)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set the input channels.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr - an array of input channels.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>outputChannels</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>return an array with current outputChannels</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>outputChannels_(arr)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>set the output channels.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>arr - an array of output channels.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>mute(channel)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>channel - index or array of indices to mute.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>solo(channel)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>channel - index to solo.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>def(inputChannels)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>should probably be private</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s6">instance variables:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;group</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>the group in use.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;cvs</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dictionary of CVs:</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - lag time in seconds (linear)</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;channels</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an array of RedMixerChannel objects matching *new's inputChannels argument.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;mixers</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an array of RedMixerChannel objects matching *new's outputChannels argument.</p>
+<p class="p4"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//--</p>
+<p class="p7">a= <span class="s9">RedMixer</span>(#[[10, 11], [14, 15]], #[[0, 1]]);</p>
+<p class="p7">a.channels</p>
+<p class="p7">a.mixers</p>
+<p class="p7">a.cvs</p>
+<p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, 0, <span class="s10">\pan</span>, <span class="s9">Pseq</span>([-1, 1], <span class="s9">inf</span>)).play</p>
+<p class="p7">a.mixer.cvs</p>
+<p class="p7">a.mixer.cvs.bal.value= -0.9</p>
+<p class="p7">a.cvs.lag.value= 2</p>
+<p class="p7">a.mixer.cvs.bal.value= 0.9</p>
+<p class="p7">a.mixer.cvs.vol.value= -6<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s11">//db</span></p>
+<p class="p7">b.stop</p>
+<p class="p7">a.free</p>
+<p class="p8"><br></p>
+<p class="p6">//--</p>
+<p class="p6">//b= {var x= SinOsc.kr(1); Pan2.ar(SinOsc.ar(x*40+400, 0, 0.5), x)}.play</p>
+<p class="p9"><span class="s3">a= </span>RedMixer<span class="s3">();</span></p>
+<p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, <span class="s9">Pseq</span>([0, 2, 4, 6, 8, 10], <span class="s9">inf</span>), <span class="s10">\degree</span>, <span class="s9">Pkey</span>(<span class="s10">\out</span>).trace).play;</p>
+<p class="p7">a.channels[1].cvs.vol.input= 0.6</p>
+<p class="p7">s.queryAllNodes</p>
+<p class="p7">a.mixer.cvs.vol.input= 0.7</p>
+<p class="p7">a.channels[1].cvs.vol.input= 0.95</p>
+<p class="p7">a.channels[0].cvs.bal.value= 1</p>
+<p class="p7">a.channels[0].cvs.bal.value= -1</p>
+<p class="p7">b.stop</p>
+<p class="p7">a.free</p>
+<p class="p8"><br></p>
+<p class="p6">//--</p>
+<p class="p7">s.boot;</p>
+<p class="p6"><span class="s3">a= </span><span class="s9">RedMixer</span><span class="s3">(group: </span><span class="s9">Group</span><span class="s3">.new);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//must boot server before creating and passing in group</p>
+<p class="p7">s.queryAllNodes</p>
+<p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, 8, <span class="s10">\pan</span>, <span class="s9">Pseq</span>([-1, 1], <span class="s9">inf</span>)).play</p>
+<p class="p7">a.mixers[0].cvs.eqMi.value= 1</p>
+<p class="p7">a.mixers[0].cvs.eqMi.value= 0</p>
+<p class="p7">a.channels[3].cvs.eqMi.value= 1</p>
+<p class="p7">a.channels[3].cvs.eqMi.value= 0</p>
+<p class="p7">a.free</p>
+<p class="p7">b.stop</p>
+<p class="p8"><br></p>
+<p class="p6">//--</p>
+<p class="p7">a= <span class="s9">RedMixer</span>(#[[2, 3], [4, 5], [6, 7], [8, 9]], [[0, 1], [12, 13]]);</p>
+<p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, <span class="s9">Pseq</span>([0, 2, 4, 6, 8, 10], <span class="s9">inf</span>), <span class="s10">\degree</span>, <span class="s9">Pkey</span>(<span class="s10">\out</span>)).play;</p>
+<p class="p7">a.channels[1].cvs.vol.input= 0.6</p>
+<p class="p7">a.inputChannels= [[2, 3], [4, 5], [10, 11], [8, 9]]</p>
+<p class="p7">a.inputChannels= [[2, 3], [4, 5], [6, 7], [10, 11]]</p>
+<p class="p7">a.inputChannels</p>
+<p class="p7">a.outputChannels= [[1, 2], [14, 15]]</p>
+<p class="p7">a.outputChannels= [[0, 1], [6, 7]]</p>
+<p class="p7">a.outputChannels</p>
+<p class="p7">a.defaults</p>
+<p class="p7">a.free</p>
+<p class="p7">b.stop</p>
+<p class="p8"><br></p>
+<p class="p6">//--</p>
+<p class="p7">a= <span class="s9">RedMixer</span>(#[[2, 3], [4, 5], [6, 7], [8, 9]], [[0, 1], [12, 13]]);</p>
+<p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, <span class="s9">Pseq</span>([2, 4, 6, 8], <span class="s9">inf</span>), <span class="s10">\degree</span>, <span class="s9">Pkey</span>(<span class="s10">\out</span>)).play;</p>
+<p class="p7">a.solo(0)</p>
+<p class="p7">a.solo(1)</p>
+<p class="p7">a.solo(<span class="s9">false</span>)</p>
+<p class="p7">a.mute(0)</p>
+<p class="p7">a.mute(1)</p>
+<p class="p7">a.mute(<span class="s9">false</span>)</p>
+<p class="p10">a.mute(<span class="s9">true</span>)</p>
+<p class="p10">a.solo(3)</p>
+<p class="p10">a.free</p>
+<p class="p10">b.stop</p>
+</body>
+</html>
