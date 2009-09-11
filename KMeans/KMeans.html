@@ -9,12 +9,12 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0e03}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000bf}
+span.s2 {color: #000ebe}
 span.s3 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -25,6 +25,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1">The k-means clustering algorithm is simple: given a set of data points, it finds a number ("k") of centroids which represent the data distribution pretty well. Each centroid is representative of one cluster, and each data point is labelled as belonging to the cluster whose centroid is nearest.</p>
 <p class="p2"><br></p>
 <p class="p1">This can be used for unsupervised classification of data, and it can be used "on-line" meaning that results are available even after only a few data points have been added, and you can easily add more data points and the algorithm can update the cluster positions and labels accordingly.</p>
+<p class="p2"><br></p>
+<p class="p1">Any dimensionality of data can be clustered (the examples below use 2D data).</p>
 <p class="p2"><br></p>
 <p class="p3">// Create an instance. This one will have 3 clusters.</p>
 <p class="p4">k = <span class="s2">KMeans</span>.new(3)</p>
