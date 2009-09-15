@@ -236,8 +236,13 @@ SWDataNetworkOSC{
 
 		// write the file:
 		file = File.open( httppath +/+ "SenseWorldDataNetwork", "w");
-		file.write( NetAddr.langPort.asString);
-		file.close;
+		if ( file.isOpen.not ){
+			"Could not write file with port information, clients may not be able to find the host. See [SW_Apache_setup] for instructions to make this work properly".warn;
+			this.logMsg("WARNING: could not write apache file");
+		}{ // file is open:
+			file.write( NetAddr.langPort.asString);
+			file.close;
+		};
 
 		if ( ports.isNil, {
 			ports = (6000..6009) ++ (57120..57129);

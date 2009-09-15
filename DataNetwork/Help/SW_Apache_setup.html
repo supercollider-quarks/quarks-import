@@ -79,7 +79,6 @@ The network will announce itself to the broadcast address of the network, to a n
 <P>
 A textfile with the network's OSC port can be found in the file <TT><A NAME="#tex2html2">http://hostip/SenseWorldDataNetwork</A></TT><A 
   HREF="#foot58"><SUP><SPAN CLASS="arabic">1</SPAN></SUP></A>, which can be retrieved by clients, so they know where to send the registration message.
-<br>(see <a href="SW_Apache_setup.html">Apache setup</A> for setup instructions to make this work properly)
 </P>
 <P>
 The general setup is that an OSC client first sends a register message to the data network server. Then it will start receiving ping messages, to which it has to reply with pong messages. The client has to query which nodes and slots are present on the network after registering, so it will receive info messages on each node and slot. Then it can subscribe to nodes and slots, and will receive data from the nodes and slots it is subscribed to via the data messages.
