@@ -29,7 +29,7 @@ SWDataNetworkBaseGui {
 
 		button3 = Button.new( w, Rect( 0, 0, 190, 20)).states_( [["Record log"]]).action_( {network.makeLogGui} ).font_( GUI.font.new( "Helvetica", 16));
 
-		StaticText.new( w, Rect( 0, 0, 190, 20)).string_( NetAddr.atMyIP( NetAddr.langPort).asString ).font_( GUI.font.new( "Helvetica", 12));
+		StaticText.new( w, Rect( 0, 0, 190, 20)).string_( [ NetAddr.myIP, NetAddr.langPort ].asString ).font_( GUI.font.new( "Helvetica", 12));
 
 		w.front;
 	}
