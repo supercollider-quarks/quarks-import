@@ -12,7 +12,8 @@ GLOBOL {
 
 	classvar <space, <isRunning = false, <numChannels, <>numSpeakers;
 	classvar server, responder, <sender, id;
-	classvar <classmethdict;
+	classvar <classmethdict, <ambiguous;
+	classvar <ugenClasses;
 	classvar prevPreProcessor, prevNetFlag;
 	
 	*run { | n = 8, numOutputs = 2 |
@@ -30,8 +31,7 @@ GLOBOL {
 		numChannels = n;
 		numSpeakers = numOutputs;
 		Server.local.options.numAudioBusChannels = n * 128;
-		space = ProxySpace.push(Server.local.reboot);
-		isRunning = true;
+		this.initRealtimeSystem;
 		this.buildDict;
 		// this.connect;
 		id = inf.asInteger.rand;
@@ -45,18 +45,21 @@ GLOBOL {
 	}
 	
 	*buildDict {
-		classmethdict = ();
+		var methdict = (), classdict = ();
 		
 		Class.allClasses.do { |class|
-				classmethdict.put(class.name.asString
+				classdict.put(class.name.asString
 							.collect(_.toUpper).asSymbol, class.name.asString);
 				class.methods.do { |method|
-					classmethdict.put(
+					methdict.put(
 						*[method.name.asString
 							.collect(_.toUpper).asSymbol, method.name.asString]
 					)
 				}
 		};
+		
+		ambiguous = this.getSect(classdict, methdict);
+		classmethdict = ().putAll(classdict).putAll(methdict) // METHODS OVERRIDE CLASSES
 		
 	}
 	
@@ -133,16 +136,31 @@ GLOBOL {
 					};
 				}; 
 				string = string.copy;
-				allCaps.do { |list| 
+				allCaps.do { |list, i| 
 					var start, length, bigName, smallName; 
 					#start, length = list;
 					
 					bigName = string[start..start + length - 1].asSymbol;
-					smallName = classmethdict[bigName];
+					
+					if(ambiguous[bigName].notNil and: { string[start + length] == $. }) {
+						// WHEN IN DOUBT, ASSUME THAT IT IS A CLASS NAME
+						// ONLY WHEN A DOT (COLON IN GLOBOL) COMES AFTER IT
+						smallName = ambiguous[bigName];
+					} {
+						smallName = classmethdict[bigName];
+					};
 					smallName !? {
 						string.overWrite(smallName, start);
 					};
+					
+					// todo: if not found, try to find it in the UGen list.
+					// then find the closest approximations (use string: compare)
+					// and build a graph from these, using a weighted mix
+					// for the other empty arguments use the defaults from the system.
+					// if a number is an input to a filter, use ~input instead.
+					
 				};
+		
 				^string
 	}
 	
@@ -153,6 +171,20 @@ GLOBOL {
 		};
 		^false
 
+	}
+	
+	// SYNTHESIS //
+	
+	*initRealtimeSystem {
+		ugenClasses = UGen.allSubclasses.collect(_.name).collect(_.asString);
+		space = ProxySpace.push(Server.local.reboot);
+		isRunning = true;
+		
+		// TODO: get all UGens, check their arguments.
+		// init args to something useful
+		// maybe find soundfiles on the system
+		space.put(\freq, { LFNoise1.ar(0.001 ! 8).range(220, 250) });
+	
 	}
 	
 	
@@ -169,16 +201,16 @@ GLOBOL {
 	}
 	
 	*distribute { | string |
-		sender !? { sender.sendMsg("/GLOBOL-2009", string, id) };
+		sender !? { sender.do(_.sendMsg("/GLOBOL-2009", string, id)) };
 	}
 	
-	*connect { |broadcastIP|
+	*connect { |broadcastAddr|  // broadcastAddr can be an array of NetAddr
 		("* NETWORKING OPENS INTERPRETER - USE 'CONNECT' AT YOUR OWN RISK"
 		"\nUSE 'DISCONNECT' TO CLOSE INTERPRETER. *").postln;
-		sender = if(broadcastIP.isNil) { 
+		sender = if(broadcastAddr.isNil) {
 			this.broadcast 
 		} {
-		 	NetAddr(broadcastIP, NetAddr.langPort)
+		 	broadcastAddr
 		 };
 		prevNetFlag = NetAddr.broadcastFlag;
 		NetAddr.broadcastFlag = true;
@@ -201,7 +233,7 @@ GLOBOL {
 		responder = nil;
 		"* INTERPRETER CLOSED. *".postln;
 		sender !? { 
-			sender.disconnect; 
+			sender.do(_.disconnect); 
 			NetAddr.broadcastFlag = prevNetFlag;
 		};
 	}
@@ -221,6 +253,70 @@ GLOBOL {
 			" provisionally used loopback instead.".collect(_.toUpper).warn;
 		};
 		^NetAddr(hostname, port)
+	}
+	
+	*getSect { |thisDict, thatDict|
+		var res = ();
+		thisDict.pairsDo { |key, val|
+			thatDict[key] !? {
+				if(thatDict[key] == val) { res.put(key, val) };
+			}
+		};
+		^res
+
+	}
+	
+	*compareUGenStrings { |str1, str2|
+		var res = 0;
+		str1.do { |char, i|
+			if(str2[i] == char) { res = res + 1 } {
+				if(str2.includes(char)) { res = res + 0.5 } { res = res - 0.5 };
+			};
+		}
+		^res / (str1.size + str2.size * 0.5)
+	
+	}
+	
+	// we'll have to write UGen groupings by hand, probably.
+	
+	*findUGensFor { |str, n = 4|
+		var similarities = ugenClasses.collect { |name|
+			
+			[this.compareUGenStrings(str, name), name]
+		};
+		similarities.sort { |a, b| a[0] > b[0] };
+		^similarities.keep(n).collect(_.at(1)).collect(_.asSymbol).collect(_.asClass);
+	}
+	
+	*makeDefaultUGenGraph {|str, args, n = 4|
+		var ugens = this.findUGensFor(str, n);
+		var argData = ugens.collect(this.getArgsForUGen(_));
+		var methodOfFirst = this.findUGenMethod(ugens.first);
+		var graph;
+		args.do { |val, i|
+			var key = methodOfFirst.argNames[i];
+			key !? {
+				argData.do { |dict| dict.put(key, val) }
+			} 
+		};
+		graph = ugens.collect { |ugen, i|
+			ugen.performWithEnvir(this.findUGenMethod(ugen).name, argData[i])
+		};
+		graph.postcs;
+		graph = graph * (n..1).normalizeSum;
+		^graph.sum
+	}
+	
+	*getArgsForUGen { |ugen|
+			var method = this.findUGenMethod(ugen);
+			^method !? { method.makeEnvirFromArgs }
+	}
+	
+	*findUGenMethod { |ugen|
+		var class = ugen.class;
+		^class.findRespondingMethodFor(\kr) 
+				?? { class.findRespondingMethodFor(\ar) } 
+				?? { class.findRespondingMethodFor(\new) } // THIS ALWAYS RETURNS SOMETHING
 	}
 
 }
