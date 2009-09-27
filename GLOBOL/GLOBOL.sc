@@ -14,6 +14,7 @@ GLOBOL {
 	classvar server, responder, <sender, id;
 	classvar <classmethdict, <ambiguous;
 	classvar <ugenClasses;
+	classvar <>laws;
 	classvar prevPreProcessor, prevNetFlag;
 	
 	*run { | n = 8, numOutputs = 2 |
@@ -57,6 +58,11 @@ GLOBOL {
 					)
 				}
 		};
+		// LAWS
+		laws.keysDo { |key|
+			classdict.put(key.asString
+							.collect(_.toUpper).asSymbol, key.asString);
+		};
 		
 		ambiguous = this.getSect(classdict, methdict);
 		classmethdict = ().putAll(classdict).putAll(methdict) // METHODS OVERRIDE CLASSES
@@ -74,9 +80,15 @@ GLOBOL {
 			
 			line = line.replace(":?",
 					".playN(%);".format((0..numSpeakers-1).wrapExtend(numChannels))
-			);			
+			);
+			// : AND ::
+			line = line.replace("::", "&&&");
 			line = line.replace(":", ".");
+			line = line.replace("&&&", ":");
+			// ¤ : LOOK UP GLOBAL LAWS
+			line = line.replace([194, 167].collect(_.asAscii).join, "GLOBOL.laws.");
 			
+			line.postcs;
 			line = " " ++ line ++ "  ";
 			
 			// FIND GLOBOL VARIABLES
@@ -137,7 +149,7 @@ GLOBOL {
 				}; 
 				string = string.copy;
 				allCaps.do { |list, i| 
-					var start, length, bigName, smallName; 
+					var start, length, bigName, smallName, preceding; 
 					#start, length = list;
 					
 					bigName = string[start..start + length - 1].asSymbol;
@@ -149,6 +161,8 @@ GLOBOL {
 					} {
 						smallName = classmethdict[bigName];
 					};
+					preceding = string[start - 1];
+					
 					smallName !? {
 						string.overWrite(smallName, start);
 					};
@@ -158,6 +172,7 @@ GLOBOL {
 					// and build a graph from these, using a weighted mix
 					// for the other empty arguments use the defaults from the system.
 					// if a number is an input to a filter, use ~input instead.
+					
 					
 				};
 		
