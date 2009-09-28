@@ -20,7 +20,8 @@ GNUPlot {
 			Platform.case(\osx, {
 				// on OSX, common "x11" term doesn't work by default (since SC not under X11)
 				initCode = initCode ++ "set term aqua\n";
-				gnuplotpath = "/opt/local/bin/gnuplot";
+				// and you can't always rely on gnuplot being in the path
+				gnuplotpath = ["/opt/local/bin/gnuplot", "/sw/bin/gnuplot", "/usr/local/bin/gnuplot", "/usr/bin/gnuplot"].detect{|p| File.exists(p)};
 			});
 			this.folder = PathName.tmp +/+ "SC_to_GNUPlot/";
 			this.makeBackupFolder;
