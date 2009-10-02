@@ -519,7 +519,7 @@ SWDataNode{
 	// --- Bus support ---
 
 	createBus{ |s|
-		if ( bus.isNil, {
+		if ( this.bus.isNil, {
 			s = s ? Server.default;
 			databus = DataBus.new( { slots.collect{ |it| it.value } }, slots.size, s )
 		});

@@ -15,18 +15,17 @@
 		"toolbarvisible" : 1,
 		"boxanimatetime" : 200,
 		"imprint" : 0,
-		"metadata" : [  ],
 		"boxes" : [ 			{
 				"box" : 				{
 					"maxclass" : "newobj",
 					"text" : "sprintf port %i",
+					"numinlets" : 1,
+					"fontname" : "Arial",
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 152.0, 213.0, 84.0, 20.0 ],
 					"id" : "obj-4",
-					"numoutlets" : 1,
-					"fontsize" : 12.0,
-					"outlettype" : [ "" ],
-					"fontname" : "Arial",
-					"numinlets" : 1
+					"fontsize" : 12.0
 				}
 
 			}
@@ -35,23 +34,23 @@
 					"maxclass" : "comment",
 					"text" : "Nov 1, 2008\nHarry Smoak\nharrycs@harrysmoak.com\n\nhandles the announce messages from the data network /datanetwork/announce and updates udpsend attributes",
 					"linecount" : 10,
+					"numinlets" : 1,
+					"fontname" : "Arial",
+					"numoutlets" : 0,
 					"patching_rect" : [ 338.0, 39.0, 155.0, 144.0 ],
 					"id" : "obj-3",
-					"numoutlets" : 0,
-					"fontsize" : 12.0,
-					"fontname" : "Arial",
-					"numinlets" : 1
+					"fontsize" : 12.0
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"maxclass" : "inlet",
-					"patching_rect" : [ 95.0, 79.0, 25.0, 25.0 ],
-					"id" : "obj-2",
+					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"numinlets" : 0,
+					"patching_rect" : [ 95.0, 79.0, 25.0, 25.0 ],
+					"id" : "obj-2",
 					"comment" : ""
 				}
 
@@ -59,10 +58,10 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "outlet",
+					"numinlets" : 1,
+					"numoutlets" : 0,
 					"patching_rect" : [ 136.0, 313.0, 25.0, 25.0 ],
 					"id" : "obj-1",
-					"numoutlets" : 0,
-					"numinlets" : 1,
 					"comment" : ""
 				}
 
@@ -72,12 +71,12 @@
 					"maxclass" : "comment",
 					"text" : "default sc ports 57120 57129",
 					"linecount" : 2,
+					"numinlets" : 1,
+					"fontname" : "Arial",
+					"numoutlets" : 0,
 					"patching_rect" : [ 275.0, 206.0, 150.0, 34.0 ],
 					"id" : "obj-31",
-					"numoutlets" : 0,
-					"fontsize" : 12.0,
-					"fontname" : "Arial",
-					"numinlets" : 1
+					"fontsize" : 12.0
 				}
 
 			}
@@ -85,13 +84,13 @@
 				"box" : 				{
 					"maxclass" : "newobj",
 					"text" : "sprintf host %s",
+					"numinlets" : 1,
+					"fontname" : "Arial",
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 113.0, 255.0, 89.0, 20.0 ],
 					"id" : "obj-29",
-					"numoutlets" : 1,
-					"fontsize" : 12.0,
-					"outlettype" : [ "" ],
-					"fontname" : "Arial",
-					"numinlets" : 1
+					"fontsize" : 12.0
 				}
 
 			}
@@ -99,27 +98,27 @@
 				"box" : 				{
 					"maxclass" : "newobj",
 					"text" : "unpack 127.0.0.1 57120",
+					"numinlets" : 1,
+					"fontname" : "Arial",
+					"numoutlets" : 2,
+					"outlettype" : [ "", "int" ],
 					"patching_rect" : [ 98.0, 172.0, 139.0, 20.0 ],
 					"id" : "obj-15",
-					"numoutlets" : 2,
-					"fontsize" : 12.0,
-					"outlettype" : [ "", "int" ],
-					"fontname" : "Arial",
-					"numinlets" : 1
+					"fontsize" : 12.0
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "OSC-route /announce",
-					"patching_rect" : [ 98.0, 137.0, 127.0, 20.0 ],
-					"id" : "obj-14",
-					"numoutlets" : 2,
-					"fontsize" : 12.0,
-					"outlettype" : [ "", "" ],
+					"text" : "jcom.oscroute /announce",
+					"numinlets" : 1,
 					"fontname" : "Arial",
-					"numinlets" : 1
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 98.0, 137.0, 145.0, 20.0 ],
+					"id" : "obj-14",
+					"fontsize" : 12.0
 				}
 
 			}
@@ -144,16 +143,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"source" : [ "obj-15", 1 ],
-					"destination" : [ "obj-4", 0 ],
-					"hidden" : 0,
-					"midpoints" : [  ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"source" : [ "obj-4", 0 ],
+					"source" : [ "obj-29", 0 ],
 					"destination" : [ "obj-1", 0 ],
 					"hidden" : 0,
 					"midpoints" : [  ]
@@ -171,8 +161,17 @@
 			}
 , 			{
 				"patchline" : 				{
-					"source" : [ "obj-29", 0 ],
+					"source" : [ "obj-4", 0 ],
 					"destination" : [ "obj-1", 0 ],
+					"hidden" : 0,
+					"midpoints" : [  ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"source" : [ "obj-15", 1 ],
+					"destination" : [ "obj-4", 0 ],
 					"hidden" : 0,
 					"midpoints" : [  ]
 				}

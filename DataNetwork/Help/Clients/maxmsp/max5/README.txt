@@ -1,6 +1,6 @@
 README
 
-2009-05-18 Harry Smoak, Joseph Malloch and Brett Bergmann
+2009-05-14 Harry Smoak, Joseph Malloch, Joseph Thibodeau, Brett Bergmann
 
 Collection of Max 5 patches for use with the SenseStage DataNetwork.  Most users will probably want to start with the help patches to cut/paste what they need.  It's not recommended to run more than one instance of each dn.source and dn.sink on a single host. 
 
@@ -8,7 +8,6 @@ Help patches
 
 	dn.source.maxhelp
 	dn.sink.maxhelp
-	dn.node.maxhelp
 
 Patches
 
@@ -16,7 +15,6 @@ Patches
 	dn.infomenu.maxpat
 	dn.manager.maxpat
 	dn.netport.maxpat
-	dn.node.maxpat
 	dn.pubedit.maxpat
 	dn.publisher.maxpat
 	dn.sink.maxpat
@@ -34,3 +32,11 @@ Dependencies
 
 	OpenSoundControl patches from CNMAT
 	http://cnmat.berkeley.edu/downloads (Last accessed 2009-05-14)
+
+	jcom.oscroute from Jamoma
+	http://jamoma.org/
+	
+
+
+
+
