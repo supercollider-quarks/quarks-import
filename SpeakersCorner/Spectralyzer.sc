@@ -120,7 +120,7 @@ Spectralyzer {
 		flo.nextLine;
 		flo.dump; 
 		
-		ampsV = SCMultiSliderView(comp, Rect(0, 20, width + 2, multiHeight))
+		ampsV = MultiSliderView(comp, Rect(0, 20, width + 2, multiHeight))
 			.valueThumbSize_(2.0).gap_(2.0)
 			.indexThumbSize_(width / freqs.size - 2.0)
 			.value_(0.5 ! freqs.size);
