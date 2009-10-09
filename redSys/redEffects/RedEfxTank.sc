@@ -1,4 +1,4 @@
-//redFrik - adapter from jmc's tank example in LocalIn helpfile
+//redFrik - adapted from jmc's tank example in LocalIn helpfile
 
 RedEfxTank : RedEffectModule {
 	*def {
@@ -13,7 +13,7 @@ RedEfxTank : RedEffectModule {
 			wet= AllpassN.ar(wet, 0.05, {Rand(0.01, 0.05)}.dup, 2*dec, damp);
 			wet= DelayN.ar(wet, 0.26, {Rand(0.1, 0.26)}.dup);
 			wet= AllpassN.ar(wet, 0.05, {Rand(0.03, 0.05)}.dup, 2*dec, damp);
-			wet= LeakDC.ar(wet);
+			wet= LeakDC.ar(Limiter.ar(wet));
 			wet= wet+in2;
 			LocalOut.ar(wet);
 			ReplaceOut.ar(out, XFade2.ar(dry, wet, mix));

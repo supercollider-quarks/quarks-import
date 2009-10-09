@@ -1,4 +1,4 @@
-//redFrik - adapter from example in Tour_of_UGens helpfile
+//redFrik - adapted from example in Tour_of_UGens helpfile
 
 RedEfxDist : RedEffectModule {
 	*def {

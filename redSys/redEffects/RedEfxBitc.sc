@@ -1,4 +1,4 @@
-//redFrik - adapter from adc's bit reduction example found in examples folder
+//redFrik - adapted from adc's bit reduction example found in examples folder
 
 RedEfxBitc : RedEffectModule {
 	*def {

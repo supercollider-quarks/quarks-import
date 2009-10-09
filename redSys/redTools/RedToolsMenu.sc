@@ -58,7 +58,7 @@ RedToolsMenu {
 			['redSys', 'RedTest'], {
 				RedTest.openHelpFile;
 			},
-			['redSys', 'open redSys overview'], {
+			['redSys', 'redSys overview'], {
 				RedSys.openHelpFile;
 			},
 			['system', 'SynthDescLib.read'], {
