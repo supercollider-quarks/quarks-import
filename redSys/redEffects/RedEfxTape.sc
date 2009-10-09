@@ -1,4 +1,4 @@
-//redFrik - adapter from jmc's tape example in LocalIn helpfile
+//redFrik - adapted from jmc's tape example in LocalIn helpfile
 
 RedEfxTape : RedEffectModule {
 	*def {
