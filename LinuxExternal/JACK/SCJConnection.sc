@@ -1,8 +1,9 @@
 SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections, <properties;
 	var <srcchan, <deschan, <source, <destination;
+	classvar <>verbose = false;
 	
 	*initClass{
-		alsadef = ["alsa_pcm:","capture_","playback_"];
+		alsadef = ["system:","playback_","capture_"];
 		scdef = ["SuperCollider:","in_","out_"];
 		prepend = "";
 		this.getallports;
@@ -83,6 +84,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 				Task({ 
 					srcch.do{ |it,i|
 						command = prepend++"jack_connect" + allports.at(it) + allports.at( desch[i] );
+						if ( verbose ){ command.postln; };
 						command.unixCmd;
 						0.2.wait;
 					};
@@ -96,6 +98,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 				if ( des == \sc, { des=scdef[0]++scdef[2] });
 				Task({ srcch.do{ |it,i|
 					command = prepend++"jack_connect" + src++it + des++desch[i];
+					if ( verbose ){ command.postln; };
 					command.unixCmd;
 					0.2.wait;};
 					this.getconnections;
@@ -110,6 +113,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 				Task({ srcch.do{ |it,i|
 					command = prepend++"jack_disconnect" + allports.at(it) + allports.at( desch[i] );
 					command.unixCmd;
+					if ( verbose ){ command.postln; };
 					0.2.wait;};
 					this.getconnections;
 				}).play;
@@ -122,6 +126,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 				Task({srcch.do{ |it,i|
 					command = prepend++"jack_disconnect" + src++it + des++desch[i];
 					command.unixCmd;
+					if ( verbose ){ command.postln; };
 					0.2.wait;};
 					this.getconnections;
 				}).play;
