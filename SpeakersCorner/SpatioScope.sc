@@ -27,8 +27,12 @@ SpatioScope {
 
 		resp.remove;
 		resp = OSCresponderNode(server.addr, '/c_set', { arg time, r, msg; 
-			var amps = msg.copyToEnd(1).clump(2).flop[1];
-			{  this.amps_(amps * (magnify ? 1)); }.defer;
+			var amps;
+			// check if this reply message is for this spatioscope
+			if ( msg[1] == proxy.index ){
+				amps = msg.copyToEnd(1).clump(2).flop[1];
+				{  this.amps_(amps * (magnify ? 1)); }.defer;
+			};
 		}); 
 		
 		skipjack = SkipJack( 
