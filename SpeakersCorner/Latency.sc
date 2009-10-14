@@ -31,7 +31,7 @@ Latency {
 		});
 	}
 	
-	*testAudio { |numChans=5, maxDT = 0.2, server, inChan=1|
+	*testAudio { |numChans=5, maxDT = 0.2, server, inChan=0|
 		serv = server ? Server.default;
 		latencies = Array.newClear(numChans); 
 		resp.remove;
@@ -41,7 +41,7 @@ Latency {
 			pulseFreq;
 			
 			phase = Phasor.ar(0, 1, 0, 2 ** 30);	// time in samples
-			audIn = AudioIn.ar(inChan);				// mike input
+			audIn = SoundIn.ar(inChan);				// mike input
 			
 			pulses =  Decay2.ar(
 				Impulse.ar( pulseFreq, 
