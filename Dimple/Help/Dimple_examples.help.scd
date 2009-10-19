@@ -466,8 +466,8 @@ l = d.createConstraint( "fixed", m, d.world );
 ~hingesVer = 4.collect{ |i| 7.collect{ |j| d.createConstraint( "hinge", ~spheres[i][j], ~spheres[i][j+1], [0,0.05,0, 1,0,0]) }};
 
 
-~spheres[2][5].force_( 0, 0, -0.0025);
-~spheres[0][2].force_( 0, 0, -0.0025);
+~spheres[2][5].force_( 0, 0, -0.025);
+~spheres[0][2].force_( 0, 0, -0.025);
 
 ~spheres[2][5].force_( 0, 0, 0);
 
@@ -478,3 +478,5 @@ d.camera.up;
 d.camera.position_( 0, -1, 0 );
 
 d.camera.position_( 1, -0.5, 0.26 );
+
+d.clear

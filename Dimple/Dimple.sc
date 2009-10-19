@@ -30,6 +30,7 @@ Dimple {
 	start{
 		//	(dimplePath + NetAddr.langPort).unixCmd;
 		(dimplePath + "-u osc.udp://localhost:" ++ NetAddr.langPort).unixCmd;
+		//		ShutDown.add({ this.stop });
 	}
 
 	createSphere{ |x,y,z|
@@ -239,6 +240,7 @@ DimpleConstraint : DimpleThing {
 		lastid = lastid + 1;
 		msg = [ "/world" +/+ type +/+ "create", name, objectA.name, objectB.name  ] ++ argVector;
 		dimple.addr.sendMsg( *msg );
+		//		this.dump;
 		objectA.addConstraint( this );
 		objectB.addConstraint( this );
 	}
@@ -276,8 +278,12 @@ DimpleObject : DimpleThing {
 
 	init{
 		this.initProps;
+		this.initObject;
+	}
+
+	initObject{
 		constraints = List.new;
-		addr = dimple.addr;
+		addr = dimple.addr;		
 	}
 
 	grab{
@@ -295,6 +301,8 @@ DimpleObject : DimpleThing {
 
 	addConstraint{ |constr|
 		constraints.add( constr );
+		//		constraints.postln;
+		//		constr.dump;
 	}
 
 	removeConstraint{ |constr|
@@ -311,6 +319,7 @@ DimpleSphere : DimpleObject {
 
 	init{ |x,y,z|
 		this.initProps;
+		this.initObject;
 		name = "sphere"++lastid;
 		type = \sphere;
 		lastid = lastid + 1;
@@ -330,6 +339,7 @@ DimpleMesh : DimpleObject {
 
 	myInit{ |x,y,z|
 		this.initProps;
+		this.initObject;
 		name = "mesh"++lastid;
 		type = \mesh;
 		lastid = lastid + 1;
@@ -347,6 +357,7 @@ DimplePrism : DimpleObject {
 
 	init{ |x,y,z|
 		this.initProps;
+		this.initObject;
 		type = \prism;
 		name = "prism"++lastid;
 		lastid = lastid + 1;
@@ -364,6 +375,7 @@ DimpleCursor : DimpleObject {
 
 	init{
 		this.initProps;
+		this.initObject;
 		addr = dimple.addr.copy.port_( 7772 );
 		type = \cursor;
 	}
