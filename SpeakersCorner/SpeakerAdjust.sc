@@ -71,30 +71,30 @@ SpeakerAdjust {
 		
 		^specs.collect { |specList, i|
 			var out, amp, dt, eqSpecs; 
-			var ampCtl, delaylCtl;
+			var ampCtl, delayCtl;
 			
 			out = ins[i];
 			#amp, dt ... eqSpecs = specList; 
 
-//			ampCtl = NamedControl(("eqAmp_c" ++ (i+1)).asSymbol, amp ? 1, 0.5);
-			ampCtl = Control.names(("eqAmp_c" ++ (i+1)).asSymbol).kr( amp ? 1);
-			out = out * ampCtl;
-			
-//			if (dt ? 0 > 0, { out = DelayN.ar(out, dt, dt) });
-//		
-//			eqSpecs.do { |specBand, j|
-//				var freq, db, rq; 
-//				var freqCtl, gainCtl, rqCtl; 
-//				var ctlNames = this.makeNames(i, j); 
-//				#freq, db, rq = specBand.postcs;
-//				
-//				freqCtl = NamedControl(ctlNames[0], freq, 0.2);
-//				gainCtl = NamedControl(ctlNames[1], db, 0.2);
-//				rqCtl   = NamedControl(ctlNames[2], rq, 0.2);
-//				
-//				out = MidEQ.ar(out, freqCtl, gainCtl, rqCtl);
-//			};
-			out * vol;
+			delayCtl = NamedControl(("eqDt_c" ++ (i+1)).asSymbol, amp ? 0, 0.2);
+			out = DelayN.ar(out, 0.1, dt);
+
+			ampCtl = NamedControl(("eqAmp_c" ++ (i+1)).asSymbol, amp ? 1, 0.2);
+			out * (ampCtl * vol);
+		
+			eqSpecs.do { |specBand, j|
+				var freq, db, rq; 
+				var freqCtl, gainCtl, rqCtl; 
+				var ctlNames = this.makeNames(i, j); 
+				#freq, db, rq = specBand.postcs;
+				
+				freqCtl = NamedControl(ctlNames[0], freq, 0.2);
+				gainCtl = NamedControl(ctlNames[1], db, 0.2);
+				rqCtl   = NamedControl(ctlNames[2], rq, 0.2);
+				
+				out = MidEQ.ar(out, freqCtl, gainCtl, rqCtl);
+			};
+			out
 		};	
 	}
 }
