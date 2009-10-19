@@ -12,19 +12,18 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #6c2a2a}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #6c2a2a; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a91616}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0014bc}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #307109}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #622c2c}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #622c2c; min-height: 12.0px}
 span.s1 {font: 9.0px Monaco}
 span.s2 {color: #000000}
-span.s3 {color: #007300}
-span.s4 {color: #0000bf}
-span.s5 {color: #5a6a1b}
-span.s6 {color: #6c2a2a}
+span.s3 {color: #307109}
+span.s4 {color: #0014bc}
+span.s5 {color: #5e691f}
+span.s6 {color: #622c2c}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -71,19 +70,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p6"><span class="s2"><span class="Apple-tab-span">	</span></span>// step by step examples</p>
-<p class="p7">(</p>
-<p class="p8">ProxyChain<span class="s2">.add(</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s3">\testSnd</span>, <span class="s3">\mix</span> -&gt; { <span class="s4">Dust</span>.ar(20) + <span class="s4">PinkNoise</span>.ar([0.1, 0.1]) },<span class="Apple-converted-space"> </span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s3">\spkAdj</span>, <span class="s3">\filter</span> -&gt; { <span class="s4">|in, spkVol=1|</span> <span class="s4">SpeakerAdjust</span>.ar(in, [ [0.25], [0.5] ], spkVol) }</p>
-<p class="p7">);</p>
-<p class="p9"><br></p>
-<p class="p10"><span class="s4">Spec</span><span class="s2">.add(</span>\spkVol<span class="s2">, </span>\amp<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
-<p class="p9"><br></p>
+<p class="p5">(</p>
+<p class="p7">ProxyChain<span class="s2">.add(</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">\testSnd</span>, <span class="s3">\mix</span> -&gt; { <span class="s4">Dust</span>.ar(20) + <span class="s4">PinkNoise</span>.ar([0.1, 0.1]) },<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">\spkAdj</span>, <span class="s3">\filter</span> -&gt; { <span class="s4">|in, spkVol=1|</span> <span class="s4">SpeakerAdjust</span>.ar(in, [ [0.25], [0.5] ], spkVol) }</p>
+<p class="p5">);</p>
+<p class="p2"><br></p>
+<p class="p8"><span class="s4">Spec</span><span class="s2">.add(</span>\spkVol<span class="s2">, </span>\amp<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p2"><br></p>
 <p class="p6"><span class="s2"><span class="Apple-tab-span">	</span></span>// can be used in a proxy chain</p>
-<p class="p10"><span class="s2">c = </span><span class="s4">ProxyChain</span><span class="s2">(2, [</span>\testSnd<span class="s2">, </span>\spkAdj<span class="s2">]);</span></p>
-<p class="p7">c.gui;</p>
-<p class="p7">c.play;</p>
-<p class="p7">)</p>
+<p class="p8"><span class="s2">c = </span><span class="s4">ProxyChain</span><span class="s2">(2, [</span>\testSnd<span class="s2">, </span>\spkAdj<span class="s2">]);</span></p>
+<p class="p5">c.gui;</p>
+<p class="p5">c.play;</p>
+<p class="p5">)</p>
 <p class="p6"><span class="s2">c.add(</span><span class="s3">\spkAdj</span><span class="s2">, 1);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// kick in compensation</p>
 <p class="p2"><br></p>
 <p class="p5">c.end;<span class="Apple-converted-space"> </span></p>
@@ -91,50 +90,50 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>// make some sound that just plays</p>
 <p class="p5">{ <span class="s4">Dust</span>.ar(20) + <span class="s4">PinkNoise</span>.ar([0.1, 0.1]) }.play;</p>
 <p class="p2"><br></p>
-<p class="p7"><span class="Apple-tab-span">	</span>// make a MasterFX - this filters everything on its buses,<span class="Apple-converted-space"> </span></p>
-<p class="p7"><span class="Apple-tab-span">	</span>// and wakes up after cmd-period.<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// make a MasterFX - this filters everything on its buses,<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// and wakes up after cmd-period.<span class="Apple-converted-space"> </span></p>
 <p class="p5">z = MasterFX(s, 2, [\spkAdj]);</p>
 <p class="p5">z.gui;</p>
-<p class="p7">z.pxChain.add(<span class="s2">\spkAdj);</span></p>
-<p class="p9"><br></p>
-<p class="p9"><br></p>
-<p class="p7">(</p>
-<p class="p8">ProxyChain<span class="s2">.add(</span></p>
-<p class="p10"><span class="s2"><span class="Apple-tab-span">	</span></span>\spkAdj<span class="s2">, </span>\filter<span class="s2"> -&gt; { </span><span class="s4">|in, spkVol=1|</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
-<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>SpeakerAdjust<span class="s2">.ar(in, [<span class="Apple-converted-space"> </span></span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0],<span class="Apple-converted-space"> </span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0.02] <span class="Apple-tab-span">	</span>// right channel slightly late</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], spkVol) }</p>
-<p class="p7">);</p>
+<p class="p5">z.pxChain.add(\spkAdj);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p5">(</p>
+<p class="p7">ProxyChain<span class="s2">.add(</span></p>
+<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>\spkAdj<span class="s2">, </span>\filter<span class="s2"> -&gt; { </span><span class="s4">|in, spkVol=1|</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
+<p class="p7"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>SpeakerAdjust<span class="s2">.ar(in, [<span class="Apple-converted-space"> </span></span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0],<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0.02] <span class="Apple-tab-span">	</span>// right channel slightly late</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], spkVol) }</p>
+<p class="p5">);</p>
 <p class="p5">z.pxChain.add(<span class="s5">\spkAdj, 1);</span></p>
-<p class="p7">)</p>
-<p class="p9"><br></p>
+<p class="p5">)</p>
+<p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p5"><span class="Apple-tab-span">	</span>// one eq band on each channel, add gain at different freqs</p>
 <p class="p5">(</p>
-<p class="p8">ProxyChain<span class="s2">.add(</span></p>
-<p class="p10"><span class="s2"><span class="Apple-tab-span">	</span></span>\spkAdj<span class="s2">, </span>\filter<span class="s2"> -&gt; { </span><span class="s4">|in, spkVol=1|</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
-<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>SpeakerAdjust<span class="s2">.ar(in, [<span class="Apple-converted-space"> </span></span></p>
+<p class="p7">ProxyChain<span class="s2">.add(</span></p>
+<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>\spkAdj<span class="s2">, </span>\filter<span class="s2"> -&gt; { </span><span class="s4">|in, spkVol=1|</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">SpeakerAdjust</span>.arDyn(in, [<span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//<span class="Apple-converted-space">  </span>amp, dt,<span class="Apple-converted-space">  </span>[freq1, gain1, bw1]<span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0, <span class="Apple-converted-space">  </span>[300, <span class="Apple-converted-space">    </span>8,<span class="Apple-converted-space">    </span>2]],<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0.02,[2800, <span class="Apple-converted-space">    </span>8,<span class="Apple-converted-space">    </span>2]]<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span></p>
+<p class="p9"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[1, 0.02,</span>/* [2800, <span class="Apple-converted-space">    </span>8,<span class="Apple-converted-space">    </span>2]*/<span class="s2">]<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span></span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>], spkVol) }</p>
 <p class="p5">);</p>
 <p class="p5">z.pxChain.add(<span class="s5">\spkAdj, 1);</span></p>
 <p class="p5">)</p>
 <p class="p2"><br></p>
 <p class="p6"><span class="s2"><span class="Apple-tab-span">	</span></span>// load test for 24 chans: a MasterFX<span class="Apple-converted-space"> </span></p>
-<p class="p7">(<span class="Apple-tab-span">	</span></p>
-<p class="p7"><span class="s4">MasterFX</span>.clear(s.name);</p>
-<p class="p7">z = <span class="s4">MasterFX</span>(s, 24, [<span class="s3">\spkAdj</span>]);</p>
-<p class="p7">z.gui;</p>
-<p class="p7">)</p>
+<p class="p5">(<span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s4">MasterFX</span>.clear(s.name);</p>
+<p class="p5">z = <span class="s4">MasterFX</span>(s, 24, [<span class="s3">\spkAdj</span>]);</p>
+<p class="p5">z.gui;</p>
+<p class="p5">)</p>
 <p class="p2"><br></p>
 <p class="p5">(</p>
-<p class="p11">//<span class="Apple-tab-span">	</span>generate random data for 24 chans, 3 bands each, to test load:</p>
+<p class="p10">//<span class="Apple-tab-span">	</span>generate random data for 24 chans, 3 bands each, to test load:</p>
 <p class="p5">var data = { [<span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="Apple-tab-span">	</span>rrand(0.5, 1.0), <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">// amp<span class="Apple-converted-space"> </span></span></p>
-<p class="p11"><span class="s2"><span class="Apple-tab-span">	</span>0.01.rand ]<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// dt, max 10msec =&gt; 3.4m<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="s2"><span class="Apple-tab-span">	</span>0.01.rand ]<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// dt, max 10msec =&gt; 3.4m<span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="Apple-tab-span">	</span>++<span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="Apple-tab-span">	</span>({ [<span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>exprand(100, 10000),<span class="Apple-tab-span">	</span><span class="s6">// freq</span></p>
@@ -143,9 +142,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span>} ! 3);<span class="Apple-tab-span">	</span></p>
 <p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5">} ! z.numChannels;<span class="Apple-tab-span">	</span><span class="s6">// for 24 chans</span></p>
-<p class="p12"><br></p>
-<p class="p8">ProxyChain<span class="s2">.add(</span></p>
-<p class="p10"><span class="s2"><span class="Apple-tab-span">	</span></span>\spkAdj<span class="s2">, </span>\filter<span class="s2"> -&gt; { </span><span class="s4">|in, spkVol=1|</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
+<p class="p11"><br></p>
+<p class="p7">ProxyChain<span class="s2">.add(</span></p>
+<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>\spkAdj<span class="s2">, </span>\filter<span class="s2"> -&gt; { </span><span class="s4">|in, spkVol=1|</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">SpeakerAdjust</span>.arDyn(in, data, spkVol) }</p>
 <p class="p5">);</p>
 <p class="p5">z.pxChain.add(<span class="s5">\spkAdj, 1);</span></p>
