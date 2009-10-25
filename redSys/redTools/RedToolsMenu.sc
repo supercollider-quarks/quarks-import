@@ -15,7 +15,6 @@ RedToolsMenu {
 				});
 				~redEfx= RedEffectsRack(
 					RedEffectsRack.defaultClasses
-					//RedEffectModule.subclasses
 				);
 				RedEffectsRackGUI(~redEfx);
 			},
@@ -25,9 +24,9 @@ RedToolsMenu {
 					~redEfx2.free;
 				});
 				if(~redEfx.notNil, {
-					~redEfx2= RedEffectsRack([RedEfxOcta, RedEfxBitc, RedEfxGuit, RedEfxVerb], 0, ~redEfx.group);
+					~redEfx2= RedEffectsRack(RedEffectModule.subclasses, 0, ~redEfx.group);
 				}, {
-					~redEfx2= RedEffectsRack([RedEfxBitc, RedEfxGuit, RedEfxVerb]);//bus 0, after defaultGroup
+					~redEfx2= RedEffectsRack(RedEffectModule.subclasses);//bus 0, after defaultGroup
 				});
 				RedEffectsRackGUI(~redEfx2, 595@333);
 			},
@@ -58,14 +57,14 @@ RedToolsMenu {
 			['redSys', 'RedTest'], {
 				RedTest.openHelpFile;
 			},
+			['redSys', 'Redraw'], {
+				Redraw.new;
+			},
 			['redSys', 'redSys overview'], {
 				RedSys.openHelpFile;
 			},
-			['system', 'SynthDescLib.read'], {
-				SynthDescLib.read;
-			},
-			['system', 'SynthDescLib.browse'], {
-				SynthDescLib.browse;
+			['system', 'SynthDescLib read+browse'], {
+				SynthDescLib.read.global.browse;
 			},
 			['system', 'post incoming osc'], {
 				Document(
