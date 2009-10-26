@@ -59,9 +59,11 @@ GLOBOL {
 				}
 		};
 		// LAWS
-		laws.keysDo { |key|
-			classdict.put(key.asString
+		laws !? { 
+			laws.keysDo { |key|
+				classdict.put(key.asString
 							.collect(_.toUpper).asSymbol, key.asString);
+			}
 		};
 		
 		ambiguous = this.getSect(classdict, methdict);
