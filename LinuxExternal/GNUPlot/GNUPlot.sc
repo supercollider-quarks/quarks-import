@@ -15,14 +15,14 @@ GNUPlot {
 
         // This function takes an arbitrary array and plots the values
 	*initClass{
+		Platform.case(\osx, {
+			// on OSX, common "x11" term doesn't work by default (since SC not under X11)
+			initCode = initCode ++ "set term aqua\n";
+			// and you can't always rely on gnuplot being in the path
+			gnuplotpath = ["/opt/local/bin/gnuplot", "/sw/bin/gnuplot", "/usr/local/bin/gnuplot", "/usr/bin/gnuplot"].detect{|p| File.exists(p)};
+		});
 		StartUp.add{
 			id = 0;
-			Platform.case(\osx, {
-				// on OSX, common "x11" term doesn't work by default (since SC not under X11)
-				initCode = initCode ++ "set term aqua\n";
-				// and you can't always rely on gnuplot being in the path
-				gnuplotpath = ["/opt/local/bin/gnuplot", "/sw/bin/gnuplot", "/usr/local/bin/gnuplot", "/usr/bin/gnuplot"].detect{|p| File.exists(p)};
-			});
 			this.folder = PathName.tmp +/+ "SC_to_GNUPlot/";
 			this.makeBackupFolder;
 		}
