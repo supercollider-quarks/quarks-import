@@ -4,12 +4,17 @@
 
 SWDataNetworkBaseGui {
 
-	var <>network;
+	var <network;
 	var w,button1,button2;
 	var button3;
 
 	*new{ |network|
 		^super.new.network_( network ).init;
+	}
+	
+	network_{ |n|
+		network = n;
+		n.baseGui = this;
 	}
 
 	init{
