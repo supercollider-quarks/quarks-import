@@ -16,7 +16,14 @@ SWDataNetworkOSCClientGui{
 	var <editKey = false;
 
 	*initClass{
-		StartUp.add( { this.font = GUI.font.new( "Lucida Sans", 9 ); } );
+		StartUp.add( { 
+			if ( thisProcess.platform.name == \linux ){
+				this.font = GUI.font.new( "Lucida Sans", 9 );
+				};
+			if ( thisProcess.platform.name == \osx ){
+				this.font = GUI.font.new( "Helvetica", 9 );
+				}; 
+		} );
 	}
 
 	//	var <monitor;
@@ -46,7 +53,6 @@ SWDataNetworkOSCClientGui{
 		cw.background = Color.white;
 		decorator = cw.decorator;
 		
-
 		addrIP = GUI.staticText.new( cw, Rect( 0, 0, 100, 16 )).string_( client.addr.ip.asString ).font_( font ).align_( \right );
 
 		addrPort = GUI.staticText.new( cw, Rect( 0, 0, 40, 16 )).string_( client.addr.port.asString ).font_( font ).align_( \right );
@@ -102,7 +108,7 @@ SWDataNetworkOSCClientGui{
 	}
 
 	updateVals { 
-		//	{ 
+			{ 
 			mpongs.string_( client.missedPongs.asString );
 
 			nsub.string_( client.subscriptions.size.asString );
@@ -114,7 +120,7 @@ SWDataNetworkOSCClientGui{
 
 			if ( editKey.not ){ key.string_( client.key.asString ); };
 			//	slots.do{ |it| it.updateVals };
-			//	}.defer;
+		}.defer;
 	}
 
 	hide{
@@ -144,7 +150,7 @@ SWDataNetworkOSCClientGui{
 
 SWDataNetworkOSCGui{
 	classvar <>xposScreen=0, <>yposScreen=20;
-	var <>w, <>network, <watcher;
+	var <>w, <network, <watcher;
 
 	var <key,<verb,<debug,<nodes,<bigNodes;
 	var <restore,<backup,<announce,<log;
@@ -159,6 +165,11 @@ SWDataNetworkOSCGui{
 
 	*new { |network, w| 
 		^super.new.w_(w).network_(network).init;
+	}
+	
+	network_{ |n|
+		network = n;
+		network.gui = this;
 	}
 	
 	init {
@@ -206,6 +217,8 @@ SWDataNetworkOSCGui{
 
 		SWDataNetworkOSCClientGui.xsize = xsize;
 
+		nodes = [];
+
 		if ( network.clients.size > 0 ) {
 			nodes = network.clients.collect{ |it,key|
 				//				it.postln;
@@ -227,22 +240,26 @@ SWDataNetworkOSCGui{
 	}
 
 	setInfo{ |string|
-		info.string_( string );
+		defer{ info.string_( string ); }
 	}
 
 	addLogMsg{ |msg|
-		logview.string_( logview.string ++ Date.localtime.asString + ":" + msg + "\n" );
+		defer{
+			logview.string_( logview.string ++ Date.localtime.asString + ":" + msg + "\n" );
+			};
 	}
 
 	addClient{ |client|
 		var ysize;
-		ysize = SWDataNetworkOSCClientGui.ysize + 2 * network.clients.size + 2;
+		defer{
+			ysize = SWDataNetworkOSCClientGui.ysize + 2 * network.clients.size + 2;
 
-		ypos = ypos + 2 + SWDataNetworkOSCClientGui.ysize;
+			ypos = ypos + 2 + SWDataNetworkOSCClientGui.ysize;
 
-		nv2.bounds_( Rect( 0, 0, SWDataNetworkOSCClientGui.xsize, ysize ) );
+			nv2.bounds_( Rect( 0, 0, SWDataNetworkOSCClientGui.xsize, ysize ) );
 
-		nodes = nodes.add( SWDataNetworkOSCClientGui.new( client, nv2, 2, ypos ).parent_( this ); );
+			nodes = nodes.add( SWDataNetworkOSCClientGui.new( client, nv2, 2, ypos ).parent_( this ); );
+		}
 	}
 
 	
@@ -258,17 +275,20 @@ SWDataNetworkOSCGui{
 	refreshClients{
 		var newNodes = nodes.collect{ |it| it.client };
 		var nbn,sn;
-		nv2.removeAll;
+		
+		defer{
+			nv2.removeAll;
 
-		nv2.children.postln;
+			nv2.children.postln;
 
-		ypos = -1 * SWDataNetworkOSCClientGui.ysize - 2;
+			ypos = -1 * SWDataNetworkOSCClientGui.ysize - 2;
 
-		nodes = Array.new;
-		newNodes.do{ |it|
-			nbn = this.addClient( it );
-		};
-		nv2.refresh;
+			nodes = Array.new;
+			newNodes.do{ |it|
+				nbn = this.addClient( it );
+			};
+			nv2.refresh;
+			}
 	}
  
 	updateRate_{ |dt|

@@ -14,6 +14,7 @@ SWDataNetwork{
 	var <watcher;
 	var <worrytime = 60; // time after which to worry whether node is still active
 	var <>gui;
+	var <>baseGui;
 
 	var <>recTask;
 	var <logfile;
