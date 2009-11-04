@@ -1,25 +1,18 @@
 (
-// required:
-	\name: 		"TuningLib",
-	\path: 		"TuningLib", // almost always the same as the quark name
-	\summary:		"A set of tools to calculate and manage tunings,including DissonanceCurves",
-	\author: 		"Charles CŽleste Hutchins, Jacha Narvesson. Feel free to contribute.",
+	name: 		"TuningLib",
+	path: 		"TuningLib", // almost always the same as the quark name
+	summary:		"A set of tools to calculate and manage tunings,including DissonanceCurves",
+	author: 		"Charles CŽleste Hutchins, Jacha Narvesson. Feel free to contribute.",
 
-// optional:
-	\version:		1.0, // must be a float
-//	\organization: 	"University of Birmingham",
-	\country: 		"UK",
-	\since: 		"2009",
-	\helpdoc: "Help/TuningLib.html",
-//	\ext_dependancy: "Information on additional software needed to run this quark properly",
-	\url:           "http://www.berkeleynoise.com/celesteh/podcast/?page_id=61",
+	version:		0.1, // must be a float
+	organization: 	"University of Birmingham",
+	country: 		"UK",
+	since: 		"2009",
+	helpdoc: "Help/TuningLib.html",
+	url:           "http://www.berkeleynoise.com/celesteh/podcast/?page_id=61",
 
 // If the quark depends on other quarks, you can specify it as a list containing:
 // (1) strings (just the quark name)
-	\dependencies: "MathLib"
-// (2) key->value pairs (name->version)
-//	\dependencies: [("nameOfDependantQuark" -> 1.0)]
-// or (3) arrays with info in this order: [name, version, repositoryBaseUrl]
-//	\dependencies: [["nameOfDependantQuark", 1.0, "https://svn.weirdserver.be/trunk/weirdquarks"]]
+	\dependencies: ["MathLib"]
 
 )
