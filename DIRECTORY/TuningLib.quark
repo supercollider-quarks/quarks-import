@@ -2,9 +2,9 @@
 	name: 		"TuningLib",
 	path: 		"TuningLib", // almost always the same as the quark name
 	summary:		"A set of tools to calculate and manage tunings,including DissonanceCurves",
-	author: 		"Charles CŽleste Hutchins, Jacha Narvesson. Feel free to contribute.",
+	author: 		"Charles CŽleste Hutchins, Jascha Narveson. Feel free to contribute.",
 
-	version:		0.1, // must be a float
+	version:		0.11, // must be a float
 	organization: 	"University of Birmingham",
 	country: 		"UK",
 	since: 		"2009",
