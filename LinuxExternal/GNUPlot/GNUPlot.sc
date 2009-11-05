@@ -330,17 +330,32 @@ GNUPlot {
 	}
 
 	scatter {|data, label="", title|
-		var fh, tmpname; // = this.createTempFile3( data, ns );
+		var tmpname; // = this.createTempFile3( data, ns );
 		defer {
-			tmpname = this.pr_tmpname;
-			this.class.pr_writeTempData2(data, tmpname: tmpname);
-			
-			["GNUPlot.scatter data size: ", data.size].postln;
-			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
-			pipe.putString(  if(data[0].size==3, "splot", "plot") 
-					++ "% with points title %\n".format(tmpname.asString.quote, label.asString.quote));
-			lastdata = [ data ];
-			pipe.flush;     
+			if(data[0][0].isArray){ // we have an array of multiple datasets, not just one
+				var dim = data.size, strs;
+				tmpname = dim.collect{|d| this.pr_tmpname("_"++d)};
+				dim.do{|d| this.class.pr_writeTempData2(data[d], tmpname: tmpname[d]) };
+				
+				title !? {pipe.putString("set title %\n".format(title.asString.quote))};
+				label = if(label.isArray and: {label.isString.not}){ label.collect(_.asString) }{[label.asString]};
+				strs = dim.collect{|d|
+					" % with points title % ".format(tmpname[d].asString.quote, label.wrapAt(d).quote)
+					};
+				pipe.putString((if(data[0][0].size==3, "splot", "plot") 
+						++ strs.join(", ") ++ Char.nl).postln);
+				lastdata = [ data ];
+				pipe.flush;
+			}{
+				tmpname = this.pr_tmpname;
+				this.class.pr_writeTempData2(data, tmpname: tmpname);
+				
+				title !? {pipe.putString("set title %\n".format(title.asString.quote))};
+				pipe.putString(  if(data[0].size==3, "splot", "plot") 
+						++ "% with points title %\n".format(tmpname.asString.quote, label.asString.quote));
+				lastdata = [ data ];
+				pipe.flush;
+			}
 		}
 	}
 	

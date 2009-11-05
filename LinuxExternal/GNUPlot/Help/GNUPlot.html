@@ -262,11 +262,10 @@ g.surf3(~xyz, "undulathon", pm3d: true);
 
 
 <DT><STRONG>scatter( data, label )</STRONG></DT>
-<DD>Creates a scatter plot.</DD>
+<DD>Creates a scatter plot. <strong>data</strong> can be an array of 2D co-ordinates (e.g. [[x0,y0],[x1,y1]...]) or an array of 3D co-ordinates. You can plot multiple datasets on one graph, by providing <strong>data</strong> as an array of arrays of co-ordinates (in which case <strong>label</strong> could either be one label or an array of labels).</DD>
 
 <pre>
 h = GNUPlot.new;
-// scatter wants pairs of values [x,y]
 
 // some 2d random distributions
 (
@@ -277,6 +276,12 @@ h.scatter(d, 'y: exp/x: qgauss')
 (
 d = {{1.0.sum3rand}.dup(2)}.dup(1000);
 h.scatter(d, '2d quasi-gaussian')
+)
+
+// 3d
+(
+d = {{1.0.sum3rand}.dup(3)}.dup(1000);
+h.scatter(d, '3d quasi-gaussian')
 )
 
 // walking-stick map (see Henon map)
@@ -300,6 +305,13 @@ numit.do {|i|
 	res = res.add(wsm.value(gam, del, eps, res[i]));
 };
 h.scatter(res, \wsm);
+)
+
+// Multiple datasets on one 3D scatter plot:
+(
+// We generate random clouds around three pre-defined centroids
+d = [[2,3,2], [-1,0,0], [0,5,0]].collect{|centroid|  {centroid + {2.5.sum3rand}.dup(3)}.dup(500) };
+h.scatter(d, ["fish", "hearts", "dolphins"]);
 )
 </pre>
 
