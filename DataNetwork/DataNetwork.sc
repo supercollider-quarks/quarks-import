@@ -465,7 +465,7 @@ SWDataNode{
 		id = ident;
 		lasttime = 0;
 		slots = Array.fill( maxs, 0 );
-		data = Array.fill( maxs, 0 );
+		data = Array.fill( maxs, 0.0 );
 		// the restart action should contain what should be done if the node does not provide data anymore
 		restartAction = {};
 		action = {};
@@ -482,7 +482,7 @@ SWDataNode{
 
 	data_{ |indata|
 		if ( indata.size == slots.size , {
-			data = indata * scale;
+			data = indata.asFloat * scale;
 			data.do{ |it,i| slots[i].value = it };
 			action.value( data, this );
 			this.setLastTime;

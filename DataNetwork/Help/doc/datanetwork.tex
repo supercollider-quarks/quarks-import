@@ -78,9 +78,9 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/query/setters| & i & port no.& query which nodes the client is the setter of (reply /info/setter) \\
 \verb|/query/subscriptions| & i & port no.& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
 
-\verb|/info/expected| & is & node ID, node label & info about an expected node \\
+\verb|/info/expected| & i(s) & node ID, node label & info about an expected node \\
 \verb|/info/node| & isii & node ID, node label, number of slots, node type & info about a node \\
-\verb|/info/slot| & iis & node ID, slot ID, slot label, slot type & info about a slot \\
+\verb|/info/slot| & iisi & node ID, slot ID, slot label, slot type & info about a slot \\
 \verb|/info/client| & sis & ip, port no., hostname & info about a client \\
 \verb|/info/setter| & isi & node ID, node label, number of slots & info about a node the client is setting \\
 
@@ -114,10 +114,10 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/label/slot| & iiis & port no., node ID, slot ID, slot label & set label to a slot \\
 
 \verb|/remove/node| & ii & port no., node ID & remove a node (only possible if client is setter) \\
-\verb|/removed/node| & ii & port no., node ID & reply to remove a node \\
+\verb|/removed/node| & i & node ID & reply to remove a node \\
 \verb|/remove/all| & i & port no. & remove all nodes the client is a setter of (generates /removed/node messages) \\
 
-\verb|/add/expected| & iiisi & port no., node ID, node size, node label, node type & add an expected node to the network (reply /info/expected) \\
+\verb|/add/expected| & ii(isi) & port no., node ID, node size, node label, node type & add an expected node to the network (reply /info/expected) \\
  &  &  & if node size is given, the node is created as well (and generates a /info/node message) \\
  &  &  & node type is 0: float, 1: string (default is 0) \\
 \hline
