@@ -342,8 +342,8 @@ GNUPlot {
 				strs = dim.collect{|d|
 					" % with points title % ".format(tmpname[d].asString.quote, label.wrapAt(d).quote)
 					};
-				pipe.putString((if(data[0][0].size==3, "splot", "plot") 
-						++ strs.join(", ") ++ Char.nl).postln);
+				pipe.putString(if(data[0][0].size==3, "splot", "plot") 
+						++ strs.join(", ") ++ Char.nl);
 				lastdata = [ data ];
 				pipe.flush;
 			}{
