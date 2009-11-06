@@ -14,6 +14,7 @@ Author:
 
 /*
 	Changes
+		2009-10-29	added SETO_OSCTUIOServer
 		2007-10-29	renamed to SETObject
 */
 
