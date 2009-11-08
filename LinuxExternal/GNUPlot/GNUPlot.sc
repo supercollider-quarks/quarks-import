@@ -330,10 +330,10 @@ GNUPlot {
 	}
 
 	scatter {|data, label="", title|
-		var tmpname; // = this.createTempFile3( data, ns );
+		var tmpname, dim, strs;
 		defer {
 			if(data[0][0].isArray){ // we have an array of multiple datasets, not just one
-				var dim = data.size, strs;
+				dim = data.size;
 				tmpname = dim.collect{|d| this.pr_tmpname("_"++d)};
 				dim.do{|d| this.class.pr_writeTempData2(data[d], tmpname: tmpname[d]) };
 				
