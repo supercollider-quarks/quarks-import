@@ -551,12 +551,14 @@ SWDataNetworkGui{
 		var ysize;
 		ysize = 22 * network.nodes.size + 4;
 		ypos = ypos + 2 + 20;
+		
+		defer {
+			nv2.bounds_( Rect( 0, 0, this.class.nodetype.xsize, ysize ) );
 
-		nv2.bounds_( Rect( 0, 0, this.class.nodetype.xsize, ysize ) );
-
-		if ( nodes.select( { |it| it.node.id == node.id } ).size == 0 ){
-			nodes = nodes.add( this.class.nodetype.newSmall( node, nv2, 2, ypos ).parent_( this ); );
-		};
+			if ( nodes.select( { |it| it.node.id == node.id } ).size == 0 ){
+				nodes = nodes.add( this.class.nodetype.newSmall( node, nv2, 2, ypos ).parent_( this ); );
+			};
+		}
 	}
 
 	updateSlotView{
