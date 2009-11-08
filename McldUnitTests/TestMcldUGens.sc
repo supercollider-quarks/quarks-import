@@ -77,4 +77,69 @@ TestMcldUGens : UnitTest {
 		this.wait{testsIncomplete==0};
 	}
 
+	test_crest {
+		var testsIncomplete = 1;
+		this.bootServer;
+                {
+			// oscillator getting louder sf DC offset, therefore crest getting bigger
+			Crest.kr(SinOsc.ar(SampleRate.ir * 0.25, 0, Line.ar(0,1,1))+1, 100)
+		}.loadToFloatArray(1, Server.default, { |data|
+			// Note: first item ignored since won't be for a full block yet, so doesn't fit pattern
+                        this.assert(data[1..].differentiate.every(_>0.0), 
+				"Crest.kr must increase if sig is getting louder cf DC offset");
+			testsIncomplete = testsIncomplete - 1;
+                });
+                rrand(0.12, 0.35).wait;
+
+		// Wait for async tests
+		this.wait{testsIncomplete==0};
+	} // test_crest
+
+	test_logger_listtrig {
+		var testsIncomplete = 1, d, b, s = this.s;
+		this.bootServer;
+
+		// We generate a random list of triggers, and see if it's similar to the list we get back:
+		d = {1.0.rand}.dup(10).integrate.normalize * 3 + 0.03;
+		b = Buffer.alloc(s, 10);
+		{ Logger.kr(Line.kr(0,4,4, doneAction: 2), ListTrig.kr(d.as(LocalBuf)), b)}.play(s);
+		3.5.wait;
+		b.loadToFloatArray(action: {|data| 
+	                this.assertArrayFloatEquals(data, d, 
+				"Logger result matches ListTrig input", within: 0.0032);
+			testsIncomplete = testsIncomplete - 1;
+                });
+                rrand(0.12, 0.35).wait;
+
+		// Wait for async tests
+		this.wait{testsIncomplete==0};
+		b.free;
+	} // test_logger_listtrig
+
+	test_insideout {
+		var tests = Dictionary[
+			"InsideOut.ar applied twice is noop" 
+				-> {var son = PinkNoise.ar; (son - InsideOut.ar(InsideOut.ar(son)))},
+			"InsideOut.kr applied twice is noop" 
+				-> {var son = PinkNoise.kr; (son - InsideOut.kr(InsideOut.kr(son)))},
+			"InsideOut.ar(_)+_ sums to 1" 
+				-> {var son = PinkNoise.ar; (son + InsideOut.ar(son)).abs - 1},
+			"InsideOut.kr(_)+_ sums to 1" 
+				-> {var son = PinkNoise.kr; (son + InsideOut.kr(son)).abs - 1},
+			];
+		var testsIncomplete = tests.size;
+		this.bootServer;
+		tests.keysValuesDo{|text, func|
+			func.loadToFloatArray(0.4, Server.default, { |data|
+	                        this.assertArrayFloatEquals(data, 0.0, text);
+				testsIncomplete = testsIncomplete - 1;
+                	});
+                	rrand(0.12, 0.35).wait;
+		};
+
+		// Wait for async tests
+		this.wait{testsIncomplete==0};
+	} // test_insideout
+
 } // end class
+
