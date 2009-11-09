@@ -1,5 +1,6 @@
 /*
 s.boot;
+UnitTest.gui;
 TestMcldUGens.run
 */
 TestMcldUGens : UnitTest {
@@ -140,6 +141,36 @@ TestMcldUGens : UnitTest {
 		// Wait for async tests
 		this.wait{testsIncomplete==0};
 	} // test_insideout
+	
+	test_tree {
+		var testsIncomplete = 1, s = this.s, d, p, c, t;
+		this.bootServer;
+		d = #[
+		/* xoff,yoff, xvec,yvec, lisl, lidx, risl, ridx */
+		   [0.53, 0.53, -0.7, 0.4,    0,    1,    0,    2],
+		   [0.33, 0.73,  0.4, 0.56,   1,    1,    1,    2],
+		   [0.53, 0.23, -0.8,-0.81,   1,    3,    1,    4]
+		   // Note: added some extra decimal places above, since the difference in numerical precision 
+		   // can lead to some near-zero values being classified differently, unavoidable.
+		];
+		
+		p = (0, 0.1 .. 1).collect{|y| (0, 0.1 .. 1).collect{|x| [x,y]}}.flatten;
+		
+		// language-side classification:
+		c = p.collect{|datum| PlaneTree.classify(datum, d) };
+		
+		// now if we do the server-side classification, it should match:
+		t = Buffer.loadCollection(s, d.flat, d[0].size);
+		0.3.wait;
+		s.sync;
+		{
+			PlaneTree.kr(t, Duty.kr(ControlDur.ir, 0, [Dseq(p.collect(_[0])), Dseq(p.collect(_[1]))]))
+		}.loadToFloatArray(p.size * s.options.blockSize / s.sampleRate, s, { |data|
+     		this.assertArrayFloatEquals(data, c, "PlaneTree server-side and language-side classifications match");
+			testsIncomplete = testsIncomplete - 1;
+		});
+		// Wait for async tests
+		this.wait{testsIncomplete==0};
+	}
 
 } // end class
-
