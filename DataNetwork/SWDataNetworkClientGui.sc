@@ -51,36 +51,42 @@ SWDataNodeClientGui : SWDataNodeGui {
 	}
 
 	setSetter{ |onoff|
-		if ( onoff ){
-			cw.background = Color(1.0,1.0,0.75,1.0);
-		}{
-			cw.background = Color.white;
-		};
-		if ( bigNode.notNil ){ bigNode.setSetter( onoff ); };
-		sub.enabled = onoff.not;
-		get.enabled = onoff.not;
-		slots.do{ |it| 
-			it.sub.enabled = onoff.not;
-			it.get.enabled = onoff.not;
-		};		
+		defer{
+			if ( onoff ){
+				cw.background = Color(1.0,1.0,0.75,1.0);
+			}{
+				cw.background = Color.white;
+			};
+			if ( bigNode.notNil ){ bigNode.setSetter( onoff ); };
+			sub.enabled = onoff.not;
+			get.enabled = onoff.not;
+			slots.do{ |it| 
+				it.sub.enabled = onoff.not;
+				it.get.enabled = onoff.not;
+			};
+		}
 	}
 
 	setSub{ |onoff|
-		sub.value = onoff;
-		if ( bigNode.notNil ){ bigNode.setSub( onoff ); };
-		// subscribed to node, no need to subscribe to slot;
-		get.enabled = onoff.booleanValue.not;
-		slots.do{ |it| 
-			it.sub.enabled = onoff.booleanValue.not;
-			it.get.enabled = onoff.booleanValue.not;
+		defer{ 
+			sub.value = onoff;
+			if ( bigNode.notNil ){ bigNode.setSub( onoff ); };
+			// subscribed to node, no need to subscribe to slot;
+			get.enabled = onoff.booleanValue.not;
+			slots.do{ |it| 
+				it.sub.enabled = onoff.booleanValue.not;
+				it.get.enabled = onoff.booleanValue.not;
+			};
 		};		
 	}
 
 	setSlotSub{ |id,onoff|
-		if ( bigNode.notNil ){ bigNode.setSlotSub( id, onoff ); };
-		if ( slots.size > 0 ){
-			slots[id].sub.value = onoff;
-			slots[id].get.enabled = onoff.booleanValue.not;
+		defer {
+			if ( bigNode.notNil ){ bigNode.setSlotSub( id, onoff ); };
+			if ( slots.size > 0 ){
+				slots[id].sub.value = onoff;
+				slots[id].get.enabled = onoff.booleanValue.not;
+			}
 		}
 	}
 
@@ -194,17 +200,23 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 
 	setSetter{ |nodeid|
 		var mynode = nodes.detect{ |it| it.node.id == nodeid };
-		mynode.setSetter( true );
+		if ( mynode.notNil ){
+			mynode.setSetter( true );
+		};
 	}
 
 	setSlotSub{ |slotid,sub|
 		var mynode = nodes.detect{ |it| it.node.id == slotid[0] };
-		mynode.setSlotSub( slotid[1], sub );		
+		if ( mynode.notNil ){
+			mynode.setSlotSub( slotid[1], sub );
+		};
 	}
 
 	setNodeSub{ |nodeid,sub|
 		var mynode = nodes.detect{ |it| it.node.id == nodeid };
-		mynode.setSub( sub );
+		if ( mynode.notNil ){
+			mynode.setSub( sub );
+		};
 	}
 
 	updateSubscriptions{

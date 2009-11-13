@@ -544,7 +544,7 @@ SWDataNetworkGui{
 	}
 
 	setInfo{ |string|
-		info.string_( string );
+		defer{ info.string_( string ); };
 	}
 
 	addNodeSmall{ |node|
