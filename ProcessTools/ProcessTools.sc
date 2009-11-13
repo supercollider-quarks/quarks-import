@@ -20,7 +20,7 @@ unixCmdInferPID { |action|
 
 		0.1.wait;
 		
-		/* Sometimes useful for debug:
+		/* Sometimes useful for debug: 
 		lines = ("ps -x | grep" + cmdname + "").unixCmdGetStdOut;
 		"------------------------".postln;
 		"unixCmdGetStdOut RESULT:".postln;
@@ -32,7 +32,7 @@ unixCmdInferPID { |action|
 		lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
 		//lines = ("ps -xc -o \"pid command\" | grep" + cmdname + "| grep -v grep\ " + cmdname + "| sed 's/" ++ cmdname ++ "//; s/ //g'").unixCmdGetStdOut;
 		postpids = if(lines.isNil, [], {lines.split($\n).collect(_.asInteger)});
-		//("PIDS post: " + postpids).postln;
+		("PIDS post: " + postpids).postln;
 		
 		// Can we spot a single addition?
 		//diff = difference(postpids, prepids).select(_ > 0);

@@ -200,7 +200,7 @@ Tendency {
 
 
 	// may be broken		
-	embedInStream {| inval, dist |
+	embedInStream {| inval, dist, parA, parB |
 		var startTime, thisVal, thisTime;
 		startTime = thisThread.beats;
 		loop {

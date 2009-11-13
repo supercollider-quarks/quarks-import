@@ -25,7 +25,7 @@ OscGroupClient {
 			username + password + groupname + grouppassword).unixCmdInferPID({arg id;
 				pid = id;
 				pid.notNil.if({
-					("Successfully joined the OscGroup at" + serveraddress).postln;
+					("OscGroupClient successfully started, attempting to connect to " + serveraddress).postln;
 					netAddr = NetAddr("localhost", localtxport);
 					UI.registerForShutdown({("kill" + pid).systemCmd});
 					}, {
@@ -45,6 +45,11 @@ OscGroupClient {
 		msg[0] = this.formatSymbol(msg[0]);
 		netAddr.sendMsg(*msg);
 	}
+	
+	sendMsgArray {arg symbol, array;
+		symbol = this.formatSymbol(symbol);
+		netAddr.sendMsg(symbol, *array)
+		}
 	
 	addResp { arg id, function;
 		pid.notNil.if({
