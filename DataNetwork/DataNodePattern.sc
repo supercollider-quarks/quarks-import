@@ -40,7 +40,7 @@ PdataSlot : Pattern {
 						});
 					});
 				ret;
-			}.yield;
+			}.unbubble.yield;
 
 		});
 
@@ -79,7 +79,7 @@ PdataNode : Pattern {
 						ret = network.nodes[ it ].data;
 					});
 				ret;
-			}.flatten.yield;
+			}.flatten.unbubble.yield;
 
 		});
 
@@ -124,7 +124,7 @@ PdataKey : Pattern {
 						}
 					});
 				ret;
-			}.flatten.yield;
+			}.flatten.unbubble.yield;
 		});
 		^inval;
 	}
