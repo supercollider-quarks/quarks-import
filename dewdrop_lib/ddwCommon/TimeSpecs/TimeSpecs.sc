@@ -29,7 +29,7 @@ NilTimeSpec {   // always schedules for now
 	}
 	quant { ^0 }
 	phase { ^0 }
-	offset { ^0 }
+	offset { ^nil }
 	offset_ {}
 	timingOffset { ^this.offset }
 	timingOffset_ { |offset| this.offset_(offset) }
