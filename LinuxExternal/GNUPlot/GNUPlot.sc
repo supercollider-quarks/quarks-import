@@ -360,31 +360,25 @@ GNUPlot {
 	}
 	
 	/*
-	boxplot API is modelled after matlab's function - send it data and it'll find the 0/25/50/75/100 percentiles,
+	boxplot API is modelled after matlab's function - send it data and it'll find the 5/25/50/75/95 percentiles,
 	and then it'll boxplot them.
-	[{99.0.rand}.dup(100), {10.0.rand.squared}.dup(80)].collect{|d| d.percentile([0, 0.25, 0.5, 0.75, 1])}
 	GNUPlot.new.boxplot([{99.0.rand}.dup(100), {10.0.rand.squared}.dup(80), {5.0.rand.squared + 20}.dup(80)], "test", title:"box-and-whisker plot adding median value as bar")
-
-
-plot 'candlesticks.dat' using 1:3:2:6:5 with candlesticks lt 3 lw 2 title 'Quartiles', \
-     ''                 using 1:4:4:4:4 with candlesticks lt -1 lw 2 notitle
-
 	*/
-	boxplot {|data, label="", title, extracmds|
+	boxplot {|data, label="", title, grplabels, extracmds|
 		var fh, tmpname, pciles;
-		pciles = data.collect{|d, index| [index+1] ++ d.percentile([0, 0.25, 0.5, 0.75, 1])};
+		pciles = data.collect{|d, index| [index+1] ++ d.percentile([0.05, 0.25, 0.5, 0.75, 0.95])};
 		defer {
 			tmpname = this.pr_tmpname;
 			this.class.pr_writeTempData2(pciles, tmpname: tmpname);
 			
-			["GNUPlot.boxplot data size: ", data.size].postln;
 			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
+			grplabels !? {pipe.putString("set xtics (" ++ grplabels.collect{|alabel, index| alabel.quote + (index+1) }.join(", ") ++ ")\n")};
 			extracmds !? {pipe.putString(extracmds ++ "\n")};
 			pipe.putString("set boxwidth 0.2 absolute\n");
 			pipe.putString("set xrange [ 0.00000 : %.0000 ] noreverse nowriteback\n".format(data.size+1));
 			pipe.putString("set style fill empty\n");
-			pipe.putString("plot % using 1:3:2:6:5 with candlesticks lt3 lw 2 title %,
-			                    '' using 1:4:4:4:4 with candlesticks lt -1 lw 2 notitle\n".format(tmpname.asString.quote, label.asString.quote).postln);
+			pipe.putString(("plot % using 1:3:2:6:5 with candlesticks lt 3 lw 2 title %, "
+			                 ++ "'' using 1:4:4:4:4 with candlesticks lt -1 lw 2 notitle\n").format(tmpname.asString.quote, label.asString.quote));
 			lastdata = [ data ];
 			pipe.flush;
 		}
