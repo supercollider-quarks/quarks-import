@@ -68,13 +68,13 @@ AminoacidPattern : CodonPattern {
 	}
 }
 
-ATest : AminoacidPattern  {
+/*ATest : AminoacidPattern  {
 	test {
 		^this.translate(\ccc)
 	}
 
 }
-
+*/
 // use this to stream the 
 AminoacidNames : ProteinBioSynthesis {
 	var <>pattern;
