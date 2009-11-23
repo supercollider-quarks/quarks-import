@@ -602,7 +602,7 @@ Voicer {		// collect and manage voicer nodes
 				adjustLengthToRealDelta: { ~voicer.isKindOfByName(\MonoPortaVoicer) }
 			));
 	
-			Event.default[\eventTypes].put(\voicerNote, #{|server|
+			Event.addEventType(\voicerNote, #{|server|
 				var	lag, strum, sustain, i, timingOffset = ~timingOffset ? 0, releaseGate,
 					voicer = ~voicer;
 				
