@@ -508,6 +508,15 @@ SWDataNetworkOSC{
 		^clients.select( { |it| it.addr == addr } ).first;
 	}
 
+	welcomeClientBack{ |client|
+		client.nodeSubs.do{ |it|
+			if ( network.nodes[it].notNil){
+				client.newNode( network.nodes[it] );
+			}
+		};
+		client.welcomeBack;
+	}
+
 	addClient{ |addr,name|
 		var there,newclient;
 		there = this.findClient( addr );
@@ -521,6 +530,7 @@ SWDataNetworkOSC{
 				// address may have changed
 				there.addr = addr;
 				clients = clients.add( there );
+				this.welcomeClientBack( there );
 				if ( gui.notNil ){ 
 					gui.addClient( there );
 				};
@@ -801,7 +811,11 @@ SWDataNetworkOSC{
 				setters.put( msg[0], addr );
 			});
 		if ( setters.at( msg[0] ) == addr, {
-			network.addExpected( msg[0], msg[2], msg[1], msg[3] );
+			switch( msg.size,
+				4, { network.addExpected( msg[0], msg[2], msg[1], msg[3] ); },
+				3, { network.addExpected( msg[0], msg[2], msg[1] ); },
+				1, { network.addExpected( msg[0], size: msg[1] ); }
+			);
 			if ( msg[1].notNil, {
 				client = this.findClient( addr );
 				if ( client.notNil ){
@@ -938,7 +952,7 @@ SWDataNetworkOSCClient{
 			existing.do{ |it| setters.remove( it ) };
 		};
 		setters.add( node );
-		addr.sendMsg( '/info/setter', node.id, node.key.asString, node.slots.size );
+		addr.sendMsg( '/info/setter', node.id, node.key.asString, node.slots.size, node.type );
 	}
 
 	setterQuery{
@@ -946,10 +960,19 @@ SWDataNetworkOSCClient{
 			^false;
 		});
 		setters.do{ |it|
-			addr.sendMsg( '/info/setter', it.id, it.key.asString, it.slots.size );
+			addr.sendMsg( '/info/setter', it.id, it.key.asString, it.slots.size, it.type );
 		};
 		^true;
 	}
+
+	welcomeBack{
+		this.setterQuery;		
+		this.subscriptionQuery;
+		setters.do{ |it|
+			this.newNode( it );
+		};
+	}
+
 
 	checkForSetter{ |node|
 		^setters.includes(node);

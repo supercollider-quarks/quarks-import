@@ -38,25 +38,36 @@ The general files will be put in /var/www. You have to make this directory
 writable by the user by executing (as root)<br>
 
 <pre>
-cd /var/www
-chmod 775 .
-chgrp netdev .
+$ cd /var/www
+$ chmod 775 .
+$ chgrp netdev .
 </pre>
 
 Assuming that the user running SuperCollider is member of the group netdev.
 You can check this by:
 <pre>
-groups
+$ groups
 </pre>
 </P>
 <P>
 
 To add yourself to the group, execute as root (with instead of "nescivi" your
 username):
-<pre>adduser nescivi netdev</pre>
+<pre>$ adduser nescivi netdev</pre>
 You may need to logout and log back in for this to take effect.
-
 </P>
+
+<P>
+You should also make sure that apache is running. The following command should give you a number of processes named apache2
+<pre>
+$ ps -A | grep apache
+</pre>
+If it is not running, you can start it with (path shown as it is on Debian)
+<pre>
+$ (sudo) /etc/init.d/apache2 start
+</pre>
+</P>
+
 <P>
 On OSX the default path for http files is: /Library/WebServer/Documents/.
 You may have to enable "Web Sharing" in the "Sharing" settings in the System

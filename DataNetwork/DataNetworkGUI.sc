@@ -19,7 +19,8 @@ SWDataSlotGui{
 		StartUp.add( {
 		Platform.case( 
 				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
-				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
+				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
+				\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
 		} );
 	}
@@ -218,7 +219,8 @@ SWDataNodeGui{
 		StartUp.add( { 
 			Platform.case( 
 				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
-				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
+				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
+				\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
 			} );
 		slottype = SWDataSlotGui;
@@ -522,7 +524,9 @@ SWDataNetworkGui{
 			nodes = network.nodes.asSortedArray.collect{ |it,key|
 				//				it.postln;
 				ypos = ypos + 2 + 20;
-				this.class.nodetype.newSmall( network.nodes.at( it[1].id ), nv2, 2, ypos ).parent_( this );
+				this.class.nodetype.newSmall( 
+					network.nodes.at( it[1].id ), nv2, 2, ypos 
+				).parent_( this );
 
 			};
 		};
@@ -536,11 +540,16 @@ SWDataNetworkGui{
 
 		network.gui = this;
 
+		this.updateSubscriptions;
+
 		w.onClose = { network.gui = nil };
 	}
 
 	// overload in subclass
 	addQueryButtons{
+	}
+
+	updateSubscriptions{
 	}
 
 	setInfo{ |string|
@@ -549,14 +558,15 @@ SWDataNetworkGui{
 
 	addNodeSmall{ |node|
 		var ysize;
-		ysize = 22 * network.nodes.size + 4;
-		ypos = ypos + 2 + 20;
-		
 		defer {
-			nv2.bounds_( Rect( 0, 0, this.class.nodetype.xsize, ysize ) );
-
 			if ( nodes.select( { |it| it.node.id == node.id } ).size == 0 ){
-				nodes = nodes.add( this.class.nodetype.newSmall( node, nv2, 2, ypos ).parent_( this ); );
+				ysize = 22 * network.nodes.size + 4;
+				ypos = ypos + 2 + 20;
+				nv2.bounds_( Rect( 0, 0, this.class.nodetype.xsize, ysize ) );
+				nodes = nodes.add( 
+					this.class.nodetype.newSmall( node, nv2, 2, ypos )
+					.parent_( this );
+				);
 			};
 		}
 	}
@@ -619,7 +629,13 @@ SWDataNetworkGui{
 		if ( editKey.not ){key.string_( network.spec.name.asString );};
 		nodes.do{ |it| it.updateVals };
 		bigNodes.do{ |it| it.updateVals };
+		this.updateReg;
+		this.updateSubscriptions;
 		//	}.defer;
+	}
+
+	updateReg{
+		// overload in subclass
 	}
 
 	hide{
