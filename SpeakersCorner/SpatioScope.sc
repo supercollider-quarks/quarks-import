@@ -4,7 +4,9 @@ SpatioScope {
 	var <numChannels, <offset = 0; 
 	var <proxy, <resp, <skipjack;
 	var <parent, <startBtn, <stopBtn, <ampViews, <magSlider, <>redLevel=0.95, <>magnify=1;
-	
+
+	var <rate;
+
 	*new { arg locations, server, parent, bounds;
 		locations = locations ?? { [(-0.5 @ -0.5), (0.5 @ -0.5), (0.5@0.5), (-0.5@0.5) ] }; 
 		server = server ? Server.default; 
@@ -15,7 +17,6 @@ SpatioScope {
 			// .start
 	}
 	
-	
 	init { |argBounds|
 		bounds = argBounds ?? { Rect(0,0,410,410) };
 		numChannels = locations.size; 
@@ -25,11 +26,13 @@ SpatioScope {
 			Amplitude.kr(InFeedback.ar(this.offset, this.numChannels), 0, 0.5)
 		};
 
+		rate = \audio;
+
 		resp.remove;
 		resp = OSCresponderNode(server.addr, '/c_set', { arg time, r, msg; 
 			var amps;
 			// check if this reply message is for this spatioscope
-			if ( msg[1] == proxy.index ){
+			if ( msg[1] == this.proxy.index ){
 				amps = msg.copyToEnd(1).clump(2).flop[1];
 				{  this.amps_(amps * (magnify ? 1)); }.defer;
 			};
@@ -43,11 +46,22 @@ SpatioScope {
 			autostart: false
 		);
 	}
+
+	maxBusNum {
+		^if ( rate == \audio ){
+			server.options.numAudioBusChannels
+		} {
+			server.options.numControlBusChannels
+		} - this.numChannels;
+	}
+
 	offset_ { |inChan=0|
-		if (inChan.inclusivelyBetween(0, 100)) { 
+		if (inChan.inclusivelyBetween(0, this.maxBusNum ) ) { 
 			offset = inChan; 
 			if (skipjack.task.isPlaying) { this.stop.start };
-		}
+		}{
+			"new offset out of range of valid busnumbers!".warn;
+		};
 	}
 	
 	gui { |argParent| 
@@ -119,6 +133,38 @@ SpatioScope {
 		locs = [ nums, radii, angleOffsets ].flop.collect { |list| this.ringPos(*list) }.flat; 
 		
 		^this.new(locs, server, parent, bounds);
+	}
+
+	// grid speaker positions
+	*gridPos{ |numx = 2, numy = 6|
+		
+		^Array.series( numy, 1/(2*numy), 1/numy ).collect{ |y|
+			Array.series( numx, 1/(2*numx), 1/numx ).collect{ |x|
+				Point(x*2-1,y*2-1);
+			}
+		}.flatten;
+	}
+
+	*grid { |numx=2, numy=6, server, parent, bounds|
+		var locs = this.gridPos(numx, numy);
+		^this.new(locs, server, parent, bounds);
+	}
+
+
+	// listen to control buses
+	krListen{
+		rate = \control;
+		proxy.source = {
+			Amplitude.kr(In.kr(this.offset, this.numChannels), 0, 0.5)
+		};
+	}
+
+	// listen to audio rate buses
+	arListen{
+		rate = \audio;
+		proxy.source = {
+			Amplitude.kr(InFeedback.ar(this.offset, this.numChannels), 0, 0.5)
+		};
 	}
 			
 	start {

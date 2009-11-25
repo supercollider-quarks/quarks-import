@@ -20,11 +20,11 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><span class="s1"><b>asMapTable</b></span><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><b>make a table for remapping ranges by breakpoints</b></p>
 <p class="p2"><br></p>
-<p class="p1">asMapTable converts a table given as breakpoints<span class="Apple-converted-space"> </span></p>
-<p class="p1">into a signal that can be used by Shaper UGen<span class="Apple-converted-space"> </span></p>
-<p class="p1">for remapping controllers.<span class="Apple-converted-space"> </span></p>
+<p class="p1">asMapTable converts a table given as breakpoints</p>
+<p class="p1">into a signal that can be used by Shaper UGen</p>
+<p class="p1">for remapping controllers.</p>
 <p class="p3"><br></p>
-<p class="p1">E.g., remap an unevenly distributed speaker setup,<span class="Apple-converted-space"> </span></p>
+<p class="p1">E.g., remap an unevenly distributed speaker setup,</p>
 <p class="p1">given here in angles between 0 and 2 (as for PanAz):</p>
 <p class="p4"><br></p>
 <p class="p5">inpos -&gt; outpos</p>
@@ -35,14 +35,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">1.5 -&gt; 1.6</p>
 <p class="p5">2.0 -&gt; 2.0 (same as 0.0)</p>
 <p class="p4"><br></p>
-<p class="p5">a = [0, 0.3, 0.7, 1, 1.5, 2.0].asMapTable;<span class="Apple-converted-space"> </span></p>
+<p class="p5">a = [0, 0.3, 0.7, 1, 1.5, 2.0].asMapTable;</p>
 <p class="p5">a.plot;</p>
-<p class="p5">s.boot;<span class="Apple-converted-space"> </span></p>
+<p class="p4"><br></p>
+<p class="p1">// 5.1 surround setup</p>
+<p class="p5">a = ([ 0, 30, 110, 360 - 110, 360 - 30, 360 ]/180).asMapTable;</p>
+<p class="p5">a.plot</p>
+<p class="p4"><br></p>
+<p class="p5">s.boot;</p>
 <p class="p4"><br></p>
 <p class="p5">b = Buffer.sendCollection(s, a.asWavetable, 1);</p>
 <p class="p5">b.getn(0, 255, { |a| a.postln });</p>
 <p class="p4"><br></p>
-<p class="p5">c = { |inpos=0.0|<span class="Apple-converted-space"> </span></p>
+<p class="p5">c = { |inpos=0.0|</p>
 <p class="p5"><span class="Apple-tab-span">	</span>Shaper.kr(b.bufnum, inpos.wrap(0, 2)).poll;</p>
 <p class="p5">}.play;</p>
 <p class="p4"><br></p>
@@ -54,6 +59,5 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">c.set(\inpos, 0.6);</p>
 <p class="p5">c.set(\inpos, 0.99);</p>
 <p class="p5">c.set(\inpos, 1.0);</p>
-<p class="p5">*/</p>
 </body>
 </html>
