@@ -99,10 +99,10 @@ SWDataNodeClientGui : SWDataNodeGui {
 
 	bigNode_{ |bn|
 		super.bigNode_( bn );
-		if ( parent.notNil ){ parent.updateSubscriptions }{
-			bigNode.setSub( sub.value );
-			bigNode.setSetter( sub.enabled.not );
-		}
+		//	if ( parent.notNil ){ parent.updateSubscriptions }{
+		bigNode.setSub( sub.value );
+		bigNode.setSetter( sub.enabled.not );
+		//	}
 	}
 
 }
@@ -113,6 +113,10 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 	classvar <slottype;
 	classvar <nodetype;
 
+	var <regButton;
+
+	var <>subsetChanged = false;
+
 	*initClass{
 		slottype = SWDataSlotClientGui;
 		nodetype = SWDataNodeClientGui;
@@ -121,15 +125,17 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 
 	addQueryButtons{
 		var bs = 85;
-		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
-			[ [ "Register", Color.blue ] ] ).action_( {
-				|but| network.register;
+		subsetChanged = true;
+		regButton = GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
+			[ [ "Register", Color.blue ],["Unregister", Color.red ] ] ).action_( {
+				|but| if ( but.value == 1 ){ network.register; }{ network.unregister };
 			}).font_( font );
+		/*
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Unregister", Color.blue ] ] ).action_( {
 				|but| network.unregister;
 			}).font_( font );
-
+		*/
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query all", Color.blue ] ] ).action_( {
 				|but| 
@@ -219,25 +225,33 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 		};
 	}
 
+	updateReg{
+		regButton.value = network.registered.binaryValue;
+	}
+
 	updateSubscriptions{
-		nodes.do{ |it|
-			it.setSub( 0 );
-			it.setSetter( false );
-			it.slots.do{ |jt,j|
-				it.setSlotSub( j, 0 );
+		if ( subsetChanged ){
+			// resets all:
+			nodes.do{ |it|
+				it.setSub( 0 );
+				it.setSetter( false );
+				it.slots.do{ |jt,j|
+					it.setSlotSub( j, 0 );
+				};
 			};
-		};
-		network.subscriptions.do{ |it|
-			//it.postln;
-			if ( it.isArray ){ // slot
-				this.setSlotSub( it, 1 );
-			}{ // node
-				this.setNodeSub( it, 1 );
-			}
-		};
-		network.setters.do{ |it|
-			this.setSetter( it );
-		};
+			network.subscriptions.do{ |it|
+				//it.postln;
+				if ( it.isArray ){ // slot
+					this.setSlotSub( it, 1 );
+				}{ // node
+					this.setNodeSub( it, 1 );
+				}
+			};
+			network.setters.do{ |it|
+				this.setSetter( it );
+			};
+			subsetChanged = false;
+		}
 	}
 
 }

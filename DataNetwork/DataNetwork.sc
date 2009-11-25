@@ -128,7 +128,7 @@ SWDataNetwork{
 		if ( type == -1){
 			ret = false;
 		}{
-			ret = (sz > 0) and: (expectedNodes.indexOf( id ).notNil);
+			ret = ( (sz > 0) and: (expectedNodes.indexOf( id ).notNil) and: (nodes.at(id).isNil ) );
 		};
 		if ( ret ) {
 			if ( type == 0 ){
@@ -172,7 +172,7 @@ SWDataNetwork{
 
 	/// -------- expected nodes -----------
 
-	addExpected{ |id,label,size=nil,type=0|
+	addExpected{ |id,label=nil,size=nil,type=0|
 		if ( this.isExpected( id ).not, {
 			expectedNodes = expectedNodes.add( id );
 		});
@@ -479,6 +479,10 @@ SWDataNode{
 	}
 
 	// -------- slots and data -------
+
+	size{
+		^slots.size;
+	}
 
 	data_{ |indata|
 		if ( indata.size == slots.size , {
@@ -824,7 +828,9 @@ SWDataNetworkSpec{
 	// --- the methods below can all be accessed from the network directly ----
 
 	add{ |key, slot|
-		map.put( key, slot );
+		if ( key.asSymbol != 'nil' ){
+			map.put( key, slot );
+		};
 		if ( this.at( key ).notNil, {
 			this.at( key ).key = key;
 		});

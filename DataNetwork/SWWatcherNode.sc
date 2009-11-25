@@ -14,7 +14,7 @@ SWWatcherNode{
 		function = func;
 		watcher = SkipJack.new(
 			{ network.setData( id, function.value ) },
-			dt ).stop;
+			dt, autostart: false );
 	}
 
 	start{
@@ -47,7 +47,7 @@ SWBusWatcherNode{
 		network = netw;
 		watcher = SkipJack.new(
 			{ bus.getn( bus.numChannels, { |v| network.setData( id, v ) } ) },
-			dt ).stop;
+			dt, autostart: false );
 		network.setData( id, Array.fill( bus.numChannels, 0 ) );
 		this.node.bus_( bus );
 	}

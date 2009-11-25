@@ -18,12 +18,12 @@ SWDataNetworkClient : SWDataNetwork{
 	}
 
 	myInit{ |hst,nm="",reg=true|
-		var ip,prefix;
+		var ip,prefix,foundHost;
 		name = nm;
 		lasttime = Process.elapsedTime;
 		host = NetAddr( hst, NetAddr.langPort);
 
-		this.findHost;
+		foundHost = this.findHost;
 
 		if ( thisProcess.platform.name == \linux, {
 			prefix = "/sbin/";
@@ -38,8 +38,12 @@ SWDataNetworkClient : SWDataNetwork{
 
 		this.addResponders;
 
-		if ( reg ){
+		if ( reg and: foundHost ){
 			this.register;
+		}{
+			if ( reg ){ // make sure that we start worrying right away, so we keep looking for the host
+				lasttime = lasttime - worrytime;
+			}
 		};
 
 		watcher = SkipJack.new( { this.worryAboutTime }, 1, name: "SWDataNetworkClient", autostart: true );			
@@ -84,7 +88,7 @@ SWDataNetworkClient : SWDataNetwork{
 			}),
 			OSCresponderNode( host, '/info/expected', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				this.addExpected( msg[1], msg[2], nil, true );				
+				this.addExpected( msg[1], msg[2], fromnw: true );				
 			}),
 			OSCresponderNode( host, '/info/node', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
@@ -161,7 +165,11 @@ SWDataNetworkClient : SWDataNetwork{
 				}
 			};
 			setters.do{ |it|
-				this.addExpected( it, spec.findNode( it ) );
+				if ( nodes[it].notNil ){
+					this.addExpected( it, spec.findNode( it ), nodes[it].size, nodes[it].type );
+				}{
+					this.addExpected( it, spec.findNode( it ) );
+				};
 			};
 		});
 	}
@@ -171,7 +179,13 @@ SWDataNetworkClient : SWDataNetwork{
 		var port;
 		if ( ip.isNil, { ip = host.hostname });
 		port = ("curl -s http://" ++ ip ++ "/SenseWorldDataNetwork").unixCmdGetStdOut.asInteger;
-		host.port = port;
+		if ( port == 0 ){
+			"The port I found is 0. This may be an indication that the http access to the host machine is not set up correctly. Try and visit: http://" ++ ip ++ "/SenseWorldDataNetwork to verify this. If you cannot reach that page, then check the helpfile [SW_Apache_setup] for instructions to make the http setup on the host work properly".warn;
+			^false;
+		}{
+			host.port = port;
+			^true;
+		}
 	}
 
 	lostHost{
@@ -180,8 +194,13 @@ SWDataNetworkClient : SWDataNetwork{
 	}
 
 	tryReconnect{
-		this.findHost;
-		this.resetHost;
+		if ( this.findHost ){
+			this.resetHost;
+		};
+	}
+
+	osc_{
+		"cannot create a osc-datanetwork-host from a client".warn;
 	}
 
 	// ------------
@@ -194,37 +213,33 @@ SWDataNetworkClient : SWDataNetwork{
 	}
 
 	// overloaded from base class
-	addExpected{ |id,label,size=nil,fromnw=false|
+	addExpected{ |id,label,size=nil,type=0,fromnw=false|
 		if ( fromnw.not, {
-			host.sendMsg( '/add/expected', NetAddr.langPort, id, size, label );
+			host.sendMsg( '/add/expected', NetAddr.langPort, id, size, label, type );
 		},{
-			if ( this.isExpected( id ).not, {
-				expectedNodes = expectedNodes.add( id );
-			});
-			if ( label.notNil and: (label.asSymbol != \0 ), {
-				this.add( label, id, fromnw );
-			},{
-				// maybe the label is already in the spec
-				label = spec.findNode( id );
-			});
-			if ( size.notNil, {
-				this.setData( id, Array.fill( size, 0 ), fromnw );
-			});
+			// use the method from the super-class
+			super.addExpected( id, label, size, type );
 		});
 	}
 
 	// overloaded from base class
 	setData{ |id,data,fromnw=false|
-		var type;
-		var ret = true;
+		//	var type;
+		var ret;
 		if ( verbose > 1, { [id,data].postln; } );
+		
+		ret = super.setData( id, data );
+		
+		/*
 		if ( nodes[id].isNil, {
 			type = this.checkDataType( data );
 			ret = this.registerNode( id, data.size, type );
 			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
 		});
-		if ( ret ) { 
-			nodes[id].data = data;
+		*/
+
+		if ( ret == 0 ) { 
+			//	nodes[id].data = data;
 			if ( fromnw.not, {
 				this.sendData( id, data );
 			});
@@ -234,7 +249,8 @@ SWDataNetworkClient : SWDataNetwork{
 	// overloaded from base class
 	add{ |key, slot,fromnw=false|
 		var ns;
-		spec.add( key, slot );
+		super.add( key, slot );
+		//	spec.add( key, slot );
 		if ( fromnw.not, {
 			ns = this.at( key );
 			if ( ns.isKindOf( SWDataNode ),{
@@ -249,11 +265,11 @@ SWDataNetworkClient : SWDataNetwork{
 	// overloaded from base class
 	removeNode{ |id,fromnw=false|
 		if ( verbose > 0, { ("remove" + id).postln; });
-		if ( fromnw.not )
-		{ 
-			host.sendMsg( '/remove/node', NetAddr.langPort, id.asInteger );}
-		{
-			nodes.removeAt( id.asInteger );			
+		if ( fromnw.not ){ 
+			host.sendMsg( '/remove/node', NetAddr.langPort, id.asInteger );
+		}{
+			super.removeNode( id.asInteger );
+			//		nodes.removeAt( id.asInteger );			
 		};	
 	}
 
@@ -389,25 +405,29 @@ SWDataNetworkClient : SWDataNetwork{
 	unsubscribeNodeInfo{ |msg|
 		("unsubscribed node"+msg).postln;
 		subscriptions.remove( msg[1]);
-		if ( gui.notNil ){ gui.setNodeSub( msg[1], 0 )};
+		//		if ( gui.notNil ){ gui.setNodeSub( msg[1], 0 )};
+		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	unsubscribeSlotInfo{ |msg|
 		("unsubscribed slot"+msg).postln;
 		subscriptions.remove( [msg[1],msg[2]] );
-		if ( gui.notNil ){ gui.setSlotSub( [msg[1],msg[2]], 0 )};
+		//		if ( gui.notNil ){ gui.setSlotSub( [msg[1],msg[2]], 0 )};
+		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	subscribeNodeInfo{ |msg|
 		("subscribed node"+msg).postln;
 		subscriptions.add( msg[1]);
-		if ( gui.notNil ){ gui.setNodeSub( msg[1], 1 )};
+		//		if ( gui.notNil ){ gui.setNodeSub( msg[1], 1 )};
+		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	subscribeSlotInfo{ |msg|
 		("subscribed slot"+msg).postln;
 		subscriptions.add( [msg[1],msg[2]] );
-		if ( gui.notNil ){ gui.setSlotSub( [msg[1],msg[2]], 1 )};
+		//		if ( gui.notNil ){ gui.setSlotSub( [msg[1],msg[2]], 1 )};
+		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	clientInfo{ |msg|
@@ -420,7 +440,8 @@ SWDataNetworkClient : SWDataNetwork{
 		setters.add( msg[0]);
 		if ( gui.notNil ){ 
 			gui.setInfo( "setter of node:" + msg );
-			gui.setSetter( msg[0] );
+			gui.subsetChanged = true;
+			//			gui.setSetter( msg[0] );
 		};
 	}
 
