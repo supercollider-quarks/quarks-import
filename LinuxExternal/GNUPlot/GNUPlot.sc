@@ -329,6 +329,14 @@ GNUPlot {
 		}
 	}
 
+	multiplot{ |onoff=true|
+		if ( onoff ){
+			this.sendCmd("set multiplot");
+		}{
+			this.sendCmd("unset multiplot");
+		}
+	}
+
 	scatter {|data, label="", title|
 		var tmpname, dim, strs;
 		defer {
