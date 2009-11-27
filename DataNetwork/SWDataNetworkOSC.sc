@@ -966,6 +966,7 @@ SWDataNetworkOSCClient{
 	}
 
 	welcomeBack{
+		this.pong;
 		this.setterQuery;		
 		this.subscriptionQuery;
 		setters.do{ |it|
