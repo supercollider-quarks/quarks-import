@@ -31,6 +31,45 @@ SWWatcherNode{
 
 }
 
+SWNodeWatcherNode{
+	var <watcher;
+	var <network;
+	var <>id;
+	var <>function;
+	var <>srcid;
+
+	*new{ |id,srcid,network,func,dt=0.05|
+		^super.new.init(id,srcid,network,func,dt);
+	}
+
+	init{ |ky,src,netw,func,dt|
+		id = ky;
+		srcid = src;
+		network = netw;
+		function = func;
+		watcher = SkipJack.new(
+			{ network.setData( id, 
+				function.value(
+					network.nodes[srcid].data
+				)
+			) },
+			dt, autostart: false );
+	}
+
+	start{
+		watcher.start;
+	}
+
+	stop{
+		watcher.stop;
+	}
+
+	node{
+		^network.nodes[id];
+	}
+
+}
+
 SWBusWatcherNode{
 	var <watcher;
 	var <network;

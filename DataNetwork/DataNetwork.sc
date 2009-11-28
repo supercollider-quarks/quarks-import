@@ -573,6 +573,11 @@ SWDataNode{
 		busmonitor = nil;
 	}
 
+	printOn { arg stream;
+		stream << this.class.name << "(" << id << "," << key << "," << this.size<< "," << type << ")";
+	}
+
+
 }
 
 SWDataSlot{
@@ -701,6 +706,10 @@ SWDataSlot{
 	monitorClose{
 		busmonitor.cleanUp;
 		busmonitor = nil;
+	}
+
+	printOn { arg stream;
+		stream << this.class.name << "(" << id << "," << key << ")";
 	}
 
 }
