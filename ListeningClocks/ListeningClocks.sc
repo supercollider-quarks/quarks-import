@@ -252,7 +252,7 @@ TelepathicClock : SoftClock {
 	fadeTempo { arg newTempo, dur = 1.0, warp = \cos, clock;
 		manual = true;
 		super.fadeTempo(newTempo, dur, warp, clock);
-		(clock ? SystemClock).sched { manual = false };
+		(clock ? SystemClock).sched(dur, { manual = false; nil; });
 	}
 		
 }
