@@ -5,19 +5,19 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.43">
+<meta name="CocoaVersion" content="824.48">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #961e1e}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001db9}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9a1d1b}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #001ebb}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
-span.s3 {color: #001db9}
+span.s3 {color: #001ebb}
 span.s4 {font: 9.0px Monaco}
-span.s5 {color: #961e1e}
+span.s5 {color: #9a1d1b}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -52,6 +52,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s2"><span class="Apple-tab-span">	</span></span>// supply locations by hand - 1@1 is left bottom.</p>
 <p class="p3">z = <span class="s3">SpatioScope</span>([ -0.5 @ -0.7, 0.5 @ -0.4, 0.8 @ 0.8, -0.5 @ 0.5, 0@0 ]);<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
+<p class="p6"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*gridPos(numx, numy) <span class="Apple-tab-span">	</span></b>// calculate positions for a grid</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>numx</b>: number of speakers in the x-direction</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>numy</b>: number of speakers in the y-direction</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="s3">SpatioScope</span>.gridPos(4,6);</p>
+<p class="p2"><br></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*grid(numx, numy radius, angleOffset, server, parent, bounds) <span class="Apple-tab-span">	</span></b>// make a SpatioScope for a grid</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>numx, numy</b> as in *<b>gridPos</b></p>
+<p class="p1"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><b>server, parent, bounds </b>as in <b>*new</b></p>
+<p class="p6"><br></p>
+<p class="p3">z = <span class="s3">SpatioScope</span>.grid(4,6);</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*ringPos(num, radius, angleOffset) <span class="Apple-tab-span">	</span></b>// calculate positions for a ring</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>num</b>: number of speakers in the ring</p>
