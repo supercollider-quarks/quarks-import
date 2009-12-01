@@ -4,8 +4,8 @@
 	\summary:		"Classes that aid nature inspired computation.",
 	\author: 		"Batuhan Bozkurt",
 	\country: "Turkey",
-	\version:		1.0,
+	\version:		1.1,
 	\since: 		"2009",
-	\helpdoc:     "LSys.html",
+	\helpdoc:     "NatureToolkit.html",
 	\url:         "http://www.earslap.com"
 )
