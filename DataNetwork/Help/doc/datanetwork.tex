@@ -4,7 +4,7 @@
 \usepackage{url}
 
 %opening
-\title{Sense World Data Network}
+\title{Sense World Data Network\\ \url{http://sensestage.hexagram.ca} }
 \author{Marije Baalman}
 
 \begin{document}
@@ -82,7 +82,7 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/info/node| & isii & node ID, node label, number of slots, node type & info about a node \\
 \verb|/info/slot| & iisi & node ID, slot ID, slot label, slot type & info about a slot \\
 \verb|/info/client| & sis & ip, port no., hostname & info about a client \\
-\verb|/info/setter| & isi & node ID, node label, number of slots & info about a node the client is setting \\
+\verb|/info/setter| & isii & node ID, node label, number of slots, node type & info about a node the client is setting \\
 
 \verb|/subscribe/all| & i & port no. & subscribe to receive data from all nodes \\
 \verb|/unsubscribe/all| & i & port no. & unsubscribe from all nodes \\
@@ -160,6 +160,14 @@ In the Max implementation, there is a data \textit{sink}, which manages the conn
 The objects react to the announce message from the network to set the right host IP and port.
 
 The Max patch dn.node can receive data from any number of nodes, as it takes multiple arguments (i.e. the object "dn.node 10 12 15" would subscribe to data from nodes 10, 12 and 15)
+
+\section{Processing implementation (by Vincent de Belleval and Brett Bergmann}
+
+The Processing client implementation is done as a Processing library, using JavaOSC for OSC communication. It comes with two example files and an HTML reference documentation.
+
+\section{C++ implementation (by Marije Baalman)}
+
+The C++ client implementation comes as a library, with a doxygen file to generate documentation, and an example client.
 
 \section{SuperCollider implementation}
 
@@ -249,8 +257,12 @@ On OSX the default path for http files is: \verb|/Library/WebServer/Documents/|.
 \section*{Acknowledgments}\label{sec:acknowledgments}
 This software was created by
 
-\textbf{SuperCollider classes:}
+\textbf{SuperCollider classes, C++ client:}
 Marije Baalman (nescivi)  
+
+\textbf{Processing library:}
+Vincent de Belleval
+Brett Bergmann
 
 \textbf{Max patches:}
 Harry Smoak, 
@@ -265,13 +277,16 @@ Input Devices and Music Interaction Lab, Music Technology, McGill University
 
 This work was support by grants from the Social Sciences and Humanities Research Council of Canada and the Hexagram Institute for Research/Creation in Media Arts and Sciences, Montr\'eal, QC, Canada.
 
-(c) 2008-9 by the authors
-
-Released under the GNU/GPL (see COPYING file)
+\vspace*{0.5cm}
+(c) 2008-9 by the authors\\
+Released under the GNU/GPL (see COPYING file)\\
+C++ library under GNU/LGPL
 
 \subsection*{ChangeLog}
 
 \begin{itemize}
+ \item ------------- v 0.3 --------------
+ \item 2/12/2009 - lots of bugfixes. New clients: processing and C++. Better assertion of argument types now in the sending of data by the host. 
  \item ------------- v 0.3 --------------
  \item 9/7/2009 - improved data logging and playback support. Added string data nodes (adds a type tag to some osc messages). Logging now saves the spec with labels.
  \item ------------- v 0.2 --------------
