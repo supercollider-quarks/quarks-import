@@ -374,6 +374,7 @@ VoicerGCProxy {
 	}
 	
 	modelWasFreed {
+		gc.removeDependant(this);
 		gc = nil;		// break the connection
 		gui.notNil.if({ gui.updateStatus });	// gui should know how to display "inactive"
 	}
