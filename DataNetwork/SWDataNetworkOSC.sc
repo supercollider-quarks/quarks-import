@@ -814,7 +814,7 @@ SWDataNetworkOSC{
 			switch( msg.size,
 				4, { network.addExpected( msg[0], msg[2], msg[1], msg[3] ); },
 				3, { network.addExpected( msg[0], msg[2], msg[1] ); },
-				1, { network.addExpected( msg[0], size: msg[1] ); }
+				2, { network.addExpected( msg[0], size: msg[1] ); }
 			);
 			if ( msg[1].notNil, {
 				client = this.findClient( addr );

@@ -90,7 +90,7 @@ SWDataNetwork{
 			if ( ret2 ){
 				returnCode = 0;
 				if ( recTime ){
-					this.writeTimeUpdate( id, node.lasttime - lasttime );
+					this.writeTimeUpdate( id, node.lasttime - lasttime, node.slots.collect{ |it| it.logvalue } );
 				};
 				if ( osc.notNil, {
 					//	osc.sendData( id, data );
@@ -385,13 +385,15 @@ SWDataNetwork{
 	// recording
 	initTimeRecord{ |fn,stamp=false|
 		fn = fn ? "SWDataNetworkUpdateLog";
-		timelogfile =  TabFileWriter(fn++"_"++Date.localtime.stamp++".txt").timeStamp_(stamp);
+		//	timelogfile =  TabFileWriter(fn++"_"++Date.localtime.stamp++".txt").timeStamp_(stamp);
+		timelogfile = MultiFileWriter.new( fn ++ "_"++Date.localtime.stamp++".txt" );
+		timelogfile.open;
 		//		timelogfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
 		recTime = true;
 	}
 
-	writeTimeUpdate{ |id,time|
-		timelogfile.writeLine( [id,time]);
+	writeTimeUpdate{ |id,time,data|
+		timelogfile.writeLine( [id,time,data]);
 		/*
 		timelogfile.write( id.asString );
 		timelogfile.write( "\t" );
