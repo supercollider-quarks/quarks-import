@@ -6,7 +6,7 @@
 This library is a C++ library to help you make a C++ based client to the
 SenseWorld DataNetwork.
 
-To build the library, you need
+To build the library, you need (see below for instructions on OSX):
 
 scons (build tool)     -- www.scons.org
 pkgconfig (library search and configuration tool)
@@ -36,6 +36,23 @@ $ doxygen
 which will create HTML and Latex based documents.
 
 An example application is automatically built from the examples/ folder and put into bin/ during the build process.
+
+Start the example with:
+
+./bin/datanetwork_example 127.0.0.1 7000 example
+127.0.0.1 being the ip-address of the DataNetwork server
+7000 the port that the example client will be using 
+example the name by which the client will be identified in the DataNetwork
+
+-------------------------------------------------------------------
+
+On OSX install the dependencies with:
+
+sudo port install scons liblo curl pkgconfig
+
+and build with:
+
+PKG_CONFIG_PATH=/opt/local/lib/pkgconfig/ PATH=$PATH:/opt/local/bin/ scons
 
 -------------------------------------------------------------------
 

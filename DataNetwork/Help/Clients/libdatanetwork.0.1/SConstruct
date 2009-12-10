@@ -91,8 +91,13 @@ if not conf.CheckPKGConfig('0'):
 
 # liblo is needed
 if not conf.LookForPackage('liblo'):
-    Exit(1)
-env.ParseConfig('pkg-config --cflags --libs liblo')
+    if conf.CheckLib ('lo', 'lo_server_new') == False:
+        print "liblo does not appear to be installed."
+        Exit(1)
+else:
+    env.ParseConfig('pkg-config --cflags --libs liblo')
+
+
 
 # curl is needed
 if not conf.LookForPackage('libcurl'):
