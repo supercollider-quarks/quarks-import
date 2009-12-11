@@ -371,10 +371,14 @@ GNUPlot {
 	boxplot API is modelled after matlab's function - send it data and it'll find the 5/25/50/75/95 percentiles,
 	and then it'll boxplot them.
 	GNUPlot.new.boxplot([{99.0.rand}.dup(100), {10.0.rand.squared}.dup(80), {5.0.rand.squared + 20}.dup(80)], "test", title:"box-and-whisker plot adding median value as bar")
+	"summaryfunc" is by default a function that turns the data into 5/25/50/75/95 percentiles, but you can supply your own function.
+	   The function would need to take a single array of numerical data and return 5 (ordered) statistics which will be plotted.
 	*/
-	boxplot {|data, label="", title, grplabels, extracmds|
+	boxplot {|data, label="", title, grplabels, summaryfunc, extracmds|
 		var fh, tmpname, pciles;
-		pciles = data.collect{|d, index| [index+1] ++ d.percentile([0.05, 0.25, 0.5, 0.75, 0.95])};
+		pciles = data.collect{|d, index| [index+1] ++ 
+			(summaryfunc ? {|sth| sth.percentile([0.05, 0.25, 0.5, 0.75, 0.95])}).value(d, index)
+		};
 		defer {
 			tmpname = this.pr_tmpname;
 			this.class.pr_writeTempData2(pciles, tmpname: tmpname);
