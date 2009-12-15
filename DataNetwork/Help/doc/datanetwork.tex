@@ -60,64 +60,65 @@ See table \ref{oscinterface} for an overview of commands.
 \verb|/datanetwork/quit| & si & host, port no. & inform that the host has quit \\
 
 \verb|/register| & is & port no., name & register to the network as a client, the name is used as an identifier for the client to remember settings \\
-\verb|/registered| & i & port no. & reply to register to the network as a client \\
+\verb|/registered| & i & port no., name & reply to register to the network as a client \\
 
-\verb|/unregister| & i & port no. & unregister to the network as a client \\  
-\verb|/unregistered| & i & port no. & reply to unregister to the network as a client \\
+\verb|/unregister| & is & port no., name & unregister to the network as a client \\  
+\verb|/unregistered| & is & port no., name & reply to unregister to the network as a client \\
 
-\verb|/ping| & i & port no. &  message to check if client is still there \\
-\verb|/pong| & i & port no. &  expected reply to the \verb|/ping| message \\
+\verb|/ping| & is & port no., name &  message to check if client is still there \\
+\verb|/pong| & is & port no., name &  expected reply to the \verb|/ping| message \\
 
 \verb|/error| & ssi & cause, error message, error ID & error occurred upon request (indicated by cause) \\
 \verb|/warn| & ssi & cause, warn message, error ID & non fatal error occurred upon request \\  
 
-\verb|/query/expected| & i & port no.& query which nodes are expected in the network (reply /info/expected) \\
-\verb|/query/nodes| & i & port no.& query which nodes are in the network (reply /info/node) \\
-\verb|/query/slots| & i & port no.& query which slots are in the network (reply /info/slot)\\
-\verb|/query/clients| & i & port no.& query which clients are in the network (reply /info/client)\\
-\verb|/query/setters| & i & port no.& query which nodes the client is the setter of (reply /info/setter) \\
-\verb|/query/subscriptions| & i & port no.& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
+\verb|/query/all| & is & port no., name& do all queries \\
+\verb|/query/expected| & is & port no., name& query which nodes are expected in the network (reply /info/expected) \\
+\verb|/query/nodes| & is & port no., name& query which nodes are in the network (reply /info/node) \\
+\verb|/query/slots| & is & port no., name& query which slots are in the network (reply /info/slot)\\
+\verb|/query/clients| & is & port no., name& query which clients are in the network (reply /info/client)\\
+\verb|/query/setters| & is & port no., name& query which nodes the client is the setter of (reply /info/setter) \\
+\verb|/query/subscriptions| & is & port no., name& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
 
 \verb|/info/expected| & i(s) & node ID, node label & info about an expected node \\
 \verb|/info/node| & isii & node ID, node label, number of slots, node type & info about a node \\
 \verb|/info/slot| & iisi & node ID, slot ID, slot label, slot type & info about a slot \\
-\verb|/info/client| & sis & ip, port no., hostname & info about a client \\
+\verb|/info/client| & sis & ip, port no., name & info about a client \\
 \verb|/info/setter| & isii & node ID, node label, number of slots, node type & info about a node the client is setting \\
 
-\verb|/subscribe/all| & i & port no. & subscribe to receive data from all nodes \\
-\verb|/unsubscribe/all| & i & port no. & unsubscribe from all nodes \\
+\verb|/subscribe/all| & is & port no., name & subscribe to receive data from all nodes \\
+\verb|/unsubscribe/all| & is & port no., name & unsubscribe from all nodes \\
 
-\verb|/subscribe/node| & ii & port no., node ID & subscribe to receive data from a node \\
-\verb|/subscribed/node| & ii & port no., node ID & reply to subscribe to receive data from a node \\
+\verb|/subscribe/node| & isi & port no., name, node ID & subscribe to receive data from a node \\
+\verb|/subscribed/node| & isi & port no., name, node ID & reply to subscribe to receive data from a node \\
 
-\verb|/unsubscribe/node| & ii & port no., node ID & unsubscribe to receive data from a node \\
-\verb|/unsubscribed/node| & ii & port no., node ID & reply to unsubscribe to receive data from a node \\
+\verb|/unsubscribe/node| & isi & port no., name, node ID & unsubscribe to receive data from a node \\
+\verb|/unsubscribed/node| & isi & port no., name, node ID & reply to unsubscribe to receive data from a node \\
 
-\verb|/subscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
-\verb|/subscribed/slot| & iii & port no., node ID, slot ID & reply to subscribe to receive data from a slot \\  
+\verb|/subscribe/slot| & isii & port no., name, node ID, slot ID & subscribe to receive data from a slot \\  
+\verb|/subscribed/slot| & isii & port no., name, node ID, slot ID & reply to subscribe to receive data from a slot \\  
 
-\verb|/unsubscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
-\verb|/unsubscribed/slot| & iii & port no., node ID, slot ID & reply to unsubscribe to receive data from a slot \\  
+\verb|/unsubscribe/slot| & isii & port no., name, node ID, slot ID & subscribe to receive data from a slot \\  
+\verb|/unsubscribed/slot| & isii & port no., name, node ID, slot ID & reply to unsubscribe to receive data from a slot \\  
 
 \verb|/data/node| & iff..f & node ID, data values & node data \\
 \verb|/data/node| & iss..s & node ID, string data values & node data \\
-\verb|/get/node| & ii & port no., node ID & get data from a node (reply /data/node) \\
+\verb|/get/node| & isi & port no., name, node ID & get data from a node (reply /data/node) \\
 
 \verb|/data/slot| & iif & node ID, slot ID, data value & slot data \\
 \verb|/data/slot| & iis & node ID, slot ID, string data value & slot data \\
-\verb|/get/slot| & iii & port no., node ID, slot ID & get data from a slot (reply /data/slot) \\
+\verb|/get/slot| & isii & port no., name, node ID, slot ID & get data from a slot (reply /data/slot) \\
 
-\verb|/set/data| & iif..f & port no., node ID, data values & set data to a node (reply /data/node)\\
-\verb|/set/data| & iis..s & port no., node ID, string data values & set data to a node\\
+\verb|/set/data| & isif..f & port no., name, node ID, data values & set data to a node (reply /data/node)\\
+\verb|/set/data| & isis..s & port no., name, node ID, string data values & set data to a node\\
 
-\verb|/label/node| & iis & port no., node ID, node label & set label to a node \\
-\verb|/label/slot| & iiis & port no., node ID, slot ID, slot label & set label to a slot \\
+\verb|/label/node| & isis & port no., name, node ID, node label & set label to a node \\
+\verb|/label/slot| & isiis & port no., name, node ID, slot ID, slot label & set label to a slot \\
 
-\verb|/remove/node| & ii & port no., node ID & remove a node (only possible if client is setter) \\
+\verb|/remove/node| & isi & port no., name, node ID & remove a node (only possible if client is setter) \\
 \verb|/removed/node| & i & node ID & reply to remove a node \\
-\verb|/remove/all| & i & port no. & remove all nodes the client is a setter of (generates /removed/node messages) \\
+\verb|/remove/all| & is & port no., name & remove all nodes the client is a setter of (generates /removed/node messages) \\
 
-\verb|/add/expected| & ii(isi) & port no., node ID, node size, node label, node type & add an expected node to the network (reply /info/expected) \\
+\verb|/add/expected| & isi(isi) & port no., name, node ID, node size, node label, node type & add an expected node to the network (reply /info/expected) \\
  &  &  & if node size is given, the node is created as well (and generates a /info/node message) \\
  &  &  & node type is 0: float, 1: string (default is 0) \\
 \hline
@@ -147,6 +148,8 @@ See table \ref{oscinterface} for an overview of commands.
  12 & "Node with id"+...+"does not have"+..+"slots" \\
  12 & "Node with id"+...+"does not have"+..+"slots" \\
  13 & "Node with id"+...+"has wrong type"+... \\
+ 14 & "Client with IP"+addr.ip+"and port"+addr.port+"was not registered under name"+name \\
+ 15 & "Client with IP"+addr.ip+"and port"+addr.port+"and name" + name + "is not registered. Please register first" \\
  \hline
  \end{tabular}
 \end{center}
@@ -174,6 +177,7 @@ The C++ client implementation comes as a library, with a doxygen file to generat
 The SuperCollider implementation is done in a set of classes.
 
 Documentation for these is available in HTML format.
+
 
 \section{Installation}
 
@@ -211,7 +215,13 @@ x.addOSCInterface;
 
 // create a network client:
 y = SWDataNetworkClient.new( ~hostip, "myname" );
+// where ~hostip is an IP address of the datanetwork host like: "192.168.0.104",
+// and "myname" is the name by which you (as a client) will be identified in the network:
+// so it becomes:
+// y = SWDataNetworkClient.new( "192.168.0.104", "myname" );
 
+// to show a GUI:
+y.makeGui;
  
 // For more help, access the helpfile:
 SenseWorldDataNetwork
@@ -254,21 +264,142 @@ On OSX the default path for http files is: \verb|/Library/WebServer/Documents/|.
 %  \item (discard) change expectedNodes to become a security option
 % \end{itemize}
 
+\section{Detailed message description}
+
+\begin{itemize}
+ \item \verb|/datanetwork/announce| - si - host, port no. 
+    \begin{description}
+    \item[sent by host] When the host becomes active, or manual. It is sent both as a broadcast message to the network, and to any clients that may be known already by the host by their IPs.
+    \item[response] clients should note the possible change in port and reregister if not registered
+   \end{description}
+
+\item \verb|/datanetwork/quit| - si - host, port no.
+    \begin{description}
+    \item[sent by host] When the host shuts down (in a proper way, not when it crashes).
+    \item[response] clients should check if this is from their host, and note that they are no longer registered with the datanetwork
+   \end{description}
+
+\item \verb|/register| - is - port no., name
+    \begin{description}
+     \item[sent by client] In order to register
+     \item[response] If it is a new client, the host will register the client and reply with the \verb|/registered| message. If it is a client at the same IP, port and name that was already registered, the host will reply with \verb|/registered|. If a client with that IP and port, but with a different name was already registered, the host will return an error message 2.
+   \end{description}
+
+\item \verb|/registered| - is - port no., name
+    \begin{description}
+     \item[sent by host] Upon a succesful registration of the client
+     \item[response] The client should note that it has been registered with the host.
+   \end{description}
+
+\item \verb|/unregister| - is - port no., name
+    \begin{description}
+     \item[sent by client] In order to unregister
+     \item[response] If the client was registered under that port and name, the host will return the \verb|/unregistered| message. If the client name does not match, it will return error 14; if the client was not registered, the host returns error 3.
+   \end{description}
+
+\item \verb|/unregistered| - is - port no., name
+    \begin{description}
+     \item[sent by host] Upon a succesful unregistration of the client, or before a shutdown of the host, or when the maximum number of pings are left without reply.
+     \item[response] The client should note that it has been unregistered with the host.
+   \end{description}
+
+\item \verb|/ping| - is - port no., name
+    \begin{description}
+     \item[sent by host] Every second to check that the client is still there
+     \item[response] The client should send a \verb|/pong| message back, if it has indeed this name.
+   \end{description}
+
+\item \verb|/pong| - is - port no., name
+    \begin{description}
+     \item[sent by client] In response to the \verb|/ping| message of the host.
+     \item[response] none
+   \end{description}
+
+\item \verb|/error| - ssi - cause, error message, error ID
+    \begin{description}
+     \item[sent by host] when an error occurs. See the error message table for descriptions of errors.
+     \item[response] client could do attempts to fix the error.
+   \end{description}
+
+\item \verb|/warn| - ssi - cause, error message, error ID
+    \begin{description}
+     \item[sent by host] When a request from the client does not have any results. See the error message table for descriptions of warnings.
+     \item[response] client can display the warning to the user, but do not need to take action.
+   \end{description}
+
+
+% \verb|/query/all| & i & port no.& query which nodes are expected in the network (reply /info/expected) \\
+% \verb|/query/expected| & i & port no.& query which nodes are expected in the network (reply /info/expected) \\
+% \verb|/query/nodes|    & i & port no.& query which nodes are in the network (reply /info/node) \\
+% \verb|/query/slots|    & i & port no.& query which slots are in the network (reply /info/slot)\\
+% \verb|/query/clients|  & i & port no.& query which clients are in the network (reply /info/client)\\
+% \verb|/query/setters|  & i & port no.& query which nodes the client is the setter of (reply /info/setter) \\
+% \verb|/query/subscriptions| & i & port no.& query which subscriptions the client has (reply /subscribed/node, /subscribed/slot)\\
+% 
+% \verb|/info/expected| & i(s) & node ID, node label & info about an expected node \\
+% \verb|/info/node| & isii & node ID, node label, number of slots, node type & info about a node \\
+% \verb|/info/slot| & iisi & node ID, slot ID, slot label, slot type & info about a slot \\
+% \verb|/info/client| & sis & ip, port no., hostname & info about a client \\
+% \verb|/info/setter| & isii & node ID, node label, number of slots, node type & info about a node the client is setting \\
+% 
+% \verb|/subscribe/all| & i & port no. & subscribe to receive data from all nodes \\
+% \verb|/unsubscribe/all| & i & port no. & unsubscribe from all nodes \\
+% 
+% \verb|/subscribe/node| & ii & port no., node ID & subscribe to receive data from a node \\
+% \verb|/subscribed/node| & ii & port no., node ID & reply to subscribe to receive data from a node \\
+% 
+% \verb|/unsubscribe/node| & ii & port no., node ID & unsubscribe to receive data from a node \\
+% \verb|/unsubscribed/node| & ii & port no., node ID & reply to unsubscribe to receive data from a node \\
+% 
+% \verb|/subscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
+% \verb|/subscribed/slot| & iii & port no., node ID, slot ID & reply to subscribe to receive data from a slot \\  
+% 
+% \verb|/unsubscribe/slot| & iii & port no., node ID, slot ID & subscribe to receive data from a slot \\  
+% \verb|/unsubscribed/slot| & iii & port no., node ID, slot ID & reply to unsubscribe to receive data from a slot \\  
+% 
+% \verb|/data/node| & iff..f & node ID, data values & node data \\
+% \verb|/data/node| & iss..s & node ID, string data values & node data \\
+% \verb|/get/node| & ii & port no., node ID & get data from a node (reply /data/node) \\
+% 
+% \verb|/data/slot| & iif & node ID, slot ID, data value & slot data \\
+% \verb|/data/slot| & iis & node ID, slot ID, string data value & slot data \\
+% \verb|/get/slot| & iii & port no., node ID, slot ID & get data from a slot (reply /data/slot) \\
+% 
+% \verb|/set/data| & iif..f & port no., node ID, data values & set data to a node (reply /data/node)\\
+% \verb|/set/data| & iis..s & port no., node ID, string data values & set data to a node\\
+% 
+% \verb|/label/node| & iis & port no., node ID, node label & set label to a node \\
+% \verb|/label/slot| & iiis & port no., node ID, slot ID, slot label & set label to a slot \\
+% 
+% \verb|/remove/node| & ii & port no., node ID & remove a node (only possible if client is setter) \\
+% \verb|/removed/node| & i & node ID & reply to remove a node \\
+% \verb|/remove/all| & i & port no. & remove all nodes the client is a setter of (generates /removed/node messages) \\
+% 
+% \verb|/add/expected| & ii(isi) & port no., node ID, node size, node label, node type & add an expected node to the network (reply /info/expected) \\
+%  &  &  & if node size is given, the node is created as well (and generates a /info/node message) \\
+%  &  &  & node type is 0: float, 1: string (default is 0) \\
+ 
+\end{itemize}
+
+
 \section*{Acknowledgments}\label{sec:acknowledgments}
 This software was created by
 
 \textbf{SuperCollider classes, C++ client:}
 Marije Baalman (nescivi)  
 
-\textbf{Processing library:}
-Vincent de Belleval
+\textbf{Processing \& Java library:}
+Vincent de Belleval,
 Brett Bergmann
 
-\textbf{Max patches:}
-Harry Smoak, 
+\textbf{Max objects:}
+Harry Smoak,
 Joseph Malloch, 
 Brett Bergmann
 
+\textbf{PureData objects:}
+Joseph Malloch, 
+Joseph Thibodeau
 
 Developed as part of the "Sense/Stage" project and the "Papyrus" project between\\
 Design and Computation Arts, Fine Arts, Concordia University\\
@@ -285,6 +416,9 @@ C++ library under GNU/LGPL
 \subsection*{ChangeLog}
 
 \begin{itemize}
+ \item ------------- v 0.5 --------------
+ \item 12/12/2009 - all messages from clients need to have port no and client name. This breaks compatibility with previous versions.
+ 
  \item ------------- v 0.3 --------------
  \item 2/12/2009 - lots of bugfixes. New clients: processing and C++. Better assertion of argument types now in the sending of data by the host. 
  \item ------------- v 0.3 --------------

@@ -64,14 +64,15 @@ SWDataNetworkClient : SWDataNetwork{
 			}),
 			OSCresponderNode( host, '/datanetwork/quit', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				this.lostHost;
+				// could do checking of hostname and port!
+				this.lostHost( *(msg.copyToEnd( 1 )) );
 			}),
 			OSCresponderNode( host, '/error', { |t,r,msg,addr|
-				"Error: ".post; msg.postln;
+				"DataNetwork Error: ".post; msg.postln;
 				if ( gui.notNil ){ gui.setInfo( msg )};
 			}),
 			OSCresponderNode( host, '/warn', { |t,r,msg,addr|
-				"Warning: ".post; msg.postln;
+				"DataNetwork Warning: ".post; msg.postln;
 				if ( gui.notNil ){ gui.setInfo( msg )};
 			}),
 			OSCresponderNode( host, '/ping', { |t,r,msg,addr|
@@ -188,7 +189,7 @@ SWDataNetworkClient : SWDataNetwork{
 		}
 	}
 
-	lostHost{
+	lostHost{ |ip,port|
 		"DataNetwork host has quit".postln;
 		if ( gui.notNil ){ gui.setInfo( "DataNetwork host has quit" )};
 	}
@@ -215,7 +216,7 @@ SWDataNetworkClient : SWDataNetwork{
 	// overloaded from base class
 	addExpected{ |id,label,size=nil,type=0,fromnw=false|
 		if ( fromnw.not, {
-			host.sendMsg( '/add/expected', NetAddr.langPort, id, size, label, type );
+			this.sendMsgWithArgs( '/add/expected', [ id, size, label, type] );
 		},{
 			// use the method from the super-class
 			super.addExpected( id, label, size, type );
@@ -265,8 +266,8 @@ SWDataNetworkClient : SWDataNetwork{
 	// overloaded from base class
 	removeNode{ |id,fromnw=false|
 		if ( verbose > 0, { ("remove" + id).postln; });
-		if ( fromnw.not ){ 
-			host.sendMsg( '/remove/node', NetAddr.langPort, id.asInteger );
+		if ( fromnw.not ){
+			this.sendMsgWithArgs( '/remove/node', [ id.asInteger] );
 		}{
 			super.removeNode( id.asInteger );
 			//		nodes.removeAt( id.asInteger );			
@@ -276,100 +277,113 @@ SWDataNetworkClient : SWDataNetwork{
 
 	/// OSC interface
 
+	sendSimpleMsg{ |msg|
+		host.sendMsg( msg, NetAddr.langPort, name.asString );
+	}
+
+	sendMsgWithArgs{ |msg,args|
+		var fullMsg = [ msg, NetAddr.langPort, name.asString ]++args;
+		host.sendMsg( *fullMsg );
+	}
+
 	register{
-		host.sendMsg( '/register', NetAddr.langPort, name );
+		this.sendSimpleMsg( '/register');
 	}
 
 	unregister{
-		host.sendMsg( '/unregister', NetAddr.langPort );
+		this.sendSimpleMsg( '/unregister');
 	}
 
 	// Querying ---
 
+	queryAll{
+		this.sendSimpleMsg( '/query/all' );
+	}
+
 	queryExpected{
-		host.sendMsg( '/query/expected', NetAddr.langPort );
+		this.sendSimpleMsg( '/query/expected' );
 	}
 
 	queryNodes{
-		host.sendMsg( '/query/nodes', NetAddr.langPort );
+		this.sendSimpleMsg( '/query/nodes' );
 	}
 
 	querySlots{
-		host.sendMsg( '/query/slots', NetAddr.langPort );
+		this.sendSimpleMsg( '/query/slots' );
 	}
 
 	querySetters{
-		host.sendMsg( '/query/setters', NetAddr.langPort );
+		this.sendSimpleMsg( '/query/setters' );
 	}
 
 	querySubscriptions{
-		host.sendMsg( '/query/subscriptions', NetAddr.langPort );
+		this.sendSimpleMsg( '/query/subscriptions' );
 	}
 
 	queryClients{
-		host.sendMsg( '/query/clients', NetAddr.langPort );
+		this.sendSimpleMsg( '/query/clients' );
 	}
 
 
 	// -- Subscribing --
 
 	subscribeAll{ 
-			host.sendMsg( '/subscribe/all', NetAddr.langPort );
+		this.sendSimpleMsg( '/subscribe/all' );
 	}
 
 	unsubscribeAll{ 
-			host.sendMsg( '/unsubscribe/all', NetAddr.langPort );
+		this.sendSimpleMsg( '/unsubscribe/all' );
 	}
 
 	removeAll{ 
-			host.sendMsg( '/remove/all', NetAddr.langPort );
+		this.sendSimpleMsg( '/remove/all' );
 	}
 
 	subscribeNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
-			host.sendMsg( '/subscribe/node', NetAddr.langPort, node.id );
+			this.sendMsgWithArgs( '/subscribe/node', node.id );
 		}{
-			host.sendMsg( '/subscribe/node', NetAddr.langPort, node );
+			this.sendMsgWithArgs( '/subscribe/node', node );
 		}
 	}
 
 	unsubscribeNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
-			host.sendMsg( '/unsubscribe/node', NetAddr.langPort, node.id );
+			this.sendMsgWithArgs( '/unsubscribe/node', node.id );
 		}{
-			host.sendMsg( '/unsubscribe/node', NetAddr.langPort, node );
+			this.sendMsgWithArgs( '/unsubscribe/node', node );
 		}
 	}
 
 	subscribeSlot{ |slot|
 		if ( slot.isKindOf( SWDataSlot ) ){
-			host.sendMsg( '/subscribe/slot', NetAddr.langPort, slot.id[0], slot.id[1] );
+			this.sendMsgWithArgs( '/subscribe/slot', slot.id );
 		}{
-			host.sendMsg( '/subscribe/slot', NetAddr.langPort, slot[0], slot[1] );
+			this.sendMsgWithArgs( '/subscribe/slot', slot );
 		}
 	}
 
 	unsubscribeSlot{ |slot|
 		if ( slot.isKindOf( SWDataSlot ) ){
-			host.sendMsg( '/unsubscribe/slot', NetAddr.langPort, slot.id[0], slot.id[1] );
+			this.sendMsgWithArgs( '/unsubscribe/slot', slot.id );
 		}{
-			host.sendMsg( '/unsubscribe/slot', NetAddr.langPort, slot[0], slot[1] );
+			this.sendMsgWithArgs( '/unsubscribe/slot', slot );
 		}
 	}
 
 	getNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
-			host.sendMsg( '/get/node', NetAddr.langPort, node.id );
+			this.sendMsgWithArgs( '/get/node', node.id );
 		}{
-			host.sendMsg( '/get/node', NetAddr.langPort, node );
+			this.sendMsgWithArgs( '/get/node', node );
 		}
 	}
 
 	getSlot{ |slot|
 		if ( slot.isKindOf( SWDataSlot ) ){
-			host.sendMsg( '/get/slot', NetAddr.langPort, slot.id[0], slot.id[1] );
+			this.sendMsgWithArgs( '/get/slot', slot.id );
 		}{
-			host.sendMsg( '/get/slot', NetAddr.langPort, slot[0], slot[1] );
+			this.sendMsgWithArgs( '/get/node', slot );
 		}
 	}
 
@@ -448,22 +462,23 @@ SWDataNetworkClient : SWDataNetwork{
 	// ---
 
 	labelNode{ |node|
-		host.sendMsg( '/label/node', NetAddr.langPort, node.id, node.key );
+		this.sendMsgWithArgs( '/label/node', [node.id, node.key] );
 	}
 
 	labelSlot{ |slot|
-		host.sendMsg( '/label/slot', NetAddr.langPort, slot.id[0], slot.id[1], slot.key );
+		this.sendMsgWithArgs( '/label/slot', slot.id ++ slot.key );
 	}
 
 	//-------------
 
 	sendData{ |id, data|
-		host.sendMsg( '/set/data', NetAddr.langPort, id, *data );
+		this.sendMsgWithArgs( '/set/data', [id] ++ data );
+		//	host.sendMsg( '/set/data', NetAddr.langPort, name.asString, id, *data );
 	}
 
 
 	sendPong{
-		host.sendMsg( '/pong', NetAddr.langPort );
+		this.sendSimpleMsg( '/pong' );
 		lasttime = Process.elapsedTime;
 	}
 
