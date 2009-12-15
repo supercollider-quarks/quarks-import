@@ -95,14 +95,14 @@ MultiFileWriter{
 						"mv" + curfn + pathDir ++ ";" +
 						"gzip" + newf ++ ";"
 						// + "rm" + newf // file is removed automagically
-					).unixCmd;
+					).systemCmd;
 					newf = newf ++ ".gz";
 				}{
 					(
 						"mv" + curfn + pathDir ++ ";"
-					).unixCmd;
+					).systemCmd;
 				};
-				1.0.wait;
+				//	1.0.wait;
 				this.createTarBundle( newf );
 			};
 		};
