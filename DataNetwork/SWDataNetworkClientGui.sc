@@ -138,12 +138,7 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 		*/
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query all", Color.blue ] ] ).action_( {
-				|but| 
-				network.queryExpected;
-				network.queryNodes;
-				network.querySlots;
-				network.querySetters;
-				network.querySubscriptions;
+				|but| network.queryAll;
 			}).font_( font );
 
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(

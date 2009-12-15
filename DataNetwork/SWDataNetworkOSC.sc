@@ -7,7 +7,7 @@ SWDataNetworkOSC{
 
 	var <>verbose = 0;
 
-	var <>maxMissedPongs = 60;
+	var <>maxMissedPongs = 10;
 
 
 	var <clientDictionary;
@@ -58,7 +58,7 @@ SWDataNetworkOSC{
 
 	stop{
 		clients.do{ |it| 
-			it.addr.sendMsg( '/unregistered', it.addr.port.asInteger );
+			it.addr.sendMsg( '/unregistered', it.addr.port.asInteger, it.key.asString );
 			it.addr.sendMsg( '/datanetwork/quit', myhost.hostname, myhost.port.asInteger );
 		};
 		this.logMsg("datanetwork stopped" );
@@ -67,7 +67,7 @@ SWDataNetworkOSC{
 
 	sendPings{
 		clients.do{ |it| it.ping };
-		clients.do{ |it| if ( it.missedPongs > maxMissedPongs ){ this.removeClient( it.addr ) } };
+		clients.do{ |it| if ( it.missedPongs > maxMissedPongs ){ this.removeClient( it.addr, it.key ) } };
 	}
 
 	removeResponders{
@@ -86,7 +86,7 @@ SWDataNetworkOSC{
 			OSCresponderNode( nil, '/unregister', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.removeClient( addr );
+					addr.port = msg[1]; this.removeClient( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 
@@ -95,47 +95,53 @@ SWDataNetworkOSC{
 				if ( verbose > 3, { msg.postln; });
 				if ( msg.size > 1 ){
 					addr.port = msg[1];
-					client = this.findClient( addr );
+					client = this.findClient( addr, msg[2] );
 					if ( client.notNil, { client.pong } ) ;
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 
 			/// QUERIES
 
+			OSCresponderNode( nil, '/query/all', { |t,r,msg,addr|
+				if ( verbose > 1, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.allQuery( addr, msg[2] );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };
+			}),
 			OSCresponderNode( nil, '/query/expected', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.expectedQuery( addr );
+					addr.port = msg[1]; this.expectedQuery( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/nodes', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.nodeQuery( addr );
+					addr.port = msg[1]; this.nodeQuery( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/slots', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.slotQuery( addr );
+					addr.port = msg[1]; this.slotQuery( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/clients', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.clientQuery( addr );
+					addr.port = msg[1]; this.clientQuery( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/subscriptions', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.subscriptionQuery( addr );
+					addr.port = msg[1]; this.subscriptionQuery( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/query/setters', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.setterQuery( addr );
+					addr.port = msg[1]; this.setterQuery( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 
@@ -144,37 +150,37 @@ SWDataNetworkOSC{
 			OSCresponderNode( nil, '/subscribe/all', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.allNodeSubscribe( addr );
+					addr.port = msg[1]; this.allNodeSubscribe( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/unsubscribe/all', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.allNodeUnsubscribe( addr );
+					addr.port = msg[1]; this.allNodeUnsubscribe( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/subscribe/node', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.nodeSubscribe( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.nodeSubscribe( addr, msg[2],  msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/unsubscribe/node', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.nodeUnsubscribe( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.nodeUnsubscribe( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/subscribe/slot', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.slotSubscribe( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.slotSubscribe( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/unsubscribe/slot', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.slotUnsubscribe( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.slotUnsubscribe( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 
@@ -183,35 +189,35 @@ SWDataNetworkOSC{
 			OSCresponderNode( nil, '/add/expected', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.addExpected( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.addExpected( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/set/data', { |t,r,msg,addr|
 				if ( verbose > 2, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.setData( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.setData( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/label/slot', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.labelSlot( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.labelSlot( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };
 			}),
 			OSCresponderNode( nil, '/label/node', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.labelNode( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.labelNode( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 
 			/// GETTING
 			OSCresponderNode( nil, '/get/node', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.getNode( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.getNode( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/get/slot', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.getSlot( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.getSlot( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 
 			/// REMOVING
@@ -219,12 +225,12 @@ SWDataNetworkOSC{
 			OSCresponderNode( nil, '/remove/node', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.removeNode( addr, msg.copyToEnd( 2 ) );
+					addr.port = msg[1]; this.removeNode( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/remove/all', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.removeAll( addr );
+					addr.port = msg[1]; this.removeAll( addr, msg[2] );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			})
 		];
 
@@ -388,76 +394,73 @@ SWDataNetworkOSC{
 
 	///--------- subscriptions and data retrieval
 
-	allNodeSubscribe{ |addr|
+	allNodeSubscribe{ |addr,name|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/subscribe/all", 1 );
+			this.errorMsg( addr, "/subscribe/all", 15, [name] );
 		},{
 			network.nodes.do{ |it| 
 				client.subscribeNode( it.id );
-				this.getNode( addr, [it.id] );
+				this.getNode( addr, client.key, [it.id] );
 				this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to node:"+it.id );
 			};
 			this.logMsg( "/subscribe/all from client with IP"+addr.ip+"and port"+addr.port );
 		});
 	}
 
-	nodeSubscribe{ |addr,msg|
+	nodeSubscribe{ |addr,name,msg|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/subscribe/node", 1 );
+			this.errorMsg( addr, "/subscribe/node", 15, [name] );
 		},{
 			client.subscribeNode( msg[0].asInteger );
-			this.getNode( addr, msg );
+			this.getNode( addr, client.key,  msg );
 			this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to node:"+msg[0] );
 		});
 	}
 
-	slotSubscribe{ |addr,msg|
+	slotSubscribe{ |addr,name,msg|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/subscribe/slot", 1);
+			this.errorMsg( addr, "/subscribe/slot", 15, [name] );
 		},{
 			client.subscribeSlot( msg[0].asInteger, msg[1].asInteger );
-			this.getSlot( addr, msg );
+			this.getSlot( addr, client.key, msg );
 			this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"subscribed to slot:"+msg.copyRange(0,1) );
 		});
 	}
 
 
-	allNodeUnsubscribe{ |addr|
+	allNodeUnsubscribe{ |addr,name|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/unsubscribe/all", 1);
+			this.errorMsg( addr, "/unsubscribe/all", 15, [name]);
 		},{
-			client.subscriptions.do{ |it| 
-				client.unsubscribeNode( it );
-				this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from node:"+it );
-			};
+			client.unsubscribeAll;
 			this.logMsg( "/unsubscribe/all from client with IP"+addr.ip+"and port"+addr.port );
 		});
 	}
 
-	nodeUnsubscribe{ |addr,msg|
+	nodeUnsubscribe{ |addr,name,msg|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/unsubscribe/node", 1);
+			this.errorMsg( addr, "/unsubscribe/node", 15, [name] );
 		},{
 			client.unsubscribeNode( msg[0].asInteger );
 			this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from node:"+msg[0] );
 		});
 	}
 
-	slotUnsubscribe{ |addr,msg|
+	slotUnsubscribe{ |addr,name,msg|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/unsubscribe/slot", 1);
+			this.errorMsg( addr, "/unsubscribe/slot", 15, name );
 		},{
 			client.unsubscribeSlot( msg[0].asInteger, msg[1].asInteger );
 			this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"unsubscribed from slot:"+msg.copyRange(0,1) );
@@ -465,13 +468,13 @@ SWDataNetworkOSC{
 	}
 
 
-	getNode{ |addr,msg|
+	getNode{ |addr,name,msg|
 		var client,data,node;
 		//[addr,msg].postln;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		//client.postln;
 		if ( client.isNil, {
-			this.errorMsg( addr, "/get/node", 1);
+			this.errorMsg( addr, "/get/node", 15, [name] );
 		},{
 			msg[0] = msg[0].asInteger;
 			node = network.nodes.at( msg[0] );
@@ -485,11 +488,11 @@ SWDataNetworkOSC{
 		});
 	}
 
-	getSlot{ |addr,msg|
+	getSlot{ |addr,name,msg|
 		var client,node;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name.asSymbol );
 		if ( client.isNil, {
-			this.errorMsg( addr, "/get/slot", 1);
+			this.errorMsg( addr, "/get/slot", 15, [name]);
 		},{
 			msg[0] = msg[0].asInteger;
 			node = network.nodes.at( msg[0] );
@@ -504,8 +507,12 @@ SWDataNetworkOSC{
 
 	// --------- client management -----------
 
-	findClient{ |addr|
-		^clients.select( { |it| it.addr == addr } ).first;
+	findClient{ |addr,name|
+		if ( name.notNil ){
+			^clients.select( { |it| (it.addr == addr) and: (it.key == name.asSymbol) } ).first;
+		}{ // don't check for name
+			^clients.select( { |it| it.addr == addr } ).first;
+		}
 	}
 
 	welcomeClientBack{ |client|
@@ -539,11 +546,10 @@ SWDataNetworkOSC{
 			}{
 				if ( addr.port > 0){
 					clientPorts.add( addr.port );
-					newclient = SWDataNetworkOSCClient.new( addr );
+					newclient = SWDataNetworkOSCClient.new( addr, name.asSymbol );
 					clients = clients.add( newclient );
 					//	watcher.start;
 					clientDictionary.put( name.asSymbol, newclient );
-					newclient.key = name.asSymbol;
 					if ( gui.notNil ){ 
 						gui.addClient( newclient );
 					};
@@ -551,85 +557,127 @@ SWDataNetworkOSC{
 				};
 			};
 		},{
-			this.errorMsg( addr, "/register", 2);
+			there = clientDictionary.at( name.asSymbol );
+			if ( there.notNil ){
+				this.welcomeClientBack( there );				
+				this.logMsg( "client reregistered:"+(addr.asString.replace( "a NetAddr",""))+name );				
+			}{
+				this.errorMsg( addr, "/register", 2);
+			};
 		});
 	}
 
-	removeClient{ |addr|
+	removeClient{ |addr,name|
 		var there,there2;
 		there = this.findClient( addr );
 		//		[addr,there].postln;
 
 		if ( there.notNil, { 
-			/// removed, as we keep the client in the dictionary
-			//	there.setters.do{ |node| setters.removeAt( node.id ) };
-			there.active = false;
-			clients.remove( there );
-			addr.sendMsg( '/unregistered', addr.port.asInteger );
+			if ( there.key == name.asSymbol ){
+				/// removed, as we keep the client in the dictionary
+				//	there.setters.do{ |node| setters.removeAt( node.id ) };
+				there.active = false;
+				clients.remove( there );
+				addr.sendMsg( '/unregistered', addr.port.asInteger, there.key );
+				if ( gui.notNil ){
+					gui.removeClient( there );
+				};
+				this.logMsg( "client unregistered:"+(addr.asString.replace( "a NetAddr","")) );
+			}{
+				this.errorMsg( addr, "/unregister", 14, [name] );
+				this.logMsg( "client tried to unregister:"+(addr.asString.replace( "a NetAddr",""))+"but was not succesful" );
+
+			};
 		},{
 			this.errorMsg( addr, "/unregister", 3 );
+				this.logMsg( "client tried to unregister:"+(addr.asString.replace( "a NetAddr",""))+"but was not succesful" );
 		} );
 
 		//		there2 = setters.findKeyForValue( addr );
 		//		if ( there2.notNil, { setters.removeAt( there2 ) } );
-
-
-		if ( gui.notNil ){
-			gui.removeClient( there );
-		};
-		this.logMsg( "client unregistered:"+(addr.asString.replace( "a NetAddr","")) );
 	}
 
 	//------- Queries -------
 
-	expectedQuery{ |addr|
-		if ( network.expectedNodes.size == 0, {
-			this.warnMsg( addr, "/query/expected", 7 );
+	allQuery{ |addr,name|
+		this.logMsg( "/query/all from client with IP"+addr.ip+"and port"+addr.port );
+		this.expectedQuery( addr, name );
+		this.nodeQuery( addr, name );
+		this.slotQuery( addr, name );
+		this.clientQuery( addr, name );
+		this.subscriptionQuery( addr, name );
+		this.setterQuery( addr, name );
+	}
+
+	expectedQuery{ |addr,name|
+		var client;
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/query/expected", 15, [name] );
+		},{
+			if ( network.expectedNodes.size == 0, {
+				this.warnMsg( addr, "/query/expected", 7 );
+			});
+			network.expectedNodes.do{ |key|
+				addr.sendMsg( '/info/expected', key );
+			};
 		});
-		network.expectedNodes.do{ |key|
-			addr.sendMsg( '/info/expected', key );
-		};
 		this.logMsg( "/query/expected from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
-	nodeQuery{ |addr|
-		if ( network.nodes.size == 0, {
-			this.warnMsg( addr, "/query/nodes", 8 );
+	nodeQuery{ |addr,name|
+		var client;
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/query/nodes", 15, [name] );
+		},{
+			if ( network.nodes.size == 0, {
+				this.warnMsg( addr, "/query/nodes", 8 );
+			});
+			network.nodes.keysValuesDo{ |key,node|
+				addr.sendMsg( '/info/node', key, node.key.asString, node.slots.size, node.type );
+			};
 		});
-		network.nodes.keysValuesDo{ |key,node|
-			addr.sendMsg( '/info/node', key, node.key.asString, node.slots.size, node.type );
-		};
-
 		this.logMsg( "/query/nodes from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
-	slotQuery{ |addr|
-		if ( network.nodes.size == 0, {
-			this.warnMsg( addr, "/query/slots", 8 );
-		});
-		network.nodes.keysValuesDo{ |key,node|
-			node.slots.do{ |it,i|
-				addr.sendMsg( '/info/slot', key, i, it.key.asString, it.type );
+	slotQuery{ |addr,name|
+		var client;
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/query/slots", 15, [name] );
+		},{
+			if ( network.nodes.size == 0, {
+				this.warnMsg( addr, "/query/slots", 8 );
+			});
+			network.nodes.keysValuesDo{ |key,node|
+				node.slots.do{ |it,i|
+					addr.sendMsg( '/info/slot', key, i, it.key.asString, it.type );
+				};
 			};
-		};
-
+		});
 		this.logMsg( "/query/slots from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
-	clientQuery{ |addr|
-		if ( clients.size == 0, {
-			this.warnMsg( addr, "/query/clients", 9 );
+	clientQuery{ |addr,name|
+		var client;
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/query/clients", 15, [name] );
+		},{
+			if ( clients.size == 0, {
+				this.warnMsg( addr, "/query/clients", 9 );
+			});
+			clients.do{ |it|
+				addr.sendMsg( '/info/client', it.addr.ip, it.addr.port, it.key );
+			};
 		});
-		clients.do{ |it|
-			addr.sendMsg( '/info/client', it.addr.ip, it.addr.port, it.key );
-		};
-
 		this.logMsg( "/query/clients from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
-	subscriptionQuery{ |addr|
+	subscriptionQuery{ |addr,name|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name );
 		if ( client.isNil, {
 			this.errorMsg( addr, "/query/subscriptions", 1 );
 		},{
@@ -643,9 +691,9 @@ SWDataNetworkOSC{
 		this.logMsg( "/query/subscriptions from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
-	setterQuery{ |addr|
+	setterQuery{ |addr,name|
 		var client;
-		client = this.findClient( addr );
+		client = this.findClient( addr, name );
 		if ( client.isNil, {
 			this.errorMsg( addr, "/query/setters", 1);
 		},{
@@ -661,12 +709,12 @@ SWDataNetworkOSC{
 
 	/// -------- node control by clients --------
 
-	setData{ |addr,msg|
+	setData{ |addr,name,msg|
 		var there, addsetter, node, code;
 		addsetter = false;
-		there = this.findClient( addr );
+		there = this.findClient( addr, name.asSymbol );
 		if ( there.isNil, {
-			this.errorMsg( addr, "/set/data", 1);
+			this.errorMsg( addr, "/set/data", 15, [name] );
 		},{
 			// node id:
 			msg[0] = msg[0].asInteger;
@@ -689,7 +737,7 @@ SWDataNetworkOSC{
 								// has to look up the newly created node:
 								there.addSetter( network.nodes.at( msg[0] ) );
 								// only send data back to sender first time the node is set, for confirmation:
-								this.getNode( addr, msg );
+								this.getNode( addr, there.key, msg );
 								this.logMsg( "client:"+(there.addr.asString.replace( "a NetAddr",""))+"became setter of node:"+msg[0] );
 							});
 					}{
@@ -719,11 +767,11 @@ SWDataNetworkOSC{
 		});
 	}
 
-	removeAll{ |addr|
+	removeAll{ |addr,name|
 		var there;
-		there = this.findClient( addr );
+		there = this.findClient( addr, name.asSymbol );
 		if ( there.isNil, {
-			this.errorMsg( addr, "/remove/all", 1);
+			this.errorMsg( addr, "/remove/all", 15, [name]);
 		},{
 			there.setters.do{ |nd|
 				if ( network.nodes.at( nd.id ).notNil,
@@ -738,11 +786,11 @@ SWDataNetworkOSC{
 		});
 	}
 
-	removeNode{ |addr,msg|
+	removeNode{ |addr,name,msg|
 		var there,node;
-		there = this.findClient( addr );
+		there = this.findClient( addr, name.asSymbol );
 		if ( there.isNil, {
-			this.errorMsg( addr, "/remove/node", 1);
+			this.errorMsg( addr, "/remove/node", 15, [name] );
 		},{
 			msg[0] = msg[0].asInteger;
 			node = network.nodes.at( msg[0] );
@@ -764,68 +812,87 @@ SWDataNetworkOSC{
 	}
 
 
-	labelNode{ |addr,msg|
-		msg[0] = msg[0].asInteger;
-		if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
-			{
-				setters.put( msg[0], addr );
-			});
-		if ( network.expectedNodes.indexOf( msg[0] ).isNil, {
-			this.warnMsg( addr, "/label/node", 6, msg );
-			if ( setters.at( msg[0] ) == addr, {
-				network.add( msg[1], msg[0] );
-			},{
-				this.warnMsg( addr, "/label/node", 4, msg );
+	/// TODO: why am I using a different tactic here??? Fix check for name!
+
+	labelNode{ |addr,name,msg|
+		var client;
+		// a client should be registered before being able to add expected nodes
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/label/node", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
+				{
+					setters.put( msg[0], addr );
+				});
+			if ( network.expectedNodes.indexOf( msg[0] ).isNil, {
+				this.warnMsg( addr, "/label/node", 6, msg );
+				if ( setters.at( msg[0] ) == addr, {
+					network.add( msg[1], msg[0] );
+				},{
+					this.warnMsg( addr, "/label/node", 4, msg );
+				});
 			});
 		});
 		this.logMsg(  "/label/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
-	labelSlot{ |addr,msg|
-		msg[0] = msg[0].asInteger;
-		if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
-			{
-				setters.put( msg[0], addr );
-			});
-		if ( network.expectedNodes.indexOf( msg[0] ).isNil, {
-			this.errorMsg( addr, "/label/slot", 6, msg );
-		}, {
-			if ( setters.at( msg[0] ) == addr, {
-				network.add( msg[2], [msg[0], msg[1].asInteger] );
-			},{
-				this.warnMsg( addr, "/label/slot", 4, msg );
+	labelSlot{ |addr,name,msg|
+		var client;
+		// a client should be registered before being able to add expected nodes
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/label/slot", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
+				{
+					setters.put( msg[0], addr );
+				});
+			if ( network.expectedNodes.indexOf( msg[0] ).isNil, {
+				this.errorMsg( addr, "/label/slot", 6, msg );
+			}, {
+				if ( setters.at( msg[0] ) == addr, {
+					network.add( msg[2], [msg[0], msg[1].asInteger] );
+				},{
+					this.warnMsg( addr, "/label/slot", 4, msg );
+				});
 			});
 		});
 		this.logMsg( "/label/slot:" + msg.copyRange(0,1) + " from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
 
-	addExpected{ |addr,msg|
+	addExpected{ |addr,name,msg|
 		var client;
-		msg[0] = msg[0].asInteger;
-		if ( msg[1].notNil ){
-			msg[1] = msg[1].asInteger;
-		};
-		if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
-			{
-				setters.put( msg[0], addr );
-			});
-		if ( setters.at( msg[0] ) == addr, {
-			switch( msg.size,
-				4, { network.addExpected( msg[0], msg[2], msg[1], msg[3] ); },
-				3, { network.addExpected( msg[0], msg[2], msg[1] ); },
+		// a client should be registered before being able to add expected nodes
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/add/expected", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			if ( msg[1].notNil ){
+				msg[1] = msg[1].asInteger;
+			};
+			if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
+				{
+					setters.put( msg[0], addr );
+				});
+			if ( setters.at( msg[0] ) == addr, {
+				switch( msg.size,
+					4, { network.addExpected( msg[0], msg[2], msg[1], msg[3] ); },
+					3, { network.addExpected( msg[0], msg[2], msg[1] ); },
 				2, { network.addExpected( msg[0], size: msg[1] ); }
-			);
-			if ( msg[1].notNil, {
-				client = this.findClient( addr );
-				if ( client.notNil ){
+				);
+				if ( msg[1].notNil, {
 					if ( network.nodes.at( msg[0] ).notNil){
 						client.addSetter( network.nodes.at( msg[0] ) );
 					};
-				};
-			})
-		},{
-			this.warnMsg( addr, "/add/expected", 4, msg );
+				})
+			},{
+				this.warnMsg( addr, "/add/expected", 4, msg );
+			});
 		});
 		this.logMsg("/add/expected:" + msg + " from client with IP"+addr.ip+"and port"+addr.port );
 	}
@@ -847,7 +914,9 @@ SWDataNetworkOSC{
 			10, { string = "Client with IP"+addr.ip+"and port"+addr.port+"has no setters"},
 			11, { string = "Client with IP"+addr.ip+"and port"+addr.port+"has no subscriptions" },
 			12, { string = "Node with id"+msg[0]+"does not have"+(msg.size-1)+"slots" },
-			13, { string = "Node with id"+msg[0]+"has wrong type"+msg[3] }
+			13, { string = "Node with id"+msg[0]+"has wrong type"+msg[3] },
+			14, { string = "Client with IP"+addr.ip+"and port"+addr.port+"was not registered under name" + msg[0] },
+			15, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "is not registered. Please register first" };
 		);	
 		^string;
 	}
@@ -910,12 +979,13 @@ SWDataNetworkOSCClient{
 	var <slotNodesSubs;
 
 
-	*new{ |addr|
-		^super.new.init( addr );
+	*new{ |addr,name|
+		^super.new.init( addr,name );
 	}
 
-	init{ |address|
+	init{ |address,name|
 		addr = address;
+		key = name;
 
 		subscriptions = Set.new;
 
@@ -924,16 +994,16 @@ SWDataNetworkOSCClient{
 		slotSubs = IdentityDictionary.new;
 
 		setters = Set.new;
-		addr.sendMsg( '/registered', addr.port.asInteger );
+		addr.sendMsg( '/registered', addr.port.asInteger, key.asString );
 	}
 
 	addr_{ |newaddr|
 		addr = newaddr;
-		addr.sendMsg( '/registered', addr.port.asInteger );
+		//	addr.sendMsg( '/registered', addr.port.asInteger );
 	}
 
 	ping{
-		addr.sendMsg( '/ping', addr.port.asInteger );
+		addr.sendMsg( '/ping', addr.port.asInteger, key.asString );
 		missedPongs = missedPongs + 1;
 	}
 
@@ -966,6 +1036,7 @@ SWDataNetworkOSCClient{
 	}
 
 	welcomeBack{
+		addr.sendMsg( '/registered', addr.port.asInteger, key.asString );
 		this.pong;
 		this.setterQuery;		
 		this.subscriptionQuery;
@@ -985,11 +1056,11 @@ SWDataNetworkOSCClient{
 		});
 
 		nodeSubs.do{ |it|
-			addr.sendMsg( '/subscribed/node', addr.port, it );
+			addr.sendMsg( '/subscribed/node', addr.port, key.asString, it );
 		};
 		slotNodesSubs.do{ |it|
 			slotSubs[it].do{ |jt|
-				addr.sendMsg( '/subscribed/slot', addr.port, it, jt );
+				addr.sendMsg( '/subscribed/slot', addr.port, key.asString, it, jt );
 			}
 		};
 		/*
@@ -1006,12 +1077,24 @@ SWDataNetworkOSCClient{
 		^true;
 	}
 
+
+	unsubscribeAll{
+		nodeSubs.do{ |it|
+			this.unsubscribeNode( it );
+		};
+		slotNodesSubs.do{ |it|
+			slotSubs[it].do{ |jt|
+				this.unsubscribeSlot( it, jt );
+			}
+		};
+	}
+
 	subscribeNode{ |id|
 		subscriptions.add( id );
 
 		nodeSubs.add( id );
 
-		addr.sendMsg( '/subscribed/node', addr.port, id );
+		addr.sendMsg( '/subscribed/node', addr.port, key.asString, id );
 	}
 
 	subscribeSlot{ |id1,id2|
@@ -1023,13 +1106,13 @@ SWDataNetworkOSCClient{
 		};
 		slotSubs[id1].add( id2 );
 
-		addr.sendMsg( '/subscribed/slot', addr.port, id1, id2 );
+		addr.sendMsg( '/subscribed/slot', addr.port, key.asString, id1, id2 );
 	}
 
 	unsubscribeNode{ |id|
 		subscriptions.remove( id );
 		nodeSubs.remove( id );
-		addr.sendMsg( '/unsubscribed/node', addr.port, id );
+		addr.sendMsg( '/unsubscribed/node', addr.port, key.asString, id );
 	}
 
 	unsubscribeSlot{ |id1,id2|
@@ -1042,7 +1125,7 @@ SWDataNetworkOSCClient{
 			slotNodesSubs.remove( id1 );
 		};
 
-		addr.sendMsg( '/unsubscribed/slot', addr.port, id1, id2 );
+		addr.sendMsg( '/unsubscribed/slot', addr.port, key.asString, id1, id2 );
 	}
 
 	newExpected{ |id,label|
