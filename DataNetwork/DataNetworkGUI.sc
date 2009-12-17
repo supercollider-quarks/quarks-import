@@ -58,7 +58,7 @@ SWDataSlotGui{
 		cw.background = Color.gray(0.8);
 
 
-		GUI.staticText.new( cw, Rect( 0, 0, 20, 16 )).string_( slot.id[1].asString ).font_( font ).align_( \right );
+		GUI.staticText.new( cw, Rect( 0, 0, 25, 16 )).string_( slot.id[1].asString ).font_( font ).align_( \right );
 
 		key = GUI.textField.new( cw, Rect( 0, 0, 65, 16 )).string_( slot.key.asString ).action_( { |tf| slot.key = tf.value.asSymbol; editKey = false; } ).font_( font );
 
@@ -124,7 +124,7 @@ SWDataSlotGui{
 
 		decorator.nextLine;
 		
-		slider = GUI.slider.new( cw, Rect( 0, 0, 205, 16 ) );
+		slider = GUI.slider.new( cw, Rect( 0, 0, 210, 16 ) );
 
 		this.addGetButton;
 		
@@ -194,8 +194,8 @@ SWDataSlotGui{
 
 SWDataNodeGui{
 	classvar <>xposScreen=0, <>yposScreen=20, <>font;
-	classvar <>xsize = 249;
-	classvar <>xsizeBig = 207;
+	classvar <>xsize = 254;
+	classvar <>xsizeBig = 212;
 	classvar <slottype;
 
 
@@ -257,7 +257,7 @@ SWDataNodeGui{
 		decorator = cw.decorator;
 		
 
-		GUI.staticText.new( cw, Rect( 0, 0, 20, 16 )).string_( node.id.asString ).font_( font ).align_( \right );
+		GUI.staticText.new( cw, Rect( 0, 0, 25, 16 )).string_( node.id.asString ).font_( font ).align_( \right );
 
 		key = GUI.textField.new( cw, Rect( 0, 0, 65, 16 )).string_( node.key.asString ).action_( { |tf| node.key = tf.value.asSymbol; editKey = false; } ).font_( font );
 

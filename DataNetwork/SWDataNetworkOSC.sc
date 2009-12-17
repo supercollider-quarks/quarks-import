@@ -516,25 +516,31 @@ SWDataNetworkOSC{
 	}
 
 	welcomeClientBack{ |client|
+		//	("welcoming client back" + client.addr + client.key ).postln;
+		client.welcomeBack;
 		client.nodeSubs.do{ |it|
 			if ( network.nodes[it].notNil){
 				client.newNode( network.nodes[it] );
 			}
 		};
-		client.welcomeBack;
+		client.setters.do{ |it|
+			// "it" is an instance of SWDataNode
+			setters.put( it.id, client.addr );
+		};
 	}
 
 	addClient{ |addr,name|
 		var there,newclient;
 		there = this.findClient( addr );
 		//		there = clients.find( { |it| it.addr == addr } );
-		//	[addr,there].postln;
+		//	[addr,there,name].postln;
 
-		if ( there.isNil, {
-			// see if the client exists in the library
+		if ( there.isNil, { 
+			// no client had that IP and port before
+			// see if the client exists by name in the library
 			there = clientDictionary.at( name.asSymbol );
 			if ( there.notNil){
-				// address may have changed
+				// address may have changed, so we reset it:
 				there.addr = addr;
 				clients = clients.add( there );
 				this.welcomeClientBack( there );
@@ -545,6 +551,7 @@ SWDataNetworkOSC{
 
 			}{
 				if ( addr.port > 0){
+					//		"new client".postln;
 					clientPorts.add( addr.port );
 					newclient = SWDataNetworkOSCClient.new( addr, name.asSymbol );
 					clients = clients.add( newclient );
@@ -557,7 +564,9 @@ SWDataNetworkOSC{
 				};
 			};
 		},{
+			//	"client had same ip and port, welcome back".postln;
 			there = clientDictionary.at( name.asSymbol );
+			//	there.postln;
 			if ( there.notNil ){
 				this.welcomeClientBack( there );				
 				this.logMsg( "client reregistered:"+(addr.asString.replace( "a NetAddr",""))+name );				
@@ -1036,6 +1045,7 @@ SWDataNetworkOSCClient{
 	}
 
 	welcomeBack{
+		//	this.dump;
 		addr.sendMsg( '/registered', addr.port.asInteger, key.asString );
 		this.pong;
 		this.setterQuery;		
@@ -1079,11 +1089,11 @@ SWDataNetworkOSCClient{
 
 
 	unsubscribeAll{
-		nodeSubs.do{ |it|
+		nodeSubs.copy.do{ |it|
 			this.unsubscribeNode( it );
 		};
-		slotNodesSubs.do{ |it|
-			slotSubs[it].do{ |jt|
+		slotNodesSubs.copy.do{ |it|
+			slotSubs[it].copy.do{ |jt|
 				this.unsubscribeSlot( it, jt );
 			}
 		};
