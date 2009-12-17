@@ -11,7 +11,7 @@ SWDataNetworkClient : SWDataNetwork{
 	
 	var <>autoregister = true;
 	// do not set unless you are the class itself
-	var <>registered = false;
+	var <registered = false;
 
 	*new{ |hostip,name="",reg=true|
 		^super.new.init.myInit( hostip,name, reg );
@@ -54,6 +54,30 @@ SWDataNetworkClient : SWDataNetwork{
 			}
 		)
 
+	}
+
+	registered_{ |reg|
+		registered = reg;
+		if ( registered ){
+			"Registered as client at DataNetwork".postln;
+		}{
+			"Unregistered as client at DataNetwork".postln;
+		};
+
+		subscriptions.do{ |it|
+			if ( it.isArray ){
+				this.subscribeSlot( it );
+			}{
+				this.subscribeNode( it );
+			}
+		};
+		setters.do{ |it|
+			if ( nodes[it].notNil ){
+				this.addExpected( it, spec.findNode( it ), nodes[it].size, nodes[it].type );
+			}{
+				this.addExpected( it, spec.findNode( it ) );
+			};
+		};
 	}
 
 	addResponders{
@@ -157,21 +181,6 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( autoregister, {
 			this.unregister;
 			this.register;
-			
-			subscriptions.do{ |it|
-				if ( it.isArray ){
-					this.subscribeSlot( it );
-				}{
-					this.subscribeNode( it );
-				}
-			};
-			setters.do{ |it|
-				if ( nodes[it].notNil ){
-					this.addExpected( it, spec.findNode( it ), nodes[it].size, nodes[it].type );
-				}{
-					this.addExpected( it, spec.findNode( it ) );
-				};
-			};
 		});
 	}
 
@@ -216,8 +225,17 @@ SWDataNetworkClient : SWDataNetwork{
 	// overloaded from base class
 	addExpected{ |id,label,size=nil,type=0,fromnw=false|
 		if ( fromnw.not, {
-			this.sendMsgWithArgs( '/add/expected', [ id, size, label, type] );
+			if ( size.isNil ){
+				this.sendMsgWithArgs( '/add/expected', [ id ] );
+			}{
+				if ( label.isNil ){
+					this.sendMsgWithArgs( '/add/expected', [ id, size ] );
+				}{
+					this.sendMsgWithArgs( '/add/expected', [ id, size, label, type] );
+				}
+			};
 		},{
+			("DataNetwork: expected node %, with label % and % slots".format( id, label, size )).postln;
 			// use the method from the super-class
 			super.addExpected( id, label, size, type );
 		});
@@ -396,6 +414,7 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( msg[1] != 0,{
 			this.add( msg[1], msg[0], true );
 		});
+		("DataNetwork: info node %, label %, % slots and type %".format( msg[0], msg[1], msg[2], msg[3] )).postln;
 	}
 
 	slotInfo{ |msg|
@@ -403,6 +422,7 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( msg[2] !=  0,{
 			this.add( msg[2], [msg[0],msg[1].asInteger], true );
 		});
+		("DataNetwork: info slot [%, %], label %".format( msg[0], msg[1], msg[2] )).postln;
 	}
 
 	nodeData{ |msg|
@@ -418,28 +438,28 @@ SWDataNetworkClient : SWDataNetwork{
 
 	unsubscribeNodeInfo{ |msg|
 		("unsubscribed node"+msg).postln;
-		subscriptions.remove( msg[1]);
+		subscriptions.remove( msg[2] );
 		//		if ( gui.notNil ){ gui.setNodeSub( msg[1], 0 )};
 		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	unsubscribeSlotInfo{ |msg|
 		("unsubscribed slot"+msg).postln;
-		subscriptions.remove( [msg[1],msg[2]] );
+		subscriptions.remove( [msg[2],msg[3]] );
 		//		if ( gui.notNil ){ gui.setSlotSub( [msg[1],msg[2]], 0 )};
 		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	subscribeNodeInfo{ |msg|
 		("subscribed node"+msg).postln;
-		subscriptions.add( msg[1]);
+		subscriptions.add( msg[2]);
 		//		if ( gui.notNil ){ gui.setNodeSub( msg[1], 1 )};
 		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
 
 	subscribeSlotInfo{ |msg|
 		("subscribed slot"+msg).postln;
-		subscriptions.add( [msg[1],msg[2]] );
+		subscriptions.add( [msg[2],msg[3]] );
 		//		if ( gui.notNil ){ gui.setSlotSub( [msg[1],msg[2]], 1 )};
 		if ( gui.notNil ){ gui.subsetChanged = true };
 	}
