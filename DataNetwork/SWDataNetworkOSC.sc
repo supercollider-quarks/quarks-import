@@ -318,7 +318,10 @@ SWDataNetworkOSC{
 	backupClients{ |name|
 		name = name ? "SWDataNetworOSC_clients";
 		this.backupClientsIPs( name );
-		clients.collect{ |it| [ it.addr, it.subscriptions.asArray, it.setters.collect{ |it| [it.id,it.data.size] }.asArray ] }.writeArchive( Platform.userAppSupportDir +/+ name  );
+		clients.collect{ |it| 
+			[ it.addr, it.subscriptions.asArray,
+				it.setters.collect{ |it| [it.id,it.data.size] }.asArray
+			] }.writeArchive( Platform.userAppSupportDir +/+ name  );
 	}
 
 	restoreClients{ |name|
@@ -345,7 +348,7 @@ SWDataNetworkOSC{
 				network.addExpected( jt[0] );
 				network.setData( jt[0], Array.fill( jt[1], 0 ) );
 				network.nodes.postcs;
-				setters.put( jt[0], tc.addr );
+				setters.put( jt[0], tc.key );
 				tc.addSetter( network.nodes.at( jt[0] ).postcs; );
 			};
 		};
@@ -523,10 +526,13 @@ SWDataNetworkOSC{
 				client.newNode( network.nodes[it] );
 			}
 		};
+		/*
 		client.setters.do{ |it|
 			// "it" is an instance of SWDataNode
-			setters.put( it.id, client.addr );
+			//		("setter"+it.id + client.addr).postln;
+			setters.put( it.id, client.key );
 		};
+		*/
 	}
 
 	addClient{ |addr,name|
@@ -568,6 +574,7 @@ SWDataNetworkOSC{
 			there = clientDictionary.at( name.asSymbol );
 			//	there.postln;
 			if ( there.notNil ){
+				there.addr = addr;
 				this.welcomeClientBack( there );				
 				this.logMsg( "client reregistered:"+(addr.asString.replace( "a NetAddr",""))+name );				
 			}{
@@ -733,10 +740,10 @@ SWDataNetworkOSC{
 				{ // it's a new node for the network:
 					if ( setters.at( msg[0] ).isNil, {
 						// and there was no setter yet, so client becomes the setter
-						setters.put( msg[0], addr );
+						setters.put( msg[0], name.asSymbol );
 					});
 					// if the client is the setter:
-					if ( setters.at( msg[0] ) == addr ){
+					if ( setters.at( msg[0] ) == name.asSymbol ){
 						if ( network.expectedNodes.indexOf( msg[0] ).isNil,
 							{
 								this.errorMsg( addr, "/set/data", 6, msg );
@@ -833,11 +840,11 @@ SWDataNetworkOSC{
 			msg[0] = msg[0].asInteger;
 			if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
 				{
-					setters.put( msg[0], addr );
+					setters.put( msg[0], name.asSymbol );
 				});
 			if ( network.expectedNodes.indexOf( msg[0] ).isNil, {
 				this.warnMsg( addr, "/label/node", 6, msg );
-				if ( setters.at( msg[0] ) == addr, {
+				if ( setters.at( msg[0] ) == name.asSymbol, {
 					network.add( msg[1], msg[0] );
 				},{
 					this.warnMsg( addr, "/label/node", 4, msg );
@@ -857,12 +864,12 @@ SWDataNetworkOSC{
 			msg[0] = msg[0].asInteger;
 			if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
 				{
-					setters.put( msg[0], addr );
+					setters.put( msg[0], name.asSymbol );
 				});
 			if ( network.expectedNodes.indexOf( msg[0] ).isNil, {
 				this.errorMsg( addr, "/label/slot", 6, msg );
 			}, {
-				if ( setters.at( msg[0] ) == addr, {
+				if ( setters.at( msg[0] ) == name.asSymbol, {
 					network.add( msg[2], [msg[0], msg[1].asInteger] );
 				},{
 					this.warnMsg( addr, "/label/slot", 4, msg );
@@ -886,13 +893,14 @@ SWDataNetworkOSC{
 			};
 			if ( network.nodes.at( msg[0] ).isNil and: setters.at( msg[0] ).isNil,
 				{
-					setters.put( msg[0], addr );
+					setters.put( msg[0], name.asSymbol );
 				});
-			if ( setters.at( msg[0] ) == addr, {
+			if ( setters.at( msg[0] ) == name.asSymbol, {
 				switch( msg.size,
 					4, { network.addExpected( msg[0], msg[2], msg[1], msg[3] ); },
 					3, { network.addExpected( msg[0], msg[2], msg[1] ); },
-				2, { network.addExpected( msg[0], size: msg[1] ); }
+					2, { network.addExpected( msg[0], size: msg[1] ); },
+					1, { network.addExpected( msg[0] ); }
 				);
 				if ( msg[1].notNil, {
 					if ( network.nodes.at( msg[0] ).notNil){
@@ -1003,6 +1011,10 @@ SWDataNetworkOSCClient{
 		slotSubs = IdentityDictionary.new;
 
 		setters = Set.new;
+		this.sendRegistered;
+	}
+
+	sendRegistered{
 		addr.sendMsg( '/registered', addr.port.asInteger, key.asString );
 	}
 
@@ -1046,7 +1058,7 @@ SWDataNetworkOSCClient{
 
 	welcomeBack{
 		//	this.dump;
-		addr.sendMsg( '/registered', addr.port.asInteger, key.asString );
+		this.sendRegistered;
 		this.pong;
 		this.setterQuery;		
 		this.subscriptionQuery;
