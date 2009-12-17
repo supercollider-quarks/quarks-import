@@ -57,7 +57,7 @@ SWDataNetworkOSCClientGui{
 
 		addrPort = GUI.staticText.new( cw, Rect( 0, 0, 40, 16 )).string_( client.addr.port.asString ).font_( font ).align_( \right );
 
-		key = GUI.textField.new( cw, Rect( 0, 0, 50, 16 )).string_( client.key.asString ).action_( { |tf| client.key = tf.value.asSymbol; editKey = false; } ).font_( font );
+		key = GUI.textField.new( cw, Rect( 0, 0, 120, 16 )).string_( client.key.asString ).action_( { |tf| client.key = tf.value.asSymbol; editKey = false; } ).font_( font );
 
 		key.mouseDownAction = { editKey = editKey.not; };
 
@@ -199,7 +199,7 @@ SWDataNetworkOSCGui{
 		restore = GUI.button.new( w, Rect( 0, 0, 55, 20 )).states_(
 			[ [ "restore", Color.blue ] ] ).action_( { network.restoreClients} ).mouseOverAction_({ this.setInfo( "restore client configuration") });
 
-		info = GUI.staticText.new( w, Rect( 0, 0, 250, 16 )).align_( \center );
+		info = GUI.staticText.new( w, Rect( 0, 0, 240, 16 )).align_( \center );
 
 		w.view.decorator.nextLine;
 
