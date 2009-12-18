@@ -75,6 +75,43 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 SWDataNetwork</A></H2>
 <H3>Base class for the Sense World Data Network.</H3>
 
+
+<h4>Some nomenclature:</h4>
+<p>
+A <strong>DataNode</strong>, or a node, is a collection of data streams which somehow belong together.<br>
+For example, this can be representing:<br>
+
+<UL>
+  <LI>A SenseStage MiniBee hardware sensor node with sensors attached</LI>
+  <LI>All the parameters of a sound process (amplitude, frequency, etc)</LI>
+  <LI>A group of (DMX) light channels</LI>
+  <LI>Showtime information (hours, minutes, seconds, frame)</LI>
+  <LI>All the light sensors in a space, collected in a logical order</LI>
+  <LI>All the parameters of a graphical object (dimensions, color)</LI>
+  <LI>All the data from a gaming device, such as a joystick</LI>
+</UL>
+
+<p>An <strong>expected Node</strong> is a DataNode that is prepared to be added to the network, but may not be present yet.</p>
+
+<p>A <strong>DataSlot</strong>, or a slot, is one datastream. So corresponding to the examples of nodes above a slot would represent:<br>
+
+<UL>
+  <LI>A light sensor attached to a MiniBee</LI>
+  <LI>One axis of an acclerometer attached to a MiniBee</LI>
+  <LI>The amplitude of a sound process</LI>
+  <LI>One DMX light channel</LI>
+  <LI>The seconds of the showtime</LI>
+  <LI>The x-dimension of a graphical object</LI>
+  <LI>The y-axis of a joystick</LI>
+</UL>
+
+<p><strong>A client:</strong> the programming environment of one collaborator hooked up to the network. E.g. Joe, using PureData, or Marije, using SuperCollider, or Vincent, using Processing, or Brett, using Max/MSP.</p>
+
+<p><strong>Subscription:</strong> a client can subscribe to a node to receive its data, or subscribe to a single slot of a node. These are called the client's subscriptions.</p>
+
+<p><strong>Setter:</strong> a client can provide data to the network by creating a DataNode. The client then becomes the "setter" of the node. Other clients can not set data to the same node.</p>
+
+
 <h4>- Example - </h4>
 
     <pre>

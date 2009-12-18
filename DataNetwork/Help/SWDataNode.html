@@ -32,6 +32,76 @@ SWDataNode</A>
 </H2>
 Base class for a data node
 
+<h3>- Example - </h3>
+
+<pre>
+// create a network client:
+y = SWDataNetworkClient.new( "192.168.0.104", "myname" );
+
+// subscribe to node 102
+y.subscribeNode( 102 );
+
+
+// -------- working with the data node:
+
+// get a reference to a DataNode in a variable:
+a = y.nodes[102];
+
+// if the node has a label, you acces it by its label:
+a = y[\minibee102];
+
+// access the values of all slots of the node:
+a.value;
+
+(
+SynthDef(\swexample,{ |out=0,amp=0.1,freq=400|
+	Out.ar( out, SinOsc.ar( freq, 0, amp ) );
+}).send(s)
+)
+
+// use it at synth instantiation:
+b = Synth.new( \swexample, [\amp,a.value ] );
+
+// set it again:
+b.set( \amp, a.value );
+
+// free the synth
+b.free;
+
+// instead of setting it manually each time, you can assign
+// an action to the data node to do this automatically:
+
+b = Synth.new( \swexample, [\amp,a.value ] );
+
+a.action= { |data| b.set( \amp, data )};
+
+// another method is to put the data automatically on a bus,
+// and grab the data from there:
+
+// reset the action:
+a.action = {};
+
+// create a bus:
+a.createBus(s);
+
+// map the amplitude of b to the bus:
+b.map( \amp, a.bus );
+
+b.free;
+
+// alternatively, you can use In.kr in your synthdef to read
+// from the bus:
+(
+SynthDef(\swexampleBus,{ |out=0,ampbus=0,freq=400|
+	Out.ar( out, SinOsc.ar( freq, 0, In.kr( ampbus, 1 ) ) );
+}).send(s)
+)
+
+b = Synth.new( \swexampleBus, [\ampbus,a.bus ] );
+
+b.free;
+
+</pre>
 
 <h3>- Methods - </h3>
 
