@@ -40,6 +40,9 @@ The SenseWorld DataNetwork was created as part of the <a href="http://sensestage
 </p>
 
 
+
+
+
 <H3><A NAME="SECTION00010000000000000000">
 Data Network Elements</A>
 </H3>
@@ -70,6 +73,93 @@ Data on the network is set by calling the function method <code>setData</code> w
 <P>
 Each <em>DataNode</em> and each <em>DataSlot</em> can be given a label, so that their functionality becomes more human understandable.
 </P>
+
+
+<h4>Some nomenclature:</h4>
+<p>
+A <strong>DataNode</strong>, or a node, is a collection of data streams which somehow belong together.<br>
+For example, this can be representing:<br>
+
+<UL>
+  <LI>A SenseStage MiniBee hardware sensor node with sensors attached</LI>
+  <LI>All the parameters of a sound process (amplitude, frequency, etc)</LI>
+  <LI>A group of (DMX) light channels</LI>
+  <LI>Showtime information (hours, minutes, seconds, frame)</LI>
+  <LI>All the light sensors in a space, collected in a logical order</LI>
+  <LI>All the parameters of a graphical object (dimensions, color)</LI>
+  <LI>All the data from a gaming device, such as a joystick</LI>
+</UL>
+
+<p>An <strong>expected Node</strong> is a DataNode that is prepared to be added to the network, but may not be present yet.</p>
+
+<p>A <strong>DataSlot</strong>, or a slot, is one datastream. So corresponding to the examples of nodes above a slot would represent:<br>
+
+<UL>
+  <LI>A light sensor attached to a MiniBee</LI>
+  <LI>One axis of an acclerometer attached to a MiniBee</LI>
+  <LI>The amplitude of a sound process</LI>
+  <LI>One DMX light channel</LI>
+  <LI>The seconds of the showtime</LI>
+  <LI>The x-dimension of a graphical object</LI>
+  <LI>The y-axis of a joystick</LI>
+</UL>
+
+<p><strong>A client:</strong> the programming environment of one collaborator hooked up to the network. E.g. Joe, using PureData, or Marije, using SuperCollider, or Vincent, using Processing, or Brett, using Max/MSP.</p>
+
+<p><strong>Subscription:</strong> a client can subscribe to a node to receive its data, or subscribe to a single slot of a node. These are called the client's subscriptions.</p>
+
+<p><strong>Setter:</strong> a client can provide data to the network by creating a DataNode. The client then becomes the "setter" of the node. Other clients can not set data to the same node.</p>
+
+
+<H3>SuperCollider implementation</H3>
+
+Within SuperCollider the implementation is done in a number of classes.
+
+
+<p>
+<A HREF="SWDataNetwork.html">SWDataNetwork</A> is the basic implementation of the DataNetwork. You can use it in a local project to manage your datastreams within SC (not communicating with other programs), or become the host of the DataNetwork by calling the method, <em>addOSCInterface</em>. It is also the base class of <A HREF="SWDataNetworkClient.html">SWDataNetworkClient</A>, so the common usage interface between the host and the client is the same. The client has some extra methods for registering, subscribing and querying.
+</p>
+
+<p>You can easily create a <A HREF="SWDataNetworkGui.html">graphical user interface</A> for the DataNetwork with the methods <em>makeGui</em> and <em>makeBasicGui</em>. 
+</p>
+
+
+<p><A 
+  HREF="SWDataNode.html">SWDataNode</A> - <A 
+  HREF="SWDataStringNode.html">SWDataStringNode</A> are the implementations of the DataNode. You usually access them by number or by name from the DataNetwork instance.
+</p>
+<p><A 
+  HREF="SWDataSlot.html">SWDataSlot</A> - <A 
+  HREF="SWDataStringSlot.html">SWDataStringSlot</A> are the implementations of the DataSlots. You usually access them by number or by name from the DataNetwork instance.
+</p>
+
+<p><A 
+  HREF="SWDataNetworkLog.html">SWDataNetworkLog</A> can be used to read a logfile of the DataNetwork and play the data back into a DataNetwork.
+</p>
+
+
+<p><A 
+  HREF="SWDataNetworkSpec.html">SWDataNetworkSpec</A>, <A 
+  HREF="SWDataNetworkOSC.html">SWDataNetworkOSC</A>, and <A 
+  HREF="SWDataNetworkOSCClient.html">SWDataNetworkOSCClient</A> are used internally to handle labeling of DataNodes and DataSlots, and the OSC communication of the host.
+</p>
+
+
+<p>There are methods for easily adding <A 
+  HREF="SWGeneralHID.html">GeneralHID devices</A> and <A 
+  HREF="SWWiiMote.html">WiiMotes</A> to the network. There are also extensions to use data from the DataNetwork in <A 
+  HREF="SWDataPattern.html">Patterns</A>.</p>
+
+
+<p><A 
+  HREF="SWBusNode.html">SWBusNode</A>, <A 
+  HREF="SWWatcherNode.html">SWWatcherNode</A>, <A 
+  HREF="SWBusWatcherNode.html">SWBusWatcherNode</A>, <A 
+  HREF="SWCombineNode.html">SWCombineNode</A> and <A 
+  HREF="SWDataAction.html">SWDataAction</A> are classes to use to process data from the datanetwork and create derived or conditioned data.
+</p>
+
+
 
 <H3><A NAME="SECTION00020000000000000000">
 OSC interface</A>
@@ -103,7 +193,7 @@ Clients</A>
 <P>
 Clients for other software environments are available in the Help/Clients directory.
 <BR>
-Currently there are Max patches for Max4.6 and Max5 (created by Harry Smoak, Joseph Malloch and Brett Bergmann)
+Currently there are Max patches for Max4.6 and Max5 (created by Harry Smoak, Joseph Malloch and Brett Bergmann), PureData (Pd) patches (created by Joseph Thibodeau), a Processing and Java library (Vincent de Belleval), and a C++ library (created by Marije Baalman).
 </P>
 <H3><A NAME="SECTION00040000000000000000">
 Futher documentation</A>

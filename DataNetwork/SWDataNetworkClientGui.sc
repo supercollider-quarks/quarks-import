@@ -1,7 +1,7 @@
 SWDataSlotClientGui : SWDataSlotGui {
 	var <sub,<get;
 
-	var <xsize = 180;
+	var <xsize = 185;
 
 	addSubButton{
 		sub = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
@@ -27,8 +27,8 @@ SWDataSlotClientGui : SWDataSlotGui {
 }
 
 SWDataNodeClientGui : SWDataNodeGui {
-	classvar <>xsize = 305;
-	classvar <>xsizeBig = 258;
+	classvar <>xsize = 310;
+	classvar <>xsizeBig = 263;
 
 	classvar <slottype;
 
