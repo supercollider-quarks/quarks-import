@@ -13,13 +13,32 @@ HelpDoc {
 	
 	makeGUI {
 		// ...
-		var view = Window(name ? "Untitled 01");
-		// ...
-		segments.do { |seg| seg.addToGUI(view) };
+		var window = Window(name ? "Untitled 01", Rect(40, 40, 510, 400));
+		window.addFlowLayout;
+		Button(window, Rect(0, 0, 60, 30)).states_([["post doc"]]).action_({ this.makeDoc });
+		Button(window, Rect(0, 0, 60, 30)).states_([["post XML"]]).action_({ this.asXML });
+		window.view.decorator.nextLine;
+		segments.do { |seg| 
+			seg.addToGUI(window);
+			window.view.decorator.nextLine;
+		};
+		window.front;
 	}
 	
 	asDict {
 		^(category: \helpdoc, name: name, segments: segments.collect(_.asDict))
+	}
+	
+	asXML { |stream|
+		stream = stream ? HelpXMLStream; // use a different one later
+		stream << "<?xml version=\"1.0\" encoding='UTF-8'?>";
+		stream.nl;
+		stream.openTag("SCHelp");
+		stream.nl;
+		segments.do { |seg|
+			seg.asXML(stream);
+		};
+		stream.closeTag("SCHelp");
 	}
 	
 	// replace these with platform specific settings
@@ -48,6 +67,24 @@ HelpDoc {
 }
 
 
+HelpXMLStream : Post { // change later to CollStream
+	classvar <open;
+	
+	*openTag { |tag|
+		this << "<" << tag << ">";
+		open = open.add(tag);
+	}
+	
+	*closeTag { |tag|
+		var stackTag = open.pop;
+		tag !? { 
+			if(stackTag != tag) { Error("XML tags don't close properly.").throw }
+		};
+		this << "</" << stackTag << ">";
+	}
+}
+
+
 
 HelpDocNode {
 
@@ -60,9 +97,11 @@ HelpDocNode {
 	addTextField { |parent, property, size = 10|
 		var oldVal = this.perform(property);
 		// determine optimal size (todo)
-		^TextView(parent).string_(oldVal ? "add % here".format(property)).action_({ |v|
-			this.perform(property.asSetter, v.string)
-		});
+		^TextView(parent, Rect(0, 0, 500, 30))
+			.string_(oldVal ? "add % here".format(property))
+			.keyDownAction_({ |v|
+				AppClock.sched(0.01, { this.perform(property.asSetter, v.string); nil })
+			});
 	}
 
 	// rendering
@@ -80,6 +119,23 @@ HelpDocNode {
 		var res = ();
 		this.properties.do { |property| res.put(property, this.perform(property)) };
 		^res
+	}
+	
+	addPropertyToXML { |stream, property|
+		var value = this.perform(property).asCompileString;
+		stream.openTag(property);
+		stream.openTag("string");
+		stream << value;
+		stream.closeTag("string");
+		stream.closeTag(property);
+		
+	}
+	
+	asXML { |stream|
+		this.properties.do { |property| 
+			this.addPropertyToXML(stream, property);
+			stream.nl;
+		}
 	}
 	
 	addString { |doc, string, font|
@@ -109,6 +165,7 @@ HelpDocHeader : HelpDocNode {
 	addToGUI { |parent|
 		this.properties.do { |property|
 			this.addTextField(parent, property);
+			parent.view.decorator.nextLine;
 		};
 	}
 	
@@ -157,41 +214,5 @@ HelpDocExample : HelpDocNode {
 }
 
 
-/*
-HelpXMLStream : Post { // change later
-	classvar <open;
-	
-	*openTag { |tag|
-		this << "<" << tag << ">";
-		open = open.add(tag);
-	}
-	
-	*closeTag { |tag|
-		var stackTag = open.pop;
-		tag !? { 
-			if(stackTag != tag) { Error("XML tags don't close properly.").throw }
-		};
-		this << "</" << stackTag << ">";
-	}
-}
-*/
 
 
-/*
-asXML { |stream|
-		stream = stream ? HelpXMLStream; // use a different one later
-		stream.openTag("XML");
-		segments.do { |seg|
-			seg.asXML(stream);
-		};
-		stream.closeTag("XML");
-	}
-asXML { |stream|
-		[\name, \headline, \description].do { |property|
-			stream.openTag(property);
-			stream << "\n" << this.perform(property).asCompileString << "\n";
-			stream.closeTag;
-		};
-	}
-	
-*/
