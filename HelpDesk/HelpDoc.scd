@@ -10,12 +10,13 @@ a = HelpDoc(
 			)
 		]
 );
+)
 
 
 a.makeDoc;
 a.asDict;
-)
-
+a.asXML;"";
+a.makeGUI;
 
 // noop.
 // primitive not bound: prSaveAsPlist
