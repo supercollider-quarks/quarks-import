@@ -1,7 +1,7 @@
 
 Voicer {		// collect and manage voicer nodes
 			// H. James Harkins -- jamshark70@dewdrop-world.net
-	
+
 	var	<nodes,
 		<voices,		// maximum number of voices
 		<target, <>addAction,
@@ -330,7 +330,7 @@ Voicer {		// collect and manage voicer nodes
 	
 	setArgsInEvent { |event|
 		var	build = {
-			var synthDesc, argList, controls, cname,
+			var synthDesc, argList, controls, cname, value,
 					// why? I want VoicerNode's initargs to override parent event defaults
 					// but keys set in the local event should take precedence
 				eventWithoutParent = currentEnvironment.copy.parent_(nil);
@@ -349,13 +349,16 @@ Voicer {		// collect and manage voicer nodes
 							(eventWithoutParent[cname].size == 0).if({
 								eventWithoutParent[cname] = eventWithoutParent[cname].asArray;
 							});
+							value = eventWithoutParent[cname].wrapAt(i)
+								?? { node.initArgAt(cname) };
 								// add value: environment overrides node's initarg,
 								// which overrides the SynthDef's default
-							argList.add(cname)
-								.add(eventWithoutParent[cname].wrapAt(i)
-									?? { node.initArgAt(cname) }
-									?? { c.defaultValue }
-								);
+								// used to add synthdef default explicitly (c.defaultValue)
+								// but that breaks t_gate, so now adding only values
+								// that exist in the event or have Voicer-specific defaults
+							if(value.notNil) {
+								argList.add(cname).add(value)
+							};
 						};
 					});
 					argList
@@ -634,10 +637,15 @@ Voicer {		// collect and manage voicer nodes
 						var latency, freq, length;
 						
 						latency = i * strum + lag;
+							// backward compatibility: I should NOT add server latency
+							// for newer versions with Julian's schedbundle method
+						if(~addServerLatencyToLag ? false) {
+							latency = latency + (node.server.latency ? 0)
+						};
 						freq = ~freq.wrapAt(i);
 						length = ~sustain.wrapAt(i);
 	
-						~schedBundleArray.(~latency ? 0, ~timingOffset,
+						~schedBundleArray.(latency, ~timingOffset,
 							node.server,
 							node.server.makeBundle(false, {
 								node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
