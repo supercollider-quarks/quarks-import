@@ -9,18 +9,21 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #843424}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0030f2}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0030f2}
-span.s6 {color: #0000ff}
-span.s7 {color: #062cb0}
+span.s5 {color: #1142e6}
+span.s6 {color: #0030f2}
+span.s7 {color: #0022f8}
+span.s8 {color: #0000bf}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -30,38 +33,38 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="s2">see </span><span class="s3">http:</span><span class="s4">//en.wikipedia.org/wiki/LZW</span></p>
 <p class="p3"><span class="s2">and </span><span class="s3">http:</span><span class="s4">//marknelson.us/1989/10/01/lzw-data-compression/</span></p>
 <p class="p2"><br></p>
-<p class="p1">see also: <a href="RedBase64.html"><span class="s5">RedBase64</span></a><span class="s5"> <a href="RedHuffman.html"><span class="s6">RedHuffman</span></a></span></p>
+<p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s5">RedBase64</span></a></span><span class="s5"> <a href="RedHuffman.html"><span class="s6">RedHuffman</span></a></span> <a href="RedRLE.html"><span class="s7">RedRLE</span></a></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*compress(string)</b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array with integers</p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*decompress(array)</b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>array must be integers</p>
 <p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns a string</p>
-<p class="p4"><br></p>
-<p class="p4"><br></p>
-<p class="p5">//--</p>
-<p class="p6"><span class="s2">a= </span>"TOBEORNOTTOBEORTOBEORNOT"<span class="s2">;</span></p>
-<p class="p7">a.size;</p>
-<p class="p7">b= <span class="s7">RedLZW</span>.compress(a);</p>
-<p class="p7">b.size;</p>
-<p class="p7">c= <span class="s7">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size;</p>
-<p class="p7">a==c;</p>
-<p class="p4"><br></p>
-<p class="p6"><span class="s2">a= </span>"/WED/WE/WEE/WEB/WET"<span class="s2">;</span></p>
-<p class="p7">a.size;</p>
-<p class="p7">b= <span class="s7">RedLZW</span>.compress(a);</p>
-<p class="p7">b.size</p>
-<p class="p7">c= <span class="s7">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size</p>
-<p class="p7">a==c</p>
-<p class="p4"><br></p>
-<p class="p6"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">;</span></p>
-<p class="p7">a.size;</p>
-<p class="p7">b= <span class="s7">RedLZW</span>.compress(a);</p>
-<p class="p7">b.size</p>
-<p class="p7">c= <span class="s7">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size</p>
-<p class="p7">a==c</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//--</p>
+<p class="p7"><span class="s2">a= </span>"TOBEORNOTTOBEORTOBEORNOT"<span class="s2">;</span></p>
+<p class="p8">a.size;</p>
+<p class="p8">b= <span class="s8">RedLZW</span>.compress(a);</p>
+<p class="p8">b.size;</p>
+<p class="p8">c= <span class="s8">RedLZW</span>.decompress(b);</p>
+<p class="p8">c.size;</p>
+<p class="p8">a==c;</p>
+<p class="p9"><br></p>
+<p class="p7"><span class="s2">a= </span>"/WED/WE/WEE/WEB/WET"<span class="s2">;</span></p>
+<p class="p8">a.size;</p>
+<p class="p8">b= <span class="s8">RedLZW</span>.compress(a);</p>
+<p class="p8">b.size;</p>
+<p class="p8">c= <span class="s8">RedLZW</span>.decompress(b);</p>
+<p class="p8">c.size;</p>
+<p class="p8">a==c;</p>
+<p class="p9"><br></p>
+<p class="p7"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">;</span></p>
+<p class="p8">a.size;</p>
+<p class="p8">b= <span class="s8">RedLZW</span>.compress(a);</p>
+<p class="p8">b.size;</p>
+<p class="p8">c= <span class="s8">RedLZW</span>.decompress(b);</p>
+<p class="p8">c.size;</p>
+<p class="p8">a==c;</p>
 </body>
 </html>
