@@ -315,4 +315,9 @@ VoicerProxy {
 		^voicer.bus;
 	}
 
+	susPedal { ^voicer.susPedal }
+	sustainPedal { |sustain|
+		moreVoicers.do(_.sustainPedal(sustain));
+		voicer.sustainPedal(sustain);
+	}
 }

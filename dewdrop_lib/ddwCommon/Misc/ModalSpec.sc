@@ -9,7 +9,7 @@ ModalSpec {
 	var	<>scale,			// representation of intervals starting with 0: [0, 2, 4] = do re mi
 		<>stepsPerOctave,	// what's top of scale?
 		<>root,			// semitones above midinote 0
-		<>tuning = 0,		// degree -> key, this is added to output midi note; ignored on unmap
+		<>tuning = 0,		// cpsFunc adds this to output frequency
 		<cpsFunc;		// a function or Tuning object to convert note numbers to cps
 	
 	var	<degToKey, <keyToDeg;	// conversion dictionaries
@@ -51,7 +51,8 @@ ModalSpec {
 			degToKey.put(v, k);	// reverse lookup
 		});
 		
-		cpsFunc ?? { cpsFunc = _.midicps };
+			// cpsFunc_ provides a default
+		this.cpsFunc = cpsFunc;
 	}
 
 		// note: using object.mapMode(mode) directly is slightly faster
@@ -85,7 +86,7 @@ ModalSpec {
 			degToKey[degree.asInteger % scale.size] + (num * num.fuzzygcd(1).reciprocal)
 		}))
 			+ ((degree / scale.size).trunc * stepsPerOctave)
-			+ root + tuning;
+			+ root // + tuning;
 	}
 	
 	addSteps { arg degree, steps;	// add steps semitones to degree
@@ -121,7 +122,7 @@ ModalSpec {
 	}
 	
 	cpsFunc_ { |func|
-		cpsFunc = func ?? { _.midicps };
+		cpsFunc = func ? { |midi| (midi + tuning).midicps };
 	}
 	
 		// transpose the scale so that the root is different but the modal notes are the same
