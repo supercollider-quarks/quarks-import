@@ -1,13 +1,10 @@
 //redFrik
 
-//--todo:
-//file read/write
-
 RedHuffman {
-	classvar <>tree, <>dict;
+	classvar <>tree, <>dict, <>pad;
 	
 	*encode {|str|
-		var out;
+		var out, n0, n1;
 		
 		//--build a forest of small trees
 		tree= [];
@@ -22,8 +19,8 @@ RedHuffman {
 		
 		//--collect greedy as a single big tree
 		while({tree.size>2}, {
-			var n0= this.prTakeMinimum;
-			var n1= this.prTakeMinimum;
+			n0= this.prTakeMinimum;
+			n1= this.prTakeMinimum;
 			tree= tree.add(([n0, n1] -> (n0.value+n1.value)));
 		});
 		
@@ -52,6 +49,23 @@ RedHuffman {
 		};
 		^out;
 	}
+	*binaryStringToBytes {|str|
+		pad= 0;
+		^str.clump(8).collect{|x|
+			while({x.size<8}, {
+				x= x++0;
+				pad= pad+1;
+			});
+			("2r"++x).interpret;
+		};
+	}
+	*bytesToBinaryString {|arr|
+		var str= arr.collect{|x|
+			x.asBinaryString(8);
+		}.join;
+		^str.copyRange(0, str.size-1-pad);
+	}
+	
 	
 	//--private
 	*prTakeMinimum {
