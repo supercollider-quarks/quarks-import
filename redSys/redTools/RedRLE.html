@@ -9,21 +9,23 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #843424}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0030f2}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #653f2e}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #083aec}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {text-decoration: underline ; color: #002ce2}
-span.s6 {color: #355ccc}
-span.s7 {color: #0030f2}
-span.s8 {color: #2854d6}
-span.s9 {color: #0019ba}
+span.s5 {text-decoration: underline ; color: #0736dc}
+span.s6 {color: #4a67bc}
+span.s7 {color: #083aec}
+span.s8 {color: #4062c4}
+span.s9 {color: #0024b5}
+span.s10 {color: #9d281b}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -32,30 +34,39 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><span class="s2">see </span><span class="s3">http:</span><span class="s4">//en.wikipedia.org/wiki/Run-length_encoding</span></p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s5">RedBase64</span></a></span><span class="s6"> <a href="RedHuffman.html"><span class="s7">RedHuffman</span></a></span><span class="s8"> <a href="RedLZW.html"><span class="s7">RedLZW</span></a></span></p>
+<p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s5">RedBase64</span></a></span><span class="s6"> <a href="RedHuffman.html"><span class="s7">RedHuffman</span></a></span><span class="s8"> <a href="RedLZ77.html"><span class="s7">RedLZ77</span></a> <a href="RedLZW.html"><span class="s7">RedLZW</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*encode(array)</b></p>
-<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array with length, value pairs integers</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array with length, value pairs.</p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*decode(array)</b></p>
-<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>array must be length, value pairs integers</p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns a string</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>array must be length, value pairs.</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6">//--</p>
-<p class="p7"><span class="s2">a= </span>"WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWWWW"<span class="s2">;</span></p>
+<p class="p7"><span class="s2">a= </span>"WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWWWW"<span class="s2">.ascii;</span></p>
 <p class="p8">a.size;</p>
 <p class="p8">b= <span class="s9">RedRLE</span>.encode(a);</p>
-<p class="p8">b.size;</p>
+<p class="p8">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s10">//21% compressed</span></p>
 <p class="p8">c= <span class="s9">RedRLE</span>.decode(b);</p>
 <p class="p8">c.size;</p>
 <p class="p8">a==c;</p>
+<p class="p8">c.collect{<span class="s9">|x|</span> x.asAscii}.join;</p>
 <p class="p5"><br></p>
-<p class="p7"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">;</span></p>
+<p class="p9"><br></p>
+<p class="p7"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">.ascii;</span></p>
 <p class="p8">a.size;</p>
 <p class="p8">b= <span class="s9">RedRLE</span>.encode(a);</p>
-<p class="p6"><span class="s2">b.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//performs really bad with non repeating data</p>
+<p class="p6"><span class="s2">b.size/c.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//167%<span class="Apple-converted-space">  </span>performs really bad with non repeating data</p>
 <p class="p8">c= <span class="s9">RedRLE</span>.decode(b);</p>
 <p class="p8">c.size;</p>
+<p class="p8">a==c;</p>
+<p class="p8">c.collect{<span class="s9">|x|</span> x.asAscii}.join;</p>
+<p class="p5"><br></p>
+<p class="p9"><br></p>
+<p class="p8">a= {[0, 0, 0, 0, 0, 0.5].choose}.dup(1000);</p>
+<p class="p8">b= <span class="s9">RedRLE</span>.encode(a);</p>
+<p class="p8">b.size/c.size;</p>
+<p class="p8">c= <span class="s9">RedRLE</span>.decode(b);</p>
 <p class="p8">a==c;</p>
 </body>
 </html>

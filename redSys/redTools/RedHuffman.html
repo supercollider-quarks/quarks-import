@@ -9,21 +9,22 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #653f2e}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #574233}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #4a4239; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #604030; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #47423b; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #544234; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0736dc}
-span.s6 {color: #0022f8}
-span.s7 {color: #0000bf}
+span.s5 {color: #1e49cd}
+span.s6 {color: #0030f2}
+span.s7 {color: #0019ba}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -33,7 +34,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><i>"to use fewer bits for more frequently occurring character"</i></p>
 <p class="p3"><span class="s2">see </span><span class="s3">http:</span><span class="s4">//www.cs.duke.edu/csed/poop/huff/info/</span></p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s4">RedBase64</span></a> <a href="RedLZW.html"><span class="s4">RedLZW</span></a></span><span class="s5"> <a href="RedRLE.html"><span class="s6">RedRLE</span></a></span></p>
+<p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s4">RedBase64</span></a> <a href="RedLZ77.html"><span class="s4">RedLZ77</span></a> <a href="RedLZW.html"><span class="s4">RedLZW</span></a></span><span class="s5"> <a href="RedRLE.html"><span class="s6">RedRLE</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*encode(string)</b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>encodes a string with ascii characters into a string with binary numbers.</p>
@@ -57,25 +58,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p6"><br></p>
 <p class="p7">//--</p>
-<p class="p8"><span class="s2">a= </span><span class="s7">RedHuffman</span><span class="s2">.encode(</span>"streets are stone stars are not"<span class="s2">);</span></p>
-<p class="p9"><span class="s7">RedHuffman</span>.decode(a);</p>
+<p class="p8"><span class="s2">a= </span>"streets are stone stars are not"<span class="s2">;</span></p>
+<p class="p9">b= <span class="s7">RedHuffman</span>.encode(a);</p>
+<p class="p9">c= <span class="s7">RedHuffman</span>.decode(b);</p>
+<p class="p9">a==c</p>
 <p class="p10"><br></p>
-<p class="p10"><br></p>
-<p class="p7">//--</p>
-<p class="p8"><span class="s2">a= </span><span class="s7">RedHuffman</span><span class="s2">.encode(</span>"go go gophers"<span class="s2">);</span></p>
+<p class="p11"><br></p>
+<p class="p8"><span class="s2">a= </span>"go go gophers"<span class="s2">;</span></p>
+<p class="p9">b= <span class="s7">RedHuffman</span>.encode(a);</p>
 <p class="p7"><span class="s7">RedHuffman</span><span class="s2">.tree;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//current tree</p>
 <p class="p7"><span class="s7">RedHuffman</span><span class="s2">.dict;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//current dict</p>
-<p class="p9"><span class="s7">RedHuffman</span>.decode(a);</p>
+<p class="p9">c= <span class="s7">RedHuffman</span>.decode(b);</p>
+<p class="p9">a==c</p>
 <p class="p10"><br></p>
-<p class="p10"><br></p>
-<p class="p7">//--</p>
-<p class="p8"><span class="s2">b= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">;</span></p>
-<p class="p9">a= <span class="s7">RedHuffman</span>.encode(b);</p>
-<p class="p10"><br></p>
-<p class="p9">c= <span class="s7">RedHuffman</span>.binaryStringToBytes(a);</p>
-<p class="p7"><span class="s2">c.size/b.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//53% smaller than the original</p>
-<p class="p10"><br></p>
+<p class="p11"><br></p>
+<p class="p8"><span class="s2">a= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">;</span></p>
+<p class="p9">b= <span class="s7">RedHuffman</span>.encode(a);</p>
+<p class="p9">c= <span class="s7">RedHuffman</span>.binaryStringToBytes(b);</p>
+<p class="p7"><span class="s2">c.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//53% smaller than the original</p>
 <p class="p9">d= <span class="s7">RedHuffman</span>.bytesToBinaryString(c);</p>
-<p class="p9"><span class="s7">RedHuffman</span>.decode(d);</p>
+<p class="p9">e= <span class="s7">RedHuffman</span>.decode(d);</p>
+<p class="p9">e==a</p>
 </body>
 </html>
