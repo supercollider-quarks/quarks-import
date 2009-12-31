@@ -9,20 +9,21 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #7a3827}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #6b3d2c}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #1949e0}
+span.s5 {color: #2854d6}
 span.s6 {color: #0000ff}
-span.s7 {color: #083aec}
-span.s8 {color: #0019ba}
+span.s7 {color: #1949e0}
+span.s8 {color: #062cb0}
+span.s9 {color: #ad1d13}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -32,7 +33,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="s2">see </span><span class="s3">http:</span><span class="s4">//en.wikipedia.org/wiki/LZW</span></p>
 <p class="p3"><span class="s2">and </span><span class="s3">http:</span><span class="s4">//marknelson.us/1989/10/01/lzw-data-compression/</span></p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s2">see also: <a href="RedLZ77.html">RedLZ77</a> <a href="RedBase64.html">RedBase64</a></span><span class="s5"> <a href="RedHuffman.html"><span class="s6">RedHuffman</span></a></span><span class="s7"> <a href="RedRLE.html"><span class="s6">RedRLE</span></a></span></p>
+<p class="p4"><span class="s2">see also: <a href="RedLZ77.html"><span class="s4">RedLZ77</span></a> <a href="RedLZSS.html">RedLZSS</a> <a href="RedBase64.html"><span class="s4">RedBase64</span></a></span><span class="s5"> <a href="RedHuffman.html"><span class="s6">RedHuffman</span></a></span><span class="s7"> <a href="RedRLE.html"><span class="s6">RedRLE</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*compress(string)</b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array with integers</p>
@@ -62,6 +63,14 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8">a.size;</p>
 <p class="p8">b= <span class="s8">RedLZW</span>.compress(a);</p>
 <p class="p8">b.size;</p>
+<p class="p8">c= <span class="s8">RedLZW</span>.decompress(b);</p>
+<p class="p8">c.size;</p>
+<p class="p8">a==c;</p>
+<p class="p5"><br></p>
+<p class="p7"><span class="s2">a= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">;</span></p>
+<p class="p8">a.size;</p>
+<p class="p8">b= <span class="s8">RedLZW</span>.compress(a);</p>
+<p class="p8">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">//69%</span></p>
 <p class="p8">c= <span class="s8">RedLZW</span>.decompress(b);</p>
 <p class="p8">c.size;</p>
 <p class="p8">a==c;</p>
