@@ -54,5 +54,4 @@ RedLZW {
 		};
 		^res.add(dict.indexOf(old));				//array of 9bit integers
 	}
-
 }
