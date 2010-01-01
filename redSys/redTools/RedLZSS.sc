@@ -5,8 +5,8 @@ RedLZSS {
 	
 	*compress {|input|
 		var out= "", i= 0, match, len, j, sub, win;
-		var bitsWin= window.log2.ceil.asInteger;
-		var bitsLen= length.log2.ceil.asInteger;
+		var bitsWin= (window-1).numBits;
+		var bitsLen= (length-1).numBits;
 		while({i<input.size}, {
 			match= nil;
 			j= length-1;
@@ -40,8 +40,8 @@ RedLZSS {
 	}
 	*decompress {|input|
 		var out= [], i= 0, match, len;
-		var bitsWin= window.log2.ceil.asInteger;
-		var bitsLen= length.log2.ceil.asInteger;
+		var bitsWin= (window-1).numBits;
+		var bitsLen= (length-1).numBits;
 		while({i<input.size}, {
 			if(input[i].digit==0, {
 				out= out++("2r"++input.copyRange(i+1, i+8)).interpret;

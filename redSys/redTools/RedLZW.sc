@@ -1,6 +1,48 @@
 //redFrik
 
 RedLZW {
+	*compress {|input|
+		var tab= {|i| [i]}.dup(256);
+		var out= [];
+		var sub= [];
+		input.do{|val|
+			var tmp= sub++val;
+			if(tab.find([tmp]).notNil, {
+				sub= tmp;
+			}, {
+				tab= tab++[tmp];
+				out= out++tab.find([sub]);
+				sub= [val];
+			});
+		};
+		^out++tab.find([sub]);
+	}
+	*decompress {|input|
+		var tab= {|i| [i]}.dup(256);
+		var old= input[0];
+		var out= [old];
+		var val= old;
+		input.drop(1).do{|k|
+			var sub;
+			if(tab[k].notNil, {
+				sub= tab[k];
+			}, {
+				sub= tab[old]++val;
+			});
+			out= out++sub;
+			val= sub[0];
+			tab= tab++[tab[old]++val];
+			old= k;
+		};
+		^out;
+	}
+}
+
+
+/*
+//--old string only implementation
+
+RedLZW {
 	*compress {|input|								//string
 		var tab= {|i| i.asAscii.asSymbol}.dup(256);
 		var out= [];
@@ -55,3 +97,4 @@ RedLZW {
 		^res.add(dict.indexOf(old));				//array of 9bit integers
 	}
 }
+*/
