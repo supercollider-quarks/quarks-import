@@ -9,11 +9,11 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #604030}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ff}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #4a4239; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #604030; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #902f20}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #46423b; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #514235; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #7a3827}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
@@ -21,20 +21,24 @@ span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #2854d6}
-span.s6 {color: #0000ff}
-span.s7 {color: #1949e0}
-span.s8 {color: #0019ba}
-span.s9 {color: #606060}
+span.s5 {color: #083aec}
+span.s6 {color: #0022f8}
+span.s7 {color: #0030f2}
+span.s8 {color: #355ccc}
+span.s9 {color: #1142e6}
+span.s10 {color: #1337a8}
+span.s11 {color: #606060}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>RedBase64</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>base64 encoding/decoding</b></p>
+<p class="p1"><span class="s1"><b>RedBase64</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>base64 encoding/decoding</b></p>
 <p class="p2"><br></p>
 <p class="p3"><span class="s2">see </span><span class="s3">http:</span><span class="s4">//en.wikipedia.org/wiki/Base64</span></p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s2">see also: <a href="RedLZ77.html"><span class="s4">RedLZ77</span></a> <a href="RedLZSS.html">RedLZSS</a> <a href="RedLZW.html"><span class="s4">RedLZW</span></a></span><span class="s5"> <a href="RedHuffman.html"><span class="s6">RedHuffman</span></a></span><span class="s7"> <a href="RedRLE.html"><span class="s6">RedRLE</span></a></span></p>
+<p class="p1">only works with <a href="SC://String"><span class="s5">String</span></a><span class="s5">.</span></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s2">see also: <a href="RedHuffman.html"><span class="s6">RedHuffman</span></a> <a href="RedLZ77.html"><span class="s4">RedLZ77</span></a> <a href="RedLZ78.html"><span class="s7">RedLZ78</span></a> <a href="RedLZSS.html"><span class="s4">RedLZSS</span></a> <a href="RedLZW.html"><span class="s4">RedLZW</span></a></span><span class="s8"> <a href="RedRLE.html"><span class="s9">RedRLE</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*encode(string)</b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*decode(string)</b></p>
@@ -43,18 +47,18 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><br></p>
 <p class="p7">//--</p>
 <p class="p8"><span class="s2">a= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">;</span></p>
-<p class="p9">b= <span class="s8">RedBase64</span>.encode(a);</p>
-<p class="p9">c= <span class="s8">RedBase64</span>.decode(b);</p>
+<p class="p9">b= <span class="s10">RedBase64</span>.encode(a);</p>
+<p class="p9">c= <span class="s10">RedBase64</span>.decode(b);</p>
 <p class="p9">a==c</p>
 <p class="p10"><br></p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(a.keep(a.size-0));</p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(a.keep(a.size-1));</p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(a.keep(a.size-2));</p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(a.keep(a.size-3));</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(a.keep(a.size-0));</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(a.keep(a.size-1));</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(a.keep(a.size-2));</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(a.keep(a.size-3));</p>
 <p class="p10"><br></p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(<span class="s9">"leasure."</span>);</p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(<span class="s9">"easure."</span>);</p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(<span class="s9">"asure."</span>);</p>
-<p class="p9"><span class="s8">RedBase64</span>.encode(<span class="s9">"sure."</span>);</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(<span class="s11">"leasure."</span>);</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(<span class="s11">"easure."</span>);</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(<span class="s11">"asure."</span>);</p>
+<p class="p9"><span class="s10">RedBase64</span>.encode(<span class="s11">"sure."</span>);</p>
 </body>
 </html>

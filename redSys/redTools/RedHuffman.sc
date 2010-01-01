@@ -3,15 +3,15 @@
 RedHuffman {
 	classvar <>tree, <>dict, <>pad;
 	
-	*encode {|str|
+	*compress {|arr|
 		var out, n0, n1;
 		
 		//--build a forest of small trees
 		tree= [];
-		str.do{|chr|
-			var n= tree.detect{|x| x.key==chr};
+		arr.do{|val|
+			var n= tree.detect{|x| x.key==val};
 			if(n.isNil, {
-				tree= tree.add((chr -> 1));			//char and counter association
+				tree= tree.add((val -> 1));			//value and counter association
 			}, {
 				n.value= n.value+1;				//increase counter
 			});
@@ -33,13 +33,13 @@ RedHuffman {
 		
 		//--create binary string
 		out= "";
-		str.do{|chr|
-			out= out++dict[chr];
+		arr.do{|val|
+			out= out++dict[val];
 		};
 		^out;
 	}
-	*decode {|str|
-		var out= "", tmp= tree;
+	*decompress {|str|
+		var out= [], tmp= tree;
 		str.do{|x|
 			tmp= tmp[x.digit];
 			if(tmp.isArray.not, {
