@@ -9,26 +9,29 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #ad1d13}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #214fdb}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #843424}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #355ccc}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #6b3d2c; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #5b4132; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #083aec}
-span.s6 {text-decoration: underline ; color: #1e49cd}
-span.s7 {color: #6875a1}
-span.s8 {color: #214fdb}
-span.s9 {color: #6473a5}
-span.s10 {color: #0030f2}
-span.s11 {color: #6272a7}
-span.s12 {color: #0019ba}
-span.s13 {color: #ad1d13}
+span.s5 {color: #214fdb}
+span.s6 {text-decoration: underline ; color: #3255bf}
+span.s7 {color: #6e789b}
+span.s8 {color: #355ccc}
+span.s9 {color: #6a769f}
+span.s10 {color: #1949e0}
+span.s11 {color: #6875a1}
+span.s12 {color: #0d32ac}
+span.s13 {color: #843424}
+span.s14 {color: #0019ba}
+span.s15 {color: #062cb0}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -61,13 +64,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;window</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maximum sliding window size.<span class="Apple-converted-space">  </span>default= 4096</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;length</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maximum length for matching pattern.<span class="Apple-converted-space">  </span>default= 16</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maximum length for matching pattern.<span class="Apple-converted-space">  </span>default= 32</p>
 <p class="p5"><br></p>
 <p class="p6"><br></p>
 <p class="p7">//--</p>
 <p class="p8">a= [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3];</p>
 <p class="p8">b= <span class="s12">RedLZSS</span>.compress(a);</p>
-<p class="p8"><span class="s12">RedLZSS</span>.binaryStringToBytes(b).size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s13">//compressed to 54%</span></p>
+<p class="p8"><span class="s12">RedLZSS</span>.binaryStringToBytes(b).size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s13">//compressed to 29%</span></p>
 <p class="p8">c= <span class="s12">RedLZSS</span>.decompress(b);</p>
 <p class="p8">a==c</p>
 <p class="p5"><br></p>
@@ -88,7 +91,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">.ascii;</span></p>
 <p class="p8">b= <span class="s12">RedLZSS</span>.compress(a);</p>
 <p class="p8">c= <span class="s12">RedLZSS</span>.binaryStringToBytes(b);</p>
-<p class="p7"><span class="s2">c.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 37.5%</p>
+<p class="p7"><span class="s2">c.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 27%</p>
 <p class="p8">d= <span class="s12">RedLZSS</span>.bytesToBinaryString(c);</p>
 <p class="p8">e= <span class="s12">RedLZSS</span>.decompress(d);</p>
 <p class="p8">e.collect{<span class="s12">|x|</span> x.asAscii}.join;</p>
@@ -96,20 +99,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p9"><span class="s2">a= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">.ascii;</span></p>
-<p class="p8">a.size;</p>
 <p class="p8">b= <span class="s12">RedLZSS</span>.compress(a);</p>
 <p class="p8"><span class="s12">RedLZSS</span>.binaryStringToBytes(b).size/a.size;<span class="Apple-tab-span">	</span><span class="s13">//compressed to 99%</span></p>
 <p class="p8">c= <span class="s12">RedLZSS</span>.decompress(b);</p>
 <p class="p8">c.collect{<span class="s12">|x|</span> x.asAscii}.join;</p>
-<p class="p8">c.size</p>
 <p class="p8">a==c</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
-<p class="p8">a= {[0, 0, 0, 1].choose}.dup(5000);</p>
-<p class="p8">b= <span class="s12">RedLZSS</span>.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s13">//slow to compress</span></p>
-<p class="p8"><span class="s12">RedLZSS</span>.binaryStringToBytes(b).size/a.size;<span class="Apple-tab-span">	</span><span class="s13">//around 22%</span></p>
-<p class="p8">c= <span class="s12">RedLZSS</span>.decompress(b);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s13">//fast to decompress</span></p>
-<p class="p8">c.size</p>
+<p class="p8">a= {<span class="s14">|i|</span> [0, 0, 0, 1].choose}.dup(5000);</p>
+<p class="p10"><span class="s15">RedLZSS</span><span class="s2">.window= 512;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//decrease window and length to speed up compression</p>
+<p class="p8"><span class="s15">RedLZSS</span>.length= 16;</p>
+<p class="p10"><span class="s2">b= </span><span class="s15">RedLZSS</span><span class="s2">.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//very slow to compress large arrays</p>
+<p class="p10"><span class="s12">RedLZSS</span><span class="s2">.binaryStringToBytes(b).size/a.size;<span class="Apple-tab-span">	</span></span>//compressed to around 22% (also 22% with default window and length values)</p>
+<p class="p10"><span class="s2">c= </span><span class="s15">RedLZSS</span><span class="s2">.decompress(b);<span class="Apple-tab-span">	</span></span>//fast to decompress</p>
 <p class="p8">a==c</p>
 </body>
 </html>
