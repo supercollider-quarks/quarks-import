@@ -9,10 +9,10 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #843424}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #1949e0}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #3b5fc8}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
@@ -21,18 +21,17 @@ span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #1142e6}
-span.s6 {color: #083aec}
-span.s7 {color: #0030f2}
-span.s8 {text-decoration: underline ; color: #1744d2}
-span.s9 {color: #5f71a9}
-span.s10 {color: #1949e0}
-span.s11 {color: #596faf}
-span.s12 {color: #566db2}
-span.s13 {color: #0019ba}
+span.s5 {color: #355ccc}
+span.s6 {color: #2f58d1}
+span.s7 {color: #2854d6}
+span.s8 {text-decoration: underline ; color: #3758bb}
+span.s9 {color: #6a769f}
+span.s10 {color: #3b5fc8}
+span.s11 {color: #6674a3}
+span.s12 {color: #6473a5}
+span.s13 {color: #0024b5}
 span.s14 {color: #606060}
 span.s15 {color: #0000bf}
-span.s16 {color: #bf0000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -48,19 +47,19 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s8">RedBase64</span></a></span><span class="s9"> <a href="RedHuffman.html"><span class="s10">RedHuffman</span></a></span><span class="s11"> <a href="RedLZ78.html"><span class="s7">RedLZ78</span></a> <a href="RedLZSS.html"><span class="s10">RedLZSS</span></a> <a href="RedLZW.html"><span class="s10">RedLZW</span></a></span><span class="s12"> <a href="RedRLE.html"><span class="s10">RedRLE</span></a></span></p>
 <p class="p2"><br></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*compress(array)</b></p>
-<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array with distance, length, value...</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array with length, distance and value...</p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*decompress(array)</b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>returns an array</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;window</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maximum sliding window size.<span class="Apple-converted-space">  </span>default= 4096</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;length</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maximum length for matching pattern.<span class="Apple-converted-space">  </span>default= 16</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>maximum length for matching pattern.<span class="Apple-converted-space">  </span>default= 32</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6">//--</p>
 <p class="p7">a= [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3];</p>
 <p class="p7">b= <span class="s13">RedLZ77</span>.compress(a);</p>
-<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 83%</p>
+<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 58%</p>
 <p class="p7">c= <span class="s13">RedLZ77</span>.decompress(b);</p>
 <p class="p7">a==c</p>
 <p class="p5"><br></p>
@@ -78,28 +77,25 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p8"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">.ascii;</span></p>
-<p class="p7">a.size;</p>
 <p class="p7">b= <span class="s13">RedLZ77</span>.compress(a);</p>
-<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 52%</p>
+<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 41%</p>
 <p class="p7">c= <span class="s13">RedLZ77</span>.decompress(b);</p>
-<p class="p7">c.size</p>
 <p class="p7">a==c</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p8"><span class="s2">a= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">.ascii;</span></p>
-<p class="p7">a.size;</p>
 <p class="p7">b= <span class="s13">RedLZ77</span>.compress(a);</p>
 <p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//expanded to 117%</p>
 <p class="p7">c= <span class="s13">RedLZ77</span>.decompress(b);</p>
 <p class="p7">c.collect{<span class="s13">|x|</span> x.asAscii}.join;</p>
-<p class="p7">c.size</p>
 <p class="p7">a==c</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
-<p class="p9">a= {[0, 0, 0, 0.1].choose}.dup(5000);</p>
-<p class="p9">a.size;</p>
-<p class="p9">b= <span class="s15">RedLZ77</span>.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s16">//slow to compress</span></p>
-<p class="p10"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to around 21%</p>
+<p class="p9">a= {<span class="s15">|i|</span> [0, 0, 0, 0.1].choose}.dup(5000);</p>
+<p class="p10"><span class="s15">RedLZ77</span><span class="s2">.window= 512;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//decrease window and length to speed up compression</p>
+<p class="p9"><span class="s15">RedLZ77</span>.length= 16;</p>
+<p class="p10"><span class="s2">b= </span><span class="s15">RedLZ77</span><span class="s2">.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//very slow to compress large arrays</p>
+<p class="p10"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to around 24% (20% with default window and length values)</p>
 <p class="p10"><span class="s2">c= </span><span class="s15">RedLZ77</span><span class="s2">.decompress(b);<span class="Apple-tab-span">	</span></span>//fast to decompress</p>
 <p class="p9">c.size</p>
 <p class="p9">a==c</p>

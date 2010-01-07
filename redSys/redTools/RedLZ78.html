@@ -9,26 +9,27 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #ad1d13}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0030f2}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #083aec}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0022f8}
-span.s6 {color: #0030f2}
-span.s7 {text-decoration: underline ; color: #002ce2}
-span.s8 {color: #6a769f}
-span.s9 {color: #6674a3}
-span.s10 {color: #6473a5}
-span.s11 {color: #0019ba}
+span.s5 {color: #0030f2}
+span.s6 {color: #083aec}
+span.s7 {text-decoration: underline ; color: #0736dc}
+span.s8 {color: #6c779d}
+span.s9 {color: #6875a1}
+span.s10 {color: #6674a3}
+span.s11 {color: #0024b5}
 span.s12 {color: #606060}
-span.s13 {color: #ad1d13}
+span.s13 {color: #9d281b}
+span.s14 {color: #0019ba}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -76,6 +77,15 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s13">//94%</span></p>
 <p class="p8">c= <span class="s11">RedLZ78</span>.decompress(b);</p>
 <p class="p8">c.collect{<span class="s11">|x|</span> x.asAscii}.join;</p>
+<p class="p8">c.size</p>
+<p class="p8">a==c</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p8">a= {[0, 0, 0, 0.1].choose}.dup(5000);</p>
+<p class="p8">a.size;</p>
+<p class="p9"><span class="s2">b= </span><span class="s14">RedLZ78</span><span class="s2">.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//does not work well at all with random data</p>
+<p class="p9"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//expanded to around 160%</p>
+<p class="p8">c= <span class="s14">RedLZ78</span>.decompress(b);</p>
 <p class="p8">c.size</p>
 <p class="p8">a==c</p>
 </body>
