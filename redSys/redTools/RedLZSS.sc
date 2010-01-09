@@ -31,8 +31,8 @@ RedLZSS {
 					len= len+j;
 				});
 				if(len>2, {
-					out= out++1++(i.min(window-1)-off).asBinaryString(bitsWin)
-						++(len-2).asBinaryString(bitsLen);
+					out= out++1++(len-2).asBinaryString(bitsLen)
+						++(i.min(window-1)-off).asBinaryString(bitsWin);
 					i= i+len;
 					if(i<input.size, {
 						out= out++input[i].asBinaryString(8);
@@ -61,10 +61,10 @@ RedLZSS {
 				i= i+8;
 			}, {
 				i= i+1;
-				off= ("2r"++input.copyRange(i, i+bitsWin-1)).interpret;
-				i= i+bitsWin;
 				len= ("2r"++input.copyRange(i, i+bitsLen-1)).interpret+2;
 				i= i+bitsLen;
+				off= ("2r"++input.copyRange(i, i+bitsWin-1)).interpret;
+				i= i+bitsWin;
 				while({len>0}, {
 					out= out++out[out.size-off];
 					len= len-1;

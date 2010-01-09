@@ -5,18 +5,17 @@
 
 RedLZ78 {
 	*compress {|input|
-		var tab= [], out= [], i= 0, j, match, sub, last, k= 0;
+		var tab= [], out= [], i= 0, j, match, sub, last;
 		while({i<input.size}, {
 			j= 0;
 			last= 0;
 			while({
 				sub= input.copyRange(i, i+j);
 				match= tab.find([sub]);
-				match.notNil and:{k<999};
+				match.notNil and:{i+j<(input.size-1)};
 			}, {
 				last= match;
 				j= j+1;
-				k= k+1;
 			});
 			tab= tab++[sub];
 			if(j==0, {

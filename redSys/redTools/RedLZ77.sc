@@ -28,7 +28,7 @@ RedLZ77 {
 					});
 					len= len+j;
 				});
-				out= out++[i.min(window-1)-off, len];
+				out= out++[len, i.min(window-1)-off];
 				i= i+len;
 				if(i<input.size, {
 					out= out++input[i];
@@ -41,11 +41,11 @@ RedLZ77 {
 	*decompress {|input|
 		var out= [], i= 0, len, off;
 		while({i<input.size}, {
-			len= input[i+1];
+			len= input[i];
 			if(len==0, {
 				out= out++input[i+2];
 			}, {
-				off= input[i];
+				off= input[i+1];
 				while({len>0}, {
 					out= out++out[out.size-off];
 					len= len-1;
