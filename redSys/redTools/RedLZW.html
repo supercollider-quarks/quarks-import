@@ -9,20 +9,24 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #843424}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #0022f8}
-span.s6 {text-decoration: underline ; color: #0f3ed7}
-span.s7 {color: #214fdb}
+span.s5 {color: #083aec}
+span.s6 {text-decoration: underline ; color: #1e49cd}
+span.s7 {color: #2f58d1}
 span.s8 {color: #0019ba}
+span.s9 {color: #0000bf}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -34,8 +38,6 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">a dictionary look-up compressor that performs well with both highly repetitive data and repeating patterns.<span class="Apple-converted-space">  </span>e.g. [0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]</p>
 <p class="p1">only works with 8bit <a href="SC://Integer"><span class="s5">Integer</span></a> (0-255)</p>
-<p class="p2"><br></p>
-<p class="p1">note: implementation might change in the future.<span class="Apple-converted-space">  </span>not complete.</p>
 <p class="p2"><br></p>
 <p class="p4"><span class="s2">see also: <a href="RedBase64.html"><span class="s4">RedBase64</span></a> <a href="RedHuffman.html"><span class="s4">RedHuffman</span></a> <a href="RedLZ77.html"><span class="s6">RedLZ77</span></a> <a href="RedLZ78.html"><span class="s4">RedLZ78</span></a> <a href="RedLZSS.html"><span class="s6">RedLZSS</span></a> <a href="RedRLE.html"><span class="s7">RedRLE</span></a></span></p>
 <p class="p2"><br></p>
@@ -49,41 +51,50 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">//--</p>
 <p class="p7">a= [0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3];</p>
 <p class="p7">b= <span class="s8">RedLZW</span>.compress(a);</p>
-<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 60% (although using 9bit integers)</p>
+<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 60%</p>
 <p class="p7">c= <span class="s8">RedLZW</span>.decompress(b);</p>
 <p class="p7">a==c</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p8"><span class="s2">a= </span>"TOBEORNOTTOBEORTOBEORNOT"<span class="s2">.ascii;</span></p>
-<p class="p7">a.size;</p>
 <p class="p7">b= <span class="s8">RedLZW</span>.compress(a);</p>
 <p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 66%</p>
 <p class="p7">c= <span class="s8">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size;</p>
 <p class="p7">a==c;</p>
+<p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p8"><span class="s2">a= </span>"/WED/WE/WEE/WEB/WET"<span class="s2">.ascii;</span></p>
-<p class="p7">a.size;</p>
 <p class="p7">b= <span class="s8">RedLZW</span>.compress(a);</p>
-<p class="p7">b.size;</p>
+<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 63%</p>
 <p class="p7">c= <span class="s8">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size;</p>
 <p class="p7">a==c;</p>
+<p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p8"><span class="s2">a= </span>"JOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEYJOEYNJOEYNJOEY"<span class="s2">.ascii;</span></p>
-<p class="p7">a.size;</p>
 <p class="p7">b= <span class="s8">RedLZW</span>.compress(a);</p>
-<p class="p7">b.size;</p>
+<p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 37.5%</p>
 <p class="p7">c= <span class="s8">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size;</p>
 <p class="p7">a==c;</p>
 <p class="p5"><br></p>
+<p class="p5"><br></p>
 <p class="p8"><span class="s2">a= </span>"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure."<span class="s2">.ascii;</span></p>
-<p class="p7">a.size;</p>
 <p class="p7">b= <span class="s8">RedLZW</span>.compress(a);</p>
 <p class="p6"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 69%</p>
 <p class="p7">c= <span class="s8">RedLZW</span>.decompress(b);</p>
-<p class="p7">c.size;</p>
 <p class="p7">a==c;</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p8"><span class="s2">a= </span>"this_is_his_thing"<span class="s2">.ascii;</span></p>
+<p class="p9">b= <span class="s9">RedLZW</span>.compress(a);</p>
+<p class="p10"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 76%</p>
+<p class="p9">c= <span class="s9">RedLZW</span>.decompress(b);</p>
+<p class="p9">a==c;</p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p8"><span class="s2">a= </span>"abcabcabcabcabcabc"<span class="s2">.ascii;</span></p>
+<p class="p9">b= <span class="s9">RedLZW</span>.compress(a);</p>
+<p class="p10"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to 50%</p>
+<p class="p9">c= <span class="s9">RedLZW</span>.decompress(b);</p>
+<p class="p9">a==c;</p>
 </body>
 </html>

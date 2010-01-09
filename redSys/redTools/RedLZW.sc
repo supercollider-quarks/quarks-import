@@ -1,5 +1,8 @@
 //redFrik
 
+//double-check exception
+//rewrite as bitstring?
+
 RedLZW {
 	*compress {|input|
 		var tab= {|i| [i]}.dup(256);
@@ -18,7 +21,7 @@ RedLZW {
 		^out++tab.find([sub]);
 	}
 	*decompress {|input|
-		var tab= {|i| [i]}.dup(256);
+		var tab= (0..255);
 		var old= input[0];
 		var out= [old];
 		var val= old;
@@ -27,11 +30,11 @@ RedLZW {
 			if(tab[k].notNil, {
 				sub= tab[k];
 			}, {
-				sub= tab[old]++val;
+				sub= tab[old].asArray++val;
 			});
 			out= out++sub;
-			val= sub[0];
-			tab= tab++[tab[old]++val];
+			val= sub.asArray[0];
+			tab= tab++[tab[old].asArray++val];
 			old= k;
 		};
 		^out;

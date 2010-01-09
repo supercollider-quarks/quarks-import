@@ -9,29 +9,28 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #3b5fc8}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #843424}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #4565c0}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline ; color: #000000}
 span.s4 {text-decoration: underline}
-span.s5 {color: #355ccc}
-span.s6 {color: #2f58d1}
-span.s7 {color: #2854d6}
-span.s8 {text-decoration: underline ; color: #3758bb}
-span.s9 {color: #6a769f}
-span.s10 {color: #3b5fc8}
-span.s11 {color: #6674a3}
-span.s12 {color: #6473a5}
-span.s13 {color: #0024b5}
+span.s5 {color: #4062c4}
+span.s6 {color: #3b5fc8}
+span.s7 {color: #355ccc}
+span.s8 {text-decoration: underline ; color: #415db3}
+span.s9 {color: #6e789b}
+span.s10 {color: #4565c0}
+span.s11 {color: #6a769f}
+span.s12 {color: #6875a1}
+span.s13 {color: #0d32ac}
 span.s14 {color: #606060}
-span.s15 {color: #0000bf}
+span.s15 {color: #0024b5}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -91,13 +90,13 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">a==c</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
-<p class="p9">a= {<span class="s15">|i|</span> [0, 0, 0, 0.1].choose}.dup(5000);</p>
-<p class="p10"><span class="s15">RedLZ77</span><span class="s2">.window= 512;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//decrease window and length to speed up compression</p>
-<p class="p9"><span class="s15">RedLZ77</span>.length= 16;</p>
-<p class="p10"><span class="s2">b= </span><span class="s15">RedLZ77</span><span class="s2">.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//very slow to compress large arrays</p>
-<p class="p10"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to around 24% (20% with default window and length values)</p>
-<p class="p10"><span class="s2">c= </span><span class="s15">RedLZ77</span><span class="s2">.decompress(b);<span class="Apple-tab-span">	</span></span>//fast to decompress</p>
-<p class="p9">c.size</p>
-<p class="p9">a==c</p>
+<p class="p7">a= {<span class="s15">|i|</span> [0, 0, 0, 0.1].choose}.dup(5000);</p>
+<p class="p9"><span class="s15">RedLZ77</span><span class="s2">.window= 512;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//decrease window and length to speed up compression</p>
+<p class="p7"><span class="s15">RedLZ77</span>.length= 16;</p>
+<p class="p9"><span class="s2">b= </span><span class="s15">RedLZ77</span><span class="s2">.compress(a);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//very slow to compress large arrays</p>
+<p class="p9"><span class="s2">b.size/a.size;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//compressed to around 24% (20% with default window and length values)</p>
+<p class="p9"><span class="s2">c= </span><span class="s15">RedLZ77</span><span class="s2">.decompress(b);<span class="Apple-tab-span">	</span></span>//fast to decompress</p>
+<p class="p7">c.size</p>
+<p class="p7">a==c</p>
 </body>
 </html>
