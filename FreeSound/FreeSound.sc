@@ -176,6 +176,9 @@ FreeSound
 				infoDict.put(\numChannels, response.getElementsByTagName("channels")[0].getFirstChild.getText.asInteger);
 				infoDict.put(\duration, response.getElementsByTagName("duration")[0].getFirstChild.getText.asFloat);
 				infoDict.put(\fileSize, response.getElementsByTagName("filesize")[0].getFirstChild.getText.asInteger);
+				infoDict.put(\sampleId, response.getElementsByTagName("sample")[0].getAttributes["id"].getNodeValue.asInteger);
+				infoDict.put(\userId, response.getElementsByTagName("user")[0].getAttributes["id"].getNodeValue.asInteger);
+				infoDict.put(\userName, response.getElementsByTagName("username")[0].getFirstChild.getText.asSymbol);
 				
 				infoDict.put(\index, argIndex);
 				callbackFunc.value(this, 5, infoDict);
