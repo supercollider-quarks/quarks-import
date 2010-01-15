@@ -9,31 +9,30 @@ Preference {
 		
 		StartUp.add {
 		
-			var dirname;
-			if([\osx].includes(thisProcess.platform.name).not) {
+			if([\osx, \linux].includes(thisProcess.platform.name).not) {
 				"sorry, preferences currently work only with OS X.".postln;
 				^this
 			};
 			
-			dirname = Platform.userExtensionDir.dirname;
-			
-			// todo: adjust file paths to platforms
-			startupFilePath = (dirname +/+ "startup.rtf").escapeChar($ );
-			repositoryDirPath = (dirname +/+ "startupfiles").escapeChar($ );
+			// for now, user dir only
+			startupFilePath = thisProcess.platform.startupFiles.last;			repositoryDirPath = (startupFilePath.dirname +/+ "startupfiles").escapeChar($ );
+			startupFilePath = startupFilePath.escapeChar($ );
+			if(pathMatch(startupFilePath).notEmpty and: { isSymLink(startupFilePath).not }) {
+				"************************************************************************"
+				"Preference: in order to use preference switching, move your startup file "
+				"to the startupfiles folder first, renaming it to 'XXX_startup'.\n"
+				"************************************************************************".postln
+			};
 			
 			if(pathMatch(repositoryDirPath).isEmpty) {
 				systemCmd(postln("mkdir -p" + repositoryDirPath));
-				"\n\n".post;
-				"**************************************************************\n".post;
-				"Preference Quark: Created a Preference folder 'startupfiles'\n".post;
-				"  To be sure, please backup your old startup file now, before recompiling .\n".post;
-				"***************************************************************\n".post;
-			} {
-				this.backupOriginalStartupFile(false);
-				this.initFilePaths;
-				this.initMenu;
-				if(openFileAtStartup) { this.openStartupFile };
 			};
+			
+			this.initFilePaths;
+			this.findCurrentStartup;
+			this.initMenu;
+			if(openFileAtStartup) { this.openStartupFile };
+			
 		
 		};
 	}
@@ -41,14 +40,28 @@ Preference {
 		
 	*initFilePaths {
 		var filePaths = pathMatch(repositoryDirPath +/+ "*_startup*");
+		
 		if(useQuarkSetups) {
-			filePaths = filePaths ++ pathMatch(this.filenameSymbol.asString.dirname +/+ "setups/*");
+			filePaths = filePaths 
+				++ pathMatch(this.filenameSymbol.asString.dirname +/+ "setups/*");
 		};
 		fileNames = ();
 		filePaths.do { |path|
 			fileNames[path.basename.splitext.first.asSymbol] = path.escapeChar($ );
 		};
-		
+	}
+	
+	*findCurrentStartup {
+		var startupPointsTo, stat, index;
+		if(pathMatch(startupFilePath).isEmpty) { current = \none; ^this };
+		stat = unixCmdGetStdOut("stat -F" + startupFilePath);
+		index = stat.find("->");
+		if(index.notNil) {
+			startupPointsTo = stat[index + 2 ..];
+			current = startupPointsTo.basename.splitext.first.asSymbol;
+		} {
+			current = \default;
+		};
 	}
 	
 	*initMenu {
@@ -61,11 +74,11 @@ Preference {
 			
 			CocoaMenuItem.add(["startup", "default"], {
 				this.setToDefault;
-			});
+			}).enabled_(current != \default and: { current != \default_startup });
 			
 			CocoaMenuItem.add(["startup", "none"], { 
 				this.reset; 
-			});
+			}).enabled_(current != \none);
 			
 			parent = CocoaMenuItem.default.findByName("startup");
 			
@@ -95,17 +108,6 @@ Preference {
 			
 		})
 	}
-
-	
-	*backupOriginalStartupFile { |verbose = true|
-		if(pathMatch(startupFilePath).notEmpty and: { isSymLink(startupFilePath).not }) {
-			backupPath = repositoryDirPath +/+ "backup_of_original_startup.rtf";
-			systemCmd("cp" + startupFilePath + backupPath);
-			"Preference Quark: backed up original startup to: \n%".postf(repositoryDirPath);
-		} {
-			if(verbose) { "Preference Quark: nothing to backup".postln };
-		}
-	}
 	
 	*setToDefault {
 		if(fileNames.at(\default_startup).notNil) {
@@ -121,22 +123,18 @@ Preference {
 	
 	*set { |which|
 			var path = fileNames.at(which.asSymbol);
-			if(pathMatch(startupFilePath).notEmpty) { 
-				if(isSymLink(startupFilePath)) {
-					systemCmd("rm" + startupFilePath);
+			if(pathMatch(startupFilePath).isEmpty or: { isSymLink(startupFilePath) }) {
+				if(path.notNil) {
+					systemCmd("ln -s -F " ++ path + startupFilePath);
+					this.openStartupFile(path);
+					current = which;
+					this.initMenu;
+				} {
+				 	"no file of this name found: %\n".postf(which) 
 				};
 			};
-			if(path.notNil) {
-				systemCmd("ln -s -F " ++ path + startupFilePath);
-				this.openStartupFile(path);
-				current = which;
-				this.initMenu;
-			} {
-				 "no file of this name found: %\n".postf(which) 
-			};
-			
-			
 	}
+
 	
 	*reset {
 		if(pathMatch(startupFilePath).notEmpty) { 
@@ -144,7 +142,7 @@ Preference {
 					systemCmd("rm" + startupFilePath);
 					current = nil;
 				} {
-					"Preference: Please backup your startup file manually".postln;
+					"Preference: Please remove your startup file manually".postln;
 				}
 		};
 	}
