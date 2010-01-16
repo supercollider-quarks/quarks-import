@@ -106,6 +106,24 @@
 	}
 }
 
++ Pattern {
+	mapMode { |mode|
+		^Pcollect({ |item| item.mapMode(mode) }, this)
+	}
+	unmapMode { |mode|
+		^Pcollect({ |item| item.unmapMode(mode) }, this)
+	}
+}
+
++ Stream {
+	mapMode { |mode|
+		^this.collect { |item| item.mapMode(mode) }
+	}
+	unmapMode { |mode|
+		^this.collect { |item| item.unmapMode(mode) }
+	}
+}
+
 + Symbol {
 		// no-op, just like \rest + 0
 	mapMode {}
