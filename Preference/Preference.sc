@@ -22,7 +22,7 @@ Preference {
 			if(pathMatch(startupFilePath).notEmpty and: { isSymLink(startupFilePath).not }) {
 				"************************************************************************"
 				"Preference: in order to use preference switching, move your startup file "
-				"to the startupfiles folder first, renaming it to 'XXX_startup'.\n"
+				"to the startupfiles folder first.\n"
 				"************************************************************************".postln
 			};
 			
@@ -45,11 +45,12 @@ Preference {
 	
 		
 	*initFilePaths {
-		var filePaths = pathMatch(repositoryDirPath +/+ "*_startup*");
+		var filePaths = pathMatch(repositoryDirPath +/+ "*startup*");
 		fileNames = ();
 		filePaths.do { |path|
-			fileNames[path.basename.splitext.first.asSymbol] = path.escapeChar($ );
-		};
+			var key = path.basename.asSymbol;
+			fileNames[key] = path.escapeChar($ );
+		}
 	}
 	
 	*findCurrentStartup {
@@ -59,10 +60,14 @@ Preference {
 		index = stat.find("->");
 		if(index.notNil) {
 			startupPointsTo = stat[index + 2 ..];
-			current = startupPointsTo.basename.splitext.first.asSymbol;
+			if(startupPointsTo.last == Char.nl) {
+				startupPointsTo = startupPointsTo.drop(-1)
+			};
+			current = startupPointsTo.basename.asSymbol;
 		} {
 			current = \default;
 		};
+		"Current startup file: %\n".postf(current);
 	}
 	
 	*copyExamplesFromQuark {
@@ -70,82 +75,23 @@ Preference {
 												+/+ "example_setups/*");
 			filePaths.do { |path|
 				path = path.escapeChar($ );
-				systemCmd("cp % %".format(path, repositoryDirPath +/+ path.basename));
+				// cp -n: copy, do not overwrite existing file
+				systemCmd("cp -n % %".format(path, repositoryDirPath +/+ path.basename));
 			};
 	}
 	
-	*initMenu {
-		
-		Platform.case(\osx, {
-			try { // make sure that nothing can block other method calls
-				var names = fileNames.keys.asArray.sort;
-				var parent = CocoaMenuItem.default.findByName("startup");
-				
-				parent.remove;
-				
-				CocoaMenuItem.add(["startup", "default"], {
-					this.setToDefault;
-				}).enabled_(current != \default and: { current != \default_startup });
-				
-				CocoaMenuItem.add(["startup", "none"], { 
-					this.reset; 
-					this.initMenu;
-				}).enabled_(current != \none);
-				
-				parent = CocoaMenuItem.default.findByName("startup");
-				
-				SCMenuSeparator(parent, 2);
-	
-				
-				names.do { |name|
-					var menuName = name.asString.replace("_", " ");
-					var item = CocoaMenuItem.add(["startup", menuName], { this.set(name) });
-					item.enabled = (current != name);
-				};
-				
-				SCMenuSeparator(parent, names.size + 3);
-				
-				CocoaMenuItem.add(["startup", "Open repository"], { 
-					this.openRepository; 
-				});
-				
-				CocoaMenuItem.add(["startup", "Open quarks window"], { 
-					Quarks.gui;
-				});
-				
-				CocoaMenuItem.add(["startup", "init", "Copy examples from quark"], { 
-					this.copyExamplesFromQuark;
-					this.initFilePaths; 
-					this.initMenu;
-				});
-				
-				CocoaMenuItem.add(["startup", "init", "Refresh this menu"], { 
-					this.initFilePaths; 
-					this.initMenu;
-				});
-				
-				CocoaMenuItem.add(["startup", "init", "Reset post window"], {
-					var str = Document.listener.text;
-					Document.listener.close;
-					Document.new(" post", str, true);
-					
-				});
-			
-			};
-			
-		})
-	}
 	
 	*setToDefault {
-		if(fileNames.at(\default_startup).notNil) {
-			this.set(\default_startup);
-		} {
-			if(fileNames.at(\backup_of_original_startup).notNil) {
-				this.set(\backup_of_original_startup);
-			} {
-				"Preferences: no default startup file exists.".postln;
-			}
-		}
+		// look for a simple startup.rtf or similar
+		fileNames.keysValuesDo { |name, val|
+			var str = name.asString;
+			if(str.splitext.first == "startup") {
+				this.set(name);
+				this.initMenu;
+				^this
+			};
+		};
+		this.reset;
 	}
 	
 	*set { |which|
@@ -185,7 +131,7 @@ Preference {
 	*openStartupFile { |path|
 		var name;
 		path = path ?? startupFilePath;
-		name = startupFilePath.basename.splitext.first.asSymbol;
+		name = startupFilePath.basename.asSymbol;
 		Document.allDocuments.do { |doc| 
 			if(doc.title == name) {
 				doc.front;
@@ -193,6 +139,71 @@ Preference {
 			};
 		};
 		systemCmd("open" + path);
+	}
+	
+	*initMenu {
+		
+		Platform.case(\osx, {
+			try { // make sure that nothing can block other method calls
+				var names = fileNames.keys.asArray.sort;
+				var parent = CocoaMenuItem.default.findByName("startup");
+				var isDefault;
+				
+				parent.remove;
+				
+				isDefault = (current == \default) or: { current == \default_startup };
+				
+				CocoaMenuItem.add(["startup", "default"], {
+					this.setToDefault;
+				}).enabled_(isDefault.not);
+				
+				CocoaMenuItem.add(["startup", "none"], { 
+					this.reset; 
+					this.initMenu;
+				}).enabled_(current != \none);
+				
+				parent = CocoaMenuItem.default.findByName("startup");
+				
+				SCMenuSeparator(parent, 2);
+	
+				
+				names.do { |name|
+					var menuName = name.asString;
+					var item = CocoaMenuItem.add(["startup", menuName], { this.set(name) });
+					item.enabled = (current != name);
+				};
+				
+				SCMenuSeparator(parent, names.size + 3);
+				
+				CocoaMenuItem.add(["startup", "Open repository"], { 
+					this.openRepository; 
+				});
+				
+				CocoaMenuItem.add(["startup", "Open quarks window"], { 
+					Quarks.gui;
+				});
+				
+				CocoaMenuItem.add(["startup", "init", "Copy examples from quark"], { 
+					this.copyExamplesFromQuark;
+					this.initFilePaths; 
+					this.initMenu;
+				});
+				
+				CocoaMenuItem.add(["startup", "init", "Refresh this menu"], { 
+					this.initFilePaths; 
+					this.initMenu;
+				});
+				
+				CocoaMenuItem.add(["startup", "init", "Reset post window"], {
+					var str = Document.listener.text;
+					Document.listener.close;
+					Document.new(" post", str, true);
+					
+				});
+			
+			};
+			
+		})
 	}
 	
 
