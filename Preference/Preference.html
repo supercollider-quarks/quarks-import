@@ -13,17 +13,19 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p8 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
-p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0b28c5}
+p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; color: #0b28c5}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #0000bf}
-span.s3 {font: 14.0px Helvetica}
-span.s4 {color: #0b28c6}
+span.s3 {color: #0b28c6}
+span.s4 {font: 14.0px Helvetica}
 span.s5 {color: #cd1612}
-span.s6 {color: #0b28c5}
-span.s7 {font: 9.0px Monaco}
-span.s8 {color: #000000}
+span.s6 {font: 12.0px Helvetica}
+span.s7 {color: #0b28c5}
+span.s8 {font: 9.0px Monaco}
+span.s9 {color: #000000}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -41,57 +43,72 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3"><b>Class Variables</b></p>
 <p class="p4"><b><span class="Apple-tab-span">	</span></b></p>
-<p class="p5"><b><span class="Apple-tab-span">	</span>*current<span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span>Name of the currently active Preference</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p1"><span class="s3"><b><span class="Apple-tab-span">	</span></b></span><b>*useQuarkSetups</b></p>
-<p class="p5"><b><span class="Apple-tab-span">	</span>*useQuarkSetups_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>If true, use the setups that are in the Preference quark folder (default: true)</p>
+<p class="p5"><b><span class="Apple-tab-span">	</span>*current<span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Name of the currently active Preference</p>
 <p class="p6"><span class="Apple-tab-span">	</span></p>
-<p class="p1"><span class="s3"><b><span class="Apple-tab-span">	</span></b></span><b>*openFileAtStartup</b></p>
-<p class="p5"><b><span class="Apple-tab-span">	</span>*openFileAtStartup_</b><span class="Apple-tab-span">	</span>If true, open all startup file folders on startup (default: true)</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Preference</span>.current;</p>
+<p class="p6"><br></p>
+<p class="p1"><span class="s4"><b><span class="Apple-tab-span">	</span></b></span><b>*openFileAtStartup</b></p>
+<p class="p5"><b><span class="Apple-tab-span">	</span>*openFileAtStartup_</b><span class="Apple-tab-span">	</span>If true, open all startup file folders on startup (<b>default</b>: true)</p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>repositoryDirPath</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>repositoryDirPath_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>The directory in which the repository is added. This is automatically found, <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>unless specified in the current startup file.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Preference</span>.repositoryDirPath; <span class="s5">// the path</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>startupFilePath</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>startupFilePath_</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>The path of the startup file. This is automatically found,<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>unless specified in the current startup file.</p>
 <p class="p4"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Preference</span>.startupFilePath; <span class="s5">// the path</span></p>
 <p class="p4"><br></p>
 <p class="p3"><b>Class Methods</b></p>
-<p class="p7"><br></p>
+<p class="p9"><br></p>
 <p class="p5"><b><span class="Apple-tab-span">	</span>*initClass</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Compiling the library, the repository of startup files is built and can be accessed via the library.</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>This method is called after the startup has run, so one satrtup may configure the behavior of the Preference class.</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*set(which)</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set the startup file to a given file name (symbol). This creates a symlink that links "startup" to the file in the startupfiles fulder named "which".</p>
+<p class="p6"><br></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Preference</span>.set(\oldschool_startup);</p>
+<p class="p6"><br></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*setToDefault</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Set the startup file to a default startup which you can make using the name: <b>default_startup</b>.<span class="Apple-converted-space"> </span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>If none exists, it uses the backed up startup file: <b>backup_of_original_startup</b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
+<p class="p7"><span class="s6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><span class="s3">Preference</span>.setToDefault;</p>
+<p class="p6"><br></p>
 <p class="p6"><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*fileNames</b></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>A dictionary of names and file paths.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Preference</span>.fileNames.keys; <span class="s5">// the names</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">Preference</span>.fileNames.values; <span class="s5">// the paths</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Preference</span>.fileNames.keys; <span class="s5">// the names</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">Preference</span>.fileNames.values; <span class="s5">// the paths</span></p>
 <p class="p6"><br></p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*openStartupFile</b></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Open the current startup file</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Preference</span>.openStartupFile;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Preference</span>.openStartupFile;</p>
 <p class="p6"><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*openRepository</b></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Open the repository directory</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Preference</span>.openRepository;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="s7"><span class="Apple-tab-span">	</span></span><b>*reset</b></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Preference</span>.openRepository;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s8"><span class="Apple-tab-span">	</span></span><b>*reset</b></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Use no startup file.</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p9"><span class="s8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>Preference<span class="s8">.reset;</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="s9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>Preference<span class="s9">.reset;</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><b>*openStartupFile</b></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Open the current startup file</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Preference</span>.openStartupFile;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">Preference</span>.openStartupFile;</p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>
 <p class="p6"><br></p>

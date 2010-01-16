@@ -1,8 +1,8 @@
 
 Preference {
 
-	classvar <>fileNames, <>startupFilePath, <>backupPath, <>repositoryDirPath;
-	classvar <current, <>useQuarkSetups = true, <>openFileAtStartup = true;
+	classvar <>fileNames, <>startupFilePath, <>repositoryDirPath, <current;
+	classvar <>openFileAtStartup = true;
 	
 	*initClass {	
 		
@@ -15,7 +15,9 @@ Preference {
 			};
 			
 			// for now, user dir only
-			startupFilePath = thisProcess.platform.startupFiles.last;			repositoryDirPath = (startupFilePath.dirname +/+ "startupfiles").escapeChar($ );
+			startupFilePath = startupFilePath ?? { thisProcess.platform.startupFiles.last };			repositoryDirPath = repositoryDirPath ?? {
+				(startupFilePath.dirname +/+ "startupfiles").escapeChar($ );
+			};
 			startupFilePath = startupFilePath.escapeChar($ );
 			if(pathMatch(startupFilePath).notEmpty and: { isSymLink(startupFilePath).not }) {
 				"************************************************************************"
@@ -26,6 +28,10 @@ Preference {
 			
 			if(pathMatch(repositoryDirPath).isEmpty) {
 				systemCmd(postln("mkdir -p" + repositoryDirPath));
+			};
+			
+			if(pathMatch(repositoryDirPath +/+ "*").isEmpty) {
+				this.copyExamplesFromQuark;
 			};
 			
 			this.initFilePaths;
@@ -40,11 +46,6 @@ Preference {
 		
 	*initFilePaths {
 		var filePaths = pathMatch(repositoryDirPath +/+ "*_startup*");
-		
-		if(useQuarkSetups) {
-			filePaths = filePaths 
-				++ pathMatch(this.filenameSymbol.asString.dirname +/+ "setups/*");
-		};
 		fileNames = ();
 		filePaths.do { |path|
 			fileNames[path.basename.splitext.first.asSymbol] = path.escapeChar($ );
@@ -64,47 +65,73 @@ Preference {
 		};
 	}
 	
-	*initMenu {
-		Platform.case(\osx, {
-		
-			var names = fileNames.keys.asArray.sort;
-			var parent = CocoaMenuItem.default.findByName("startup");
-			
-			parent.remove;
-			
-			CocoaMenuItem.add(["startup", "default"], {
-				this.setToDefault;
-			}).enabled_(current != \default and: { current != \default_startup });
-			
-			CocoaMenuItem.add(["startup", "none"], { 
-				this.reset; 
-			}).enabled_(current != \none);
-			
-			parent = CocoaMenuItem.default.findByName("startup");
-			
-			SCMenuSeparator(parent, 2);
-
-			
-			names.do { |name|
-				var menuName = name.asString.replace("_", " ");
-				var item = CocoaMenuItem.add(["startup", menuName], { this.set(name) });
-				item.enabled = (current != name);
+	*copyExamplesFromQuark {
+			var filePaths = pathMatch(this.filenameSymbol.asString.dirname 
+												+/+ "example_setups/*");
+			filePaths.do { |path|
+				path = path.escapeChar($ );
+				systemCmd("cp % %".format(path, repositoryDirPath +/+ path.basename));
 			};
+	}
+	
+	*initMenu {
+		
+		Platform.case(\osx, {
+			try { // make sure that nothing can block other method calls
+				var names = fileNames.keys.asArray.sort;
+				var parent = CocoaMenuItem.default.findByName("startup");
+				
+				parent.remove;
+				
+				CocoaMenuItem.add(["startup", "default"], {
+					this.setToDefault;
+				}).enabled_(current != \default and: { current != \default_startup });
+				
+				CocoaMenuItem.add(["startup", "none"], { 
+					this.reset; 
+					this.initMenu;
+				}).enabled_(current != \none);
+				
+				parent = CocoaMenuItem.default.findByName("startup");
+				
+				SCMenuSeparator(parent, 2);
+	
+				
+				names.do { |name|
+					var menuName = name.asString.replace("_", " ");
+					var item = CocoaMenuItem.add(["startup", menuName], { this.set(name) });
+					item.enabled = (current != name);
+				};
+				
+				SCMenuSeparator(parent, names.size + 3);
+				
+				CocoaMenuItem.add(["startup", "Open repository"], { 
+					this.openRepository; 
+				});
+				
+				CocoaMenuItem.add(["startup", "Open quarks window"], { 
+					Quarks.gui;
+				});
+				
+				CocoaMenuItem.add(["startup", "init", "Copy examples from quark"], { 
+					this.copyExamplesFromQuark;
+					this.initFilePaths; 
+					this.initMenu;
+				});
+				
+				CocoaMenuItem.add(["startup", "init", "Refresh this menu"], { 
+					this.initFilePaths; 
+					this.initMenu;
+				});
+				
+				CocoaMenuItem.add(["startup", "init", "Reset post window"], {
+					var str = Document.listener.text;
+					Document.listener.close;
+					Document.new(" post", str, true);
+					
+				});
 			
-			SCMenuSeparator(parent, names.size + 3);
-			
-			CocoaMenuItem.add(["startup", "open repository"], { 
-				this.openRepository; 
-			});
-			
-			CocoaMenuItem.add(["startup", "open quarks window"], { 
-				Quarks.gui;
-			});
-			
-			CocoaMenuItem.add(["startup", "refresh menu"], { 
-				this.initFilePaths; 
-				this.initMenu;
-			});
+			};
 			
 		})
 	}
@@ -130,7 +157,7 @@ Preference {
 					current = which;
 					this.initMenu;
 				} {
-				 	"no file of this name found: %\n".postf(which) 
+				 	"Preference: no file of this name found: %\n".postf(which) 
 				};
 			};
 	}
@@ -140,19 +167,17 @@ Preference {
 		if(pathMatch(startupFilePath).notEmpty) { 
 				if(isSymLink(startupFilePath)) {
 					systemCmd("rm" + startupFilePath);
-					current = nil;
+					current = \none;
 				} {
 					"Preference: Please remove your startup file manually".postln;
 				}
 		};
+		this.initMenu;
 	}
 
 		
 	*openRepository {
 		var str = "open";
-		if(useQuarkSetups) { 
-			str = str + (this.filenameSymbol.asString.dirname +/+ "setups/").escapeChar($ )
-		};
 		str = str + repositoryDirPath;
 		systemCmd(str)
 	}
