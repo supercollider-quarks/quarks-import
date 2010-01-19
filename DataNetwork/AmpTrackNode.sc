@@ -66,7 +66,7 @@ SWBusNode{
 
 		this.myInit;
 
-		if ( bus.notNil, { this.node.bus_( bus ); } );
+		//	if ( bus.notNil, { this.node.bus_( bus ); } );
 
 		this.setLabel;
 	}

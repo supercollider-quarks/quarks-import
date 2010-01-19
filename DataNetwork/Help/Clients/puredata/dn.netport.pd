@@ -1,0 +1,18 @@
+#N canvas 84 82 361 208 10;
+#X obj 41 29 inlet;
+#X obj 81 29 r host;
+#X obj 41 62 sprintf curl http://%s/SenseWorldDataNetwork;
+#X obj 41 91 popen;
+#X obj 41 149 outlet;
+#X obj 85 149 print DataNetworkServer_port;
+#X obj 41 115 fromsymbol;
+#X text 213 88 Joseph Malloch/;
+#X text 213 99 Joseph Thibodeau;
+#X text 213 111 IDMIL 2009;
+#X text 214 122 www.idmil.org;
+#X connect 0 0 2 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 6 0;
+#X connect 6 0 4 0;
+#X connect 6 0 5 0;
