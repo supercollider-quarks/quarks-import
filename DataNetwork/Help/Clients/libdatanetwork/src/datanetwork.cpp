@@ -445,7 +445,7 @@ void DataNetwork::infoSlot( int nodeid, int id, const char *label, int type )
 	}
 }
 
-void DataNetwork::setterNode( int id, const char *label, int noslots )
+  void DataNetwork::setterNode( int id, const char *label, int noslots, int type )
 {
 	if ( !nodeExists( id ) ){
 		addNode( id, label );
@@ -455,6 +455,7 @@ void DataNetwork::setterNode( int id, const char *label, int noslots )
 		node->setLabel( label );
 		node->setSetter( true );
 		node->setNoSlots( noslots );
+		node->setType( type );
 	}
 }
 

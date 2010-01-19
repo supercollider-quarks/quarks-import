@@ -29,7 +29,7 @@ import re
 import tarfile
 
 PACKAGE = 'libdatanetwork'
-VERSION = '0.1'
+VERSION = '0.2'
 
 ################ FUNCTIONS ##################
 

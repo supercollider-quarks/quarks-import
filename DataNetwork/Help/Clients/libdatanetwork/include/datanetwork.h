@@ -91,7 +91,7 @@ public:
 	void expectedNode( int id, const char *label );
 	void infoNode( int id, const char *label, int noslots, int type );
 	void infoSlot( int nodeid, int id, const char *label, int type );
-	void setterNode( int id, const char *label, int noslots );
+	void setterNode( int id, const char *label, int noslots, int type );
 
     void dataForNode( int id , int size, float * data  );
     void dataForNode( int id , int size, string * data  );
