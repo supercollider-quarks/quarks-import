@@ -42,12 +42,22 @@ int main(int argc, char *argv[])
   DataNode * node;
   DataNetwork * dn;
 
+  if ( argc < 4 ){
+    printf( "Start this DataNetwork example client with 3 arguments:\n");
+    printf( "host ip (e.g. 127.0.0.1), the IP address of the host running the DataNetwork server\n");
+    printf( "port (e.g. 7000), the port this client will use for OSC messages\n");
+    printf( "name (e.g. example_client), the name by which this client will be identified in the DataNetwork\n");
+    printf( "For example:\n");
+    printf( "%s 127.0.0.1 7000 DatanetworkExampleClient\n", argv[0]); 
+    return EXIT_SUCCESS;
+  }
+
 // create a data network:
   dn = new DataNetwork();
 // create an osc client interface for it:
   dn->createOSC( argv[1], argv[2], argv[3] );
 
-// 	dn->osc->postDebug = true;
+  dn->osc->postDebug = false;
 
 // register with the host:
   dn->registerMe();
@@ -55,7 +65,7 @@ int main(int argc, char *argv[])
   sleep( 3 );
 
 // query all there is to know about the network
-	dn->query();
+  dn->query();
 
   sleep( 3 );
 

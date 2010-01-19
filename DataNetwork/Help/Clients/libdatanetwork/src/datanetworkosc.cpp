@@ -139,13 +139,13 @@ void DataNetworkOSC::addMethods()
 	addMethod( "/datanetwork/announce", "si", announceHandler, this );
 	addMethod( "/datanetwork/quit", "si", quitHandler, this );
 
-	addMethod( "/ping", "i", pingHandler, this );
+	addMethod( "/ping", "is", pingHandler, this );
 
 	addMethod( "/error", "ssi", errorHandler, this );
 	addMethod( "/warn",  "ssi", warnHandler, this );
 
-	addMethod( "/registered",   "i", registeredHandler, this );
-	addMethod( "/unregistered", "i", unregisteredHandler, this );
+	addMethod( "/registered",   "is", registeredHandler, this );
+	addMethod( "/unregistered", "is", unregisteredHandler, this );
 
 	addMethod( "/info/expected", "is",   infoExpectedHandler, this );
 	addMethod( "/info/expected", "i",   infoExpectedHandler, this );
@@ -153,12 +153,12 @@ void DataNetworkOSC::addMethods()
 	addMethod( "/info/node",     "isii", infoNodeHandler, this );
 	addMethod( "/info/slot",     "iisi",  infoSlotHandler, this );
 	addMethod( "/info/client",   "sis",  infoClientHandler, this );
-	addMethod( "/info/setter",   "isi",  infoSetterHandler, this );
+	addMethod( "/info/setter",   "isii",  infoSetterHandler, this );
 
-	addMethod( "/subscribed/node",   "ii",  subscribedNodeHandler, this );
-	addMethod( "/unsubscribed/node",   "ii",  unSubscribedNodeHandler, this );
-	addMethod( "/subscribed/slot",   "iii",  subscribedSlotHandler, this );
-	addMethod( "/unsubscribed/slot",   "iii",  unSubscribedSlotHandler, this );
+	addMethod( "/subscribed/node",   "isi",  subscribedNodeHandler, this );
+	addMethod( "/unsubscribed/node",   "isi",  unSubscribedNodeHandler, this );
+	addMethod( "/subscribed/slot",   "isii",  subscribedSlotHandler, this );
+	addMethod( "/unsubscribed/slot",   "isii",  unSubscribedSlotHandler, this );
 
 	addMethod( "/data/node", NULL,  dataNodeHandler, this );
 
@@ -169,7 +169,7 @@ void DataNetworkOSC::addMethods()
 
  // The generic handler must be added last. 
     // Otherwise it would be called instead of the handlers. 
-    addMethod( NULL, NULL, genericHandler );
+	addMethod( NULL, NULL, genericHandler, this );
 }
 
 int DataNetworkOSC::announceHandler( handlerArgs )
@@ -231,6 +231,8 @@ int DataNetworkOSC::registeredHandler( handlerArgs )
  		cout << "[DataNetworkOSC:registered]: " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 //     lo_address from = lo_message_get_source( msg );
 
+	/// TODO: check if this was really for me
+
     datanetwork->setRegistered( true  );
     return 0;
 }
@@ -240,6 +242,8 @@ int DataNetworkOSC::unregisteredHandler( handlerArgs )
 	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
  		cout << "[DataNetworkOSC:unregistered]: " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 //     lo_address from = lo_message_get_source( msg );
+
+	/// TODO: check if this was really for me
 
     datanetwork->setRegistered( false  );
     return 0;
@@ -294,7 +298,7 @@ int DataNetworkOSC::infoSetterHandler( handlerArgs )
 	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
     	cout << "[DataNetworkOSC::setter] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
-	datanetwork->setterNode( argv[ 0 ]->i, &argv[ 1 ]->s, argv[ 2 ]->i );
+	datanetwork->setterNode( argv[ 0 ]->i, &argv[ 1 ]->s, argv[ 2 ]->i, argv[ 3 ]->i );
 
     return 0;
 }
@@ -304,7 +308,9 @@ int DataNetworkOSC::subscribedNodeHandler( handlerArgs )
 	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
     	cout << "[DataNetworkOSC::node] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
-	datanetwork->subscribedNode( argv[ 1 ]->i );
+	/// TODO: check if this was really for me
+
+	datanetwork->subscribedNode( argv[ 2 ]->i );
 
     return 0;
 }
@@ -314,7 +320,9 @@ int DataNetworkOSC::unSubscribedNodeHandler( handlerArgs )
 	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
     	cout << "[DataNetworkOSC::node] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
-	datanetwork->unSubscribedNode( argv[ 1 ]->i );
+	/// TODO: check if this was really for me
+
+	datanetwork->unSubscribedNode( argv[ 2 ]->i );
 
     return 0;
 }
@@ -324,7 +332,9 @@ int DataNetworkOSC::subscribedSlotHandler( handlerArgs )
 	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
     	cout << "[DataNetworkOSC::slot] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
-	datanetwork->subscribedSlot( argv[ 1 ]->i , argv[ 2 ]->i );
+	/// TODO: check if this was really for me
+
+	datanetwork->subscribedSlot( argv[ 2 ]->i , argv[ 3 ]->i );
 
     return 0;
 }
@@ -334,7 +344,9 @@ int DataNetworkOSC::unSubscribedSlotHandler( handlerArgs )
 	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
     	cout << "[DataNetworkOSC::slot] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
-	datanetwork->unSubscribedSlot( argv[ 1 ]->i , argv[ 2 ]->i );
+	/// TODO: check if this was really for me
+
+	datanetwork->unSubscribedSlot( argv[ 2 ]->i , argv[ 3 ]->i );
 
     return 0;
 }
@@ -409,10 +421,9 @@ int DataNetworkOSC::removedNodeHandler( handlerArgs )
 
 int DataNetworkOSC::genericHandler( handlerArgs )
 {
-	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
-	    cout << "[DataNetworkOSC::genericHandler] No handler implemented for message: " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
-
-    return 0;
+  // if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
+  cout << "[DataNetworkOSC::genericHandler] No handler implemented for message: " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
+  return 0;
 }
 
 // ------------- end messages from the host -----------
@@ -488,6 +499,7 @@ void DataNetworkOSC::subscribeNode( int id )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	sendMessage( hostAddress, "/subscribe/node", msg );
@@ -499,6 +511,7 @@ void DataNetworkOSC::subscribeSlot( int id, int sid )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 	lo_message_add_int32( msg, sid );
 
@@ -511,6 +524,7 @@ void DataNetworkOSC::unSubscribeNode( int id )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	sendMessage( hostAddress, "/unsubscribe/node", msg );
@@ -522,6 +536,7 @@ void DataNetworkOSC::unSubscribeSlot( int id, int sid )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 	lo_message_add_int32( msg, sid );
 
@@ -534,6 +549,7 @@ void DataNetworkOSC::getNode( int id )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	sendMessage( hostAddress, "/get/node", msg );
@@ -545,6 +561,7 @@ void DataNetworkOSC::getSlot( int id, int sid )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 	lo_message_add_int32( msg, sid );
 
@@ -558,6 +575,7 @@ void DataNetworkOSC::labelNode( int id, const char *label )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 	lo_message_add_string( msg, label );
 
@@ -570,6 +588,7 @@ void DataNetworkOSC::labelSlot( int id, int sid, const char *label )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 	lo_message_add_int32( msg, sid );
 	lo_message_add_string( msg, label );
@@ -583,6 +602,7 @@ void DataNetworkOSC::removeNode( int id )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	sendMessage( hostAddress, "/remove/node", msg );
@@ -594,6 +614,7 @@ void DataNetworkOSC::addExpected( int id )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	sendMessage( hostAddress, "/add/expected", msg );
@@ -605,6 +626,7 @@ void DataNetworkOSC::addExpectedPlus( int id, int size, const char *label, int t
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 	lo_message_add_int32( msg, size );
 	lo_message_add_string( msg, label );
@@ -619,6 +641,7 @@ void DataNetworkOSC::setData( int id, int size, float data[] )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	for (int n=0; n<size; n++)
@@ -633,6 +656,7 @@ void DataNetworkOSC::setData( int id, int size, string data[] )
 {
 	lo_message msg = lo_message_new();
 	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
 	lo_message_add_int32( msg, id );
 
 	for (int n=0; n<size; n++)
@@ -646,7 +670,7 @@ void DataNetworkOSC::setData( int id, int size, string data[] )
 
 void DataNetworkOSC::sendSimpleMessage( const char *path )
 {
-	lo_send_from( hostAddress, server, LO_TT_IMMEDIATE, path, "i", port );
+  lo_send_from( hostAddress, server, LO_TT_IMMEDIATE, path, "is", port, name.data() );
 }
 
 //-------------- end messages to the host -----------------
