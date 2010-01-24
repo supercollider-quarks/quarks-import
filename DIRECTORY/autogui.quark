@@ -1,0 +1,13 @@
+(
+	\name: 		"autogui",
+	\path: 		"autogui", 
+	\summary:		"Easy, automatic creation of GUIs  for controlling/monitoring Synth and SynthDefs, e.g. aSynth.autogui",
+	\author: 		"Andrea Valle",
+	\version:		1.0, // must be a float
+	\organization: 	"CIRMA - Universitˆ di Torino",
+	\country: 		"Italy",
+	\since: 		"2010",
+	\helpdoc: "Help/SynthDefAutogui.html",
+	\ext_dependancy: "none",
+	\url:           "http://www.cirma.unito.it/andrea"
+)
