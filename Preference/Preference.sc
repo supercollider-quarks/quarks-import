@@ -2,7 +2,7 @@
 Preference {
 
 	classvar <>fileNames, <>startupFilePath, <>repositoryDirPath, <current;
-	classvar <>openFileAtStartup = true;
+	classvar <>openFileAtStartup = true, <>examplesFolder;
 	
 	*initClass {	
 		
@@ -17,12 +17,16 @@ Preference {
 			// for now, user dir only
 			startupFilePath = startupFilePath ?? { thisProcess.platform.startupFiles.last };			repositoryDirPath = repositoryDirPath ?? {
 				(startupFilePath.dirname +/+ "startupfiles").escapeChar($ );
-			};
+			}; 
+			examplesFolder = examplesFolder ?? { 
+				this.filenameSymbol.asString.dirname +/+ "startup_examples/";
+			}; 
 			startupFilePath = startupFilePath.escapeChar($ );
 			if(pathMatch(startupFilePath).notEmpty and: { isSymLink(startupFilePath).not }) {
-				"************************************************************************"
+				"************************************************************************\n"
 				"Preference: in order to use preference switching, move your startup file "
-				"to the startupfiles folder first.\n"
+				"to the startupfiles folder first, and recompile.\n"
+				"Preference.openRepository;\n"
 				"************************************************************************".postln
 			};
 			
