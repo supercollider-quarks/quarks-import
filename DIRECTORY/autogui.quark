@@ -2,7 +2,7 @@
 	\name: 		"autogui",
 	\path: 		"autogui", 
 	\summary:		"Easy, automatic creation of GUIs  for controlling/monitoring Synths and SynthDefs, e.g. aSynth.autogui",
-	\author: 		"Andrea Valle",
+	\author: 		"Andrea Valle, ControlSpec GUI by Martin Marier",
 	\version:		1.0, // must be a float
 	\organization: 	"CIRMA - Universitˆ di Torino",
 	\country: 		"Italy",
