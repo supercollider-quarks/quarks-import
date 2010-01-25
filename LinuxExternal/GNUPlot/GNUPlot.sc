@@ -408,6 +408,18 @@ GNUPlot {
 		pipe.flush;
 	}
 	
+	write{ |path, term="pdf", termopts="fsize 10"|
+		path ?? {
+			path = PathName.tmp +/+ "gnuplot_sc";
+			"GNUPlot:write - path ".format(path).postln;
+		};
+		^this.sendCmd(
+			"set term % %
+set output '%'
+replot
+set term pop".format(term, termopts, path.escapeChar($')))
+	}
+	
 	//////////////////////////////////////////////////////////////////////
 	// Helper functions to write temp data files
 	*pr_writeTempData1 { |data, delims(["\n"]), tmpname|
