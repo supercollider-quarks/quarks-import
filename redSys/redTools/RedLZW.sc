@@ -30,11 +30,11 @@ RedLZW {
 			if(tab[k].notNil, {
 				sub= tab[k];
 			}, {
-				sub= tab[old].asArray++val;
+				sub= tab[old].asCollection++val;
 			});
 			out= out++sub;
-			val= sub.asArray[0];
-			tab= tab++[tab[old].asArray++val];
+			val= sub.asCollection[0];
+			tab= tab++[tab[old].asCollection++val];
 			old= k;
 		};
 		^out;

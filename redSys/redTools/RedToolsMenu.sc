@@ -69,7 +69,7 @@ RedToolsMenu {
 			['system', 'post incoming osc'], {
 				Document(
 					"listen to all incoming osc",
-					"//start\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0]!='status.reply', {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;"
+					"//start\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0]!='/status.reply', {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;"
 				)
 			},
 			['system', 'post Event defaults'], {

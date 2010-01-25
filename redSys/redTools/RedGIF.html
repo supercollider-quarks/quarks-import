@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0024b5}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {font: 9.0px Monaco}
+span.s3 {color: #000000}
+span.s4 {text-decoration: underline ; color: #000000}
+span.s5 {text-decoration: underline}
+span.s6 {color: #0024b5}
+span.s7 {color: #606060}
+span.s8 {color: #9d281b}
+span.s9 {color: #0019ba}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedGIF<span class="Apple-tab-span">	</span></b></span><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><b><span class="Apple-tab-span">	</span>gif image decoder</b></p>
+<p class="p2"><br></p>
+<p class="p1">read and decodes a .gif file from disk.</p>
+<p class="p1">includes a simple makeWindow method to display the pixels.<span class="Apple-converted-space">  </span>(but you should really write your own.)</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s3">see<span class="Apple-tab-span">	</span></span><span class="s4">http:</span><span class="s5">//www.onicos.com/staff/iz/formats/gif.html</span></p>
+<p class="p3"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s4">http:</span><span class="s5">//local.wasp.uwa.edu.au/~pbourke/dataformats/gif/</span></p>
+<p class="p3"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s4">http:</span><span class="s5">//www.daubnet.com/formats/GIF.html</span></p>
+<p class="p3"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s4">http:</span><span class="s5">//www.cis.udel.edu/%7Eamer/CISC651/lzw.and.gif.explained.html</span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*read(path)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a <span class="s6">RedGIF</span> by reading and decoding a .gif file from disk.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>might take a long time to decode.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>makeWindow(bounds)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>as simple as possible.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;type</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>string.<span class="Apple-converted-space">  </span>either <span class="s7">"GIF87a"</span> or <span class="s7">"GIF89a"</span>.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;width</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;height</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>image dimensions in pixels.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;background</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Color"><span class="s6">Color</span></a>.<span class="Apple-converted-space">  </span>can be <span class="s6">nil</span> if no globalColorMap.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;aspectRatio</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>usually 0.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;depth</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>colour depth.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;globalColorMap</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of colours.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;controls</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of <span class="s6">RedGIFControl</span> objects.<span class="Apple-converted-space">  </span>corresponding control also saved in each <span class="s6">RedGIFImage</span>.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>see below.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;comments</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of strings.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;appId</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;appCode</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>optional strings.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;appData</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>optional data as an array.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;images</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of <span class="s6">RedGIFImage</span> objects.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s5">helper classes:</span></p>
+<p class="p2"><br></p>
+<p class="p4"><b>RedGIFImage</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span></b>holds the actual pixel data and other image specific settings.</p>
+<p class="p1"><span class="Apple-tab-span">	</span>a <span class="s6">RedGIF</span> consist of one or more <span class="s6">RedGIFImage</span> objects.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;bounds</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>image dimensions as a <a href="SC://Rect"><span class="s6">Rect</span></a>.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;flags</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>semi-private image settings.<span class="Apple-converted-space">  </span>use the methods depth, hasColorMap, interlaced below instead.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;colorMap</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>image specific (a.k.a. local) array of colours.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;data</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the pixel data as a 1-dimensional array of <a href="SC://Color"><span class="s6">Color</span></a> objects.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reading from left to right, top to bottom.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;control</b></p>
+<p class="p4"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a </span>RedGIFControl<span class="s3"> object.</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>depth</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>colour depth.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>hasColorMap</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>boolean.<span class="Apple-converted-space">  </span>true if local colorMap.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>interlaced</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>boolean.<span class="Apple-converted-space">  </span>indicates that this image needs to be drawn in separate passes.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>RedGIFControl</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span></b>holds data for specific images.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;duration</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>integer.<span class="Apple-converted-space">  </span>if not 0 then specify delay time for animation in 1/100th of a second.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;transparent</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Color"><span class="s6">Color</span></a>.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;disposalMethod</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an <a href="SC://Integer"><span class="s6">Integer</span></a> from 0 to 3 that indicated overdraw operations.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;userInputFlag</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Boolean"><span class="s6">Boolean</span></a>.<span class="Apple-converted-space">  </span>if animation should wait for user input or not.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;transparentFlag</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Boolean"><span class="s6">Boolean</span></a>.<span class="Apple-converted-space">  </span>if transparent colour used or not.</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6"><br></p>
+<p class="p7">//--</p>
+<p class="p8"><span class="s3">a= </span><span class="s6">RedGIF</span><span class="s3">.read(</span>"/Library/Application Support/Apple/iChat Icons/Funk Animals/RedDog.gif"<span class="s3">);</span></p>
+<p class="p9">a.dump;</p>
+<p class="p9">a.makeWindow;</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p7">//--template for custom code to manipulate and display</p>
+<p class="p9">(</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s6">var</span> scale= 10;</p>
+<p class="p8"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s6">var</span><span class="s3"> a= </span><span class="s6">RedGIF</span><span class="s3">.read(</span>"/Library/Application Support/Apple/iChat Icons/Funk Animals/RedDog.gif"<span class="s3">);</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s6">var</span> win= <span class="s6">Window</span>(<span class="s7">"gif"</span>, <span class="s6">Rect</span>(300, 300, a.width*scale, a.height*scale), <span class="s6">false</span>);</p>
+<p class="p7"><span class="s3"><span class="Apple-tab-span">	</span>a.background= </span><span class="s6">Color</span><span class="s3">.blue;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//overwrite background colour</p>
+<p class="p9"><span class="Apple-tab-span">	</span>a.images[0].data= a.images[0].data.reverse;<span class="Apple-tab-span">	</span><span class="s8">//mess with the image pixel data</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.view.background= a.background;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.drawHook= {</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.setSmoothing(<span class="s6">false</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.images[0].data.do{<span class="s6">|col, i|</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(a.controls[0].transparentFlag.not or:{a.controls[0].transparent!=col}, {</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.fillColor= col;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.fillOval(<span class="s6">Rect</span>(i%a.width*scale, i.div(a.width)*scale, scale, scale));</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.front;</p>
+<p class="p9">)</p>
+<p class="p5"><br></p>
+<p class="p10">//--download example animated gif to desktop</p>
+<p class="p8">"cd ~/Desktop; curl -o dog-03.gif http://www.gifanimations.com/GA/image/animations/animals/dogs/dog-03.gif"<span class="s3">.unixCmd;</span></p>
+<p class="p5"><br></p>
+<p class="p10">//--template for animation (load an animated gif)</p>
+<p class="p9">(</p>
+<p class="p9"><span class="Apple-tab-span">	</span>var scale= 2;</p>
+<p class="p8"><span class="s3"><span class="Apple-tab-span">	</span></span><span class="s9">var</span><span class="s3"> a= </span><span class="s9">RedGIF</span><span class="s3">.read(</span>"~/Desktop/dog-03.gif"<span class="s3">);</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s9">var</span> win= <span class="s9">Window</span>(<span class="s7">"gif"</span>, <span class="s9">Rect</span>(300, 300, a.width*scale, a.height*scale), <span class="s9">false</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s9">var</span> index= 0, img;</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.drawHook= {</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.setSmoothing(<span class="s9">false</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>img= a.images.wrapAt(index);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>img.data.do{<span class="s9">|col, i|</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(img.control.transparentFlag.not or:{img.control.transparent!=col}, {</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.fillColor= col;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.fillRect(<span class="s9">Rect</span>(i%a.width*scale, i.div(a.width)*scale, scale, scale));</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.front;</p>
+<p class="p11"><span class="s3"><span class="Apple-tab-span">	</span></span>Routine<span class="s3">({</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>while({win.isClosed.not}, {</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>win.refresh;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(img.control.duration*0.01).max(0.01).wait;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>index= index+1;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>});</p>
+<p class="p9"><span class="Apple-tab-span">	</span>}).play(<span class="s9">AppClock</span>);</p>
+<p class="p9">)</p>
+</body>
+</html>
