@@ -17,11 +17,13 @@ SWDataSlotGui{
 
 	*initClass{
 		StartUp.add( {
+			if ( GUI.scheme.notNil ){
 		Platform.case( 
 				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
 				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
 				\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
+			};
 		} );
 	}
 
@@ -217,12 +219,14 @@ SWDataNodeGui{
 
 	*initClass{
 		StartUp.add( { 
-			Platform.case( 
-				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
-				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
-				\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
+			if ( GUI.scheme.notNil ){
+				Platform.case( 
+					\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
+					\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
+					\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
-			} );
+			};
+		} );
 		slottype = SWDataSlotGui;
 	}
 
@@ -439,10 +443,12 @@ SWDataNetworkGui{
 
 	*initClass{
 		StartUp.add( { 
+			if ( GUI.scheme.notNil ){
 		Platform.case( 
 				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
 				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
+			};
 		} );
 		slottype = SWDataSlotGui;
 		nodetype = SWDataNodeGui;
