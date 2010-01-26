@@ -17,12 +17,14 @@ SWDataNetworkOSCClientGui{
 
 	*initClass{
 		StartUp.add( { 
-			if ( thisProcess.platform.name == \linux ){
-				this.font = GUI.font.new( "Lucida Sans", 9 );
+			if ( GUI.scheme.notNil ){
+				if ( thisProcess.platform.name == \linux ){
+					this.font = GUI.font.new( "Lucida Sans", 9 );
 				};
-			if ( thisProcess.platform.name == \osx ){
-				this.font = GUI.font.new( "Helvetica", 9 );
+				if ( thisProcess.platform.name == \osx ){
+					this.font = GUI.font.new( "Helvetica", 9 );
 				}; 
+			};
 		} );
 	}
 
