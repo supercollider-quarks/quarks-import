@@ -35,8 +35,6 @@ using namespace std;
 /// this is the namespace used by the datanetwork classes
 using namespace SWDataNetwork;
 
-
-
 int main(int argc, char *argv[])
 {
   DataNode * node;
