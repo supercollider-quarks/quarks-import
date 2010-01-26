@@ -142,7 +142,7 @@ Preference {
 				^this
 			};
 		};
-		systemCmd("open" + path);
+		systemCmd("open -a SuperCollider" + path);
 	}
 	
 	*initMenu {
