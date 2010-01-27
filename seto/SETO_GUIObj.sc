@@ -33,7 +33,8 @@ SETO_GUIObj{
 		tServer = setoServer;
 
 		obj = GUI.userView.new(parent, bounds);
-		obj.relativeOrigin_(true).clearOnRefresh_(true);
+		//obj.relativeOrigin_(true)
+		obj.clearOnRefresh_(true);
 		this.updateBounds;
 		obj.drawFunc_({|me|
 			GUI.pen.use{
