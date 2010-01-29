@@ -172,6 +172,11 @@ GNUPlot {
 		pipe.putString( "set autoscale y\n" );
 		pipe.flush;
 	}
+	
+	autoscaleZ{
+		pipe.putString( "set autoscale z\n" );
+		pipe.flush;
+	}
 
 	setXrange{ |min,max|
 		pipe.putString( "unset autoscale x\n" );
@@ -182,6 +187,12 @@ GNUPlot {
 	setYrange{ |min,max|
 		pipe.putString( "unset autoscale y\n" );
 		pipe.putString( "set yrange [%:%]\n".format(min, max) );
+		pipe.flush;
+	}
+	
+	setZrange{ |min,max|
+		pipe.putString( "unset autoscale z\n" );
+		pipe.putString( "set zrange [%:%]\n".format(min, max) );
 		pipe.flush;
 	}
 
