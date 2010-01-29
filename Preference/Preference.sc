@@ -2,7 +2,7 @@
 Preference {
 
 	classvar <>fileNames, <>startupFilePath, <>repositoryDirPath, <current;
-	classvar <>openFileAtStartup = true, <>examplesFolder;
+	classvar <>openFileAtStartup = false, <>examplesFolder;
 	
 	*initClass {	
 		
@@ -103,7 +103,6 @@ Preference {
 			if(pathMatch(startupFilePath).isEmpty or: { isSymLink(startupFilePath) }) {
 				if(path.notNil) {
 					systemCmd("ln -s -F " ++ path + startupFilePath);
-					this.openStartupFile(path);
 					current = which;
 					this.initMenu;
 				} {
@@ -142,7 +141,7 @@ Preference {
 				^this
 			};
 		};
-		systemCmd("open -a SuperCollider" + path);
+		systemCmd("open" + path);
 	}
 	
 	*initMenu {
@@ -179,6 +178,9 @@ Preference {
 				
 				SCMenuSeparator(parent, names.size + 3);
 				
+				CocoaMenuItem.add(["startup", "Open current startup"], { 
+					this.openStartupFile; 
+				}).enabled_(current != \none);				
 				CocoaMenuItem.add(["startup", "Open repository"], { 
 					this.openRepository; 
 				});
