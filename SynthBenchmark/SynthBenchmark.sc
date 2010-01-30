@@ -65,7 +65,7 @@ init { |argDirs|
 	StartUp.add{
 		cmd = Platform.case(
 			\osx, {"/opt/local/bin/gtime"},
-			{"time"}
+			{"/usr/bin/time"}
 		)
 	}
 }
