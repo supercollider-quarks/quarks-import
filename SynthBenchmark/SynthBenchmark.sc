@@ -138,6 +138,28 @@ write { |path, mode="w"|
 	}
 }
 
+
+// Output statistics comparing two benchmarks against each other
+compare { |that|
+	var k1, k2, a1, a2, wsr, wsrN, avgdiff;
+	k1 = this.results.keys.asArray;
+	k2 = that.results.keys.asArray;
+	k1.sort;
+	k2.sort;
+	if(k1 != k2){ ^"SynthBenchmark.compare: keys don't match, cannot compare".error };
+	
+	// get times as sorted lists
+	a1 = k1.collect{|k| this.results[k]};
+	a2 = k2.collect{|k| that.results[k]};
+	
+	// wilcoxonSR is in MathLib quark
+	# wsr, wsrN = wilcoxonSR(a1, a2, false);
+	avgdiff = median(a2 / a1);
+	
+	"The latter benchmark's tests took on average % percent the time of the former (Wilcoxon signed-rank %, N=%)".format((avgdiff * 100).asStringPrec(4), wsr, wsrN);
+}
+
+
 } // end class
 
 + String {

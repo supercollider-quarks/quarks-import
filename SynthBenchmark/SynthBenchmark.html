@@ -9,10 +9,13 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000ebe}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000bf}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
 span.s1 {color: #000000}
-span.s2 {color: #0024f8}
-span.s3 {text-decoration: underline ; color: #0021e7}
+span.s2 {color: #0029f7}
+span.s3 {text-decoration: underline ; color: #0026e6}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -31,5 +34,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">You can write your own benchmarks if you like. In the quark there's a "benchmarks" folder containing files named *_bench.scd - all files of that form are expected to contain sclang code to define a <a href="SC://SynthDef"><span class="s3">SynthDef</span></a> (note that they don't .load or .store the SynthDef, they just return it). You can define benchmarks in different folders, and then pass the folder paths in as an argument to the SynthBenchmark() constructor.</p>
 <p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4">// The "compare" method returns a string with stats comparing two runs:</p>
+<p class="p5"><span class="s1">a = </span>SynthBenchmark<span class="s1">().run(</span>false<span class="s1">);</span></p>
+<p class="p4">// ...then recompile scsynth or whatever change you want to make...</p>
+<p class="p5"><span class="s1">b = </span>SynthBenchmark<span class="s1">().run(</span>false<span class="s1">);</span></p>
+<p class="p6">compare(a, b);</p>
 </body>
 </html>
