@@ -156,7 +156,7 @@ compare { |that|
 	# wsr, wsrN = wilcoxonSR(a1, a2, false);
 	avgdiff = median(a2 / a1);
 	
-	"The latter benchmark's tests took on average % percent the time of the former (Wilcoxon signed-rank %, N=%)".format((avgdiff * 100).asStringPrec(4), wsr, wsrN);
+	^"The latter benchmark's tests took on average % percent the time of the former (Wilcoxon signed-rank %, N=%)".format((avgdiff * 100).asStringPrec(4), wsr, wsrN);
 }
 
 
