@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.25">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #2b30fa}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd0b0b}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #2b30fa; min-height: 14.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2024c7}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad140d}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {font: 9.0px Monaco}
+span.s3 {font: 9.0px Monaco; color: #000000}
+span.s4 {font: 12.0px Helvetica; color: #0000ee}
+span.s5 {text-decoration: underline}
+span.s6 {color: #000000}
+span.s7 {color: #008417}
+span.s8 {color: #2024c7}
+span.s9 {color: #737373}
+span.s10 {color: #2b30fa}
+span.s11 {color: #1d20b9}
+span.s12 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>PFKtl</b></span><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><b>a MIDIKtl class for the Doepfer PocketFader</b></p>
+<p class="p2"><br></p>
+<p class="p1">The Doepfer PockectFader only has 16 faders, so PFKtl is an extremely simple class.<span class="Apple-converted-space"> </span></p>
+<p class="p1">It has a<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s3">see also <a href="MIDIKtl.html"><span class="s4"><b>MIDIKtl</b></span></a></span><b>, </b><b><span class="s5">NanoKtl</span></b></p>
+<p class="p3"><br></p>
+<p class="p1"><b>first example</b></p>
+<p class="p2"><br></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// make a new PFKtl</p>
+<p class="p5">f = PFKtl.new;</p>
+<p class="p3"><br></p>
+<p class="p6"><span class="s6"><span class="Apple-tab-span">	</span></span>// map a single slider's action</p>
+<p class="p5">f.mapCC(<span class="s7">\sl1</span>, { <span class="s8">|chan, ccnum, val|</span> <span class="s9">"PFKtl test: ch % cc % val %\n"</span>.postf(chan, ccnum, val) });<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// fails if no midi info for that key</p>
+<p class="p5">f.mapCC(<span class="s7">\wrongKey</span>, { <span class="s8">|chan, ccnum, val|</span> <span class="s9">"PFKtl test: ch % cc % val %\n"</span>.postf(chan, ccnum, val) });<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p1"><b>Class Variables</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*verbose <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>// a flag whether the class posts extended info <span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>PFKtl.verbose = true;</p>
+<p class="p1"><span class="Apple-tab-span">	</span>PFKtl.verbose = false;</p>
+<p class="p3"><br></p>
+<p class="p1"><b>Instance Variables</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>softWithin </b><span class="Apple-tab-span">	</span>how close controllers should be for soft takeOver (default 0.05).</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>see also <a href="SC://softSet"><span class="s10">softSet</span></a><span class="s10">.<span class="Apple-converted-space"> </span></span></p>
+<p class="p7"><br></p>
+<p class="p1"><span class="s10"><span class="Apple-tab-span">	</span></span><b>ctlNames<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>a dictionary of the controller element names and their midi info.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="s10"><span class="Apple-tab-span">	</span></span><b>lastVals<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>the last values that come from each controller element (used for softSet)</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p1"><b>Methods</b></p>
+<p class="p7"><br></p>
+<p class="p1"><span class="s10"><b><span class="Apple-tab-span">	</span></b></span><b>*new(uid)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>make a new PFKtl. uid is an optional ID for the MIDI port to listen to.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p5">f = PFKtl.new;</p>
+<p class="p3"><br></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span></span><b>mapCC(ctl, action)</b></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="s6"><span class="Apple-tab-span">	</span></span>// map a single slider's action</p>
+<p class="p5">f.mapCC(<span class="s7">\sl1</span>, { <span class="s8">|chan, ccnum, val|</span> <span class="s9">"PFKtl test: ch % cc % val %\n"</span>.postf(chan, ccnum, val) });<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// the valid names are:</p>
+<p class="p5">f.ctlNames.keys;</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>mapToPxEdit(editor, indices, lastIsVol) <span class="Apple-tab-span">	</span></b>- map to a NodeProxyEditor.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>editor</b> <span class="Apple-tab-span">	</span>the editor</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>indices</b><span class="Apple-tab-span">	</span>which sliders to map to. default is [1, 2 .. 8].<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>lastIsVol</b><span class="Apple-tab-span">	</span>flag whether the last slider becomes a volume control for that editor.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="s6">(<span class="Apple-tab-span">	</span></span>// make an Ndef and its editor first</p>
+<p class="p5"><span class="s8">Spec</span>.add(<span class="s7">\harm</span>, [2, 200, <span class="s7">\exp</span>]);</p>
+<p class="p8">Ndef<span class="s6">(</span><span class="s7">\a</span><span class="s6">, { </span>|freq = 20, harm = 20|<span class="s6"> </span>Blip<span class="s6">.ar(freq, harm) });</span></p>
+<p class="p8"><span class="s6">o = </span>NodeProxyEditor<span class="s6">(</span>Ndef<span class="s6">(</span><span class="s7">\a</span><span class="s6">));</span></p>
+<p class="p3"><br></p>
+<p class="p5">f.mapToPxEdit(o);</p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span></span><b>mapToPxMix(mixer, splitIndex, lastEdIsVol, lastIsMaster)</b><span class="Apple-tab-span">	</span>map to a proxymixer.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>mixer </b>is the mixer to map to.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the left hand sliders (sliders 1 to splitIndex) are mapped to volumes;</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the right hand sliders<span class="Apple-converted-space">  </span>map to the mixer.editor parameters.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>lastIsMaster: </b>if true, the rightmost control maps to server volume.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b><span class="Apple-tab-span">	</span>lastEdIsVol: </b>if true, the last free slider on the right side is used for<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the edited proxy's volume.</p>
+<p class="p1"><b>(<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
+<p class="p8"><span class="s6">m = </span>NdefMixer<span class="s6">();</span></p>
+<p class="p5">f.mapToPxMix(m);<span class="Apple-converted-space"> </span></p>
+<p class="p5">m.openEditZone;</p>
+<p class="p5">m.editor.proxy_(<span class="s8">Ndef</span>(<span class="s7">\a</span>));</p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s6">(<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// test many proxies<span class="Apple-converted-space"> </span></p>
+<p class="p5">10.do { <span class="s11">|i|</span><span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>Ndef((<span class="s12">"test"</span> ++ i).asSymbol, {<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s11">Pan2</span>.ar(<span class="s11">Ringz</span>.ar(<span class="s11">Impulse</span>.ar(exprand(0.5, 4)), exprand(300, 3000), 0.02), 1.0.rand2, 0.2)<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>}).play(vol: 0.2)</p>
+<p class="p5"><span class="Apple-tab-span">	</span>;<span class="Apple-converted-space"> </span></p>
+<p class="p5">};</p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+</body>
+</html>
