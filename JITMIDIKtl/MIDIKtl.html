@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.25">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #2b30fa}
+span.s3 {color: #2024c7}
+span.s4 {text-decoration: underline ; color: #0000ee}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>MIDIKtl<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>simple and flexible handling of mappings for midi controllers</b></p>
+<p class="p2"><br></p>
+<p class="p1">MIDIKtl is an abstract class for representing specific midi controllers with subclasses,</p>
+<p class="p1">such as the <a href="PFKtl.html"><span class="s2">PFKtl</span></a>, <a href="NanoKtl.html"><span class="s2">NanoKtl</span></a>, the <a href="BCRKtl.html"><span class="s2">BCRKtl</span></a>, the FFLV2 and hopefully more to come.</p>
+<p class="p1">MIDIKtl subclasses are intended for simple mappings to JIT interfaces like ProxyMixer,<span class="Apple-converted-space"> </span></p>
+<p class="p1">NdefMixer, NodeProxyEditor, TdefAllGui, PdefAllGui, etc.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p1"><b>Class variables:<span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>*defaults </b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a dictionary where each subclass stores clear controller element names<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>and their midi information.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="s3">MIDIKtl</span>.defaults</p>
+<p class="p3"><br></p>
+<p class="p1">A MIDIKtl subclass has a CCResponder that listens to an (optional) MIDI source uid,<span class="Apple-converted-space"> </span></p>
+<p class="p1">and keeps a dictionary for the actions to do when specific MIDI events<span class="Apple-converted-space"> </span></p>
+<p class="p1">from that source comes in.<span class="Apple-converted-space"> </span></p>
+<p class="p1">This is a little more efficient that CCResponder, as there is less matching</p>
+<p class="p1">going on; and overwriting mappings automatically removes previous actions.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p1">The simplest MIDIKtl is <a href="PFKtl.html"><span class="s2">PFKtl</span></a> for the Doepfer PocketFader, which only has faders.</p>
+<p class="p3"><br></p>
+<p class="p1">More complex ones:<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="s4"><a href="NanoKtl.html">NanoKtl</a></span> for the Korg nanoControl has sliders, knobs, and buttons, and one can switch<span class="Apple-converted-space"> </span></p>
+<p class="p1">between 4 scenes, in which the controls send different sets of cc numbers.</p>
+<p class="p3"><br></p>
+<p class="p1"><span class="s4"><a href="BCRKtl.html">BCRKtl</a></span> (with Yvan Volonchine)for the Behringer BCR 2000 motor fader box supports<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>updating the faders from SC.</p>
+<p class="p3"><br></p>
+<p class="p1">If you'd like to make a MIDIKtl class for your controller, please see <a href="MIDIKtl_howTo.html"><span class="s2">MIDIKtl_howTo</span></a>.</p>
+<p class="p3"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span>// not finished yet:<span class="Apple-converted-space"> </span></p>
+<p class="p1">A MIDIKtl can optionally have a NoteOn- and a NoteOffResponder<span class="Apple-converted-space"> </span></p>
+<p class="p1">and the associated dictionaries for these actions.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+</body>
+</html>
