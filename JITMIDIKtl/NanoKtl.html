@@ -91,8 +91,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p12"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.ccresp;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// a midi CCResponder listing to that MIDI port</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
 <p class="p12"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// map transport buttons 'play' and 'rec' to simple actions:<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(0, <span class="s9">'play'</span>, { <span class="s8">|ch, cc, val|</span> <span class="s6">" 'play': %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(0, <span class="s9">'rec'</span>, { <span class="s8">|ch, cc, val|</span> <span class="s6">" 'rec': %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(0, <span class="s9">'play'</span>, { <span class="s8">|ch, cc, val|</span> <span class="s6">" 'play': %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(0, <span class="s9">'rec'</span>, { <span class="s8">|ch, cc, val|</span> <span class="s6">" 'rec': %.\n"</span>.postf([ch, cc, val]) });</p>
 <p class="p12"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// the actions are now in the dict:</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.ccDict.postcs;</p>
 <p class="p8"><span class="Apple-tab-span">	</span></p>
@@ -120,24 +120,24 @@ span.Apple-tab-span {white-space:pre}
 <p class="p15"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>g.ctlNames<span class="s3">[1]</span></p>
 <p class="p10"><br></p>
 <p class="p14"><span class="s3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// add some more mapped actions</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s10">'sl1'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, slider1: %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s10">'kn2'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, knob2: %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s10">'bu3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button up 3: %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s10">'bd3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button down 3: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s10">'sl1'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, slider1: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s10">'kn2'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, knob2: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s10">'bu3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button up 3: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s10">'bd3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button down 3: %.\n"</span>.postf([ch, cc, val]) });</p>
 <p class="p8"><br></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.ccDict;</p>
 <p class="p2"><br></p>
 <p class="p13"><b>Instance Methods</b></p>
 <p class="p10"><span class="Apple-tab-span">	</span></p>
-<p class="p9"><b><span class="Apple-tab-span">	</span>mapCC (editor, scene)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span>mapCCS (editor, scene)</b></p>
 <p class="p10"><br></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>map one of the controls in a scene to a general function.</p>
 <p class="p10"><br></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g = <span class="s5">NanoKtl</span>.new;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// listen to all midi in ports</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s11">'sl1'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, slider1: %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s11">'kn2'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, knob2: %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s11">'bu3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button up 3: %.\n"</span>.postf([ch, cc, val]) });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCC(1, <span class="s11">'bd3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button down 3: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s11">'sl1'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, slider1: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s11">'kn2'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, knob2: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s11">'bu3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button up 3: %.\n"</span>.postf([ch, cc, val]) });</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.mapCCS(1, <span class="s11">'bd3'</span>, { <span class="s5">|ch, cc, val|</span> <span class="s6">" scene 1, button down 3: %.\n"</span>.postf([ch, cc, val]) });</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>g.ccDict;</p>
 <p class="p10"><br></p>
 <p class="p9"><b><span class="Apple-tab-span">	</span>mapToPxEdit (editor, scene)</b></p>

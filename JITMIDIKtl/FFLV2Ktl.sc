@@ -6,15 +6,9 @@ FFLV2Ktl : MIDIKtl {
 
 	init { 
 		super.init; 
-		ctlNames = defaults[this.class];
 		lastVals = ();
 	}
 			
-	mapCC { |ctl= \sl1, action| 
-		var ccDictKey = ctlNames[ctl]; // '0_42'
-		ccDict.put(ccDictKey, action);
-	}
-
 		// to do: how to map to editor? 
 
 		// how to map to proxymixer?
