@@ -84,6 +84,7 @@ MultiFileWriter{
 
 	close{
 		var newf;
+		if ( curFile.notNil ){
 		if ( curFile.isOpen ){
 			newf= pathDir +/+ PathName(curfn).fileName;
 			curFile.close;
@@ -106,6 +107,7 @@ MultiFileWriter{
 				this.createTarBundle( newf );
 			};
 		};
+		}
 		//		}).play(AppClock);
 	}
 
