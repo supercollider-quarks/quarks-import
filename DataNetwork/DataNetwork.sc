@@ -24,6 +24,8 @@ SWDataNetwork{
 	var <recTime = false;
 	var <timelogfile;
 
+	var <>hive;
+
 	*new{ 
 		^super.new.init;
 	}
@@ -122,6 +124,18 @@ SWDataNetwork{
 		};
 	}
 	*/
+
+	mapHivePWM{ |nodeID, miniBee|
+		if ( hive.notNil ){
+			this.nodes[ nodeID ].action = { |data| hive.setPWM( miniBee, data) };
+		};
+	}
+
+	mapHiveDig{ |nodeID, miniBee|
+		if ( hive.notNil ){
+			this.nodes[ nodeID ].action = { |data| hive.setDigital( miniBee, data) };
+		};
+	}
 
 	registerNode{ |id,sz,type|
 		var ret,key,nnode;
@@ -326,7 +340,7 @@ SWDataNetwork{
 			recTask.reset.play;
 		}{
 			recTask.stop;
-			logfile.close;
+			if ( logfile.notNil ){ logfile.close; };
 		};
 	}
 
