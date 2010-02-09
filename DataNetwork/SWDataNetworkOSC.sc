@@ -231,7 +231,21 @@ SWDataNetworkOSC{
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
 					addr.port = msg[1]; this.removeAll( addr, msg[2] );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
+
+			/// MAPPING TO MINIBEE OUTPUT
+
+			OSCresponderNode( nil, '/map/minibee/pwm', { |t,r,msg,addr|
+				if ( verbose > 1, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mapHivePWM( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
+			OSCresponderNode( nil, '/map/minibee/digital', { |t,r,msg,addr|
+				if ( verbose > 1, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mapHiveDig( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			})
+
 		];
 
 		responders.do{ |it| it.add };
@@ -824,6 +838,57 @@ SWDataNetworkOSC{
 					this.errorMsg( addr, "/remove/node", 5, msg );
 				});
 			this.logMsg( "/remove/node:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+
+	mapHivePWM{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/map/minibee/pwm", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						// old version:
+						//	if ( setters.at( msg[0] ) == addr, {
+						network.mapHivePWM( msg[0], msg[1] );
+						addr.sendMsg( '/mapped/node', msg[0] );
+					},{
+						this.errorMsg( addr, "/map/minibee/pwm", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/map/minibee/pwm", 5, msg );
+				});
+			this.logMsg( "/map/minibee/pwm:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+	mapHiveDig{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/map/minibee/digital", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						// old version:
+						//	if ( setters.at( msg[0] ) == addr, {
+						network.mapHiveDig( msg[0], msg[1] );
+						addr.sendMsg( '/mapped/node', msg[0] );
+					},{
+						this.errorMsg( addr, "/map/minibee/digital", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/map/minibee/digital", 5, msg );
+				});
+			this.logMsg( "/map/minibee/digital:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
 		});
 	}
 
