@@ -10,17 +10,6 @@ BCRKtl : MIDIKtl {
 		this.makeDefaults;
 	}
 	
-	init {
-		super.init;
-		ctlNames = defaults[this.class];
-		^this
-	}
-
-	mapCC { |ctl= \sl1, action|
-		var ccDictKey = ctlNames[ctl]; // '0_42'
-		ccDict.put(ccDictKey, action);
-	}
-
 	mapToPxPars { |proxy ... pairs|
 		if (midiOut.notNil) {
 			this.sendFromProxy(proxy, pairs);
