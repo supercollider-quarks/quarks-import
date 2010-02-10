@@ -66,12 +66,6 @@ RedToolsMenu {
 			['system', 'SynthDescLib read+browse'], {
 				SynthDescLib.read.global.browse;
 			},
-			['system', 'post incoming osc'], {
-				Document(
-					"listen to all incoming osc",
-					"//start\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0]!='/status.reply', {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;"
-				)
-			},
 			['system', 'post Event defaults'], {
 				Event.default.parent.associationsDo(_.postln);
 			},
@@ -87,14 +81,26 @@ RedToolsMenu {
 			['system', 'post all document positions'], {
 				Document.allDocuments.do{|x| x.title.post; "   ".post; x.bounds.postln};
 			},
-			['extras', 'random helpfile'], {
-				Document.open(PathName("Help").deepFiles.choose.fullPath);//by jrh
+			['template', 'post incoming osc'], {
+				Document(
+					"listen to all incoming osc",
+					"//start\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0].asString.contains(\"status.reply\").not, {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;"
+				).syntaxColorize;
 			},
-			['extras', 'normalize soundfile'], {
+			['template', 'normalize soundfile'], {
 				Document(
 					"normalize soundfile",
 					"//--edit paths and evaluate...\nSoundFile.normalize(\n\t\"~/Music/SuperCollider Recordings/SC_090410_125330.aiff\".standardizePath,\n\t\"~/Music/SuperCollider Recordings/SC_090410_125330+.aiff\"standardizePath,\n\tnil, //\"AIFF\" \"WAVE\"\n\t\"int16\"\n)"
 				).syntaxColorize;
+			},
+			['template', 'animationview'], {
+				Document(
+					"animationview",
+					"(\nvar width= 500, height= 500;\nvar win= Window(\"animationview\", Rect(300, 300, width, height), false);\nvar usr= AnimationView(win, Rect(0, 0, width, height));\nusr.background= Color.white;\nusr.clearOnRefresh= true;\nusr.showInfo= false;\nusr.drawFunc= {|view, index|\n\tPen.setSmoothing(true);\n\tPen.width= 1;\n\tPen.fillColor= Color.red;\n\tPen.fillRect(Rect(index*3%width, index*4%height, 20, 20));\n};\nwin.front;\nCmdPeriod.doOnce({if(win.isClosed.not, {win.close})});\n)"
+				).syntaxColorize;
+			},
+			['extras', 'random helpfile'], {
+				Document.open(PathName("Help").deepFiles.reject{|x| #[\jpg, \png, \qtz].includes(x.extension.asSymbol)}.choose.fullPath);
 			},
 			['extras', 'swing boot'], {
 				SwingOSC.default.boot;
