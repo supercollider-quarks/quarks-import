@@ -10,11 +10,25 @@
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #2024c7}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
+p.p11 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
+p.p12 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p14 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p15 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #2b30fa}
-span.s3 {color: #2024c7}
-span.s4 {text-decoration: underline ; color: #0000ee}
+span.s3 {text-decoration: underline ; color: #292def}
+span.s4 {color: #2024c7}
+span.s5 {font: 9.0px Monaco; color: #000000}
+span.s6 {color: #000000}
+span.s7 {font: 14.0px Helvetica}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -22,15 +36,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="s1"><b>MIDIKtl<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>simple and flexible handling of mappings for midi controllers</b></p>
 <p class="p2"><br></p>
 <p class="p1">MIDIKtl is an abstract class for representing specific midi controllers with subclasses,</p>
-<p class="p1">such as the <a href="PFKtl.html"><span class="s2">PFKtl</span></a>, <a href="NanoKtl.html"><span class="s2">NanoKtl</span></a>, the <a href="BCRKtl.html"><span class="s2">BCRKtl</span></a>, the FFLV2 and hopefully more to come.</p>
-<p class="p1">MIDIKtl subclasses are intended for simple mappings to JIT interfaces like ProxyMixer,<span class="Apple-converted-space"> </span></p>
-<p class="p1">NdefMixer, NodeProxyEditor, TdefAllGui, PdefAllGui, etc.<span class="Apple-converted-space"> </span></p>
-<p class="p3"><br></p>
-<p class="p1"><b>Class variables:<span class="Apple-converted-space"> </span></b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><b>*defaults </b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a dictionary where each subclass stores clear controller element names<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>and their midi information.<span class="Apple-converted-space"> </span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p4"><span class="s3">MIDIKtl</span>.defaults</p>
+<p class="p1">such as the <a href="PFKtl.html"><span class="s2">PFKtl</span></a>, <a href="PDKtl.html"><span class="s2">PDKtl</span></a>, <a href="NanoKtl.html"><span class="s2">NanoKtl</span></a>, <a href="BCRKtl.html"><span class="s2">BCRKtl</span></a>, <a href="FFLV2Ktl.html"><span class="s2">FFLV2Ktl</span></a> and more to come.</p>
+<p class="p1">MIDIKtl subclasses are intended for simple mappings of controllers to JIT interfaces<span class="Apple-converted-space"> </span></p>
+<p class="p1">like ProxyMixer, NdefMixer, NodeProxyEditor, TdefAllGui, PdefAllGui, etc.<span class="Apple-converted-space"> </span></p>
 <p class="p3"><br></p>
 <p class="p1">A MIDIKtl subclass has a CCResponder that listens to an (optional) MIDI source uid,<span class="Apple-converted-space"> </span></p>
 <p class="p1">and keeps a dictionary for the actions to do when specific MIDI events<span class="Apple-converted-space"> </span></p>
@@ -38,20 +46,88 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1">This is a little more efficient that CCResponder, as there is less matching</p>
 <p class="p1">going on; and overwriting mappings automatically removes previous actions.<span class="Apple-converted-space"> </span></p>
 <p class="p3"><br></p>
-<p class="p1">The simplest MIDIKtl is <a href="PFKtl.html"><span class="s2">PFKtl</span></a> for the Doepfer PocketFader, which only has faders.</p>
+<p class="p1"><b>Examples:<span class="Apple-converted-space"> </span></b></p>
+<p class="p1"><span class="s2"><a href="PFKtl.html">PFKtl</a></span> for the Doepfer PocketFader is the simplest class, which only has faders.</p>
+<p class="p1"><span class="s2"><a href="PDKtl.html">PDKtl</a></span> for the Doepfer PocketFader has multiple scenes, and can switch modes<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>between normal knobs (0 .. 127) and endless rotary knob action.</p>
 <p class="p3"><br></p>
-<p class="p1">More complex ones:<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="s4"><a href="NanoKtl.html">NanoKtl</a></span> for the Korg nanoControl has sliders, knobs, and buttons, and one can switch<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="s3"><a href="NanoKtl.html">NanoKtl</a></span> for the Korg nanoControl has sliders, knobs, and buttons, and one can switch<span class="Apple-converted-space"> </span></p>
 <p class="p1">between 4 scenes, in which the controls send different sets of cc numbers.</p>
 <p class="p3"><br></p>
-<p class="p1"><span class="s4"><a href="BCRKtl.html">BCRKtl</a></span> (with Yvan Volonchine)for the Behringer BCR 2000 motor fader box supports<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-tab-span">	</span>updating the faders from SC.</p>
+<p class="p1"><span class="s3"><a href="BCRKtl.html">BCRKtl</a></span> (with Yvan Volonchine) for the Behringer BCR 2000 motor fader box<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>supports updating the faders from SC.</p>
 <p class="p3"><br></p>
 <p class="p1">If you'd like to make a MIDIKtl class for your controller, please see <a href="MIDIKtl_howTo.html"><span class="s2">MIDIKtl_howTo</span></a>.</p>
 <p class="p3"><br></p>
-<p class="p1"><span class="Apple-tab-span">	</span>// not finished yet:<span class="Apple-converted-space"> </span></p>
-<p class="p1">A MIDIKtl can optionally have a NoteOn- and a NoteOffResponder<span class="Apple-converted-space"> </span></p>
-<p class="p1">and the associated dictionaries for these actions.<span class="Apple-converted-space"> </span></p>
+<p class="p1">MIDINKtl also allows mapping actions to note messages.</p>
 <p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4"><b>Class Variables</b></p>
+<p class="p3"><br></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>*defaults </b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a dictionary where each subclass stores clear controller element names<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>and their midi information.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="s4">MIDIKtl</span>.defaults</p>
+<p class="p6"><br></p>
+<p class="p1"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>Controllers without multiple scenes have a single-layer dictionary</p>
+<p class="p7">MIDIKtl<span class="s6">.defaults[</span>PFKtl<span class="s6">]</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="s5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>Controllers with multiple scenes have a dictionary per scene:</p>
+<p class="p7">MIDIKtl<span class="s6">.defaults[</span>NanoKtl<span class="s6">]</span></p>
+<p class="p2"><br></p>
+<p class="p3"><br></p>
+<p class="p4"><b>Class Methods</b></p>
+<p class="p8"><b></b><br></p>
+<p class="p1"><span class="s7"><b><span class="Apple-tab-span">	</span></b></span><b>*makeDefaults</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Every subclass of MIDIKtl should implement this method to add its dictionary to<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the global defaults.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>*new (srcID, ccDict)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>make a new instance - only meaningful for subclasses of MIDIKtl.</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>srcID </b>- The MIDI srcID to which to listen.</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ccDict </b>- a dict of mappings can be supplied at creation.<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p13"><b>Instance Variables</b></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>ccDict</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a dictionary of the mappings used.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>ccresp</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the CCResponder that listen to the srcID.</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>ctlNames<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>the names of all controller elements and their MIDI keys.</p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p13"><b>Instance Methods</b></p>
+<p class="p9"><b></b><br></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>mapCC (ctl, action)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>map an action to a controller element - simple controller, single scene</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ctl </b>- a key present in ctlNames</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>action </b>- the action to evaluate when that controller is used.</p>
+<p class="p14"><br></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>mapCCS (scene, ctl, action)</b></p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>map an action to a controller element - multiple scenes</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>scene </b>- for which scene to map the controller element</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>ctl </b>- a key present in ctlNames</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>action </b>- the action to evaluate when that controller is used.</p>
+<p class="p9"><b></b><br></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>free</b></p>
+<p class="p14"><br></p>
+<p class="p14"><br></p>
+<p class="p15"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// utility methods</p>
+<p class="p14"><br></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>makeCCKey (chan, cc)</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>convert a cc message to a key</p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>ccKeyToChanCtl (ccKey)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>convert a key to cc number and message</p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>makeNoteKey (chan, note)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>convert a chan and note to a key</p>
+<p class="p9"><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p10"><b><span class="Apple-tab-span">	</span>noteKeyToChanNote (noteKey)<span class="Apple-tab-span">	</span></b>convert a key to chan and note</p>
+<p class="p9"><b></b><br></p>
+<p class="p9"><br></p>
 </body>
 </html>
