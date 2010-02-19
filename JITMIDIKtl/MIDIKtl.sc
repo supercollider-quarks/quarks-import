@@ -18,16 +18,10 @@ MIDIKtl {
 		defaults.put(this.class, ());
 	}
 	
-	*new { |srcID, ccDict, noteDict| 
+	*new { |srcID, ccDict| 
 		^super.newCopyArgs(srcID, ccDict).init;
 	}
 	
-	free { 
-		ccresp.remove;
-		ccDict.clear;
-		// redraw pxmix and pxedit with clear colors...?
-	}
-
 	init { 
 		ctlNames = defaults[this.class];
 
@@ -41,18 +35,6 @@ MIDIKtl {
 			ccDict[lookie].value(chan, ccn, val);
 		}, srcID);
 	}
-	
-	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
-	
-	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
-
-	makeNoteKey { |chan, note| 
-		var key = chan.asString; 
-		if (note.notNil) { key = key ++ "_" ++ note };
-		^key.asSymbol 
-	}
-
-	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
 
 		// use when ctlNames is one flat dict
 	mapCC { |ctl= \sl1, action| 
@@ -80,19 +62,51 @@ MIDIKtl {
 		};	
 		ccDict.put(ccDictKey, action);
 	}
+
+	free { 
+		ccresp.remove;
+		ccDict.clear;
+		// redraw pxmix and pxedit with clear colors...?
+	}
+
+	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
 	
+	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
+
+	makeNoteKey { |chan, note| 
+		var key = chan.asString; 
+		if (note.notNil) { key = key ++ "_" ++ note };
+		^key.asSymbol 
+	}
+
+	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
+	
+	findKey { |val| ^ctlNames.findKeyForValue(val); } 
+	
+	findSceneKey { |val|
+		var res;
+		ctlNames.keysValuesDo { |scene, dict| 
+			res = dict.findKeyForValue(val); 
+			if (res.notNil) { ^[scene, res] }; 
+		}; 
+		^res;
+	}
 }
 
 MIDINKtl : MIDIKtl { 
 	var <noteOnDict, <noteOffDict, <noteOnResp, <noteOffResp;
 	
-	init { 
-		super.init.initNote
+	*new { |srcID, ccDict, noteOnDict, noteOffDict| 
+		^super.newCopyArgs(srcID, ccDict).init(noteOnDict, noteOffDict);
+	}
+
+	init { |noteOnD, noteOffD|
+		super.init.initNote(noteOnD, noteOffD)
 	}
 	
-	initNote { 
-		noteOnDict = noteOnDict ?? ();
-		noteOffDict = noteOffDict ?? ();
+	initNote { |noteOnD, noteOffD|
+		noteOnDict = noteOnD ?? {()};
+		noteOffDict = noteOffD ?? {()};
 
 		noteOnResp.remove; 
 		noteOnResp = CCResponder({ |src, chan, ccn, val| 
@@ -111,11 +125,22 @@ MIDINKtl : MIDIKtl {
 		}, srcID);
 	}
 
-	mapNoteOn { 
-		
+		// only for single keys from that source, 
+		// ignore midi channels for now. 
+		// maybe fix later if needed? 
+	mapNoteOn { |note, action| 
+		// assume channels
 	}
 	
 	mapNoteOff { 
+		
+	}
+
+	mapNoteOnS { 
+		
+	}
+	
+	mapNoteOffS { 
 		
 	}
 	
