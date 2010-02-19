@@ -432,6 +432,10 @@ SWDataNetwork{
 	// add interfaces:
 
 	makeGui{
+		^SWDataNetworkBaseGui.new( this );
+	}
+
+	makeNodeGui{
 		^SWDataNetworkGui.new( this );
 	}
 
@@ -439,12 +443,16 @@ SWDataNetwork{
 		^SWDataNetworkLogGui.new( this );
 	}
 
-	makeBasicGui{
-		^SWDataNetworkBaseGui.new( this );
-	}
 
 	addOSCInterface{
 		^SWDataNetworkOSC.new( this );
+	}
+
+
+	/// backward compatibility
+	makeBasicGui{
+		"DataNetwork: now use .makeGui for this, and .makeNodeGui for the detailed node GUI.".warn;
+		^SWDataNetworkBaseGui.new( this );
 	}
 
 }

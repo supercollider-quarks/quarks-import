@@ -28,8 +28,8 @@
 #include <string>
 #include <map>
 
-#include <datanetworkosc.h>
-#include <datanode.h>
+#include "datanetworkosc.h"
+#include "datanode.h"
 
 namespace SWDataNetwork {
 

@@ -451,6 +451,11 @@ void DataNetworkOSC::unRegisterAtHost()
 	sendSimpleMessage( "/unregister" );
 }
 
+void DataNetworkOSC::queryAll()
+{
+	sendSimpleMessage( "/query/all" );
+}
+
 void DataNetworkOSC::queryExpected()
 {
 	sendSimpleMessage( "/query/expected" );
