@@ -85,12 +85,7 @@ void DataNetwork::query( bool waitForRegister )
   if ( waitForRegister ){
 	checkRegistered();	
 	}
-  osc->queryClients();
-  osc->queryExpected();
-  osc->queryNodes();
-  osc->querySlots();
-  osc->querySetters();
-  osc->querySubscriptions();
+  osc->queryAll();
 }
 
 /** 

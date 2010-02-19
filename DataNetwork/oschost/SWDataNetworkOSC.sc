@@ -3,7 +3,7 @@
 
 SWDataNetworkOSC{
 
-	classvar <>httppath = "/var/www/";
+	classvar <>httppath;
 
 	var <>verbose = 0;
 
@@ -28,6 +28,13 @@ SWDataNetworkOSC{
 
 	var myhost;
 
+	*initClass{
+		Platform.case(
+			\osx, { this.httppath = "/Library/WebServer/Documents/"; },
+			\linux, { this.httppath = "/var/www/" },
+			\windows, { "Please set SWDataNetworkOSC.httppath to an appropriate path!".warn }
+		);
+	}
 
 	*new{ |netw|
 		^super.new.init( netw );

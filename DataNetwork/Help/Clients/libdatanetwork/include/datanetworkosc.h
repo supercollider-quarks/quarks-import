@@ -54,6 +54,7 @@ public:
 	void registerAtHost( const char *name );
 	void unRegisterAtHost();
 
+	void queryAll();
 	void queryExpected();
 	void queryNodes();
 	void querySlots();
