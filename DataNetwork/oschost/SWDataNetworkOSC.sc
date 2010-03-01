@@ -306,6 +306,12 @@ SWDataNetworkOSC{
 				};
 			};
 		};
+		
+		// localhost
+		ports.do{ |it|
+			NetAddr.new( "127.0.0.1", it ).sendMsg( 
+				"/datanetwork/announce", myhost.hostname, myhost.port.asInteger );
+			};
 
 		this.logMsg( "network announced" );
 	}
