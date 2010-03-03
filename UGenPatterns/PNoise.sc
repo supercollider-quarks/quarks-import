@@ -11,7 +11,7 @@ PWhiteNoise : Pattern {
 		var mulStr= mul.asStream;
 		var addStr= add.asStream;
 		var mulVal, addVal;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil}, {^inval});
@@ -26,7 +26,7 @@ PClipNoise : PWhiteNoise {
 		var mulStr= mul.asStream;
 		var addStr= add.asStream;
 		var mulVal, addVal;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil}, {^inval});

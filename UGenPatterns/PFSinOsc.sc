@@ -13,7 +13,7 @@ PFSinOsc : Pattern {
 		var addStr= add.asStream;
 		var freqVal, mulVal, addVal;
 		var theta= 0;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
@@ -37,7 +37,7 @@ PSaw : Pattern {
 		var addStr= add.asStream;
 		var freqVal, mulVal, addVal;
 		var counter= 0;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
@@ -62,7 +62,7 @@ PPulse : Pattern {
 		var addStr= add.asStream;
 		var freqVal, widthVal, mulVal, addVal;
 		var counter= 0;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			widthVal= widthStr.next(inval);

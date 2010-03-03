@@ -14,7 +14,7 @@ PSinOsc : Pattern {
 		var addStr= add.asStream;
 		var freqVal, phaseVal, mulVal, addVal;
 		var theta= 0;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			phaseVal= phaseStr.next(inval);
@@ -39,7 +39,7 @@ PLFSaw : Pattern {
 		var addStr= add.asStream;
 		var freqVal, mulVal, addVal;
 		var counter= iphase;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
@@ -58,7 +58,7 @@ PLFTri : PLFSaw {
 		var addStr= add.asStream;
 		var freqVal, mulVal, addVal;
 		var counter= iphase;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			freqVal= freqStr.next(inval);
@@ -83,7 +83,7 @@ PLFPulse : Pattern {
 		var addStr= add.asStream;
 		var freqVal, widthVal, mulVal, addVal;
 		var counter= iphase;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			widthVal= widthStr.next(inval);
@@ -113,7 +113,7 @@ PImpulse : Pattern {
 		var addStr= add.asStream;
 		var freqVal, phaseVal, mulVal, addVal;
 		var counter= 0, flag= false;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			phaseVal= phaseStr.next(inval);
