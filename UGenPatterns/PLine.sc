@@ -12,7 +12,7 @@ PLine : Pattern {
 		var addStr= add.asStream;
 		var mulVal, addVal;
 		var counter= 0;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil}, {^inval});
@@ -32,7 +32,7 @@ PXLine : PLine {
 		var addStr= add.asStream;
 		var mulVal, addVal;
 		var counter= 0;
-		length.value.do{
+		length.value(inval).do{
 			addVal= addStr.next(inval);
 			mulVal= mulStr.next(inval);
 			if(addVal.isNil or:{mulVal.isNil}, {^inval});
