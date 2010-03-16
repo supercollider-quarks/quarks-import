@@ -586,7 +586,7 @@ Voicer {		// collect and manage voicer nodes
 	
 						~nodes.do({ |node, i|
 							var	freq = ~freq.wrapAt(i), length = ~length.wrapAt(i);
-							~schedBundleArray.(~lag ? 0, ~timingOffset,
+							~schedBundleArray.(~lag ? 0, timingOffset,
 								node.server,
 								node.server.makeBundle(false, {
 									node.trigger(freq, ~gate.wrapAt(i), ~args.wrapAt(i));
@@ -600,6 +600,7 @@ Voicer {		// collect and manage voicer nodes
 							});
 						});
 					});
+					~delta ?? { ~delta = ~dur };
 				},
 					// you could override this
 				adjustLengthToRealDelta: { ~voicer.isKindOfByName(\MonoPortaVoicer) }
@@ -619,7 +620,7 @@ Voicer {		// collect and manage voicer nodes
 						// for mono voicers, adjust sustain if note's delta is altered
 					if(voicer.isKindOfByName(\MonoPortaVoicer)
 					and: { ~dur != currentEnvironment.delta }) {
-						~sustain = ~sustain * currentEnvironment.delta / ~dur;
+						~sustain = max(0.01, ~sustain * currentEnvironment.delta / ~dur);
 					};
 						
 					~gate = (~gate ?? {

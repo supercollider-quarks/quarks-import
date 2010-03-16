@@ -171,6 +171,10 @@ PR(\abstractTLCommand).clone({
 		if(obj == ~node and: { msg == \n_end }) {
 			~stop.value;
 		};
+//// debug
+//		if(obj == ~node and: { msg == \n_go }) {
+//			~node.trace;
+//		};
 	};
 	~isSynth = true;
 }) => PR(\synthCmd);
@@ -181,26 +185,56 @@ PR(\synthCmd).clone {
 	~controlName = \level;
 	~outName = \out;
 	~fire = { |parms|
-		~server = ~mixer.server;
-		~target = ~mixer.fadergroup;
-			// this is really fucking stupid
-			// it's supposed to put all the parms into the environment (~setParms)
-			// but it's missing this one ???
-		~outName = parms.tryPerform(\at, \outName) ? \out;
-		~outName.envirPut(~mixer.controls[~controlName].index);
-//~mixer.debug("mixer to automate");
-//~mixer.controls[~controlName].index.debug(~outName);
-//~controlName.debug("watching");
-//currentEnvironment.listVars;
-		~mixer.watch(~controlName);
-		~superFire.(parms);
+		~mixer = ~mixer.value;
+		if(~mixer.notNil) {
+			~server = ~mixer.server;
+			~target = ~mixer.fadergroup;
+				// this is really fucking stupid
+				// it's supposed to put all the parms into the environment (~setParms)
+				// but it's missing this one ???
+			~outName ?? { ~outName = parms.tryPerform(\at, \outName) ? \out };
+			~outName.envirPut(~mixer.controls[~controlName].index);
+	//~mixer.debug("mixer to automate");
+	//~mixer.controls[~controlName].index.debug(~outName);
+	//~controlName.debug("watching");
+	//currentEnvironment.listVars;
+			~mixer.stopAuto(~controlName).watch(~controlName);
+			~superFire.(parms);
+			~mixer.autoSynths.put(~controlName, ~node);
+		};
 	};
 	~done = { |parms|
 //~controlName.debug("stopped watching");
-		~mixer.stopWatching(~controlName);
+		if(~node === ~mixer.autoSynths[~controlName]) {
+			~mixer.stopWatching(~controlName);
+			~mixer.autoSynths.put(~controlName, nil);
+		};
 		~superDone.(parms);
 	};
 } => PR(\mixerAutoSynthCmd);
+
+PR(\mixerAutoSynthCmd).clone {
+	~fire = { |parms|
+		if(~gc.isFunction) { ~gc = ~gc.value };
+		if(~gc.notNil) {
+			~server = ~gc.server;
+			~target = ~target ?? { ~server.asTarget };
+			~outName = parms.tryPerform(\at, \outName) ? \out;
+			~outName.envirPut(~gc.index);
+			~gc.stopAuto.watch;	// should replace existing automation
+			~superFire.(parms);
+			~gc.autoSynth = ~node;
+		};
+	};
+	~done = { |parms|
+//~controlName.debug("stopped watching");
+		if(~node === ~gc.autoSynth) {
+			~gc.stopWatching;
+			~gc.autoSynth = nil;
+		};
+		~superDone.(parms);
+	};
+} => PR(\gcAutoSynthCmd);
 
 PR(\abstractTLCommand).clone({
 	~fire = { |parms|
@@ -440,9 +474,12 @@ PR(\abstractTLCommand).clone({
 }, #[shouldSync]) => PR(\bp1eventCmd);
 
 PR(\abstractTLCommand).clone({
+	~beatsPerBar = 4;
 	~fire = { |parms|
 //		~setParms.(parms);
-		thisThread.clock.setMeterNextBar(~beatsPerBar);
+			// No implementations of 'setMeterNextBar'?
+//		thisThread.clock.setMeterNextBar(~beatsPerBar);
+		thisThread.clock.setMeterAtBeat(~beatsPerBar, thisThread.clock.nextBar);
 		~stop.();
 	};
 }) => PR(\meterCmd);
@@ -453,21 +490,28 @@ PR(\abstractTLCommand).clone({
 // how to stop: same as others, set a user signal or specify a duration
 
 PR(\abstractTLCommand).clone({
+	~autoSync = true;
 	~fire = { |parms|
 //		~setParms.(parms);
-		~myIterator = TLSequenceIterator(~cmds, autoSync: true);
-			// looping works by receiving "stop" signal, then restarting upon that signal
-		~myIterator.addDependant(currentEnvironment);
-		~myIterator.play;
+		~myIterator = ~makeIterator.();
+		~myIterator.play(argClock: thisThread.clock);
 	};
 	~done = { |parms|
+		~myIterator.removeDependant(currentEnvironment);
 		~myIterator.stop;
 	};
-	~update = { |obj, what|
+	~update = { |obj, what, activeCmds|
 		if((~isRunning ? false) and: { what == \done }) {
 			"got done notification; looping back".postln;
-			~myIterator.play;
+			~myIterator.removeDependant(currentEnvironment);
+			~myIterator = ~makeIterator.();
+			~myIterator.play(argClock: thisThread.clock, runningCmds: activeCmds);
 		};
+	};
+	~makeIterator = {
+		var iterator = TLSequenceIterator(~cmds, autoSync: ~autoSync);
+			// looping works by receiving "stop" signal, then restarting upon that signal
+		iterator.addDependant(currentEnvironment);	// returns iterator
 	};
 }) => PR(\loopCmd);
 
@@ -520,6 +564,7 @@ Proto({
 			~initStates.();
 			~preparePlay.();
 			~seqPlayer = ~makeSeqPlayer.();
+//~clock.tempo.debug("section %'s tempo".format(~name));
 			~clock.sched(0, ~seqPlayer);
 			~status = \running;
 			currentEnvironment.changed(\play);
@@ -610,8 +655,6 @@ Proto({
 					obj.removeDependant(currentEnvironment);
 						// iterator might remove commands after this happens
 					~savedCmds = args.copy;
-//args.debug("section:update - savedcmds");
-//~savedCmds.debug("savedCmds variable");
 					if(~status == \sync) { ~condition.unhang };
 				}
 		};
@@ -619,7 +662,6 @@ Proto({
 			// it can set the passthru flag
 			// try returns nil if there's an error
 		if(try { args[\passthru] } == true) {
-//"passing notification thru".debug;
 			currentEnvironment.changed(what, args)
 		};
 	};
@@ -631,9 +673,8 @@ Proto({
 			~currentIterator = iterator = TLSequenceIterator(seq, currentEnvironment,
 					autoSync: ~autoSync)
 				.onStop_(item[\onStop])
-				.play(0, ~clock, ~savedCmds);
+				.play(0, ~clock, ~savedCmds/*.debug("adding saved cmds")*/);
 			~savedCmds = nil;
-//"section playItem: set savedCmds to nil".debug;
 			iterator.addDependant(currentEnvironment);
 		};
 		case
