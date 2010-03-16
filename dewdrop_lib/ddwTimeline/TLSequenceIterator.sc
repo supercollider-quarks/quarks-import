@@ -53,6 +53,14 @@ TLSequenceIterator {
 							now = this.cmdSync(lastCmd);
 							index = index + 1;
 						}
+						{ item.isKindOf(TLSequenceIterator) } {
+							index = index + 1;
+							if(item.isRunning.not) {
+								// should I set the sequencer var here? can't, no setter
+								item.play(argClock: thisThread.clock);
+								this.addActive(item);
+							};
+						}
 						{ item.isArray } {
 //"spawn".debug;
 							index = index + 1;
@@ -79,7 +87,7 @@ TLSequenceIterator {
 					// the next iterator should create them for itself
 				this.removeNotifications(activeCmds);
 					// in case this is a spawned iterator
-				NotificationCenter.notify(this, \done, (activeCmds: activeCmds));
+				NotificationCenter.notify(this, \done, [(activeCmds: activeCmds)]);
 				this.changed(\done, activeCmds); // .debug("done sent");
 					// allow old cmds to be GC'ed
 					// not sure if this will break something
@@ -112,7 +120,7 @@ TLSequenceIterator {
 //debug("<< TLSequenceIterator:stop");
 	}
 	
-	isRunning { ^status == \running }
+	isRunning { ^status != \idle }
 
 		// bookkeeping
 	playCmd { |cmd, parms|
