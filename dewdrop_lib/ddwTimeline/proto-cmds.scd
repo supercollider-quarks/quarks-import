@@ -352,9 +352,10 @@ PR(\abstractTLCommand).clone({
 		~name = ~name.asArray;
 		~bps = Array(~name.size);
 		~name.do({ |name|
-			if(BP(name).isPlaying) {
+			if(BP.exists(name).not or: { BP(name).isPlaying }) {
 				if(parms.tryPerform(\at, \playWarning) != false) {
-					"BP(%) is already playing; ignored".format(name.asCompileString).warn;
+					"BP(%) is already playing, or doesn't exist; ignored"
+						.format(name.asCompileString).warn;
 				};
 			} {
 				~bps.add(BP(name));
