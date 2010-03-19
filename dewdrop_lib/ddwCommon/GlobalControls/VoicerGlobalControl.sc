@@ -112,7 +112,7 @@ GlobalControlBase : AbstractFunction {
 	}
 	stopAuto {
 		if(autoSynth.notNil) {
-			server.sendBundle(nil, [
+			server.listSendBundle(nil, [
 				[error: -1],	// suppress potential node not found error
 				[n_free: autoSynth.asNodeID],
 				[error: -2]
