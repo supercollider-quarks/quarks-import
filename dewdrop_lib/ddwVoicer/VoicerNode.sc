@@ -278,8 +278,11 @@ InstrVoicerNode : SynthVoicerNode {
 				// this breaks nested patches but I never use that anyway
 			def = patch.asSynthDef;
 			def.name = (defname = def.name ++ UniqueID.next);
-			try { def.memStore }		// this might not work with wrapped Instr's
-				{ |error|
+				// this might not work with wrapped Instr's
+			try {
+				def.perform(if(SynthDef.findRespondingMethodFor(\add).notNil)
+					{ \add } { \memStore })
+			} { |error|
 					error.notNil.if({
 						"Error occurred during InstrVoicerNode initialization: memStore.\nSending synthdef normally.".warn;
 						error.reportError;
