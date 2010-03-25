@@ -142,7 +142,7 @@ PR(\abstractTLCommand).clone({
 		});
 	};
 	~schedDone = { |parms|
-		if(~dur.notNil and: { ~synthDesc.tryPerform(\hasGate) ? false }) {
+		if(~dur.notNil) {
 //"synthCmd scheduling release".debug;
 			thisThread.clock.schedAbs(~schedTime + ~dur, e { ~stop.(parms) });
 		};	// else -- node had better end on its own and trigger ~update
@@ -503,7 +503,7 @@ PR(\abstractTLCommand).clone({
 	};
 	~update = { |obj, what, activeCmds|
 		if((~isRunning ? false) and: { what == \done }) {
-			"got done notification; looping back".postln;
+//			"got done notification; looping back".postln;
 			~myIterator.removeDependant(currentEnvironment);
 			~myIterator = ~makeIterator.();
 			~myIterator.play(argClock: thisThread.clock, runningCmds: activeCmds);
