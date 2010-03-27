@@ -101,7 +101,7 @@ FreeSoundSearch
 		specsText = TextView(win, Rect(10, 315, win.view.bounds.width - 20, 100))
 			.usesTabToFocusNextView_(false)
 			.enterInterpretsSelection_(false)
-			.string_("(\n\tnumDownloads: \\any,\n\textension:\n\t{|ext|\n\t\t(ext == \\wav).or(ext == \\aiff);\n\t},\n\tsampleRate:\n\t{|sr|\n\t\tsr == 44100;\n\t},\n\tbitRate: \\any,\n\tbitDepth: \\any,\n\tnumChannels: \\any,\n\tduration: \\any,\n\tfileSize: \\any\n)");
+			.string_("(\n\tnumDownloads: \\any,\n\textension:\n\t{|ext|\n\t\t(ext == \\wav).or(ext == \\aiff);\n\t},\n\tsampleRate:\n\t{|sr|\n\t\tsr == 44100;\n\t},\n\tbitRate: \\any,\n\tbitDepth: \\any,\n\tnumChannels: \\any,\n\tduration: \\any,\n\tfileSize: \\any,\n\tsampleId: \\any,\n\tuserId: \\any,\n\tuserName: \\any\n)");
 		specsText.tryPerform(\syntaxColorize);
 		
 		evalMenu = PopUpMenu(win, Rect(10, 430, win.view.bounds.width - 20, 20))
@@ -134,7 +134,7 @@ FreeSoundSearch
 						reqSpecs = specsText.string.interpret.as(Dictionary);
 						reqSpecs.keys.do
 							({|item|
-							
+								
 								if(reqSpecs.at(item) == \any,
 								{
 									reqSpecs.put(item, { true; });
@@ -247,11 +247,11 @@ FreeSoundSearch
 											});
 										}).every({|eItem| eItem == true; }),
 									{//upper if - true block
-										this.displayStatus("Sample % matches criterias. Downloading.".format(curSelected), 1);
+										this.displayStatus("Sample % matches criteria. Downloading.".format(curSelected), 1);
 										fs.downloadSample(argInfo.at(\index));
 									},
 									{
-										this.displayStatus("Sample % didn't match the criterias.".format(curSelected), 1);
+										this.displayStatus("Sample % didn't match the criteria.".format(curSelected), 1);
 										if(uncheckedSamps.size > 0,
 										{
 											if(evalMenu.value == 0,
