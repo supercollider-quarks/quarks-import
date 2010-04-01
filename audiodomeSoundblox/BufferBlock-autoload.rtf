@@ -1,0 +1,270 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf290
+{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red96\green96\blue96;\red0\green115\blue0;}
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs18 \cf2 // jedem W\'fcrfel ist eine Geraeuschfamilie zugeordnet\cf3 \
+\cf2 /*\
+Es gibt (nach bodo und norbert):\
+\
+-1- Rhythmus\
+-2- Tiere\
+-3- Akkorde\
+-4- Sprache\
+-5- Spielekonsole\
+\
+*/\cf3 \
+\
+\pard\pardeftab560\ql\qnatural
+\cf3 \
+\cf4 Server\cf3 .default = s = \cf4 Server\cf3 .internal;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf4 Server\cf3 .default = s = \cf4 Josef\cf3 .startServer;\
+s.makeGui;\
+\pard\pardeftab560\ql\qnatural
+\cf3 \
+s.freeAll\
+\
+s.boot;\
+\
+\
+(\
+q = ();\
+\
+\cf2 // joseph\cf3 \
+\cf2 // q.directory = "/Network/Servers/stitch/srv/nfs/volume1/home/till/samples/";\cf3 \
+\
+\cf2 // till\cf3 \
+q.directory = \cf5 "/localvol/sound/share/audiosamples/koelnKalk/"\cf3 ;\
+\
+\cf2 /* open directory\
+"open %".format(q.directory).unixCmd; // */\cf3 \
+\
+\
+\
+\cf2 // For each name given below, q.directory should have a directory containing files named 1-*.aiff, 2-*.aiff, etc. \cf3 \
+\cf2 // If the files are n-channel, currently only the first channel is used.\cf3 \
+\cf2 // be sure to have only .aiff files here. Neither wav, nor mp3 are supported yet. If you need to convert files easily, use e.g. Max ({\field{\*\fldinst{HYPERLINK "http://sbooth.org/Max/"}}{\fldrslt 
+\f1\fs22 \cf2 http://sbooth.org/Max/}}), or sndfile-convert.\cf3 \
+\
+\cf2 // Link directory names to colors. Only given colores will be recognized, all other cubes are ignored.\cf3 \
+q.colorToName = (\
+	red: \cf5 "animals"\cf3 , \
+	green: \cf5 "chords"\cf3 , \
+	blue: \cf5 "crowd"\cf3 , \
+	yellow: \cf5 "water"\cf3 ,\
+	\cf2 // lightGreen: "whateva",\cf3 \
+	orange: \cf5 "drums"\cf3 \
+);\
+\
+\
+\cf2 // the audiochannels to which the cube speakers are attached to\cf3 \
+q.cubeChannels = (\
+	red: 0, \
+	green: 1, \
+	blue: 2, \
+	yellow: 3,\
+	lightGreen: 4,\
+	orange: 5\
+);\
+\
+\
+q.filenames = ();\
+q.colorToName.keysValuesDo\{\cf4 |color, subdirname|\cf3 \
+	q.filenames[color] = 6.collect\{\cf4 |i|\cf3 \
+		\cf5 "%/%.aiff"\cf3 .format(subdirname, i+1);\
+	\}\
+\};\
+\
+\cf2 /*\
+q.filenames.printAll // */\cf3 \
+\
+\
+\
+q.buffers = q.filenames.collect\{\cf4 |cubefiles|\cf3 \
+	cubefiles.collect\{\cf4 |name|\cf3 \
+		\cf4 Buffer\cf3 .readChannel(s, q.directory ++ name, channels: [0], action:\{\cf5 "file % read.\\n"\cf3 .postf(name) \})\
+	\}\
+\};\
+\
+\cf2 // only first channel of the file is read \cf3 \
+\
+\cf2 /* test\
+q.buffers.choose.choose.play \
+\
+q.sfile = SoundFile.openRead(q.directory ++ q.filenames[\\green][6]);\
+\
+q.sfile.numChannels\
+q.sfile.close;\
+\
+\
+// */\cf3 \
+\
+)\
+\
+\
+\
+(\
+q.cubes = q.colorToName.collect\{\cf4 |v, color|\cf3  \cf4 BufferBlock\cf3 (color, 0, q.buffers[color], q.cubeChannels[color])\};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
+\cf4 BufferBlock\cf3 .sendSynth;\
+\pard\pardeftab560\ql\qnatural
+\cf3 q.buffers.asArray.flatten.do\{\cf4 _\cf3 .normalize\};\
+)\
+\
+(\
+s.bind\{\
+q.cubes.do(\cf4 _\cf3 .play);\
+\}\
+)\
+\
+(\
+s.bind\{\
+q.cubes.do(\cf4 _\cf3 .stop);\
+\}\
+)\
+\
+\
+\
+\cf2 /*\
+q.cubes[0].setFace(108, \\amps, 1)\
+q.cubes[0].set(\\amps, 1, 0)\
+\
+q.cubes[0].synth.set(\\amps2, 1)\
+*/\cf3 \
+\
+q.cubes[\cf6 \\red\cf3 ].set(\cf6 \\amp\cf3 , 0.5);\
+q.cubes[\cf6 \\green\cf3 ].set(\cf6 \\amp\cf3 , 0.1);\
+q.cubes[\cf6 \\blue\cf3 ].set(\cf6 \\amp\cf3 , 0.5);\
+q.cubes[\cf6 \\orange\cf3 ].set(\cf6 \\amp\cf3 , 0.8); \
+q.cubes[\cf6 \\yellow\cf3 ].set(\cf6 \\amp\cf3 , 0.5);\
+\
+\
+\
+\
+\
+\cf2 /*\
+q.cubes.do\{|cube|\
+	cube.set(\\amp, 1);\
+	cube.out = 0\
+\}\
+*/\cf3 \
+\
+\cf2 //////////////////////\cf3 \
+\cf2 // Start SETO\cf3 \
+\
+(\
+q.seto = \cf4 SETO_OSCTUIOServer\cf3 (\cf5 "2Dobj"\cf3 , \cf4 nil\cf3 , \cf4 JITseto\cf3 , \cf4 SETOIDistance\cf3 ); \
+q.seto.start;\
+\
+\
+\cf4 JITseto\cf3 .action = \{\cf4 |me|\cf3 \
+	\cf4 var\cf3  cube = q.cubes.detect\{\cf4 |cube|\cf3  cube.ids.includes(me.id)\};\
+	cube.notNil.if\{\
+		\
+		\cf2 //cube.color.postln;\cf3 \
+		cube.setFace(me.id, \cf6 \\amps\cf3 , ((sin(me.rotEuler.first) * 0.95).abs + 0.05))\
+		\cf2 //cube.setFace(me.id, \\amps, 0.9)\cf3 \
+	\}\
+\};\
+\
+\cf2 /*\
+JITseto.action = nil; // */\cf3 \
+)\
+\
+\
+\cf2 ///////////////////////\cf3 \
+\cf2 // Midi Mixer\cf3 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf4 MIDIClient\cf3 .init;\
+\cf4 MIDIIn\cf3 .connect;\
+\
+(\
+\cf4 MIDIIn\cf3 .control = \{\cf4 |port, chan, ctlNum, val|\cf3  \
+	[chan, ctlNum, val].postln;\
+	\
+	(ctlNum == 7).if\{ \cf2 // fader\cf3 \
+		(chan == 8).if\{ \cf2 // master (right-most)\cf3 \
+			q.cubes.do\{\cf4 |cube|\cf3 \
+				cube.set(\cf6 \\masterAmp\cf3 , val.linlin(0, 127, 0, 1))	\
+			\}\
+		\};\
+\
+		(chan < 8).if\{ \cf2 // red (left-most)\cf3 \
+			q.cubes[chan].set(\cf6 \\amp\cf3 , val.linlin(0, 127, 0, 1))	\
+		\};\
+	\};\
+	\
+	(ctlNum == 17).if\{ \cf2 // lower button -> mute\cf3 \
+		(chan == 8).if\{ \cf2 // master (right-most)\cf3 \
+			q.cubes.do\{\cf4 |cube|\cf3 \
+				cube.set(\cf6 \\masterMute\cf3 , val.linlin(0, 127, 0, 1))	\
+			\}\
+		\};\
+\
+		(chan < 8).if\{ \cf2 // red (left-most)\cf3 \
+			q.cubes[chan].set(\cf6 \\mute\cf3 , val.linlin(0, 127, 0, 1))	\
+		\};\
+	\};\
+	\
+\}\
+\pard\pardeftab560\ql\qnatural
+\cf3 )\
+\
+q.cubes.do\{\cf4 |cube|\cf3 \
+	cube.synthParams.add(\cf6 \\masterMute\cf3  -> [0]);\
+	cube.synthParams.add(\cf6 \\mute\cf3  -> [0]);\
+\}\
+\
+q.cubes[3].play\
+q.cubes[3].out = 0\
+\
+q.cubes[3].stop\
+\
+\
+\
+\
+\
+\
+\
+q.cubes.do\{\cf4 |cube|\cf3 \
+	cube.set(\cf6 \\amps\cf3 , 3);\
+\}\
+\
+q.cubes.do\{\cf4 |cube|\cf3 \
+	cube.stop;\
+\}\
+\
+q.cubes[3].play\
+q.cubes[3].out = 0\
+q.cubes[3].stop\
+\
+q.cubes[1].set(side: 2, what: \cf6 \\rates\cf3 , val: 0.5);\
+\
+6.do\{\cf4 |i|\cf3 \
+	q.cubes[1].set(side: i, what: \cf6 \\amps\cf3 , val: 0.5);\
+\}\
+\
+6.do\{\cf4 |i|\cf3 \
+	q.cubes[1].set(side: i, what: \cf6 \\rates\cf3 , val: rrand(0.5, 2.0));\
+\}\
+\
+\
+6.do\{\cf4 |i|\cf3 \
+	q.cubes[0].set(side: i, what: \cf6 \\rates\cf3 , val: rrand(1, 4.0));\
+\}\
+\
+\
+\
+x.setn(\cf6 \\amps\cf3 , [1, 0, 0, 0, 0, 0])\
+x.setn(\cf6 \\amps\cf3 , [0, 0, 1, 0, 0, 0])\
+x.setn(\cf6 \\amps\cf3 , 1!6)\
+\
+x.setn(\cf6 \\amps\cf3 , [10, 0, 0, 0, 0, 0, 0])\
+\
+\
+x.setn(\cf6 \\amps\cf3 , [1, 1, 1, 1, 1, 1, 1])}
