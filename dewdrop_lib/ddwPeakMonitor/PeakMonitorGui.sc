@@ -59,8 +59,12 @@ PeakMonitorGui : ObjectGui {
 			maxRecent.flop.do({ |chan, i|
 				str = str ++ format("%: % dB\n", i+1, chan.maxItem.ampdb.round(0.01));
 			});
-			{	multiSl.value_(newpeaks.sqrt);
-				maxRecentView.setString(str, 0, maxRecentView.string.size);
+				// must repeat test: window might close between above test
+				// and the deferred func waking up
+			{	if(multiSl.notClosed) {
+					multiSl.value_(newpeaks.sqrt);
+					maxRecentView.setString(str, 0, maxRecentView.string.size);
+				};
 			}.defer;
 		});
 	}
