@@ -258,7 +258,10 @@ NB {
 			
 		}, {
 			// this does (seem to) work
-			("python /Applications/SuperCollider/console.py " ++
+			(
+			//"python /Applications/SuperCollider/console.py " ++
+			"python " ++ NB.filenameSymbol.asString.dirname.dirname.escapeChar( $  )
+			  +/+ "console.py " ++
 			fullpath ++ 
 			" " ++ 
 			path ++ 
@@ -303,7 +306,10 @@ NB {
 			
 		}, {
 			// this does (seem to) work
-			("python /Applications/SuperCollider/console.py " ++
+			(
+			//"python /Applications/SuperCollider/console.py " ++
+			"python " ++ NB.filenameSymbol.asString.dirname.dirname.escapeChar( $  )
+			  +/+ "console.py " ++
 			fullpath ++ 
 			" " ++ 
 			path ++ 
