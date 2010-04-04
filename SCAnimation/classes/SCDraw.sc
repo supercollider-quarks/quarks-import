@@ -112,3 +112,28 @@ SCDraw {
 		this.new(list, rate, sort).render(path, width, height, color, ext);
 	}
 }
+
++ Color {
+
+	*degreesHSV { arg hue, sat, val, alpha=1;
+				var r, g, b, segment, fraction, t1, t2, t3;
+				hue = hue%360.0;
+				if( sat == 0 )
+					{ r = g = b = val }
+					{ 		
+						segment = floor( hue/60 )%6;
+						fraction = ( hue/60 - segment );
+						t1 = val * (1 - sat);
+						t2 = val * (1 - (sat * fraction));
+						t3 = val * (1 - (sat * (1 - fraction)));
+						if( segment == 0, { r=val; g=t3; b=t1 });
+						if( segment == 1, { r=t2; g = val; b=t1 });
+						if( segment == 2, { r=t1; g=val; b=t3 });
+						if( segment == 3, { r=t1; g=t2; b=val });
+						if( segment == 4, { r=t3; g=t1; b=val });
+						if( segment == 5, { r=val; g=t1; b=t2 });
+					};
+			//[r, g, b].postln;
+			^this.new(r, g, b, alpha);
+	}
+}
