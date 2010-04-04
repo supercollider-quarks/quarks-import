@@ -1,8 +1,0 @@
-console.py goes in the SuperCollider folder.
-NB-classes go where SuperCollider can read classes.
-NB-help goes in the help folder.
-
-NodeBox is already installed, yes? If not, download it from http://nodebox.net
-
-mrp - polishook@optonlinenet - 2.10.08
-
