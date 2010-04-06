@@ -99,9 +99,34 @@ void DataNode::setType( int tp )
 	type = tp;
 }
 
+int DataNode::getType()
+{
+	return type;
+}
+
 void DataNode::setLabel( const char *myLabel )
 {
 	label = string( myLabel );
+}
+
+string DataNode::getLabel()
+{
+    return label;
+}
+
+int DataNode::getID()
+{
+	return id;
+}
+
+bool DataNode::isSubscribed()
+{
+	return subscribed;
+}
+
+bool DataNode::isSetter()
+{
+	return setter;
 }
 
 void DataNode::setNetwork( DataNetwork * nw )
@@ -147,7 +172,7 @@ void DataNode::setSubscribed( bool amSubscribed )
 void DataNode::resubscribeSlots()
 {
 	for ( int i=0; i < slotsize; i++ ){
-		if ( dataSlots[i].subscribed ){
+		if ( dataSlots[i].isSubscribed() ){
 			datanetwork->subscribeSlot( id, i );
 		}
 	}

@@ -33,13 +33,22 @@ Only for nodes/slots you create:
 DataNode:
 - getData()	- get a reference to the data
 - getStringData()	- get a reference to the string data (if the node contains string data)
+- getLabel()	- get the node's label
+- getID()	- get the node's ID
+- size()	- get the number of slots, data size...
+- getType()	- get the node's type (0 is float, 1 is string)
 - setData()	- set data to a node (if you created the node)
 - send()	- send the data to the network
+- isSubscribed()	- check whether the node is subscribed
+- isSetter()	- check whether you are the setter of the node
 
 DataSlot:
 - getValue()	- get the current value
 - getStringValue()	- get the current string value
-
+- getLabel()	- get the slot's label
+- getID()	- get the slot's ID
+- getType()	- get the slot's type (0 is float, 1 is string)
+- isSubscribed()	- check whether the slot is subscribed
 
 Extensive HTML documentation can be created with Doxygen.
 Also look at the supplied example.
