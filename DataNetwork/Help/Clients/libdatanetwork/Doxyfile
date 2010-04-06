@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = libdn_scons
+PROJECT_NAME           = libdatanetwork
 PROJECT_NUMBER         = 1
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = NO
@@ -25,7 +25,7 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = NO
-STRIP_FROM_PATH        = /home/nescivi/
+STRIP_FROM_PATH        = /home/nescivi/share/SuperCollider/quarks/DataNetwork/Help/Clients
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
@@ -95,7 +95,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /home/nescivi/svn/schwelle/trunk/liblo/libdn_scons
+INPUT                  = .
+# /home/nescivi/svn/schwelle/trunk/liblo/libdn_scons
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \

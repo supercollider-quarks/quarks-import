@@ -74,6 +74,8 @@ public:
 	DataSlot * getSlot( int id, int sid );
 
 	bool registered;
+	
+	void debug( bool onoff );
 
 // ------- END - use in client ------
 

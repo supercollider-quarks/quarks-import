@@ -397,7 +397,9 @@ void DataNetworkOSC::getFloatData( float * data, const char *types, lo_arg** arg
 {
 	for( int i = 1; i < argc; ++i )
 		{
-			*(data+(i-1)) = argv[ i ]->f;
+			data[i-1] = argv[i]->f;
+// 			*(data+(i-1)) = argv[ i ]->f;
+// 			printf( "data %f, %f\n", argv[i]->f, data[i-1] );
 		}
 }
 
@@ -405,7 +407,8 @@ void DataNetworkOSC::getStringData( string * data, const char *types, lo_arg** a
 {
 	for( int i = 1; i < argc; ++i )
 		{
-			*(data+(i-1)) = &argv[ i ]->s;
+			data[i-1] = &argv[ i ]->s;
+// 			*(data+(i-1)) = &argv[ i ]->s;
 		}
 }
 

@@ -41,6 +41,8 @@ using namespace SWDataNetwork;
 int main(int argc, char *argv[])
 {
   DataNode * node;
+  DataNode * node2;
+  DataSlot * slot;
   DataNetwork * dn;
 
   if ( argc < 4 ){
@@ -58,30 +60,53 @@ int main(int argc, char *argv[])
 // create an osc client interface for it:
   dn->createOSC( argv[1], argv[2], argv[3] );
 
-  dn->osc->postDebug = false;
+  dn->debug( false ); // is false by default, but turn on if you want
 
 // register with the host:
   dn->registerMe();
 
+  printf( "registering\n" );
+
   sleep( 3 );
+  printf( "query\n" );
 
 // query all there is to know about the network
   dn->query();
 
   sleep( 3 );
-
+  printf( "get data once\n" );
+  
 // get data from a node once
   dn->updateNode( 5, true );
 // get data from a slot once
   dn->updateSlot( 5, 2, true );
 
   sleep( 2 );
+  printf( "subscribing\n" );
 
 // subscribe to a node, so data is always received when it is changed:
   dn->subscribeNode( 5, true );
-// subscribe to a slot, so data is always received when it is changed (doesn't really make sense if you are already subscribed to the full node, you should only use it when you want one specific slot of a node):
+// subscribe to a slot, so data is always received when it is changed (doesn't really make sense if you are already subscribed to the full node, you should only use it when you only need one specific slot of a node):
   dn->subscribeSlot( 5, 1, true );
 
+    sleep( 1 );
+  
+   /// access the data from a node:
+   node2 = dn->getNode( 5 );
+   float * nodeData = node2->getData(); // use getStringData() if the node's type is a string
+   for ( int i=0; i<node2->size(); i++ ){
+      printf( "Node 5, slot %i, value %f\n", i, nodeData[i] );
+   }
+   // NOTE copy the data from the array if you want threadsafe access!
+
+   /// access the data from a slot:
+   slot = dn->getSlot( 5, 1 );
+   float slotData = slot->getValue(); // use getStringValue() if the slot's type is a string
+   printf( "Node 5, slot 1, value %f\n", slotData );
+
+   sleep(1);
+   
+   printf( "creating a node\n" );
 
 	// create a node:
   dn->createNode( 4, "world", 5, 0, true );
@@ -104,12 +129,14 @@ float dummydata2[] =  {0.4, 0.34, 0.4, 0.2, 0.6};
 	node->send( true );
 
   sleep( 5 );
+  printf( "removing the node\n" );
 
 // remove a node from the network
   dn->removeNode( 4, true );
 
   sleep( 5 );
 
+  printf( "unregistering\n" );
 // unregister from the host:
   dn->unregisterMe();
 

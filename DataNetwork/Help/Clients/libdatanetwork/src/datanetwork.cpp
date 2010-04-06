@@ -42,6 +42,12 @@ void DataNetwork::createOSC( const char *hostip, const char *myport, const char 
 	osc->setNetwork( this );
 }
 
+/**  turn on/off debugging */
+void DataNetwork::debug( bool onoff )
+{
+	osc->postDebug = onoff;
+}
+
 /**  register with the host: */
 void DataNetwork::registerMe()
 {
@@ -243,11 +249,13 @@ DataSlot * DataNetwork::getSlot( int id, int sid )
 {
 	nodeMap::iterator iter = dataNodes.find( id );
 	if ( iter != dataNodes.end() )
-		if ( sid < iter->second->slotsize ){
+		return iter->second->getSlot( sid );
+/*		if ( sid < iter->second->slotsize ){
 			return &(iter->second->dataSlots[sid]);
 		} else {
 			return NULL;
 		}
+*/
 	else
 		return NULL;
 }
@@ -304,12 +312,15 @@ void DataNetwork::refreshNodeSettings()
 		}
 		node->resubscribeSlots();
 		if ( node->setter ){
-			osc->addExpectedPlus( node->id, node->slotsize, node->label.data(), node->type );
+			osc->addExpectedPlus( node->id, node->size(), node->label.data(), node->type );
 			node->send();
 		}
     }
 }
 
+/**
+	This sends data to the network. This function is called from DataNode::send
+*/
 void DataNetwork::sendData( int id, int size, float data[], bool waitForRegister )
 {
 	if ( waitForRegister ){
@@ -318,6 +329,9 @@ void DataNetwork::sendData( int id, int size, float data[], bool waitForRegister
 	osc->setData( id, size, data );
 }
 
+/**
+	This sends data to the network. This function is called from DataNode::send
+*/
 void DataNetwork::sendData( int id, int size, string data[], bool waitForRegister )
 {
 	if ( waitForRegister ){
