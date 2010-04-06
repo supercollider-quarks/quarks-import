@@ -108,6 +108,39 @@ void DataNetwork::removeNode( int id, bool waitForRegister )
 }
 
 /**
+	Map node to a minibee (type 0: output, type 1: pwm, type 2: digital)
+*/
+void DataNetwork::mapBee( int nid, int mid, int type, bool waitForRegister )
+{
+	bool canMap = false;
+	DataNode * node = getNode( nid );
+	MiniBee * bee = getBee( mid );
+	if ( (node != NULL) && ( bee != NULL) ){
+	  canMap = node->isSetter();
+	  switch( type ){
+	    case 0:
+	      canMap = canMap && ( node->size() == bee->getOutSize() );
+	      break;
+	    case 1:
+	      canMap = canMap && ( node->size() == 6 );
+	      break;
+	    case 2:
+	      canMap = canMap && ( node->size() == 19 );
+	      break;
+	  }
+	}
+    if ( canMap ){
+	if ( waitForRegister ){
+		checkRegistered();	
+	}
+
+	osc->mapBee( nid, mid, type );
+	} else {
+	    printf( "minibee mapping is not possible. Does node exist? does MiniBee exist? is the node size correct?\n" );
+	}
+}
+
+/**
 	Create a node with a specific label, number of slots, and a specific type
 */
 int DataNetwork::createNode( int id, const char * label, int noslots, int type, bool waitForRegister )
@@ -231,6 +264,18 @@ void DataNetwork::unSubscribeSlot( int id, int sid, bool waitForRegister )
 }
 
 /**
+	Get a pointer to a specific minibee, in order to use it in your program
+*/
+MiniBee * DataNetwork::getBee( int id )
+{
+	beeMap::iterator iter = miniBees.find( id );
+	if ( iter != miniBees.end() )
+		return iter->second;
+	else
+		return NULL;
+}
+
+/**
 	Get a pointer to a specific node, in order to use it in your program
 */
 DataNode * DataNetwork::getNode( int id )
@@ -284,6 +329,33 @@ void DataNetwork::removeNodeFromMap( int id )
 		{
 		// iter->second free
 		dataNodes.erase( iter );
+		}
+}
+
+/**
+	(private)
+	add a node to the nodeMap
+*/
+void DataNetwork::addBee( int id, int insize, int outsize )
+{
+	MiniBee * bee = new MiniBee( id, insize, outsize );
+// 	node->setNetwork( this );
+	bee->setNode( getNode( id ) );
+	// insert the node into the map
+	miniBees.insert( make_pair(id, bee) );
+}
+
+/**
+	(private)
+	remove a bee from the beeMap
+*/
+void DataNetwork::removeBeeFromMap( int id )
+{
+	beeMap::iterator iter = miniBees.find( id );
+	if ( iter != miniBees.end() )
+		{
+		// iter->second free
+		miniBees.erase( iter );
 		}
 }
 
@@ -349,6 +421,14 @@ bool DataNetwork::nodeExists( int id )
 		return false;
 }
 
+bool DataNetwork::beeExists( int id )
+{
+	beeMap::iterator iter = miniBees.find( id );
+	if ( iter != miniBees.end() )
+		return true;
+	else
+		return false;
+}
 void DataNetwork::removedNode( int id )
 {
 	removeNodeFromMap( id );
@@ -428,6 +508,7 @@ void DataNetwork::expectedNode( int id, const char *label )
 		node->setLabel( label );
 	}
 }
+
 void DataNetwork::infoNode( int id, const char *label, int noslots, int type )
 {
 	if ( !nodeExists( id ) ){
@@ -454,7 +535,30 @@ void DataNetwork::infoSlot( int nodeid, int id, const char *label, int type )
 	}
 }
 
-  void DataNetwork::setterNode( int id, const char *label, int noslots, int type )
+void DataNetwork::infoBee( int id, int noslots, int nooutputs )
+{
+	if ( !beeExists( id ) ){
+ 		addBee( id, noslots, nooutputs );
+	}
+	MiniBee * bee = getBee( id );
+ 	if ( bee != NULL ){
+ 		bee->setInSize( noslots );
+ 		bee->setOutSize( nooutputs );
+ 	}
+}
+
+void DataNetwork::mappedBee( int nid, int mid )
+{
+	DataNode * node = getNode( nid );
+	if ( node != NULL ){
+	  MiniBee * bee = getBee( mid );
+	  if ( bee != NULL ){
+	    bee->setMapped( node );
+	  }
+	}
+}
+
+void DataNetwork::setterNode( int id, const char *label, int noslots, int type )
 {
 	if ( !nodeExists( id ) ){
 		addNode( id, label );

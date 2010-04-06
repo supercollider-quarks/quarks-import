@@ -155,6 +155,9 @@ void DataNetworkOSC::addMethods()
 	addMethod( "/info/client",   "sis",  infoClientHandler, this );
 	addMethod( "/info/setter",   "isii",  infoSetterHandler, this );
 
+	addMethod( "/info/minibee",   "iii", infoBeeHandler, this );
+	addMethod( "/mapped/minibee",   "ii", mapBeeHandler, this );
+
 	addMethod( "/subscribed/node",   "isi",  subscribedNodeHandler, this );
 	addMethod( "/unsubscribed/node",   "isi",  unSubscribedNodeHandler, this );
 	addMethod( "/subscribed/slot",   "isii",  subscribedSlotHandler, this );
@@ -299,6 +302,26 @@ int DataNetworkOSC::infoSetterHandler( handlerArgs )
     	cout << "[DataNetworkOSC::setter] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
 	datanetwork->setterNode( argv[ 0 ]->i, &argv[ 1 ]->s, argv[ 2 ]->i, argv[ 3 ]->i );
+
+    return 0;
+}
+
+int DataNetworkOSC::infoBeeHandler( handlerArgs )
+{
+	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
+    	cout << "[DataNetworkOSC::bee] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
+
+	datanetwork->infoBee( argv[ 0 ]->i, argv[ 1 ]->i, argv[ 2 ]->i );
+
+    return 0;
+}
+
+int DataNetworkOSC::mapBeeHandler( handlerArgs )
+{
+	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
+    	cout << "[DataNetworkOSC::mapbee] " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
+
+	datanetwork->mappedBee( argv[ 0 ]->i, argv[ 1 ]->i );
 
     return 0;
 }
@@ -487,6 +510,11 @@ void DataNetworkOSC::querySubscriptions()
 	sendSimpleMessage( "/query/subscriptions" );
 }
 
+void DataNetworkOSC::queryBees()
+{
+	sendSimpleMessage( "/query/minibees" );
+}
+
 void DataNetworkOSC::subscribeAll()
 {
 	sendSimpleMessage( "/subscribe/all" );
@@ -602,6 +630,30 @@ void DataNetworkOSC::labelSlot( int id, int sid, const char *label )
 	lo_message_add_string( msg, label );
 
 	sendMessage( hostAddress, "/label/slot", msg );
+
+	lo_message_free( msg );
+}
+
+void DataNetworkOSC::mapBee( int nid, int mid, int type )
+{
+	lo_message msg = lo_message_new();
+	lo_message_add_int32( msg, port );
+	lo_message_add_string( msg, name.data() );
+	lo_message_add_int32( msg, nid );
+	lo_message_add_int32( msg, mid );
+// 	lo_message_add_string( msg, label );
+
+	switch( type ){
+	  case 0:
+	     	sendMessage( hostAddress, "/map/minibee/output", msg );
+		break;
+	  case 1:
+	     	sendMessage( hostAddress, "/map/minibee/pwm", msg );
+		break;
+	  case 2:
+	     	sendMessage( hostAddress, "/map/minibee/digital", msg );
+		break;
+	};
 
 	lo_message_free( msg );
 }

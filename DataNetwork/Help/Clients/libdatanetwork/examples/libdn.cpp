@@ -93,17 +93,19 @@ int main(int argc, char *argv[])
   
    /// access the data from a node:
    node2 = dn->getNode( 5 );
-   float * nodeData = node2->getData(); // use getStringData() if the node's type is a string
-   for ( int i=0; i<node2->size(); i++ ){
-      printf( "Node 5, slot %i, value %f\n", i, nodeData[i] );
+   if ( node2 != NULL ){
+    float * nodeData = node2->getData(); // use getStringData() if the node's type is a string
+    for ( int i=0; i<node2->size(); i++ ){
+	printf( "Node 5, slot %i, value %f\n", i, nodeData[i] );
+    }
+    // NOTE copy the data from the array if you want threadsafe access!
+
+    /// access the data from a slot:
+    slot = dn->getSlot( 5, 1 );
+    float slotData = slot->getValue(); // use getStringValue() if the slot's type is a string
+    printf( "Node 5, slot 1, value %f\n", slotData );
    }
-   // NOTE copy the data from the array if you want threadsafe access!
-
-   /// access the data from a slot:
-   slot = dn->getSlot( 5, 1 );
-   float slotData = slot->getValue(); // use getStringValue() if the slot's type is a string
-   printf( "Node 5, slot 1, value %f\n", slotData );
-
+   
    sleep(1);
    
    printf( "creating a node\n" );
