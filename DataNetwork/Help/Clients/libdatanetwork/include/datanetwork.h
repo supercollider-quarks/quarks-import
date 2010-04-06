@@ -30,10 +30,12 @@
 
 #include "datanetworkosc.h"
 #include "datanode.h"
+#include "minibee.h"
 
 namespace SWDataNetwork {
 
 typedef std::map<int, DataNode*> nodeMap;
+typedef std::map<int, MiniBee*> beeMap;
 
 /**
 	@author Marije Baalman <nescivi@gmail.com>
@@ -72,6 +74,7 @@ public:
 
 	DataNode * getNode( int id );
 	DataSlot * getSlot( int id, int sid );
+	MiniBee * getBee( int id );
 
 	bool registered;
 	
@@ -95,6 +98,10 @@ public:
 	void infoSlot( int nodeid, int id, const char *label, int type );
 	void setterNode( int id, const char *label, int noslots, int type );
 
+	void infoBee( int id, int insize, int outsize );
+	void mapBee( int nid, int mid, int type = 0,  bool waitForRegister = false );
+	void mappedBee( int nid, int mid );
+
     void dataForNode( int id , int size, float * data  );
     void dataForNode( int id , int size, string * data  );
 
@@ -112,10 +119,15 @@ public:
 
 private:
 	nodeMap dataNodes;
+	beeMap miniBees;
 
 	void addNode( int id, const char *label  = "" );
 	bool nodeExists( int id );
 	void removeNodeFromMap( int id );
+
+	void addBee( int id, int insize, int outsize );
+	bool beeExists( int id );
+	void removeBeeFromMap( int id );
 
 };
 

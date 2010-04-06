@@ -61,6 +61,7 @@ public:
 	void queryClients();
 	void querySetters();
 	void querySubscriptions();
+	void queryBees();
 
 	void subscribeNode( int id );
 	void subscribeSlot( int id, int sid );
@@ -74,6 +75,8 @@ public:
 	void labelSlot( int id, int sid, const char *label );
 
 	void removeNode( int id );
+	
+	void mapBee( int nid, int mid, int type );
 
 	void addExpected( int id );
 	void addExpectedPlus( int id, int size, const char *label, int type=0 );
@@ -131,6 +134,9 @@ private:
 	static int infoSlotHandler( handlerArgs );
 	static int infoClientHandler( handlerArgs );
 	static int infoSetterHandler( handlerArgs );
+
+	static int infoBeeHandler( handlerArgs );
+	static int mapBeeHandler( handlerArgs );
 
 	static int subscribedNodeHandler( handlerArgs );
 	static int subscribedSlotHandler( handlerArgs );

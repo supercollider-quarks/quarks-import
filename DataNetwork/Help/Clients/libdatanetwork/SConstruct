@@ -29,7 +29,7 @@ import re
 import tarfile
 
 PACKAGE = 'libdatanetwork'
-VERSION = '0.2'
+VERSION = '0.3'
 
 ################ FUNCTIONS ##################
 
@@ -111,6 +111,7 @@ src/datanetwork.cpp
 src/datanetworkosc.cpp
 src/datanode.cpp
 src/dataslot.cpp
+src/minibee.cpp
 src/oscin.cpp
 ''')
 
@@ -119,6 +120,7 @@ include/datanetwork.h
 include/datanetworkosc.h
 include/datanode.h
 include/dataslot.h
+include/minibee.h
 include/oscin.h
 ''')
 

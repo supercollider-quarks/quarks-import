@@ -125,15 +125,42 @@ SWDataNetwork{
 	}
 	*/
 
+	newBee{ |minibee|
+		if ( osc.notNil ){
+			osc.newBee( minibee );
+		}
+	}
+
+	getBeeInfo{ |addr|
+		if ( osc.notNil ){
+			if ( hive.swarm.size == 0 ){
+				osc.sendBeeNoInfo( addr );
+			}{
+				hive.swarm.do{ |it|
+					osc.sendBeeInfo( addr, it.id, it.noInputs, it.noOutputs );
+				}
+			};
+		}
+	}
+
+	mapHiveOutput{ |nodeID, miniBee|
+		if ( hive.notNil ){
+			hive.mapBee( this.nodes[ nodeID ], miniBee, \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+	}
+
 	mapHivePWM{ |nodeID, miniBee|
 		if ( hive.notNil ){
-			this.nodes[ nodeID ].action = { |data| hive.setPWM( miniBee, data) };
+			hive.mapBee( this.nodes[ nodeID ], miniBee, \pwm );
+			//		this.nodes[ nodeID ].action = { |data| hive.setPWM( miniBee, data) };
 		};
 	}
 
 	mapHiveDig{ |nodeID, miniBee|
 		if ( hive.notNil ){
-			this.nodes[ nodeID ].action = { |data| hive.setDigital( miniBee, data) };
+			hive.mapBee( this.nodes[ nodeID ], miniBee, \digital );
+			//		this.nodes[ nodeID ].action = { |data| hive.setDigital( miniBee, data) };
 		};
 	}
 
@@ -443,6 +470,9 @@ SWDataNetwork{
 		^SWDataNetworkLogGui.new( this );
 	}
 
+	createHost{
+		this.addOSCInterface;
+	}
 
 	addOSCInterface{
 		^SWDataNetworkOSC.new( this );

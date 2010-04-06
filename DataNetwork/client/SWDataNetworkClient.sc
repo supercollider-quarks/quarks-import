@@ -158,7 +158,16 @@ SWDataNetworkClient : SWDataNetwork{
 			OSCresponderNode( host, '/data/slot', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
 				this.slotData( msg.copyToEnd( 1 ) );
-			})
+			}),
+			OSCresponderNode( host, '/info/minibee', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.minibeeInfo( msg.copyToEnd( 1 ) );
+			}),
+			OSCresponderNode( host, '/mapped/minibee', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.mappedNode( msg[1], msg[2] );
+			}),
+
 		];
 
 		responders.do{ |it| it.add };
@@ -292,6 +301,9 @@ SWDataNetworkClient : SWDataNetwork{
 		};	
 	}
 
+	mappedNode{ |id,mid|
+		("Mapped node"+id+"to minibee"+mid).postln;
+	}
 
 	/// OSC interface
 
@@ -340,6 +352,10 @@ SWDataNetworkClient : SWDataNetwork{
 
 	queryClients{
 		this.sendSimpleMsg( '/query/clients' );
+	}
+
+	queryBees{
+		this.sendSimpleMsg( '/query/minibees' );
 	}
 
 
@@ -423,6 +439,14 @@ SWDataNetworkClient : SWDataNetwork{
 			this.add( msg[2], [msg[0],msg[1].asInteger], true );
 		});
 		("DataNetwork: info slot [%, %], label %".format( msg[0], msg[1], msg[2] )).postln;
+	}
+
+	minibeeInfo{ |msg|
+		//	"slot info ".post; msg.postln;
+		/*		if ( msg[2] !=  0,{
+			this.add( msg[2], [msg[0],msg[1].asInteger], true );
+			});*/
+		("DataNetwork: info minibee: id %, number of inputs %, number of outputs %".format( *msg )).postln;
 	}
 
 	nodeData{ |msg|
