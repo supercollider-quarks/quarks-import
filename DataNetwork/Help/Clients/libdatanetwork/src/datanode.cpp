@@ -41,20 +41,56 @@ DataNode::DataNode( int ident, const char *myLabel )
 	dataSlots = NULL;
 }
 
+/**
+  Get a pointer to the data of the node. Copy this if you need to process it further in another thread.
+*/
+float * DataNode::getData()
+{
+  return data;
+}
 
+/**
+  Get a pointer to the (string) data of the node. Copy this if you need to process it further in another thread.
+*/
+string * DataNode::getStringData()
+{
+  return stringData;
+}
+
+/**
+  Set the data of the node. This is called either from the incoming OSC message (if this is a node that you have subscribed to), or,
+  if it is a node you create, you have to call DataNode::send() to send the data to the network, after you have called this method. 
+*/
 void DataNode::setData( int size, float * indata )
 {
 	for ( int i=0; i<size; i++ ){
-		data[i] = *(indata + i );
-		dataSlots[i].value = *(indata + i );
+		data[i] = indata[i];
+		dataSlots[i].setValue( indata[i] );
+// 		printf( "setData %i, %f\n", i, data[i] );
 	}
 }
 
+/**
+  Set the (string) data of the node. This is called either from the incoming OSC message (if this is a node that you have subscribed to), or,
+  if it is a node you create, you have to call DataNode::send() to send the data to the network, after you have called this method. 
+*/
 void DataNode::setData( int size, string * indata )
 {
 	for ( int i=0; i<size; i++ ){
-		stringData[i] = *(indata + i );
-		dataSlots[i].stringValue = *(indata + i );
+		stringData[i] = indata[i];
+		dataSlots[i].setValue( indata[i] );
+	}
+}
+
+/**
+  Send the data to the network. waitForRegister should be true if you want to hold off sending the data until registration has happened.
+*/
+void DataNode::send( bool waitForRegister )
+{
+	if ( type == 0 ){
+		datanetwork->sendData( id, slotsize, data, waitForRegister );
+	} else if ( type == 1 ){
+		datanetwork->sendData( id, slotsize, stringData, waitForRegister );
 	}
 }
 
@@ -73,15 +109,6 @@ void DataNode::setNetwork( DataNetwork * nw )
 	datanetwork = nw;
 }
 
-void DataNode::send( bool waitForRegister )
-{
-	if ( type == 0 ){
-		datanetwork->sendData( id, slotsize, data, waitForRegister );
-	} else if ( type == 1 ){
-		datanetwork->sendData( id, slotsize, stringData, waitForRegister );
-	}
-}
-
 void DataNode::setSlotLabel( int id, const char *myLabel )
 {
 	dataSlots[id].setLabel( myLabel );
@@ -94,12 +121,12 @@ void DataNode::setSlotType( int id, int tp )
 
 void DataNode::setSlotValue( int id, float value )
 {
-	dataSlots[id].value = value;
+	dataSlots[id].setValue( value );
 }
 
 void DataNode::setSlotValue( int id, string value )
 {
-	dataSlots[id].stringValue = value;
+	dataSlots[id].setValue( value );
 }
 
 void DataNode::setSlotSubscribed( int id, bool amSubscribed )
@@ -139,6 +166,21 @@ void DataNode::setNoSlots( int noslots )
 	} else if ( type == 1 ){
 		stringData = new string [noslots];
 	}
+}
+
+/**
+	Get a pointer to a specific slot, in order to use it in your program
+*/
+DataSlot * DataNode::getSlot( int sid )
+{
+  if ( sid < slotsize ){
+      return &(dataSlots[sid]);
+  }
+  return NULL;
+}
+
+int DataNode::size(){
+    return slotsize;
 }
 
 DataNode::~DataNode()

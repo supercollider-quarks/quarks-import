@@ -1,0 +1,45 @@
+Quick manual:
+
+Classes you should use in your client program:
+
+DataNetwork
+- create an instance
+- createOSC()	- to set up the OSC connection
+- debug()	- to turn on and off some debugging messages
+- registerMe()	- to register the client
+- query()	- query what is in the network
+
+Node interaction:
+- updateNode()	- update the values of a node once
+- subscribeNode()	- subscribe to a node
+- unSubscribeNode()	- unsubscribe from a node
+- getNode()	- get a reference to the actual DataNode
+
+Only for nodes you create:
+- createNode()	- create a node
+- labelNode()	- label a node
+- removeNode()	- create a node
+
+
+Slot interaction:
+- updateSlot()	- update the value of a slot once
+- subscribeSlot()	- subscribe to a slot
+- unSubscribeSlot()	- unsubscribe from a slot
+- getSlot()	- get a reference to the actual DataSlot
+
+Only for nodes/slots you create:
+- labelSlot()	- label a slot
+
+DataNode:
+- getData()	- get a reference to the data
+- getStringData()	- get a reference to the string data (if the node contains string data)
+- setData()	- set data to a node (if you created the node)
+- send()	- send the data to the network
+
+DataSlot:
+- getValue()	- get the current value
+- getStringValue()	- get the current string value
+
+
+Extensive HTML documentation can be created with Doxygen.
+Also look at the supplied example.

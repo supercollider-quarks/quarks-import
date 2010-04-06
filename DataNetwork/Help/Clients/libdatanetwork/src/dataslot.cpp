@@ -46,6 +46,16 @@ void DataSlot::setNode( DataNode * dn )
 	datanode = dn;
 }
 
+void DataSlot::setValue( float v )
+{
+    value = v;
+}
+
+void DataSlot::setValue( string v )
+{
+    stringValue = v;
+}
+
 void DataSlot::set( int ident, int type, const char *myLabel )
 {
 	id = ident;
@@ -69,6 +79,22 @@ void DataSlot::setType( int tp )
 void DataSlot::setLabel( const char *myLabel )
 {
 	label = string( myLabel );
+}
+
+/**
+  Get the current value
+*/
+float DataSlot::getValue()
+{
+    return value;
+}
+
+/**
+  Get the current string value
+*/
+string DataSlot::getStringValue()
+{
+    return stringValue;
 }
 
 DataSlot::~DataSlot()

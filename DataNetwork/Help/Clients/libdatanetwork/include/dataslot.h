@@ -48,6 +48,11 @@ public:
 	void setType( int tp );
 	void setLabel( const char *myLabel );
 
+	float getValue();
+	string getStringValue();
+	
+	void setValue( float v );
+	void setValue( string v );
 
 	DataNode * datanode;
 
@@ -55,11 +60,12 @@ public:
 	string label;
 
 	int type; // 0 is number, 1 is string
+	bool subscribed;
 
+  private:
 	float value;
 	string stringValue;
 
-	bool subscribed;
 };
 
 }

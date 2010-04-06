@@ -61,6 +61,12 @@ public:
 	void setSlotValue( int id, string value );
 
 	void resubscribeSlots();
+	
+	float * getData();
+	string * getStringData();
+	int size();
+	
+	DataSlot * getSlot(int sid);
 
     ~DataNode();
 
@@ -72,6 +78,8 @@ public:
 
 	DataNetwork * datanetwork;
 
+
+  private:
 	int slotsize;
 	DataSlot * dataSlots;
 	float * data;
