@@ -133,13 +133,15 @@ SWDataNetwork{
 
 	getBeeInfo{ |addr|
 		if ( osc.notNil ){
-			if ( hive.swarm.size == 0 ){
-				osc.sendBeeNoInfo( addr );
-			}{
-				hive.swarm.do{ |it|
-					osc.sendBeeInfo( addr, it.id, it.noInputs, it.noOutputs );
-				}
-			};
+			if ( hive.notNil ){
+				if ( hive.swarm.size == 0 ){
+					osc.sendBeeNoInfo( addr );
+				}{
+					hive.swarm.do{ |it|
+						osc.sendBeeInfo( addr, it.id, it.noInputs, it.noOutputs );
+					}
+				};
+			}
 		}
 	}
 
