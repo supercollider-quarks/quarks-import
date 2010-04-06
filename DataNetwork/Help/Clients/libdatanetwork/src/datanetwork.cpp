@@ -307,12 +307,12 @@ void DataNetwork::refreshNodeSettings()
 	nodeMap::iterator iter;
     for( iter = dataNodes.begin(); iter != dataNodes.end(); ++iter ) {
       node = iter->second;
-		if ( node->subscribed ){
-			subscribeNode( node->id );
+		if ( node->isSubscribed() ){
+			subscribeNode( node->getID() );
 		}
 		node->resubscribeSlots();
-		if ( node->setter ){
-			osc->addExpectedPlus( node->id, node->size(), node->label.data(), node->type );
+		if ( node->isSetter() ){
+			osc->addExpectedPlus( node->getID(), node->size(), node->getLabel().data(), node->getType() );
 			node->send();
 		}
     }

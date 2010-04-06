@@ -54,15 +54,19 @@ public:
 	void setValue( float v );
 	void setValue( string v );
 
+	string getLabel();
+	int getType();
+
 	DataNode * datanode;
 
-	int id;
-	string label;
-
-	int type; // 0 is number, 1 is string
-	bool subscribed;
+	int getID();
+	bool isSubscribed();
 
   private:
+	int id;
+	bool subscribed;
+	int type; // 0 is number, 1 is string
+	string label;
 	float value;
 	string stringValue;
 

@@ -65,21 +65,28 @@ public:
 	float * getData();
 	string * getStringData();
 	int size();
+	int getType();
+	
+	string getLabel();
+// 	void setLabel( string labl );
 	
 	DataSlot * getSlot(int sid);
 
     ~DataNode();
 
-	bool subscribed;
-	bool setter;
-	int id;
-	int type;
-	string label;
+	int getID();
+	bool isSubscribed();
+	bool isSetter();
 
 	DataNetwork * datanetwork;
 
 
   private:
+	bool subscribed;
+	bool setter;
+	int id;
+	int type;
+	string label;
 	int slotsize;
 	DataSlot * dataSlots;
 	float * data;

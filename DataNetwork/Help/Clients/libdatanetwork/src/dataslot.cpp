@@ -97,6 +97,27 @@ string DataSlot::getStringValue()
     return stringValue;
 }
 
+string DataSlot::getLabel()
+{
+    return label;
+}
+
+int DataSlot::getType()
+{
+	return type;
+}
+
+
+int DataSlot::getID()
+{
+	return id;
+}
+
+bool DataSlot::isSubscribed()
+{
+	return subscribed;
+}
+
 DataSlot::~DataSlot()
 {
 }
