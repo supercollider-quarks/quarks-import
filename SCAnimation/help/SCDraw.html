@@ -14,14 +14,14 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bd0007}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b9000d}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb000a}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #0000bc}
+span.s2 {color: #0000b6}
 span.s3 {color: #000000}
-span.s4 {color: #13740e}
+span.s4 {color: #23761a}
 span.s5 {color: #606060}
-span.s6 {color: #bd0007}
+span.s6 {color: #b9000d}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -61,14 +61,16 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>*new(list, rate, sort)</b> - returns a SCDraw object with supplied list processed for the given <b>rate</b>, which</p>
 <p class="p3"><span class="Apple-tab-span">	</span>defaults to 25.0. <b>sort</b> defaults to true.</p>
 <p class="p2"><br></p>
-<p class="p3"><b>*preview(list, rate, width, height, color, sort)</b> - runs the score in realtime. <b>width</b> and <b>height</b> default to 500. <b>color</b></p>
-<p class="p3"><span class="Apple-tab-span">	</span>defaults to Color.black. <b>sort</b> defaults to true.</p>
+<p class="p3"><b>*preview(list, start, end, rate, width, height, color, sort)</b> - runs the score in realtime. <b>width</b> and <b>height</b> default to 500.</p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>color</b> defaults to Color.black. <b>sort</b> defaults to true. <b>start</b> and <b>end</b> define the section to be previewed, normally the</p>
+<p class="p3"><span class="Apple-tab-span">	</span>entire score.</p>
 <p class="p2"><br></p>
-<p class="p3"><b>*render(path, list, rate, width, height, color, ext, sort)</b> - render the image sequence. path should include base</p>
-<p class="p3"><span class="Apple-tab-span">	</span>filename which will then have a frame number appended with ext appended after that. For example,</p>
-<p class="p3"><span class="Apple-tab-span">	</span>"~/folder/mySeq" will yield "~/folder/mySeq_1.png" and so on. ext is the file extension and defaults</p>
+<p class="p3"><b>*render(path, list, start, end, rate, width, height, color, ext, sort)</b> - render the image sequence. path should</p>
+<p class="p3"><span class="Apple-tab-span">	</span>include base filename which will then have a frame number appended with ext appended after that. For</p>
+<p class="p3"><span class="Apple-tab-span">	</span>example, "~/folder/mySeq" will yield "~/folder/mySeq_1.png" and so on. ext is the file extension and defaults</p>
 <p class="p3"><span class="Apple-tab-span">	</span>to "png". The available choices are "tiff", "png", "gif", "jpeg", and "bmp". The dot before the extension</p>
 <p class="p3"><span class="Apple-tab-span">	</span>does not have to included; that is taken care of. The other arguments default the same as *preview.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><b>start</b> and <b>end</b> define the section to be rendered, normally the entire score.</p>
 <p class="p2"><br></p>
 <p class="p1"><b>Instance Methods</b></p>
 <p class="p2"><br></p>

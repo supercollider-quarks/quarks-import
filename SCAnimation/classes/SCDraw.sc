@@ -1,15 +1,15 @@
 SCDraw {
 	var score, firstFrame, lastFrame, frameRate, clear;
 	
-	*new { arg list, rate=25.0, sort=true;
-		^super.new.init(list, rate, sort);
+	*new { arg list, start=0.0, end=nil, rate=25.0, sort=true;
+		^super.new.init(list, start, end, rate, sort);
 	}
 	
-	init { arg list, rate, sort=true;
+	init { arg list, start, end, rate, sort=true;
 		score = Array.new;
-		firstFrame = 0;
-		lastFrame = 0;
 		frameRate = rate;
+		firstFrame = (start*frameRate).asInteger;
+		if(end.isNil, { lastFrame = 0; }, { lastFrame = (end*frameRate).asInteger; });
 		clear = 1;
 		list.do({ arg it, i;
 				var arr, dict=Dictionary.new();
@@ -21,13 +21,15 @@ SCDraw {
 				arr = arr.add(it[2]);
 				dict.put('start', it[1]);
 				dict.put('duration', it[2]);
-				lastFrame = lastFrame.max(arr[1]);
+				if(end.isNil, { lastFrame = lastFrame.max(arr[1]); });
 				if(it.size > 3, { ((it.size-3)/2).do({ arg j; dict.put(it[j*2+3], it[j*2+4]); }); });
 				arr = arr.add(dict);
-				score = score.add(arr);
+				if((arr[0] >= firstFrame) && (arr[0] < lastFrame),
+					{ score = score.add(arr); });
 			});
 		score = score.add([ lastFrame+1, 0 ]);
 		if(sort, { score.sort({arg a, b; a[0] < b[0]}); });
+		//score.do({ arg it; it.postln; });
 
 	}
 			
@@ -68,7 +70,7 @@ SCDraw {
 			});
 	}
 		
-	render { arg path,  width=500, height=500, color=Color.black, ext="png";
+	render { arg path, width=500, height=500, color=Color.black, ext="png";
 		var img, frame=firstFrame, index = 0;
 		var queue = [];
 		var removeThese = [];
@@ -104,12 +106,12 @@ SCDraw {
 
 	}
 			
-	*preview	{ arg list, rate=25.0, width=500, height=500, color=Color.black, sort=true;
-		this.new(list, rate, sort).preview(width, height, color);
+	*preview	{ arg list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, sort=true;
+		this.new(list, start, end, rate, sort).preview(width, height, color);
 	}
 	
-	*render	{ arg path, list, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true;
-		this.new(list, rate, sort).render(path, width, height, color, ext);
+	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true;
+		this.new(list, start, end, rate, sort).render(path, width, height, color, ext);
 	}
 }
 
