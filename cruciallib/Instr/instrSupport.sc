@@ -81,12 +81,6 @@
 
 /**  asSpec **/
 
-+ Nil {
-	asSpec {
-		^ControlSpec.new;
-	}
-}
-
 + Spec {
 	rate { ^\noncontrol }
 
