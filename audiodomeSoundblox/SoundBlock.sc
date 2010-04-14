@@ -1,8 +1,18 @@
 SoundBlock {
 	var <>color, <>ids;
+	
+	// upFace 	returns the index of the face that is most probably shown, 
+	// faceStates	contains the actual probabilities (counters, _not_ normalized) 
+	// faceLag	is the number of seconds, it takes to switch from one face to another
+	var <upFace = 0, <faceStates, <>faceLag = 2;
+	var <lastUpdates, lastTick;
+	var <>fUpThresh = 0.95;
+	var <>visible = false;
 
 	// fiducial ids of cubes
 	classvar <>allIds;
+
+	classvar <all;
 
 	*initClass {
 		allIds = (
@@ -36,7 +46,11 @@ SoundBlock {
 				[ 204, 205, 206, 207, 208, 209 ],
 				[ 210, 211, 212, 213, 214, 215 ]
 			]
-			);
+		);
+			
+			
+		all = IdentitySet[];
+
 	}
 		
 	*basicNew{|color = \red, ids|
@@ -46,15 +60,72 @@ SoundBlock {
 		^this.basicNew(color, allIds[color][number])
 	}
 	init {|aColor, aIDs|
+		// register object
+		all.add(this);
 		color = aColor;
-		ids   = aIDs;	
+		ids   = aIDs;
+		
+		// 	
+		faceStates = {0}!6;
+		upFace = 0;
+		
+		lastUpdates = (SystemClock.seconds!6);
+		lastTick = lastUpdates.first.copy;
 	}
 	
 	printOn { | stream |
 		if (stream.atLimit) { ^this };
 		stream << this.class.name << "( " << this.color.asCompileString << ", " << this.ids << " )" ;
 	}
+	
+	// call this if a face were seen
+	// when called, this method increases its value in faceStates (with a maximum of faceLag).
+	faceSeen{|id = 0, visible = true|
+		var idx = ids.indexOf(id);
+		var timeStamp = SystemClock.seconds;
+		var dt = (timeStamp - lastUpdates[idx]);
+
+
+		//[\dt, dt, \idx, idx, \states, faceStates].postln;
+		visible.if({
+			// direct
+			faceStates[idx] = min(faceStates[idx] + (0.2*dt), faceLag);
+			lastUpdates[idx] = timeStamp;
+		});
+		
+		this.tick;
+	}
+	
+	
+	faceSeenOn {|setObj|
+		this.faceSeen(setObj.id, setObj.visible)
+	}
+		
+	
+	tick {
+		var timeStamp = SystemClock.seconds;
+		var dt = (timeStamp - lastTick);
+		var tmp;
+		
+		faceStates = max(faceStates * max(1-dt, 0), 0);
+		// update face information
+		
+		tmp = faceStates.selectIndex{|v| v > fUpThresh};
+		
+		upFace = tmp.includes(upFace).if({upFace}, {tmp.choose}) ? (-1);
+		visible = (upFace != -1);
+		
+		lastTick = timeStamp;
+	}
+	
+	// unregister object
+	remove {
+		all.remove(this);
+	}	
 }
+
+///////////////////////////////////////////////////
+
 
 BufferBlock : SoundBlock {
 	var <>buffers;
