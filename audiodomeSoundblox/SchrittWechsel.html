@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.29">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #dc0000}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #737373}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #dc0000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #1000d0}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {color: #1000d0}
+span.s2 {color: #000000}
+span.s3 {color: #737373}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1">// Schrittwechsel Controller</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">(</p>
+<p class="p3"><span class="s1">Server</span>.default = s = <span class="s1">Server</span>.internal;</p>
+<p class="p3">s.boot;</p>
+<p class="p2"><br></p>
+<p class="p3">q = ();</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s2">q.directory = </span>"/localvol/sound/share/audiosamples/koelnKalk"<span class="s2">;</span></p>
+<p class="p2"><br></p>
+<p class="p3">q.subDirs = (footsteps: 6, doorClose: 4, doorOpen: 4, activity: 1);</p>
+<p class="p2"><br></p>
+<p class="p1">// the audiochannels to which the cube speakers are attached to</p>
+<p class="p3">q.cubeChannels = (</p>
+<p class="p3"><span class="Apple-tab-span">	</span>red: 0,<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>green: 1,<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>blue: 2,<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>yellow: 3,</p>
+<p class="p3"><span class="Apple-tab-span">	</span>lightGreen: 4,</p>
+<p class="p3"><span class="Apple-tab-span">	</span>orange: 5</p>
+<p class="p3">);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">s.waitForBoot{</p>
+<p class="p3"><span class="Apple-tab-span">	</span>q.buffers = q.subDirs.collect{<span class="s1">|num, dirName|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>num.collect{<span class="s1">|i|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">Buffer</span>.readChannel(s, <span class="s3">"%/%/%.aiff"</span>.format(q.directory, dirName, i+1), channels: [0], action:{<span class="s1">|b|</span> <span class="s3">"file %/%.aiff read.\n"</span>.postf(dirName, i+1);<span class="Apple-converted-space">  </span>b.normalize});</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">HomeBlock</span>.sendSynth;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">BlockPerson</span>.sendSynth;</p>
+<p class="p3">}</p>
+<p class="p2"><br></p>
+<p class="p3">)</p>
+<p class="p2"><br></p>
+<p class="p3">(</p>
+<p class="p1">// FIXME: record / find activities</p>
+<p class="p1">// OPTIONAL: record / find different door sounds for each cube side</p>
+<p class="p3">q.cubes = q.cubeChannels.collect{<span class="s1">|outChan, color|</span><span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">HomeBlock</span>(color, 0, s, q.buffers.activity, q.buffers.doorOpen, q.buffers.doorClose, outChan);</p>
+<p class="p3">};</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">// create persons</p>
+<p class="p3">q.persons = (</p>
+<p class="p3"><span class="Apple-tab-span">	</span>redWoman:<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">BlockPerson</span>(s, q.buffers.footsteps[[0, 2, 4]], q.cubes.red, q.cubes.red),</p>
+<p class="p3"><span class="Apple-tab-span">	</span>greenMan:<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">BlockPerson</span>(s, q.buffers.footsteps[[1, 3, 5]], q.cubes.green, q.cubes.green),</p>
+<p class="p3"><span class="Apple-tab-span">	</span>yellowWoman:<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">BlockPerson</span>(s, q.buffers.footsteps[[0, 2, 4]], q.cubes.yellow, q.cubes.yellow),</p>
+<p class="p3"><span class="Apple-tab-span">	</span>blueMan:<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">BlockPerson</span>(s, q.buffers.footsteps[[0, 2, 4]], q.cubes.blue, q.cubes.blue)</p>
+<p class="p3">);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">q.cubes.do{<span class="s1">|q|</span> q.activitySynthParams.masterAmp = 1};</p>
+<p class="p1">//q.cubes.do{|q| q.activitySynthParams.amp = 0.1};</p>
+<p class="p3">q.persons.do{<span class="s1">|p|</span> p.synthParams.masterAmp = 1};</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">/*</p>
+<p class="p1">q.cubes.red.getActive</p>
+<p class="p5"><br></p>
+<p class="p1">q.cubes.red.getInactive(1)</p>
+<p class="p1">q.cubes.red.getInactiveImmediatly // force inactivity</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">q.cubes.do{<span class="s1">|cube|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>cube.fittingAction = {<span class="s1">|cube, numPersons|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s3">"active"</span>.postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>1.0.wait;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.getActive;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}.fork</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><br></p>
+<p class="p6"><span class="s2"><span class="Apple-tab-span">	</span>cube.overfullAction = {</span>|cube, numPersons, supernumerousPersons|</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// choose a person and send it to another cube.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// FIXME: search for a strategy to choose the cube<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// FIXME: set duration according to distance<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>{</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.getInactive;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>3.wait;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>supernumerousPersons.postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>supernumerousPersons.do{</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rrand(1, 2.0).wait;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.persons.choose.transite(cube.others.choose, dur: 5, dt: 1);</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>6.wait;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.getActive;</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}.fork</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p3">}</p>
+<p class="p3">)</p>
+<p class="p1">/* info</p>
+<p class="p1">q.buffers.footsteps.printAll</p>
+<p class="p1">q.cubes.red.out</p>
+<p class="p1">q.cubes.green.out</p>
+<p class="p1">q.cubes.blue.out</p>
+<p class="p1">*/</p>
+<p class="p2"><br></p>
+<p class="p1">// no one in orange -&gt; no resulting action</p>
+<p class="p1">//q.persons.redWoman.transite(q.cubes.orange, 2);</p>
+<p class="p1">//q.persons.greenMan.transite(q.cubes.orange, 2);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">// there's someone in red -&gt; one of the two will move to another place<span class="Apple-converted-space"> </span></p>
+<p class="p3">q.persons.greenMan.transite(q.cubes.red, 5);</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">q.persons.greenMan.goHome;</p>
+<p class="p2"><br></p>
+<p class="p1">// now, green is free again, so when we send the green man back home, he will start working the dishes</p>
+<p class="p3">q.persons.greenMan.goHome</p>
+<p class="p2"><br></p>
+<p class="p3">q.persons.do(<span class="s1">_</span>.transite(q.cubes.choose, 2))</p>
+<p class="p3">{q.persons.do{<span class="s1">|p|</span> p.goHome(rrand(3, 10.0)); 1.0.rand.wait}}.fork</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">.redWoman.transite(q.cubes.orange, 10)</p>
+<p class="p3">q.persons.redWoman.goHome</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">q.persons.redWoman.transite(q.cubes.red, 10)</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">q.person.transite(q.cubes.green, 10)</p>
+<p class="p3">q.person.currentBlock;</p>
+<p class="p3">q.person.transite(q.cubes.red, 3)</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">//////////////////////</p>
+<p class="p1">// Start SETO</p>
+<p class="p7"><br></p>
+<p class="p8">(</p>
+<p class="p6"><span class="s2">q.seto = </span>SETO_OSCTUIOServer<span class="s2">(</span><span class="s3">"2Dobj"</span><span class="s2">, </span>nil<span class="s2">, </span>JITseto<span class="s2">, </span>SETOIDistance<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p8">q.seto.start;</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p8"><span class="s1">JITseto</span>.action = {<span class="s1">|me|</span></p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="s1">var</span> cube = q.cubes.detect{<span class="s1">|cube|</span> cube.ids.includes(me.id)};</p>
+<p class="p8"><span class="Apple-tab-span">	</span>cube.notNil.if{</p>
+<p class="p8"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.faceSeen(me);</p>
+<p class="p8"><span class="Apple-tab-span">	</span>}<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p8">};</p>
+<p class="p7"><br></p>
+<p class="p1">/*</p>
+<p class="p1">JITseto.action = nil; // */</p>
+<p class="p8">)</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+</body>
+</html>
