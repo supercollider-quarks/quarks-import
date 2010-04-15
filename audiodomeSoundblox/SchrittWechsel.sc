@@ -71,8 +71,13 @@ BlockPerson {
 			false		
 		}));
 	}
+	setParam {|which, val|
+		synthParams[which] = val.asArray;	
+		synth.notNil.if{
+			synth.setn(which, val.asArray);	
+		};
+	}
 	
-
 	// one shot synth
 	// FIXME: add different door bufnums according to current side
 	transite {|to, dur = 5, dt = 1| // a Block
@@ -307,9 +312,6 @@ HomeBlock : SoundBlock {
 
 	addPerson{|person, dt = 1|
 		persons.add(person);
-		
-		// no good, want to tweek this lateron
-		// this.getActive(dt);
 		this.act;
 	}
 
@@ -393,5 +395,80 @@ HomeBlock : SoundBlock {
 			
 			Out.ar(out, src * amp * masterAmp * (1 - masterMute) * (1-mute) * env);
 		}).memStore;
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+
+BlockGod {
+	var <>server;
+	var <>blox, <>persons, <>activityDt = 0.5;
+	var activityWatcher, randomActivity;
+	
+	*new {|server, blox, persons|
+		^super.new.initGod(server, blox, persons)
+	}
+	
+	initGod {|aServer, aBlox, aPersons|
+		
+		server  =  aServer;
+		blox    =    aBlox;
+		persons = aPersons;
+		
+		activityWatcher = Task{loop{
+			activityDt.wait;
+			blox.do{|block|
+				(block.persons.size > 0).if({
+					block.perform([\getActive, \getInactive].wchoose(0.95, 0.05), 1);
+					activityDt.asFloat.rand.wait;
+				}, {
+					block.getInactive(1);
+				});
+			}
+		}};
+		randomActivity = Task{loop{
+			rrand(20, 120.0).wait;
+			persons.choose.transite(blox.choose, 5);
+		}};
+	}
+	
+	start {
+		activityWatcher.play;
+		randomActivity.play;
+	}
+	stop {
+		activityWatcher.stop;
+		randomActivity.stop;
+	}
+	muteAll {
+		server.bind{
+			blox.do{|block|
+				block.setActivityParam(\masterMute, 1);
+			};
+			persons.do{|person|
+				person.setParam(\masterMute, 1);
+			}
+		}
+	}
+	unmuteAll {
+		server.bind{
+			blox.do{|block|
+				block.setActivityParam(\masterMute, 0);
+			};
+			persons.do{|person|
+				person.setParam(\masterMute, 0);
+			}
+		}
+	}
+	ampAll {|val = 0.1|
+		server.bind{
+			blox.do{|block|
+				block.setActivityParam(\masterAmp, val);
+			};
+			persons.do{|person|
+				person.setParam(\masterAmp, val);
+			}
+		}
 	}
 }
