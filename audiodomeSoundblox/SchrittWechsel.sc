@@ -206,7 +206,7 @@ BlockPerson {
 			onsets = Onsets.kr(FFT(onsetBufnum1, steps), 0.5, \power, mingap: 20);
 
 			// send away
-			SendReply.kr(onsets, '/step', (pan + 1) * 0.5);
+			SendReply.kr(onsets, '/step', pan.linlin(-1, 1, 0.2, 0.8));
 		
 			Out.ar(startChan,  (open  + pannedSteps[0]) * amp * masterAmp * (1 - masterMute) * (1-mute));
 			Out.ar(finishChan, (close + pannedSteps[1]) * amp * masterAmp * (1 - masterMute) * (1-mute));
@@ -282,7 +282,6 @@ HomeBlock : SoundBlock {
 		^activitySynth.notNil
 	}
 	
-	// FIXME: set bufnum according to upfacing side of cube
 	getActive {
 		this.isActive.not.if({
 			server.bind{
