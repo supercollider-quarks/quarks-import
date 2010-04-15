@@ -415,12 +415,11 @@ BlockGod {
 		server  =  aServer;
 		blox    =    aBlox;
 		persons = aPersons;
-		
 		activityWatcher = Task{loop{
 			activityDt.wait;
 			blox.do{|block|
 				(block.persons.size > 0).if({
-					block.perform([\getActive, \getInactive].wchoose(0.95, 0.05), 1);
+					block.perform([\getActive, \getInactive].wchoose([0.95, 0.05]), 1);
 					activityDt.asFloat.rand.wait;
 				}, {
 					block.getInactive(1);
