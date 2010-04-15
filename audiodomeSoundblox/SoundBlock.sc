@@ -91,13 +91,16 @@ SoundBlock {
 			// direct
 			faceStates[idx] = min(faceStates[idx] + (0.2*dt), faceLag);
 			lastUpdates[idx] = timeStamp;
+		}, {
+			faceStates[idx] = max(fUpThresh*0.99, 0);
+			lastUpdates[idx] = timeStamp;
 		});
 		
 		this.tick;
 	}
 	
 	
-	faceSeenOn {|setObj|
+	faceSeenAs {|setObj|
 		this.faceSeen(setObj.id, setObj.visible)
 	}
 		
@@ -112,10 +115,33 @@ SoundBlock {
 		
 		tmp = faceStates.selectIndex{|v| v > fUpThresh};
 		
-		upFace = tmp.includes(upFace).if({upFace}, {tmp.choose}) ? (-1);
-		visible = (upFace != -1);
+		// only set to new face, if tmp does not include current face
+		tmp.includes(upFace).not.if({
+			// upFace = tmp.choose;
+			tmp.isEmpty.if({
+				//upFace = nil;
+				visible = false;
+				// cube is invisible
+				this.performInvisible
+			}, {
+				upFace = faceStates.maxIndex;
+				visible = true;
+				// face has changed
+				this.performFaceChange(upFace)
+			});
+		});
+		
 		
 		lastTick = timeStamp;
+	}
+	
+	// implement these methods to add custom functionality
+	performFaceChange {|face|
+		"%: face changed to %".format(this.color, face).inform;
+	}
+
+	performInvisible {
+		"%: invisible".format(this.color).inform;
 	}
 	
 	// unregister object

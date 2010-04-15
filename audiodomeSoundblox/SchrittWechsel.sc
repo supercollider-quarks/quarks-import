@@ -189,6 +189,9 @@ HomeBlock : SoundBlock {
 	var <>overfullAction, <>fittingAction;
 	var <isOverfull;
 	
+	// these are the actions that are performed on a face change.
+	// invisibleAction(this), faceChangeAction(this, newFace) 
+	var <>invisibleAction, <>faceChangeAction;
 	
 	*new{|color=\red, number=0, server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel = 0|
 		^super.new(color, number).initHome(server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel)
@@ -283,6 +286,15 @@ HomeBlock : SoundBlock {
 			fittingAction.value(this, personsSize)
 		});
 	}
+
+	performFaceChange {|face|
+		faceChangeAction.value(this, face)
+	}
+
+	performInvisible {
+		invisibleAction.value(this)
+	}
+
 
 	others {
 		^HomeBlock.all difference: [this];
