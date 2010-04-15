@@ -140,6 +140,7 @@ SoundBlock {
 			});
 		}, {
 			// face has not changed, now coordinates of the cube should be set to current upFace.
+			visible = true;
 			posX = x;
 			posY = y;
 			rot = r;
