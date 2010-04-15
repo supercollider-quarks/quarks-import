@@ -1,11 +1,11 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf290
-{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fswiss\fcharset0 Helvetica;}
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf480
+{\fonttbl\f0\fnil\fcharset77 Monaco;\f1\fswiss\fcharset77 Helvetica;}
 {\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
 \red96\green96\blue96;\red0\green115\blue0;}
 \deftab720
 \pard\pardeftab720\ql\qnatural
 
-\f0\fs18 \cf2 // jedem W\'fcrfel ist eine Geraeuschfamilie zugeordnet\cf3 \
+\f0\fs18 \cf2 // jedem W\'9frfel ist eine Geraeuschfamilie zugeordnet\cf3 \
 \cf2 /*\
 Es gibt (nach bodo und norbert):\
 \
@@ -21,13 +21,13 @@ Es gibt (nach bodo und norbert):\
 \cf3 \
 \cf4 Server\cf3 .default = s = \cf4 Server\cf3 .internal;\
 \
+\cf2 /*\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ql\qnatural\pardirnatural
-\cf4 Server\cf3 .default = s = \cf4 Josef\cf3 .startServer;\
+\cf2 Server.default = s = Josef.startServer;\
 s.makeGui;\
 \pard\pardeftab560\ql\qnatural
-\cf3 \
-s.freeAll\
-\
+\cf2 s.freeAll;\
+*/\cf3 \
 s.boot;\
 \
 \
@@ -38,7 +38,10 @@ q = ();\
 \cf2 // q.directory = "/Network/Servers/stitch/srv/nfs/volume1/home/till/samples/";\cf3 \
 \
 \cf2 // till\cf3 \
-q.directory = \cf5 "/localvol/sound/share/audiosamples/koelnKalk/"\cf3 ;\
+\cf2 // q.directory = "/localvol/sound/share/audiosamples/koelnKalk/";\cf3 \
+\
+\cf2 // hubert\cf3 \
+q.directory = \cf5 "/Users/till/Documents/koelnKalk/"\cf3 ;\
 \
 \cf2 /* open directory\
 "open %".format(q.directory).unixCmd; // */\cf3 \
@@ -48,25 +51,25 @@ q.directory = \cf5 "/localvol/sound/share/audiosamples/koelnKalk/"\cf3 ;\
 \cf2 // For each name given below, q.directory should have a directory containing files named 1-*.aiff, 2-*.aiff, etc. \cf3 \
 \cf2 // If the files are n-channel, currently only the first channel is used.\cf3 \
 \cf2 // be sure to have only .aiff files here. Neither wav, nor mp3 are supported yet. If you need to convert files easily, use e.g. Max ({\field{\*\fldinst{HYPERLINK "http://sbooth.org/Max/"}}{\fldrslt 
-\f1\fs22 \cf2 http://sbooth.org/Max/}}), or sndfile-convert.\cf3 \
+\f1\fs22 http://sbooth.org/Max/}}), or sndfile-convert.\cf3 \
 \
 \cf2 // Link directory names to colors. Only given colores will be recognized, all other cubes are ignored.\cf3 \
 q.colorToName = (\
 	red: \cf5 "animals"\cf3 , \
 	green: \cf5 "chords"\cf3 , \
-	blue: \cf5 "crowd"\cf3 , \
-	yellow: \cf5 "water"\cf3 ,\
+	blue: \cf5 "drums"\cf3 , \
+	yellow: \cf5 "chords"\cf3 ,\
 	\cf2 // lightGreen: "whateva",\cf3 \
-	orange: \cf5 "drums"\cf3 \
+	orange: \cf5 "crowd"\cf3 \
 );\
 \
 \
 \cf2 // the audiochannels to which the cube speakers are attached to\cf3 \
 q.cubeChannels = (\
-	red: 0, \
-	green: 1, \
-	blue: 2, \
-	yellow: 3,\
+	red: 3, \
+	green: 2, \
+	blue: 1, \
+	yellow: 0,\
 	lightGreen: 4,\
 	orange: 5\
 );\
@@ -138,9 +141,9 @@ q.cubes[0].synth.set(\\amps2, 1)\
 \
 q.cubes[\cf6 \\red\cf3 ].set(\cf6 \\amp\cf3 , 0.5);\
 q.cubes[\cf6 \\green\cf3 ].set(\cf6 \\amp\cf3 , 0.1);\
-q.cubes[\cf6 \\blue\cf3 ].set(\cf6 \\amp\cf3 , 0.5);\
+q.cubes[\cf6 \\blue\cf3 ].set(\cf6 \\amp\cf3 , 1);\
 q.cubes[\cf6 \\orange\cf3 ].set(\cf6 \\amp\cf3 , 0.8); \
-q.cubes[\cf6 \\yellow\cf3 ].set(\cf6 \\amp\cf3 , 0.5);\
+q.cubes[\cf6 \\yellow\cf3 ].set(\cf6 \\amp\cf3 , 1);\
 \
 \
 \
@@ -171,8 +174,11 @@ q.seto.start;\
 	\}\
 \};\
 \
+\
+\
 \cf2 /*\
 JITseto.action = nil; // */\cf3 \
+\cf2 //JITseto.action = \{|me| me.postln\}; // */\cf3 \
 )\
 \
 \
@@ -195,6 +201,7 @@ JITseto.action = nil; // */\cf3 \
 		\};\
 \
 		(chan < 8).if\{ \cf2 // red (left-most)\cf3 \
+			\
 			q.cubes[chan].set(\cf6 \\amp\cf3 , val.linlin(0, 127, 0, 1))	\
 		\};\
 	\};\
