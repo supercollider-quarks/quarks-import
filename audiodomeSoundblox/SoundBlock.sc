@@ -8,13 +8,16 @@ SoundBlock {
 	var <lastUpdates, lastTick;
 	var <>fUpThresh = 0.95;
 	var <>visible = false;
+	var <posX, <posY, <rot;
 
 	// fiducial ids of cubes
 	classvar <>allIds;
 
 	classvar <all;
-
+	classvar <idCounter;
+	var <id;
 	*initClass {
+		idCounter = 0;
 		allIds = (
 			red:[
 				[ 108, 109, 110, 111, 112, 113 ],
@@ -62,6 +65,8 @@ SoundBlock {
 	init {|aColor, aIDs|
 		// register object
 		all.add(this);
+		id = idCounter;
+		idCounter = idCounter + 1;
 		color = aColor;
 		ids   = aIDs;
 		
@@ -80,7 +85,7 @@ SoundBlock {
 	
 	// call this if a face were seen
 	// when called, this method increases its value in faceStates (with a maximum of faceLag).
-	faceSeen{|id = 0, visible = true|
+	faceSeen{|id = 0, visible = true, x, y, r|
 		var idx = ids.indexOf(id);
 		var timeStamp = SystemClock.seconds;
 		var dt = (timeStamp - lastUpdates[idx]);
@@ -95,17 +100,17 @@ SoundBlock {
 			faceStates[idx] = max(fUpThresh*0.99, 0);
 			lastUpdates[idx] = timeStamp;
 		});
-		
-		this.tick;
+
+		this.tick(x, y, r);
 	}
 	
 	
 	faceSeenAs {|setObj|
-		this.faceSeen(setObj.id, setObj.visible)
+		this.faceSeen(setObj.id, setObj.visible, setObj.pos[0], setObj.pos[1], setObj.rotEuler.first)
 	}
 		
 	
-	tick {
+	tick {|x, y, r|
 		var timeStamp = SystemClock.seconds;
 		var dt = (timeStamp - lastTick);
 		var tmp;
@@ -117,8 +122,8 @@ SoundBlock {
 		
 		// only set to new face, if tmp does not include current face
 		tmp.includes(upFace).not.if({
-			// upFace = tmp.choose;
 			tmp.isEmpty.if({
+				// face does not change, but cube is invisible. Information on the actual detected face is not updated. 
 				//upFace = nil;
 				visible = false;
 				// cube is invisible
@@ -127,21 +132,34 @@ SoundBlock {
 				upFace = faceStates.maxIndex;
 				visible = true;
 				// face has changed
-				this.performFaceChange(upFace)
+				posX = x;
+				posY = y;
+				rot = r;
+				this.performFaceChange;
+				this.performCubeUpdate;
 			});
+		}, {
+			// face has not changed, now coordinates of the cube should be set to current upFace.
+			posX = x;
+			posY = y;
+			rot = r;
+			this.performCubeUpdate;
 		});
-		
-		
+				
 		lastTick = timeStamp;
 	}
 	
 	// implement these methods to add custom functionality
-	performFaceChange {|face|
-		"%: face changed to %".format(this.color, face).inform;
+	performFaceChange {
+		"%: face changed to %".format(this.color, upFace).inform;
 	}
 
 	performInvisible {
 		"%: invisible".format(this.color).inform;
+	}
+	
+	performCubeUpdate {
+		"%: update".format(this.color).inform;
 	}
 	
 	// unregister object
