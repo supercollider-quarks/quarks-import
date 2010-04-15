@@ -8,5 +8,5 @@
 	\helpdoc:		"Help/SenseWorldDataNetwork.html",
 	\dependencies:	["GNUPlot","SenseWorld","NetLib","FileLog"],
 	\since: 		"2008",
-	\version:		"0.3"
+	\version:		"0.5"
 )
