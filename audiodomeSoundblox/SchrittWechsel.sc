@@ -9,44 +9,58 @@
 // everything "info" is regular output
 
 BlockPerson {
-	classvar <all;
+	classvar <all, <idCounter;
 	
 	var <>server;	
-	var <synth, <>synthName, <synthParams;
+	var <synth, <>synthName, <synthParams, <stepResponder;
 	var <stepBuffers;
-	var <>homeBlock, <>currentBlock;
+	var <onsetBuffers;
+	var <>homeBlock, <>currentBlock, <lastBlock;
+	var <>visualsAddr;
+	var <id;
 
-	*new{|server, stepBuffers, homeBlock, currentBlock|
-		^super.new.initHome(server, stepBuffers, homeBlock, currentBlock)
+	*new{|server, stepBuffers, homeBlock, currentBlock, visualsAddr|
+		^super.new.initHome(server, stepBuffers, homeBlock, currentBlock, visualsAddr)
 	}
 	
 	*initClass {
 		all = IdentitySet[];
+		idCounter = 0;
 	}
 	
-	initHome {|aServer, aStepBuffers, aHomeBlock, aCurrentBlock|
+	initHome {|aServer, aStepBuffers, aHomeBlock, aCurrentBlock, aVisualAddr|
 		server = aServer;
 
-		stepBuffers = aStepBuffers;
-		
+		stepBuffers  =  aStepBuffers;
+		onsetBuffers = 2.collect{
+			Buffer.alloc(server, 512);
+		};
 		homeBlock    =    aHomeBlock;
 		currentBlock = aCurrentBlock;
-		
+		lastBlock    =     homeBlock;
+		visualsAddr  =   aVisualAddr;
+
 		synthName = \BlockPerson;
 		synthParams = (
 			masterAmp: [0.1],
 			amp: [0.1],
 			interpolation: [2],
 			masterMute: [0],
-			mute: [0]
+			mute: [0],
+			onsetBufnum1: [onsetBuffers[0].bufnum],
+			onsetBufnum2: [onsetBuffers[1].bufnum]
 		);
 
 		// add person to current block 
 		this.currentBlock.addPerson(this);
+
+		id = idCounter;
+		idCounter = idCounter +1;
 		all.add(this);
 	}
 
 	remove{
+		onsetBuffers.do(_.free);
 		all.remove(this);	
 	}
 	
@@ -72,16 +86,17 @@ BlockPerson {
 
 			// remove person from current block, and 
 			currentBlock.removePerson(this, dt);
-
+			lastBlock = currentBlock;
+			
 			// wait for dt seconds (and take care of server's latency)
 			server.makeBundle((server.latency ? 0) + dt, {
 				synth = Synth(synthName, target: server)
 					.set(
-						\openBufnum, this.currentBlock.doorOpenBufnum,
+						\openBufnum, lastBlock.doorOpenBufnum,
 						\closeBufnum, to.doorCloseBufnum,
 						\stepBufnum, stepBuffers.first.bufnum,
 						\dur, dur,
-						\startChan, this.currentBlock.out,
+						\startChan, lastBlock.out,
 						\finishChan, to.out,
 						\rate, 1
 				);
@@ -93,6 +108,9 @@ BlockPerson {
 							// if synth ended, put person in block
 							"add person to %\n".format(this.currentBlock).postln;
 							this.currentBlock.addPerson(this);
+							
+							stepResponder.remove;
+							
 							// release dependants for garbage collection
 							obj.releaseDependants;
 						});	
@@ -100,6 +118,16 @@ BlockPerson {
 				synthParams.keysValuesDo{|key, value|
 					synth.setn(key, value)
 				};
+				stepResponder = OSCresponderNode(nil, '/step', { |t, r, msg|
+					var nodeID, pos;
+					nodeID = msg[1];
+					pos    = msg[3];
+					
+					(nodeID == synth.nodeID).if({
+						"step (%, from %, to %, %)".format(id, lastBlock.id, to.id, pos).postln;
+						visualsAddr.sendMsg("/footstep", id, lastBlock.id, to.id, pos)
+					})
+				}).add;
 			});
 
 			// set current block to the one she's heading to
@@ -128,10 +156,12 @@ BlockPerson {
 				masterMute = 1, mute = 1, 
 				stepBufnum = 0, openBufnum, closeBufnum,
 				startChan = 0, finishChan = 1, 
-				dur = 5, rate=1, interpolation=4;
+				dur = 5, rate=1, interpolation=4,
+				onsetBufnum1, onsetBufnum2;
 
-			var steps, pannedSteps, open, close;
+			var steps, pan, pannedSteps, open, close;
 			var openLength, closeLength, minDur;
+			var onsets;
 			
 
 			openLength = BufSampleRate.kr(openBufnum).reciprocal * BufFrames.ir(openBufnum);
@@ -155,11 +185,13 @@ BlockPerson {
 				0, // no loop 
 				interpolation
 			) * EnvGen.ar(Env.linen(0, minDur - closeLength, 0));
-			
-			pannedSteps = Pan2.ar(steps, 
-				EnvGen.ar(Env([-1, -1, 1], [openLength * 0.9, minDur - closeLength + (openLength * 0.1)]))
-			);
-		
+
+			pan = EnvGen.kr(Env(
+				[-1, -1, 1], 
+				[openLength * 0.9, dur]
+			));
+			pannedSteps = Pan2.ar(steps, pan);
+
 			close = BufRd.ar(
 				1,
 				closeBufnum, 
@@ -167,6 +199,14 @@ BlockPerson {
 				0, // no loop 
 				interpolation
 			);
+		
+			// step recognition
+			// onsets = OnsetsDS.kr(steps, onsetBufnum1, onsetBufnum2, 0.5, \complex, mingap: 0.2);
+			
+			onsets = Onsets.kr(FFT(onsetBufnum1, steps), 0.5, \power, mingap: 20);
+
+			// send away
+			SendReply.kr(onsets, '/step', (pan + 1) * 0.5);
 		
 			Out.ar(startChan,  (open  + pannedSteps[0]) * amp * masterAmp * (1 - masterMute) * (1-mute));
 			Out.ar(finishChan, (close + pannedSteps[1]) * amp * masterAmp * (1 - masterMute) * (1-mute));
@@ -191,13 +231,15 @@ HomeBlock : SoundBlock {
 	
 	// these are the actions that are performed on a face change.
 	// invisibleAction(this), faceChangeAction(this, newFace) 
-	var <>invisibleAction, <>faceChangeAction;
+	var <>invisibleAction, <>faceChangeAction, <>cubeUpdateAction;
 	
-	*new{|color=\red, number=0, server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel = 0|
-		^super.new(color, number).initHome(server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel)
+	var visualsAddr;
+	
+	*new{|color=\red, number=0, server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel = 0, visualsAddr|
+		^super.new(color, number).initHome(server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel, visualsAddr)
 	}
 	
-	initHome {|aServer, aBuffers, aDoorOpenBuffers, aDoorCloseBuffers, outChannel|
+	initHome {|aServer, aBuffers, aDoorOpenBuffers, aDoorCloseBuffers, outChannel, aVisualsAddr|
 		out = outChannel;
 
 		server = aServer;
@@ -213,10 +255,20 @@ HomeBlock : SoundBlock {
 			amp: [0.1],
 			interpolation: [2],
 			masterMute: [0],
-			mute: [0]
+			mute: [0],
+			dampFreq: [800]
 		);
 		
+		visualsAddr = aVisualsAddr;
+		
 		persons = IdentitySet[];
+	}
+
+	setActivityParam{|which, val|
+		activitySynthParams[which] = val.asArray;	
+		activitySynth.notNil.if{
+			activitySynth.setn(which, val.asArray);	
+		};
 	}
 
 	out_{|val|
@@ -295,6 +347,11 @@ HomeBlock : SoundBlock {
 		invisibleAction.value(this)
 	}
 
+	performCubeUpdate {
+		//"update (% (%), x:%, y:%, r:%, vis(%)) ".format(id, upFace, posX, posY, rot, visible.binaryValue).postln;
+		visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);
+		cubeUpdateAction.value(this)
+	}
 
 	others {
 		^HomeBlock.all difference: [this];
@@ -318,24 +375,24 @@ HomeBlock : SoundBlock {
 			arg	out = 0, 
 				amp = 0.1, mute = 0, masterAmp = 1, masterMute = 0, 
 				bufnum = 0, rate = 1,//startpos = 0,
-				interpolation = 2, gate= 1;
+				interpolation = 2, gate= 1, dampFreq = 800;
 				
 			var env = EnvGen.kr(Env.asr(0.1, 1, 10), gate: gate, doneAction: 2);
-			Out.ar(out, 
-				BufRd.ar(
-					1, 
-					bufnum, 
-					Phasor.ar(
-						0, BufRateScale.kr(bufnum) * rate, 
-						0, 
-						BufFrames.kr(bufnum)
-					), 
-					1, 
-					interpolation
-				) * amp * masterAmp * (1 - masterMute) * (1-mute) * env
+			var src = BufRd.ar(
+				1, 
+				bufnum, 
+				Phasor.ar(
+					0, BufRateScale.kr(bufnum) * rate, 
+					0, 
+					BufFrames.kr(bufnum)
+				), 
+				1, 
+				interpolation
 			);
+			src = LPF.ar(src, dampFreq);
+			
+			
+			Out.ar(out, src * amp * masterAmp * (1 - masterMute) * (1-mute) * env);
 		}).memStore;
 	}
-
-	
 }
