@@ -300,7 +300,7 @@ HomeBlock : SoundBlock {
 		var cubes, distances;
 		# cubes, distances = this.nearCubes;
 		this.persons.asArray.scramble.copyRange(0, numPersons).do{|p, i|
-			p.transite(cubes[i], dur: distances[i] * 4, dt: i* 1.0.rand)
+			p.transite(cubes[i], dur: distances[i] * 8, dt: i* 1.0.rand)
 		}
 	}
 
