@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.48">
+<meta name="CocoaVersion" content="1038.29">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bb0e03}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
@@ -30,8 +30,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">q = ();</p>
 <p class="p2"><br></p>
-<p class="p1">//q.directory = "/localvol/sound/share/audiosamples/koelnKalk";</p>
-<p class="p4"><span class="s2">q.directory = </span>"/Users/till/Documents/koelnKalk"<span class="s2">;</span></p>
+<p class="p1">q.directory = "/localvol/sound/share/audiosamples/koelnKalk";</p>
+<p class="p4"><span class="s2">//q.directory = </span>"/Users/till/Documents/koelnKalk"<span class="s2">;</span></p>
 <p class="p3">q.subDirs = (footsteps: 6, doorClose: 4, doorOpen: 4, activity: 1);</p>
 <p class="p2"><br></p>
 <p class="p1">// the audiochannels to which the cube speakers are attached to</p>
@@ -122,9 +122,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span>};</p>
 <p class="p3"><span class="Apple-tab-span">	</span>cube.faceChangeAction = {<span class="s1">|cube, face|</span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[cube.color, face].postln;</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.persons.do{<span class="s1">|p|</span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>p.transite(cube.others.choose, dur: 5, dt: 1)</p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>cube.transitePersonsToNext;</p>
 <p class="p3"><span class="Apple-tab-span">	</span>};</p>
 <p class="p3"><span class="Apple-tab-span">	</span>q.cubes.do{<span class="s1">|q|</span><span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q</p>
