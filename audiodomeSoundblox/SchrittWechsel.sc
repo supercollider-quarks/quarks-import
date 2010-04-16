@@ -231,7 +231,7 @@ HomeBlock : SoundBlock {
 	// If the state is below, fittingAction is evaluated. 
 	var <>overfullAction, <>fittingAction;
 	var <isOverfull;
-	
+	var isActive = false;
 	// these are the actions that are performed on a face change.
 	// invisibleAction(this), faceChangeAction(this, newFace) 
 	var <>invisibleAction, <>faceChangeAction, <>cubeUpdateAction;
@@ -281,12 +281,13 @@ HomeBlock : SoundBlock {
 		}	
 	}
 	
-	isActive {
+/*	isActive {
 		^activitySynth.notNil
 	}
-	
+*/	
 	getActive {
 		this.isActive.not.if({
+		this.isActive = true;
 			server.bind{
 				activitySynth = Synth(activitySynthName, [\out, out], target: server).setn(\bufnum, this.activeBufNum);
 				activitySynthParams.keysValuesDo{|key, value|
@@ -315,6 +316,7 @@ HomeBlock : SoundBlock {
 
 
 	getInactive{|dt = 1|
+		this.isActive = false;
 		activitySynth.release(dt);
 		activitySynth = nil;	
 	}
@@ -443,7 +445,7 @@ BlockGod {
 			}
 		}};
 		randomActivity = Task{loop{
-			rrand(20, 120.0).wait;
+			rrand(60, 120.0).wait;
 			persons.choose.currentBlock.transitePersonsToNext(1);
 		}};
 	}

@@ -173,6 +173,8 @@ SoundBlock {
 
 
 BufferBlock : SoundBlock {
+	classvar <bus, <phase;
+
 	var <>buffers;
 	var <>synth;
 	//var nodeProxy;
@@ -209,7 +211,8 @@ BufferBlock : SoundBlock {
 			amp: [0.1],
 			interpolation: [2],
 			masterMute: [0],
-			mute: [0]
+			mute: [0],
+			pitch: [1]
 		);
 	}
 
@@ -218,7 +221,7 @@ BufferBlock : SoundBlock {
 		
 		synth.isNil.if({
 			server.bind{
-				synth = Synth(\bbSynth, [\out, out], target: server).setn(\bufnums, buffers.collect(_.bufnum));
+				synth = Synth(\bbSynth, [\out, out, \phaseIn, BufferBlock.bus.index], target: server).setn(\bufnums, buffers.collect(_.bufnum));
 				synthParams.keysValuesDo{|key, value|
 					synth.setn(key, value)
 				}
@@ -251,6 +254,14 @@ BufferBlock : SoundBlock {
 			synth.set((what ++ side).asSymbol, val);
 			^this // break	
 		};
+		(what == \pitch).if{
+			synthParams[what] = [val];
+			synth.notNil.if{
+				synth.set(what, val);
+			}
+			^this // break	
+		};
+		
 		synthParams[what][side] = val;
 		synth.notNil.if{
 			synth.setn(what, synthParams[what]);
@@ -299,15 +310,27 @@ BufferBlock : SoundBlock {
 	}
 */
 
-	*sendSynth {
-		SynthDef(\bbSynth, {|out = 0, amp = 0.1, mute = 0, masterAmp = 1, masterMute = 0, interpolation = 2, ampLagUp = 0.1, ampLagDown = 1|
-			var bufnums = \bufnums.kr([1, 2, 3, 4, 5, 6]);
-			
+	*startClock{|server|
+		server = server ? Server.default;
+		bus = bus ?? {
+			Bus.audio(server);
+		};
+		phase = Synth(\phaseSynth, [\out, bus.index], 1, addAction: \addBefore);
+	}
 
-/*			var inAmps = \amps.tr(
-				[0, 0, 0, 0, 0, 0], 0
-			);
-*/
+	*sendSynth {
+		SynthDef(\phaseSynth, {|out, rate = 1|
+			Out.ar(out, 
+				Phasor.ar(
+					0, rate,
+					0, 
+					162830
+				)
+			)
+		}).memStore;
+	
+		SynthDef(\bbSynth, {|out = 0, amp = 0.1, mute = 0, masterAmp = 1, masterMute = 0, interpolation = 2, ampLagUp = 0.1, ampLagDown = 1, phaseIn, globOut = 6, pitch = 1|
+			var bufnums = \bufnums.kr([1, 2, 3, 4, 5, 6]);
 
 			var inAmps = [
 				\amps0.tr(1),
@@ -338,19 +361,16 @@ BufferBlock : SoundBlock {
 			var src = BufRd.ar(
 				1, 
 				bufnums, 
-				Phasor.ar(
-					0, BufRateScale.kr(bufnums) * rates, 
-					0, 
-					BufFrames.kr(bufnums)
-				), 
+				In.ar(phaseIn), 
 				1, 
 				interpolation
 			);
+			src = PitchShift.ar(src, 0.1, pitch);
 			
-			src = RLPF.ar(src, filterFreqs, 0.2);
+			src = RLPF.ar(src, filterFreqs, 0.8);
 			
-			Out.ar(out, (src * amps).sum * amp * masterAmp * (1 - masterMute) * (1-mute)
-			);
+			Out.ar(    out, (src * amps).sum * amp * masterAmp * (1 - masterMute) * (1-mute));
+			Out.ar(globOut, (src * amps).sum * amp * masterAmp * (1 - masterMute) * (1-mute));
 		}).memStore;
 	}
 }
