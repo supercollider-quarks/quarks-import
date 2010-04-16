@@ -8,7 +8,7 @@ SoundBlock {
 	var <lastUpdates, lastTick;
 	var <>fUpThresh = 0.95;
 	var <>visible = false;
-	var <posX, <posY, <rot;
+	var <posX = 0, <posY = 0, <rot = 0;
 
 	// fiducial ids of cubes
 	classvar <>allIds;

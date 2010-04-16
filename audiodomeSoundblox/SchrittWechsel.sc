@@ -81,8 +81,6 @@ BlockPerson {
 	// one shot synth
 	// FIXME: add different door bufnums according to current side
 	transite {|to, dur = 5, dt = 1| // a Block
-		
-		
 		// one cannot go to where he already is
 		(to == this.currentBlock).if{"BlockPerson:transite :illegal move".warn; ^this};
 		
@@ -298,6 +296,24 @@ HomeBlock : SoundBlock {
 		})
 	}
 
+	transitePersonsToNext{|numPersons = 1|
+		var cubes, distances;
+		# cubes, distances = this.nearCubes;
+		this.persons.asArray.scramble.copyRange(0, numPersons).do{|p, i|
+			p.transite(cubes[i], dur: distances[i] * 4, dt: i* 1.0.rand)
+		}
+	}
+
+	nearCubes{
+		var others = this.others.asArray;
+		var distances = others.collect{|cube| 
+			((this.posX - cube.posX).squared + (this.posY - cube.posY).squared).sqrt		};
+		var indices = distances.order;
+		
+		^[others[indices], distances[indices]]
+	}
+
+
 	getInactive{|dt = 1|
 		activitySynth.release(dt);
 		activitySynth = nil;	
@@ -428,7 +444,7 @@ BlockGod {
 		}};
 		randomActivity = Task{loop{
 			rrand(20, 120.0).wait;
-			persons.choose.transite(blox.choose, 5);
+			persons.choose.currentBlock.transitePersonsToNext(1);
 		}};
 	}
 	
