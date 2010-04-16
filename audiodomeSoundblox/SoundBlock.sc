@@ -213,9 +213,6 @@ BufferBlock : SoundBlock {
 		);
 	}
 
-
-
-
 	play {|server|
 		server = server ? Server.default;
 		
@@ -245,6 +242,11 @@ BufferBlock : SoundBlock {
 	
 	set {|what=\rates, val = 0, side=0|
 		(what == \amps).if{
+			//synth.setn(what, (ampTrigs[side] * val));
+			synth.set((what ++ side).asSymbol, val);
+			^this // break	
+		};
+		(what == \filterFreqs).if{
 			//synth.setn(what, (ampTrigs[side] * val));
 			synth.set((what ++ side).asSymbol, val);
 			^this // break	
@@ -315,6 +317,14 @@ BufferBlock : SoundBlock {
 				\amps4.tr(1),
 				\amps5.tr(1)
 			];
+			var filterFreqs = [
+				\filterFreqs0.tr(1000),
+				\filterFreqs1.tr(1000),
+				\filterFreqs2.tr(1000),
+				\filterFreqs3.tr(1000),
+				\filterFreqs4.tr(1000),
+				\filterFreqs5.tr(1000)
+			].lag(0.3);
 
 			var rates = \rates.kr(
 				[1, 1, 1, 1, 1, 1], 0.1
@@ -325,18 +335,21 @@ BufferBlock : SoundBlock {
 				// amp.lagud(1, 1)
 			};
 			
-			Out.ar(out, 
-				(BufRd.ar(
-					1, 
-					bufnums, 
-					Phasor.ar(
-						0, BufRateScale.kr(bufnums) * rates, 
-						0, 
-						BufFrames.kr(bufnums)
-					), 
-					1, 
-					interpolation
-				) * amps).sum * amp * masterAmp * (1 - masterMute) * (1-mute)
+			var src = BufRd.ar(
+				1, 
+				bufnums, 
+				Phasor.ar(
+					0, BufRateScale.kr(bufnums) * rates, 
+					0, 
+					BufFrames.kr(bufnums)
+				), 
+				1, 
+				interpolation
+			);
+			
+			src = RLPF.ar(src, filterFreqs, 0.2);
+			
+			Out.ar(out, (src * amps).sum * amp * masterAmp * (1 - masterMute) * (1-mute)
 			);
 		}).memStore;
 	}
