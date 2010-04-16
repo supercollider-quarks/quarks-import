@@ -7,18 +7,17 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="824.48">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b71505}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b71505; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0014bd}
-span.s1 {color: #0014bd}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+span.s1 {color: #0000bf}
 span.s2 {color: #000000}
 span.s3 {color: #bf0000}
 span.s4 {color: #606060}
-span.s5 {color: #20710d}
+span.s5 {color: #007300}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -40,9 +39,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3">q.cubeChannels = (</p>
 <p class="p3"><span class="Apple-tab-span">	</span>yellow: 0,</p>
 <p class="p3"><span class="Apple-tab-span">	</span>lightGreen: 1,</p>
-<p class="p5"><span class="Apple-tab-span">	</span>blue: 2</p>
-<p class="p5">/*<span class="Apple-tab-span">	</span>orange: 3,</p>
-<p class="p5"><span class="Apple-tab-span">	</span>red: 4,</p>
+<p class="p3"><span class="Apple-tab-span">	</span>blue: 2</p>
+<p class="p1">/*<span class="Apple-tab-span">	</span>orange: 3,</p>
+<p class="p1"><span class="Apple-tab-span">	</span>red: 4,</p>
 <p class="p3"><span class="s3">*/</span>);</p>
 <p class="p2"><br></p>
 <p class="p3">q.visualAddr = <span class="s1">NetAddr</span>(<span class="s4">"localhost"</span>, 12000);</p>
@@ -73,9 +72,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">// create persons</p>
 <p class="p3">q.persons = (</p>
-<p class="p5">/*<span class="Apple-tab-span">	</span>orange:<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>BlockPerson(s, q.buffers.footsteps[[0, 2, 4]], q.cubes.orange, q.cubes.orange, q.visualAddr),</p>
-<p class="p3"><span class="s3">*/</span><span class="Apple-tab-span">	</span>yellow:<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span>green:<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>BlockPerson(s, q.buffers.footsteps[[0, 2, 4]], q.cubes.lightGreen, q.cubes.lightGreen, q.visualAddr),</p>
+<p class="p3"><span class="Apple-tab-span">	</span>yellow:<span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s1">BlockPerson</span>(s, q.buffers.footsteps[[1, 3, 5]], q.cubes.yellow, q.cubes.yellow, q.visualAddr)</p>
 <p class="p3">);</p>
 <p class="p2"><br></p>
@@ -87,7 +86,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">/*</p>
 <p class="p1">q.cubes.red.getActive</p>
-<p class="p6"><br></p>
+<p class="p5"><br></p>
 <p class="p1">q.cubes.red.getInactive(1)</p>
 <p class="p1">q.cubes.red.getInactiveImmediatly // force inactivity</p>
 <p class="p1">*/</p>
@@ -98,7 +97,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">"active"</span>.postln;</p>
 <p class="p3"><span class="Apple-tab-span">	</span>};</p>
 <p class="p2"><br></p>
-<p class="p7"><span class="s2"><span class="Apple-tab-span">	</span>cube.overfullAction = {</span>|cube, numPersons, supernumerousPersons|</p>
+<p class="p6"><span class="s2"><span class="Apple-tab-span">	</span>cube.overfullAction = {</span>|cube, numPersons, supernumerousPersons|</p>
 <p class="p2"><br></p>
 <p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// choose a person and send it to another cube.<span class="Apple-converted-space"> </span></p>
 <p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// FIXME: search for a strategy to choose the cube<span class="Apple-converted-space"> </span></p>
@@ -134,22 +133,22 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><span class="Apple-tab-span">	</span>};</p>
 <p class="p2"><br></p>
 <p class="p1">/*<span class="Apple-tab-span">	</span>cube.cubeUpdateAction = {|cube|</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p1"><span class="Apple-tab-span">	</span>};</p>
 <p class="p1">*/<span class="s2"><span class="Apple-tab-span">	</span></span></p>
 <p class="p3"><span class="Apple-tab-span">	</span>cube.fUpThresh = 0.11;</p>
 <p class="p3">}</p>
 <p class="p3">);</p>
 <p class="p2"><br></p>
-<p class="p3">q.god = BlockGod(s, q.cubes, q.persons);</p>
+<p class="p3">q.god = <span class="s1">BlockGod</span>(s, q.cubes, q.persons);</p>
 <p class="p3">)</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p1">/*</p>
 <p class="p1">q.cubes.orange.upFace<span class="Apple-converted-space"> </span></p>
 <p class="p1">q.cubes.orange.faceStates.selectIndex{|v| v &gt; q.cubes.orange.fUpThresh}</p>
-<p class="p6"><br></p>
-<p class="p6"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
 <p class="p1">*/</p>
 <p class="p1">/*</p>
 <p class="p1">q.persons.orange.transite(q.cubes.lightGreen, 10) // */</p>
@@ -158,7 +157,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1">// Start SETO</p>
 <p class="p2"><br></p>
 <p class="p3">(</p>
-<p class="p7"><span class="s2">q.seto = </span>SETO_OSCTUIOServer<span class="s2">(</span><span class="s4">"2Dobj"</span><span class="s2">, </span>nil<span class="s2">, </span>JITseto<span class="s2">, </span>SETOIDistance<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><span class="s2">q.seto = </span>SETO_OSCTUIOServer<span class="s2">(</span><span class="s4">"2Dobj"</span><span class="s2">, </span>nil<span class="s2">, </span>JITseto<span class="s2">, </span>SETOIDistance<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
 <p class="p3">q.seto.start;</p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
@@ -173,6 +172,49 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p1">/*</p>
 <p class="p1">JITseto.action = nil; // */</p>
+<p class="p3">)</p>
+<p class="p2"><br></p>
+<p class="p1">///////////////////////</p>
+<p class="p1">// Midi Mixer</p>
+<p class="p2"><br></p>
+<p class="p6">MIDIClient<span class="s2">.init;</span></p>
+<p class="p3"><span class="s1">MIDIIn</span>.connect;</p>
+<p class="p2"><br></p>
+<p class="p3">(</p>
+<p class="p6">MIDIIn<span class="s2">.control = {</span>|port, chan, ctlNum, val|<span class="s2"><span class="Apple-converted-space"> </span></span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>[chan, ctlNum, val].postln;</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>(ctlNum == 7).if{ <span class="s3">// fader == cubes</span></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(chan == 8).if{ </span>// master (right-most)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.cubes.do{<span class="s1">|cube|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.god.ampAll(val.linlin(0, 127, 0, 1));</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(chan &lt; 8).if{<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.cubes.asArray[chan].setActivityParam(<span class="s5">\amp</span>, val.linlin(0, 127, 0, 1));</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>(ctlNum == 10).if{ <span class="s3">// knobs == persons</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(chan &lt; 8).if{<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.persons.asArray[chan].setParam(<span class="s5">\amp</span>, val.linlin(0, 127, 0, 1));</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span>(ctlNum == 17).if{ </span>// lower button -&gt; mute</p>
+<p class="p1"><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(chan == 8).if{ </span>// master (right-most)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.cubes.do{<span class="s1">|cube|</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.god.muteAll(val.linlin(0, 127, 0, 1));</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>}</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>(chan &lt; 8).if{<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.cubes.detect{<span class="s1">|a|</span> a.out == chan}.setActivityParam(<span class="s5">\mute</span>, val.linlin(0, 127, 0, 1));</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><span class="Apple-tab-span">	</span>};</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3">}</p>
 <p class="p3">)</p>
 </body>
 </html>
