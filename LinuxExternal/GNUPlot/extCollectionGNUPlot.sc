@@ -9,10 +9,11 @@
 
 + AbstractFunction{
 	
-	gnuplot{ arg a=0,b=1,n = 500;		
-		var spec1 = [a,b,\linear].asSpec;
-		var spec2 = [0,n-1].asSpec;
-		GNUPlot.plot(Array.fill(n,{Ê|i| this.(spec1.map(spec2.unmap(i))) }));
+	gnuplot{ arg n=500, from = 0.0, to = 1.0;
+		var array = Array.interpolation(n, from, to);
+		var res = array.collect { |x| this.value(x) };
+	
+		GNUPlot.plot(res);
 	}
 	
 	surf3{ |rect,grid = 20,hidden3d = true, pm3d = true|
