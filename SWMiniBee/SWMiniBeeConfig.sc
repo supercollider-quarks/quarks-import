@@ -785,13 +785,15 @@ SWMiniHiveConfigGui{
 	}
 
 	updateGui{
-		view.removeAll;
-		view.decorator.reset;
-		confs = List.new;
+		defer{
+			view.removeAll;
+			view.decorator.reset;
+			confs = List.new;
 		
-		hiveConf.hiveMap.keys.do{ |key,i|
-			this.addLine(key);
-			this.updateLine( key );
+			hiveConf.hiveMap.keys.do{ |key,i|
+				this.addLine(key);
+				this.updateLine( key );
+			}
 		}
 	}
 }
