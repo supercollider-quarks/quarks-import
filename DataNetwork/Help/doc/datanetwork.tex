@@ -133,14 +133,15 @@ See table \ref{oscinterface} for an overview of commands.
 
 You can send queries to the network to get information about the minibees that are present. Info messages of minibees that appear after a client has joined the network, will automatically be sent.
 
-Three methods of mapping data (see table \ref{oscinterfaceMB}):
+You can map datanodes to send data to a MiniBee (see table \ref{oscinterfaceMB}):
 \begin{description}
  \item [output] The DataNode that is used to map from, has to have an equal amount of slots as the MiniBee has outputs. The PWM outputs come first, then the digital outputs.
- \item [pwm] The DataNode that is used to map from, has to have 6 slots. (MiniBee pins 3, 5, 6, 9, 10, 11).
- \item [digital] The DataNode that is used to map from, has to have 19 slots. (MiniBee pins 1 through 19).
+%  \item [pwm] The DataNode that is used to map from, has to have 6 slots. (MiniBee pins 3, 5, 6, 9, 10, 11).
+%  \item [digital] The DataNode that is used to map from, has to have 19 slots. (MiniBee pins 1 through 19).
+ \item [custom] The DataNode that is used to map from, has to have as many slots as the custom message received in the MiniBee has data bytes.
 \end{description}
 
-Note that an \textbf{output}-mapping will remove any previous \textbf{pwm} or \textbf{digital} mappings. A \textbf{pwm} or \textbf{digital} mapping will remove a previous \textbf{output} mapping.
+% Note that an \textbf{output}-mapping will remove any previous \textbf{pwm} or \textbf{digital} mappings. A \textbf{pwm} or \textbf{digital} mapping will remove a previous \textbf{output} mapping.
 
 
 % \begin{table}
@@ -152,10 +153,12 @@ Note that an \textbf{output}-mapping will remove any previous \textbf{pwm} or \t
 \hline
 \verb|/query/minibees| & is & port no., name& query which minibees are in the network (reply /info/minibee) \\
 \verb|/info/minibee| & isii & node ID, number of slots (inputs), number of outputs & info about a minibee \\
-\verb|/map/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee)\\
-\verb|/map/minibee/pwm| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee pwm output (reply /mapped)\\
-\verb|/map/minibee/digital| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee digital output (reply /mapped/minibee)\\
-\verb|/mapped/minibee| & ii & node ID, minibee ID & reply to /map/minibee messages \\
+\verb|/map/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output)\\
+\verb|/map/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /mapped/minibee/custom)\\
+% \verb|/map/minibee/pwm| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee pwm output (reply /mapped)\\
+% \verb|/map/minibee/digital| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee digital output (reply /mapped/minibee)\\
+\verb|/mapped/minibee/output| & ii & node ID, minibee ID & reply to /map/minibee/output messages \\
+\verb|/mapped/minibee/custom| & ii & node ID, minibee ID & reply to /map/minibee/custom messages \\
 \hline
 \end{tabular}
 \end{center}
