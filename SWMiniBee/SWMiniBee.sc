@@ -28,6 +28,9 @@ SWMiniHive {
 
 	var <>gui;
 
+	var <confMsgID = 0;
+	var <idMsgID = 0;
+
 	/*
 	*new { | network, portName, baudrate |
 		^super.new( portName, baudrate ).myInit( network )
@@ -44,11 +47,11 @@ SWMiniHive {
 
 	xbee_{ |xb|
 		xbee = xb;
-		outMessages.add( [ $A, 0, 0, 0 ] );
+		outMessages.add( [ 0, [ $A, 0, 0, 0 ] ] );
 	}
 
 	stopXBee{
-		outMessages.add( [ $Q, 0, 0, 0 ] );
+		outMessages.add( [ 0, [ $Q, 0, 0, 0 ] ] );
 		fork{
 			0.5.wait;
 			this.stopSend;
@@ -86,7 +89,16 @@ SWMiniHive {
 	}
 
 	removeBee{ |id|
-		swarm.removeAt( id );
+		var bee = swarm.at( id );
+		if ( bee.notNil ){
+			network.removeNode( bee.dataNodeIn );
+			swarm.removeAt( id );
+		};
+	}
+
+	// called from HiveConfig when configuration for minibee changes
+	changeBee{ |id|
+		this.removeBee( id );
 	}
 
 	/*
@@ -154,23 +166,24 @@ SWMiniHive {
 
 	parseSerialNumber{ |msg|
 		var size;
-		var serial,beerev,beelibv;
+		var serial,beerev,beelibv,beecaps;
 		if ( verbose > 0 ){
 			msg.postcs;
 			msg.copyToEnd(1).collect{ |it| { it.asAscii }.try({ it }) }.postln;
 		};
-		size = msg.size;
-		//		beerev = msg[size-1].asAscii;
-		//		beelibv = msg[size-2];
-		beerev = 'A';
-		beelibv = 1;
+		//	size = msg.size;
+		beelibv = msg.wrapAt(-3);
+		beerev = msg.wrapAt(-2).asAscii;
+		beecaps = msg.wrapAt(-1);
+		//	beerev = 'A';
+		//	beelibv = 1;
 		serial = "".catList( 
-			msg.copyRange(1,size).collect{ |it| // size-3 for new version
+			msg.copyRange(1,msg.size-4).collect{ |it| // size-3 for new version
 				{ it.asAscii }.try({ it }) 
 			} ).asSymbol;
 		this.sendID( serial );
 		hiveConfig.setStatus( serial, 0 );
-		hiveConfig.setVersion( serial, beerev, beelibv );
+		hiveConfig.setVersion( serial, beerev, beelibv, beecaps );
 
 		if ( gui.notNil ){ gui.updateGui; };
 	}
@@ -228,18 +241,26 @@ SWMiniHive {
 		var id = hiveConfig.getNodeID( serial );
 		//	hiveConfig.isConfigured( serial ).postcs;
 		switch( hiveConfig.isConfigured( serial ),
-			0, { outMessages.add( ( [ $I ] ++ 
+			0, {
+				idMsgID = idMsgID + 1;
+				idMsgID = idMsgID%256;
+				outMessages.add( [0, [ $I, idMsgID ] ++ 
 				serial.asString.ascii
-				++ id ).postln ) },
-			1, { outMessages.add( ( [ $I ] ++ 
+				++ id ] ) },
+			1, {
+				idMsgID = idMsgID + 1;
+				idMsgID = idMsgID%256;
+				outMessages.add( [0, [ $I, idMsgID ] ++ 
 				serial.asString.ascii
-				++ id ++ hiveConfig.getConfigID( serial ) ).postln ) },
+				++ id ++ hiveConfig.getConfigID( serial ) ] ) },
 			2, { "Please define configuration".postln; }
 			);
 	}
 
 	sendConfig{ |cid|
-		outMessages.add( [$C] ++ hiveConfig.getConfigMsg( cid ) );
+		confMsgID = confMsgID + 1;
+		confMsgID = confMsgID%256;
+		outMessages.add( [0, [$C, confMsgID] ++ hiveConfig.getConfigMsg( cid ) ] );
 	}
 
 	stop{
@@ -260,8 +281,12 @@ SWMiniHive {
 			var msg;
 			loop{
 				outMessages.copy.do{ |it,i|
-					xbee.sendMsgNoID( it[0], it.copyToEnd( 1 ) );
+					it.postln;
+					xbee.sendMsgNoID( it[1][0], it[1].copyToEnd( 1 ) );
 					outMessages.remove( it );
+					if ( it[0] < this.redundancy ){
+						outMessages.add( [it[0] + 1, it[1]] );
+					};
 					serialDT.wait;
 				};
 				swarm.do{ |it|
@@ -392,6 +417,7 @@ SWMiniBee{
 	//	var <>dataNodeOutDig; // data node in network from which we are sending data to this minibee, digital
 
 	var dataNodeOutput, dataNodePWM, dataNodeDig;
+	var dataNodeCustom;
 
 	var <network;
 	
@@ -629,8 +655,15 @@ SWMiniBee{
 		^([ id, msgSendID ] ++ digData);
 	}
 
-	mapBee{ |node, type|
+	setMap{ |node, type|
 		switch( type,
+			\custom, {
+				if ( dataNodeCustom.notNil ){
+					dataNodeCustom.action = {};
+				};
+				dataNodeCustom = node;
+				dataNodeCustom.action = { |data| this.setCustom( data ) };
+			},
 			\pwm, {
 				if ( dataNodeOutput.notNil ){
 					dataNodeOutput.action = {};

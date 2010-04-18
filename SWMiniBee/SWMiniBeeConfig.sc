@@ -92,6 +92,7 @@ SWMiniHiveConfig{
 	// assign a certain defined configuration to a serial number
 	setConfig{ |configLabel,serial|
 		hiveMap.at( serial.asSymbol ).configLabel_( configLabel ).configured_( 1 );
+		hive.changeBee( this.getNodeID( serial ) );
 		/*
 		hiveConfigMap.put( serial.asSymbol, configLabel );
 		hiveConfed.put( serial.asSymbol, 1 );
@@ -105,9 +106,9 @@ SWMiniHiveConfig{
 	}
 
 	// set status of a specific bee 
-	setVersion{ |serial,rev,libv|
+	setVersion{ |serial,rev,libv,caps|
 		// TODO: if other revision or libversion than before, config has to be adapted!
-		hiveMap.at( serial.asSymbol ).revision_( rev ).libversion_( libv );
+		hiveMap.at( serial.asSymbol ).revision_( rev ).libversion_( libv ).libcaps_( caps );
 		//		hiveStatus.put( serial.asSymbol, value );
 	}
 
@@ -124,6 +125,7 @@ SWMiniHiveConfig{
 		// - is configured(2),
 		// - is sending data(3),
 		// - stopped sending data(4)
+		// - inactive (not yet started) (5)
 		^hiveMap.at( serial ).status;
 	}
 
@@ -216,7 +218,7 @@ SWMiniHiveConfig{
 
 		configLib.do{ |it| it.hive = this };
 		hiveMap.keysValuesDo{ |key,it|
-			this.setStatus( key, 0 );
+			this.setStatus( key, 5 );
 			idAllocator.allocID( it.nodeID );
 		};
 		//	^Object.readArchive( thisf +/+ name );
@@ -231,6 +233,7 @@ SWMiniBeeID{
 	var <>configured = 2;
 	var <>status;
 	var <>libversion;
+	var <>libcaps;
 	var <>revision;
 
 	*new{ |ser,cl,nid,conf=2,st,libv,rev|
@@ -238,7 +241,7 @@ SWMiniBeeID{
 	}
 
 	storeOn { arg stream;
-		stream << this.class.name << ".new(" << serial.asCompileString << "," << configLabel.asCompileString << "," << nodeID << "," << configured << "," << status << "," << libversion << "," << revision.asCompileString << ")"
+		stream << this.class.name << ".new(" << serial.asCompileString << "," << configLabel.asCompileString << "," << nodeID << "," << configured << "," << status << "," << libversion << "," << revision.asCompileString << "," << libcaps << ")"
 	}
 
 }
@@ -256,6 +259,7 @@ SWMiniBeeConfig{
 
 	var <noInputs,<noOutputs;
 	var <inputSize;
+	//	var <noCustomOut;
 	var <customSizes;
 
 
@@ -521,7 +525,7 @@ SWMiniBeeConfigGui{
 	var <config;
 
 	var w;
-	var left,right,top,bottom;
+	var left,right,top; //,bottom;
 
 	var <menu;
 	var label,store,send;
@@ -538,29 +542,36 @@ SWMiniBeeConfigGui{
 	init{ |conf|
 		w = Window.new("MiniBee Configuration", Rect( 0, 0, 430, 350 ));
 		
-		top = CompositeView.new( w, Rect( 0,0, 430, 60 ));
+		top = CompositeView.new( w, Rect( 0,0, 430, 90 ));
 		top.addFlowLayout;
 
 
-		menu = PopUpMenu.new( top, 100@20 );
-		label = TextField.new( top, 255@25 );
+		menu = PopUpMenu.new( top, 150@20 );
+		label = TextField.new( top, 205@25 ).focusLostAction_( { arg field; config.label = field.value } ).action_( { arg field; config.label = field.value } );
 		store = Button.new( top, 50@25 ).states_( [[ "store"]]).action_({ 
 			this.storeConfig;
 		});
 		//		send = Button.new( top, 50@25 ).states_( [[ "send"]]).action_({ "sending config".postln; });
 
-		msgInt = EZNumber.new( top, 160@20, "delta T (ms)", [5,100000,\exponential,1].asSpec, {}, 50, labelWidth: 80 );
-		smpMsg = EZNumber.new( top, 130@20, "samples/msg", [1,20,\linear,1].asSpec, {}, 1, labelWidth: 90 );
+		msgInt = EZNumber.new( top, 160@20, "delta T (ms)", [5,100000,\exponential,1].asSpec, { |g| config.msgInterval = g.value; }, 50, labelWidth: 80 );
+		smpMsg = EZNumber.new( top, 130@20, "samples/msg", [1,20,\linear,1].asSpec, { |g| config.samplesPerMsg = g.value; }, 1, labelWidth: 90 );
 		//		noInputs = EZNumber.new( top, 80@20, "#in", labelWidth:40 );
-		
-		left = CompositeView( w,  Rect(0,  60, 215, 260) );
-		right = CompositeView( w, Rect(215,60, 215, 260) );
 
-		bottom = CompositeView( w, Rect( 0, 320, 430, 30 ) );
+		//		bottom = CompositeView( w, Rect( 0, 320, 430, 30 ) );
+
+		top.decorator.nextLine;
+
+		check = Button.new( top, 50@25 ).states_( [["check"]]).action_({ this.checkConfig; });
+		status = StaticText.new( top, 366@25 );
+
+		
+		left = CompositeView( w,  Rect(0,  90, 215, 260) );
+		right = CompositeView( w, Rect(215,90, 215, 260) );
+
 
 		left.addFlowLayout(2@2,2@2);
 		right.addFlowLayout(2@2,2@2);
-		bottom.addFlowLayout(2@2,2@2);
+		//		bottom.addFlowLayout(2@2,2@2);
 
 		StaticText.new( left, 180@20 ); // spacer
 
@@ -568,19 +579,22 @@ SWMiniBeeConfigGui{
 			this.createPin( it, left );
 		};
 
-		leftpins[0][1].action = { |b| if ( b.items.at( b.value ) == \TWIData ) { 
-			leftpins[1][1].value = SWMiniBeeConfig.getPinCaps( \SCL_A5 ).indexOf( \TWIClock );
-		} };
-		leftpins[1][1].action = { |b| if ( b.items.at( b.value ) == \TWIClock ) { 
-			leftpins[0][1].value = SWMiniBeeConfig.getPinCaps( \SDA_A4 ).indexOf( \TWIData );
-		} };
+		leftpins[0][1].action = { |b| 
+			if ( b.items.at( b.value ) == \TWIData ) { 
+				leftpins[1][1].value = SWMiniBeeConfig.getPinCaps( \SCL_A5 ).indexOf( \TWIClock );
+			};
+			status.string_( "" );
+		};
+		leftpins[1][1].action = { |b| 
+			if ( b.items.at( b.value ) == \TWIClock ) { 
+				leftpins[0][1].value = SWMiniBeeConfig.getPinCaps( \SDA_A4 ).indexOf( \TWIData );
+			};
+			status.string_( "" );
+		};
 
 		rightpins = (13..3).collect{ |it|
 			this.createPin( ("D"++it).asSymbol, right );
 		};
-
-		check = Button.new( bottom, 50@25 ).states_( [["check"]]).action_({ this.checkConfig; });
-		status = StaticText.new( bottom, 370@25 );
 
 		w.front;
 
@@ -631,7 +645,7 @@ SWMiniBeeConfigGui{
 
 	storeConfig{
 		// check the label, and put config under label in hiveconfig
-		config.label = label.string;
+		//	config.label = label.string;
 		this.checkConfig;
 		this.updateMenu;
 	}
@@ -661,7 +675,7 @@ SWMiniBeeConfigGui{
 			StaticText.new( parent, 50@20 ).string_( label ).align_( \right ),
 			PopUpMenu.new( parent, 150@20 ).items_( 
 				SWMiniBeeConfig.getPinCaps( label );
-			)
+			).action_( { status.string_( "" ); });
 		]
 	}
 
@@ -691,14 +705,14 @@ SWMiniHiveConfigGui{
 	init{ |hc|
 		hiveConf = hc;
 		
-		w = Window.new("MiniHive Configuration", Rect( 0, 400, 450, 375 ));
+		w = Window.new("MiniHive Configuration", Rect( 0, 400, 500, 375 ));
 		//	
 		
-		hview = CompositeView.new(w, Rect( 0,0, 450, 50));
+		hview = CompositeView.new(w, Rect( 0,0, 500, 50));
 		hview.addFlowLayout(2@2);
 
 		save = [
-			TextField.new( hview, 275@20 ),
+			TextField.new( hview, 325@20 ),
 			Button.new( hview, 60@20 ).states_( [ ["save"] ]).action_( { |b|
 				hiveConf.save( this.getSaveString );
 			}),
@@ -711,12 +725,12 @@ SWMiniHiveConfigGui{
 		header = [
 			StaticText.new( hview, 130@20 ).string_("serial number").align_( \center ), // serial number
 			StaticText.new( hview, 60@20 ).string_( "node ID" ).align_( \center ), // node ID
-			StaticText.new( hview, 100@20 ).string_( "configuration" ).align_( \center ), // choice of configs
+			StaticText.new( hview, 150@20 ).string_( "configuration" ).align_( \center ), // choice of configs
 			StaticText.new( hview, 40@20 ).string_( "status" ).align_( \center ), // active/not active
 			StaticText.new( hview, 80@20 ).string_( "send config").align_( \center ), // send config
 		];
 
-		view = CompositeView.new( w, Rect( 0,50, 450, 310 ));
+		view = ScrollView.new( w, Rect( 0,50, 500, 310 ));
 		view.addFlowLayout(2@2);
 
 		confs = List.new;
@@ -731,7 +745,7 @@ SWMiniHiveConfigGui{
 	getSaveString{
 		var str = save[0].string;
 		if ( str.isNil ){ ^str };
-		if ( str.equals( "" )){ ^nil }{ ^str };
+		if ( str.size == 0 ){ ^nil }{ ^str };
 	}
 
 	addLine{ |key|
@@ -739,7 +753,7 @@ SWMiniHiveConfigGui{
 		confs.add([
 			StaticText.new( view, 130@20 ), // serial number
 			StaticText.new( view, 60@20 ).align_('center'), // node ID
-			PopUpMenu.new( view, 100@20 ).items_(  [ "*new*" ] ++ hiveConf.configLabels).action_({ |men|
+			PopUpMenu.new( view, 150@20 ).items_(  [ "*new*" ] ++ hiveConf.configLabels).action_({ |men|
 				//	men.value.postln;
 				if ( men.value > 0 ){
 					configEdit.config_( 
@@ -753,7 +767,8 @@ SWMiniHiveConfigGui{
 				['w',Color.black, Color.yellow], // (1) is waiting for config
 				['c',Color.black, Color.green], // (2) has confirmed config
 				['d',Color.black, Color.green], // (3) is sending data
-				['x', Color.black, Color.red ] // (4) stopped sending data
+				['x', Color.black, Color.red ], // (4) stopped sending data
+				['i', Color.black, Color.white ] // (5) inactive
 			]), // active/not active
 			//			Button.new( view, 60@20 ).states_( [['known'],['send'],['define']]), // send config
 			Button.new( view, 60@20 ).states_( [['send']]).action_({

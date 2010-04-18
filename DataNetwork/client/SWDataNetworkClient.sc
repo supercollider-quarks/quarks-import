@@ -163,9 +163,13 @@ SWDataNetworkClient : SWDataNetwork{
 				if ( verbose > 0, { msg.postln; });
 				this.minibeeInfo( msg.copyToEnd( 1 ) );
 			}),
-			OSCresponderNode( host, '/mapped/minibee', { |t,r,msg,addr|
+			OSCresponderNode( host, '/mapped/minibee/output', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
-				this.mappedNode( msg[1], msg[2] );
+				this.mappedNode( msg[1], msg[2], 'output' );
+			}),
+			OSCresponderNode( host, '/mapped/minibee/custom', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.mappedNode( msg[1], msg[2], 'custom' );
 			}),
 
 		];
@@ -301,8 +305,8 @@ SWDataNetworkClient : SWDataNetwork{
 		};	
 	}
 
-	mappedNode{ |id,mid|
-		("Mapped node"+id+"to minibee"+mid).postln;
+	mappedNode{ |id,mid,type|
+		("Mapped node"+id+"to minibee"+mid+type).postln;
 	}
 
 	/// OSC interface
@@ -371,6 +375,24 @@ SWDataNetworkClient : SWDataNetwork{
 
 	removeAll{ 
 		this.sendSimpleMsg( '/remove/all' );
+	}
+
+	mapBee{ |node,miniBee,type=\output|
+		var id,mb;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		if ( miniBee.isKindOf( SWMiniBee ) ){
+			mb = miniBee.id;
+		}{
+			mb = miniBee;
+		};
+		switch( type,
+			'custom', { this.sendMsgWithArgs( '/map/minibee/custom', id, mb )},
+			'output', { this.sendMsgWithArgs( '/map/minibee/output', id, mb )}
+		);
 	}
 
 	subscribeNode{ |node|

@@ -145,9 +145,34 @@ SWDataNetwork{
 		}
 	}
 
+	mapBee{ |node,miniBee,type=\output|
+		var id,mb;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		if ( miniBee.isKindOf( SWMiniBee ) ){
+			mb = miniBee.id;
+		}{
+			mb = miniBee;
+		};
+		switch( type,
+			'custom', { this.mapHiveCustom(id,mb)},
+			'output', { this.mapHiveOutput(id,mb)}
+		)
+	}
+
 	mapHiveOutput{ |nodeID, miniBee|
 		if ( hive.notNil ){
 			hive.mapBee( this.nodes[ nodeID ], miniBee, \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+	}
+
+	mapHiveCustom{ |nodeID, miniBee|
+		if ( hive.notNil ){
+			hive.mapBee( this.nodes[ nodeID ], miniBee, \custom );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
 	}
