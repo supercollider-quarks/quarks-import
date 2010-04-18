@@ -111,7 +111,7 @@ BlockPerson {
 							// if synth ended, put person in block
 							"add person to %\n".format(this.currentBlock).postln;
 							this.currentBlock.addPerson(this);
-							
+							synth = nil;
 							stepResponder.remove;
 							
 							// release dependants for garbage collection
@@ -227,14 +227,14 @@ HomeBlock : SoundBlock {
 	
 	var <>activityBuffers, <doorOpenBuffers, <doorCloseBuffers;
 	
-	// overfullAction is evaluated, if the cube reaches a state in which it contains more persons than allowed. (Only once!)
+	// overfullAction is evaluated, if the block reaches a state in which it contains more persons than allowed. (Only once!)
 	// If the state is below, fittingAction is evaluated. 
 	var <>overfullAction, <>fittingAction;
 	var <isOverfull;
-	var isActive = false;
+	var <isActive = false;
 	// these are the actions that are performed on a face change.
 	// invisibleAction(this), faceChangeAction(this, newFace) 
-	var <>invisibleAction, <>faceChangeAction, <>cubeUpdateAction;
+	var <>invisibleAction, <>faceChangeAction, <>blockUpdateAction;
 	
 	var visualsAddr;
 	
@@ -286,8 +286,8 @@ HomeBlock : SoundBlock {
 	}
 */	
 	getActive {
-		this.isActive.not.if({
-		this.isActive = true;
+		isActive.not.if({
+			isActive = true;
 			server.bind{
 				activitySynth = Synth(activitySynthName, [\out, out], target: server).setn(\bufnum, this.activeBufNum);
 				activitySynthParams.keysValuesDo{|key, value|
@@ -298,17 +298,19 @@ HomeBlock : SoundBlock {
 	}
 
 	transitePersonsToNext{|numPersons = 1|
-		var cubes, distances;
-		# cubes, distances = this.nearCubes;
+		var blocks, distances;
+		# blocks, distances = this.nearBlocks;
+		
+		// use all Blocks but the nearest
 		this.persons.asArray.scramble.copyRange(0, numPersons).do{|p, i|
-			p.transite(cubes[i], dur: distances[i] * 8, dt: i* 1.0.rand)
+			p.transite(blocks[i+1], dur: distances[i+1] * 8, dt: i* 1.0.rand)
 		}
 	}
 
-	nearCubes{
+	nearBlocks{
 		var others = this.others.asArray;
-		var distances = others.collect{|cube| 
-			((this.posX - cube.posX).squared + (this.posY - cube.posY).squared).sqrt		};
+		var distances = others.collect{|block| 
+			((this.posX - block.posX).squared + (this.posY - block.posY).squared).sqrt		};
 		var indices = distances.order;
 		
 		^[others[indices], distances[indices]]
@@ -316,7 +318,7 @@ HomeBlock : SoundBlock {
 
 
 	getInactive{|dt = 1|
-		this.isActive = false;
+		isActive = false;
 		activitySynth.release(dt);
 		activitySynth = nil;	
 	}
@@ -338,7 +340,7 @@ HomeBlock : SoundBlock {
 		(persons.size <= maxAllowedPersons).if{
 			isOverfull = false;
 		};
-		persons.isEmpty.if{ // if there's no one in the cube, it cannot be active.
+		persons.isEmpty.if{ // if there's no one in the block, it cannot be active.
 			this.getInactive(dt);
 		};
 	}
@@ -366,10 +368,10 @@ HomeBlock : SoundBlock {
 		invisibleAction.value(this)
 	}
 
-	performCubeUpdate {
+	performBlockUpdate {
 		//"update (% (%), x:%, y:%, r:%, vis(%)) ".format(id, upFace, posX, posY, rot, visible.binaryValue).postln;
 		visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);
-		cubeUpdateAction.value(this)
+		blockUpdateAction.value(this)
 	}
 
 	others {
@@ -436,7 +438,7 @@ BlockGod {
 		activityWatcher = Task{loop{
 			activityDt.wait;
 			blox.do{|block|
-				(block.persons.size > 0).if({
+				(block.persons.size == 1).if({
 					block.perform([\getActive, \getInactive].wchoose([0.95, 0.05]), 1);
 					activityDt.asFloat.rand.wait;
 				}, {

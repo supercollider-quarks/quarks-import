@@ -10,7 +10,7 @@ SoundBlock {
 	var <>visible = false;
 	var <posX = 0, <posY = 0, <rot = 0;
 
-	// fiducial ids of cubes
+	// fiducial ids of blocks
 	classvar <>allIds;
 
 	classvar <all;
@@ -123,10 +123,10 @@ SoundBlock {
 		// only set to new face, if tmp does not include current face
 		tmp.includes(upFace).not.if({
 			tmp.isEmpty.if({
-				// face does not change, but cube is invisible. Information on the actual detected face is not updated. 
+				// face does not change, but block is invisible. Information on the actual detected face is not updated. 
 				//upFace = nil;
 				visible = false;
-				// cube is invisible
+				// block is invisible
 				this.performInvisible
 			}, {
 				upFace = faceStates.maxIndex;
@@ -136,15 +136,15 @@ SoundBlock {
 				posY = y;
 				rot = r;
 				this.performFaceChange;
-				this.performCubeUpdate;
+				this.performBlockUpdate;
 			});
 		}, {
-			// face has not changed, now coordinates of the cube should be set to current upFace.
+			// face has not changed, now coordinates of the block should be set to current upFace.
 			visible = true;
 			posX = x;
 			posY = y;
 			rot = r;
-			this.performCubeUpdate;
+			this.performBlockUpdate;
 		});
 				
 		lastTick = timeStamp;
@@ -159,7 +159,7 @@ SoundBlock {
 		"%: invisible".format(this.color).inform;
 	}
 	
-	performCubeUpdate {
+	performBlockUpdate {
 		"%: update".format(this.color).inform;
 	}
 	
