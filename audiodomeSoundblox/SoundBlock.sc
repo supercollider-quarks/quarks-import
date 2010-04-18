@@ -10,6 +10,8 @@ SoundBlock {
 	var <>visible = false;
 	var <posX = 0, <posY = 0, <rot = 0;
 
+	var <visualsAddr;
+
 	// fiducial ids of blocks
 	classvar <>allIds;
 
@@ -56,20 +58,21 @@ SoundBlock {
 
 	}
 		
-	*basicNew{|color = \red, ids|
-		^super.new.init(color, ids)
+	*basicNew{|color = \red, ids, visualsAddr|
+		^super.new.init(color, ids, visualsAddr)
 	}
-	*new{|color = \red, number = 0|
-		^this.basicNew(color, allIds[color][number])
+	*new{|color = \red, number = 0, visualsAddr|
+		^this.basicNew(color, allIds[color][number], visualsAddr)
 	}
-	init {|aColor, aIDs|
+	init {|aColor, aIDs, aVisualsAddr|
 		// register object
 		all.add(this);
 		id = idCounter;
 		idCounter = idCounter + 1;
 		color = aColor;
 		ids   = aIDs;
-		
+		visualsAddr = aVisualsAddr;
+
 		// 	
 		faceStates = {0}!6;
 		upFace = 0;
@@ -152,15 +155,16 @@ SoundBlock {
 	
 	// implement these methods to add custom functionality
 	performFaceChange {
-		"%: face changed to %".format(this.color, upFace).inform;
+		//"%: face changed to %".format(this.color, upFace).inform;
 	}
 
 	performInvisible {
-		"%: invisible".format(this.color).inform;
+		// "%: invisible".format(this.color).inform;
 	}
 	
 	performBlockUpdate {
-		"%: update".format(this.color).inform;
+		visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);
+		//"%: update".format(this.color).inform;
 	}
 	
 	// unregister object
@@ -178,6 +182,7 @@ BufferBlock : SoundBlock {
 	var <>buffers;
 	var <>synth;
 	//var nodeProxy;
+	var <synthName;
 	var <synthParams;
 	var <out;
 	
@@ -191,8 +196,8 @@ BufferBlock : SoundBlock {
 				[0, 0, 0, 0, 0, 1]
 			];
 	
-	*new{|color=\red, number=0, buffers, outChannel = 0|
-		^super.new(color, number).initBuffers(buffers, outChannel)
+	*new{|color=\red, number=0, visualsAddr, buffers, outChannel = 0|
+		^super.new(color, number, visualsAddr).initBuffers(buffers, outChannel)
 	}
 
 	initBuffers {|aBuffers, aOut|
@@ -214,6 +219,8 @@ BufferBlock : SoundBlock {
 			mute: [0],
 			pitch: [1]
 		);
+		
+		synthName = \bbSynth;
 	}
 
 	play {|server|
@@ -221,7 +228,7 @@ BufferBlock : SoundBlock {
 		
 		synth.isNil.if({
 			server.bind{
-				synth = Synth(\bbSynth, [\out, out, \phaseIn, BufferBlock.bus.index], target: server).setn(\bufnums, buffers.collect(_.bufnum));
+				synth = Synth(synthName, [\out, out, \phaseIn, BufferBlock.bus.index], target: server).setn(\bufnums, buffers.collect(_.bufnum));
 				synthParams.keysValuesDo{|key, value|
 					synth.setn(key, value)
 				}
@@ -374,3 +381,47 @@ BufferBlock : SoundBlock {
 		}).memStore;
 	}
 }
+
+/*AmpelBlock : BufferBlock {
+
+	*new{|color=\red, number=0, visualsAddr, buffers, outChannel = 0|
+		^super.new(color, number, visualsAddr, buffers, outChannel).initAmpel;
+	}
+
+	initAmpel {
+		synthName = \ampel;	
+	}
+
+	*sendSynth{
+		SynthDef(\ampel, {|klackBufnum = 0, mechaBufnum = 1, out = 0, freq = 0.5, inter = 4, mechaPitch = 1, mechaMaxDur = 1.1, isGreen = 0, greenAmp = 0.0125, greenPitch = 1|
+		
+			var klack, mecha, greenSignal, trig;
+			
+			trig = Impulse.ar(freq);
+			//trig = DelayN.ar(trig, 1, freq.reciprocal * 0.99, -1); // add gate closing
+			
+			klack = BufRd.ar(
+				2,
+				klackBufnum, 
+				EnvGen.ar(Env([0, BufFrames.ir(klackBufnum), 0], [BufSampleRate.kr(klackBufnum).reciprocal * (BufFrames.ir(klackBufnum)), 0]), gate: trig), 
+				0, // no loop 
+				inter
+			);
+		
+			mecha = BufRd.ar(
+				2,
+				mechaBufnum, 
+				Phasor.ar(trig, (BufRateScale.kr(mechaBufnum)) * mechaPitch, 1000, BufFrames.kr(mechaBufnum)),
+				1, // loop 
+				inter
+			);
+			
+			mecha = mecha * EnvGen.ar(Env.linen(0, max(0, min(mechaMaxDur, freq.reciprocal - 0.05)), 0.01), gate: trig);
+		
+		
+			greenSignal = greenAmp * (SinOsc.ar([1200, 2400] * greenPitch, 0, [3, 5]).tanh * [0.5, 1] * LFPulse.ar(8, 0, 0.25).lag(0.0125)).sum * isGreen;
+		
+			Out.ar(out, [klack.sum, mecha.sum, greenSignal].sum);	
+		}).memStore
+	}
+}*/
