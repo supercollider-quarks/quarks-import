@@ -13,12 +13,13 @@ BlockPerson {
 	
 	var <>server;	
 	var <synth, <>synthName, <synthParams, <stepResponder;
-	var <stepBuffers;
+	var <stepBuffers, <>stepRate;
 	var <onsetBuffers;
 	var <>homeBlock, <>currentBlock, <lastBlock;
 	var <>visualsAddr;
 	var <id;
 
+	// stepBuffers should be mono soundfiles with increasing step speeds
 	*new{|server, stepBuffers, homeBlock, currentBlock, visualsAddr|
 		^super.new.initHome(server, stepBuffers, homeBlock, currentBlock, visualsAddr)
 	}
@@ -40,6 +41,8 @@ BlockPerson {
 		lastBlock    =     homeBlock;
 		visualsAddr  =   aVisualAddr;
 
+		stepRate = #[1, 1.2, 0.8, 0.857, 0.9][idCounter % 5];
+
 		synthName = \BlockPerson;
 		synthParams = (
 			masterAmp: [0.1],
@@ -48,8 +51,10 @@ BlockPerson {
 			masterMute: [0],
 			mute: [0],
 			onsetBufnum1: [onsetBuffers[0].bufnum],
-			onsetBufnum2: [onsetBuffers[1].bufnum]
+			onsetBufnum2: [onsetBuffers[1].bufnum],
+			rStepRate: [stepRate.reciprocal]
 		);
+
 
 		// add person to current block 
 		this.currentBlock.addPerson(this);
@@ -78,15 +83,14 @@ BlockPerson {
 		};
 	}
 	
-	// one shot synth
-	// FIXME: add different door bufnums according to current side
 	transite {|to, dur = 5, dt = 1| // a Block
-		// one cannot go to where he already is
+		var speed = stepBuffers.size.rand; // we use the index of the used buffer to determine speed
+		
+		// one cannot go to where she already is.
 		(to == this.currentBlock).if{"BlockPerson:transite :illegal move".warn; ^this};
 		
 		
 		this.inTransit.not.if({
-
 			// remove person from current block, and 
 			currentBlock.removePerson(this, dt);
 			lastBlock = currentBlock;
@@ -97,8 +101,8 @@ BlockPerson {
 					.set(
 						\openBufnum, lastBlock.doorOpenBufnum,
 						\closeBufnum, to.doorCloseBufnum,
-						\stepBufnum, stepBuffers.first.bufnum,
-						\dur, dur,
+						\stepBufnum, stepBuffers[speed].bufnum,
+						\dur, dur * (speed.linlin(0, stepBuffers.size-1, 1, 0.5)),
 						\startChan, lastBlock.out,
 						\finishChan, to.out,
 						\rate, 1
@@ -159,7 +163,7 @@ BlockPerson {
 				masterMute = 1, mute = 1, 
 				stepBufnum = 0, openBufnum, closeBufnum,
 				startChan = 0, finishChan = 1, 
-				dur = 5, rate=1, interpolation=4,
+				dur = 5, rate=1, rStepRate = 1, interpolation=4,
 				onsetBufnum1, onsetBufnum2;
 
 			var steps, pan, pannedSteps, open, close;
@@ -184,7 +188,7 @@ BlockPerson {
 			steps = BufRd.ar(
 				1,
 				stepBufnum, 
-				EnvGen.ar(Env([0, 0, BufFrames.ir(stepBufnum), 0], [openLength * 0.9, BufSampleRate.kr(stepBufnum).reciprocal * BufFrames.ir(stepBufnum), 0]), gate: Impulse.ar(0)), 
+				EnvGen.ar(Env([0, 0, BufFrames.ir(stepBufnum), 0], [openLength * 0.9, BufSampleRate.kr(stepBufnum).reciprocal * BufFrames.ir(stepBufnum) * rStepRate, 0]), gate: Impulse.ar(0)), 
 				0, // no loop 
 				interpolation
 			) * EnvGen.ar(Env.linen(0, minDur - closeLength, 0));
@@ -236,13 +240,12 @@ HomeBlock : SoundBlock {
 	// invisibleAction(this), faceChangeAction(this, newFace) 
 	var <>invisibleAction, <>faceChangeAction, <>blockUpdateAction;
 	
-	var visualsAddr;
 	
-	*new{|color=\red, number=0, server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel = 0, visualsAddr|
-		^super.new(color, number).initHome(server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel, visualsAddr)
+	*new{|color=\red, number=0, visualsAddr, server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel = 0|
+		^super.new(color, number, visualsAddr).initHome(server, activityBuffers, doorOpenBuffers, doorCloseBuffers, outChannel)
 	}
 	
-	initHome {|aServer, aBuffers, aDoorOpenBuffers, aDoorCloseBuffers, outChannel, aVisualsAddr|
+	initHome {|aServer, aBuffers, aDoorOpenBuffers, aDoorCloseBuffers, outChannel|
 		out = outChannel;
 
 		server = aServer;
@@ -262,14 +265,13 @@ HomeBlock : SoundBlock {
 			dampFreq: [800]
 		);
 		
-		visualsAddr = aVisualsAddr;
 		
 		persons = IdentitySet[];
 	}
 
 	setActivityParam{|which, val|
 		activitySynthParams[which] = val.asArray;	
-		activitySynth.notNil.if{
+		isActive.if{
 			activitySynth.setn(which, val.asArray);	
 		};
 	}
@@ -325,6 +327,7 @@ HomeBlock : SoundBlock {
 
 	// only stop in emergency, use getInactive instead.
 	getInactiveImmediatly {
+		isActive = false;
 		activitySynth.free;
 		activitySynth = nil;	
 	}
@@ -361,16 +364,18 @@ HomeBlock : SoundBlock {
 	}
 
 	performFaceChange {|face|
+		super.performFaceChange(face);
 		faceChangeAction.value(this, face)
 	}
 
 	performInvisible {
+		super.performInvisible;
 		invisibleAction.value(this)
 	}
 
 	performBlockUpdate {
 		//"update (% (%), x:%, y:%, r:%, vis(%)) ".format(id, upFace, posX, posY, rot, visible.binaryValue).postln;
-		visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);
+		super.performBlockUpdate;
 		blockUpdateAction.value(this)
 	}
 
@@ -382,7 +387,7 @@ HomeBlock : SoundBlock {
 		^buffers[((buffers.size / 6) * upface).asInteger].bufnum;
 	}
 	doorOpenBufnum {
-		^this.pr_computeBufnum(doorOpenBuffers,  upFace);
+		^this.pr_computeBufnum(doorOpenBuffers,  6.rand);
 	}
 	doorCloseBufnum {
 		^this.pr_computeBufnum(doorCloseBuffers, upFace);
@@ -393,6 +398,27 @@ HomeBlock : SoundBlock {
 	
 	*sendSynth {
 		SynthDef(\HomeBlock, {
+			arg	out = 0, 
+				amp = 0.1, mute = 0, masterAmp = 1, masterMute = 0, 
+				bufnum = 0, rate = 1,//startpos = 0,
+				interpolation = 2, gate= 1, dampFreq = 800;
+				
+			var env = EnvGen.kr(Env.asr(0.5, 1, 10), gate: gate, doneAction: 2);
+			var src = PlayBuf.ar(
+				1,
+				bufnum,
+				BufRateScale.kr(bufnum) * rate,
+				startPos: BufRateScale.kr(bufnum) * Rand(0, 1),
+				loop: 1
+			);
+			
+			src = LPF.ar(src, dampFreq);
+
+			Out.ar(out, src * amp * masterAmp * (1 - masterMute) * (1-mute) * env);
+		}).memStore;
+
+// BufRd version, always starting at beginning of file
+/*		SynthDef(\HomeBlock, {
 			arg	out = 0, 
 				amp = 0.1, mute = 0, masterAmp = 1, masterMute = 0, 
 				bufnum = 0, rate = 1,//startpos = 0,
@@ -415,7 +441,7 @@ HomeBlock : SoundBlock {
 			
 			Out.ar(out, src * amp * masterAmp * (1 - masterMute) * (1-mute) * env);
 		}).memStore;
-	}
+*/	}
 }
 
 
@@ -440,7 +466,7 @@ BlockGod {
 			blox.do{|block|
 				(block.persons.size == 1).if({
 					block.perform([\getActive, \getInactive].wchoose([0.95, 0.05]), 1);
-					activityDt.asFloat.rand.wait;
+					rrand(activityDt.asFloat, 2*activityDt).wait;
 				}, {
 					block.getInactive(1);
 				});
