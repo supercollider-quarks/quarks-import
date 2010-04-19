@@ -408,7 +408,7 @@ HomeBlock : SoundBlock {
 				1,
 				bufnum,
 				BufRateScale.kr(bufnum) * rate,
-				startPos: BufRateScale.kr(bufnum) * Rand(0, 1),
+				startPos: BufFrames.kr(bufnum) * Rand(0, 1),
 				loop: 1
 			);
 			
@@ -472,10 +472,15 @@ BlockGod {
 				});
 			}
 		}};
-		randomActivity = Task{loop{
-			rrand(60, 120.0).wait;
-			persons.choose.currentBlock.transitePersonsToNext(1);
-		}};
+		randomActivity = Task{
+			var block, distance, person;
+			loop{
+				rrand(60, 120.0).wait;
+				person = persons.choose;
+				# block, distance = person.currentBlock.nearBlocks.flop.choose;
+				person.transite(block, distance * 8);
+			}
+		};
 	}
 	
 	start {
