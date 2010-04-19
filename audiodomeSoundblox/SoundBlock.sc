@@ -6,7 +6,7 @@ SoundBlock {
 	// faceLag	is the number of seconds, it takes to switch from one face to another
 	var <upFace = 0, <faceStates, <>faceLag = 2;
 	var <lastUpdates, lastTick;
-	var <>fUpThresh = 0.95;
+	var <>fUpThresh = 0.11;
 	var <>visible = false;
 	var <posX = 0, <posY = 0, <rot = 0;
 
@@ -122,7 +122,7 @@ SoundBlock {
 		// update face information
 		
 		tmp = faceStates.selectIndex{|v| v > fUpThresh};
-		
+				
 		// only set to new face, if tmp does not include current face
 		tmp.includes(upFace).not.if({
 			tmp.isEmpty.if({
@@ -163,6 +163,7 @@ SoundBlock {
 	}
 	
 	performBlockUpdate {
+		//["/block", id, upFace, posX, posY, rot, visible.binaryValue].postln;
 		visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);
 		//"%: update".format(this.color).inform;
 	}
