@@ -16,7 +16,7 @@
 		GNUPlot.plot(res);
 	}
 	
-	surf3{ |rect,grid = 20,hidden3d = true, pm3d = true|
+	surf3{ |rect,grid = 30,hidden3d = true, pm3d = true,extracmds|
 	
 		var xyz, gnuplot, grain, specX, specY;
 		
@@ -29,7 +29,7 @@
 		xyz =  (0,grain .. 1).collect{|x|  (0,grain .. 1).collect{|y| 
 			 [specX.map(x),specY.map(y),this.value(specX.map(x),specY.map(y))]
 		 } };
-		gnuplot.surf3(xyz, "a Function", hidden3d, pm3d);
+		gnuplot.surf3(xyz, "a Function", hidden3d, pm3d,extracmds:extracmds);
 		
 		
 	}	
