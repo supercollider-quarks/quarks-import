@@ -8,26 +8,26 @@
 		pxOffsets = (1: 0, 2: 0, 3: 0, 4: 0);
 		parOffsets = (1: 0, 2: 0, 3: 0, 4: 0);
 				^this	}			mapToPxEdit { |editor, scene=1, volPause = true| 		pxEditors.put(scene, editor);					// map 7 lowest knobs to params - can be shifted		 [\knl1, \knl2, \knl3, \knl4, \knl5, \knl6, \knl7].do { |key, i| 
-		 				this.mapCCS(scene, key, 				{ |ch, cc, val| 					var proxy = pxEditors[scene].proxy;
+		 				this.mapCCS(scene, key, 				{ |ccval| 					var proxy = pxEditors[scene].proxy;
 					var parKey =  pxEditors[scene].editKeys[i + parOffsets[scene]];
-					var normVal = val / 127;
+					var normVal = ccval / 127;
 					var lastVal = lastVals[key];
 					if (parKey.notNil and: proxy.notNil) { 
 						proxy.softSet(parKey, normVal, softWithin, lastVal: lastVal) 
 					};
-					lastVals.put(key, normVal);				}			)		};			// and use 8th knob for proxy volume 		this.mapCCS(scene, \knl8, { |ch, cc, val| 
+					lastVals.put(key, normVal);				}			)		};			// and use 8th knob for proxy volume 		this.mapCCS(scene, \knl8, { |ccval| 
 			var lastVal = lastVals[\knl8];
-			var mappedVol = \amp.asSpec.map(val / 127);
+			var mappedVol = \amp.asSpec.map(ccval / 127);
 			var proxy = pxEditors[scene].proxy;
 			if (lastVal.notNil) { lastVal = \amp.asSpec.map(lastVal) };			if (proxy.notNil) { 
 				proxy.softVol_(mappedVol, softWithin, pause: volPause, lastVal: lastVal) 
 			};
-			lastVals[\knl8] = mappedVol;		} );	}			// no softSet - maybe add it.//	mapToPxPars { |scene = 2, proxy ... pairs| //		pairs.do { |pair| //			var ctlName, paramName; //			#ctlName, paramName = pair;//			this.mapCCS(scene, ctlName, //				{  |ch, cc, midival| //					proxy.set(paramName, paramName.asSpec.map(midival / 127))//				}//			);//		};//	}//	//		// convenience method to map to a proxymixer //		// could and should be refactored for more general use! 	mapToPxMix { |mixer, scene = 1| 			var server, mastaFunc; 		pxmixers.put(scene, mixer); 		server = mixer.proxyspace.server;
-
-			// can't softVol server volume ... hmm. do it by hand? 			// add master volume to all 4 scenes, on slider 9: 		mastaFunc = { |chan, cc, val| server.volume.volume_(\mastaVol.asSpec.map(val/127)) };
-					Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);			(1..4).do { |scene| this.mapCCS(scene, \sl9, mastaFunc) };						// scene 1: 			// map first 8 volumes to sliders		[\sl1, \sl2, \sl3, \sl4, \sl5, \sl6, \sl7, \sl8].do { |key, i| 			this.mapCCS(scene, key, 				{ |ch, cc, val| 
+			lastVals[\knl8] = mappedVol;		} );	}			// no softSet - maybe add it.//	mapToPxPars { |scene = 2, proxy ... pairs| //		pairs.do { |pair| //			var ctlName, paramName; //			#ctlName, paramName = pair;//			this.mapCCS(scene, ctlName, //				{  |ch, cc, midival| //					proxy.set(paramName, paramName.asSpec.map(midival / 127))//				}//			);//		};//	}//	//		// convenience method to map to a proxymixer //		// could and should be refactored for more general use! 	mapToPxMix { |mixer, scene = 1| 			var server; 		pxmixers.put(scene, mixer); 		server = mixer.proxyspace.server;
+	
+			// fix later ...
+			// add master volume to all 4 scenes, on slider 9: 		//	(1..4).do { |scene| { |ccval| server.volume.volume_(\mastaVol.asSpec.map(ccval/127)) } };						// scene 1: 			// map first 8 volumes to sliders		[\sl1, \sl2, \sl3, \sl4, \sl5, \sl6, \sl7, \sl8].do { |key, i| 			this.mapCCS(scene, key, 				{ |ccval| 
 					var lastVal = lastVals[key]; 
-					var mappedVal = \amp.asSpec.map(val / 127); 
+					var mappedVal = \amp.asSpec.map(ccval / 127); 
 					
 					var lastVol = if (lastVal.notNil) { \amp.asSpec.map(lastVal) }; 				//	[\lastVal, lastVal, \mappedVal, mappedVal].postcs;
 					try { 

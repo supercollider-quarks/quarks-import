@@ -1,11 +1,21 @@
 PFKtl : MIDIKtl {
 	classvar <>verbose = false; 
 	var <>softWithin = 0.05, <lastVals;
+	var <valRange, <minval, <range;
 
-	
 	init { 
-		super.init;
+		super.init; 
+		orderedCtlNames = ctlNames.keys.asArray.sort;
 		lastVals = ();
+		this.valRange = [0, 127];
+	}
+	
+	norm { |val| ^val - minval / range }
+	
+	valRange_ { |inRange| 
+		range = inRange[1] - inRange[0];
+		minval = inRange[0];
+		valRange = inRange;
 	}
 
 	*makeDefaults { 
@@ -20,6 +30,101 @@ PFKtl : MIDIKtl {
 			)
 		);
 	}
+
+	mapToEnvirGui { |gui, indices| 
+		var elementKeys; 
+		indices = indices ? (1..8); 
+		
+		elementKeys = orderedCtlNames[indices - 1].postcs; 
+				
+		elementKeys.do { |key, i|  	
+			this.mapCC(key, 
+				{ |ccval| 
+					var envir = gui.envir;
+					var parKey =  gui.editKeys[i];
+					var normVal = this.norm(ccval);
+					var lastVal = lastVals[key];
+					if (envir.notNil and: { parKey.notNil } ) { 
+						envir.softSet(parKey, normVal, softWithin, false, lastVal, gui.getSpec(parKey))
+					};
+					lastVals.put(key, normVal) ;
+				}
+			)
+		};
+	}
+	
+	mapToNdefGui { |gui, indices, lastIsVol = true| 
+		var elementKeys, lastKey; 
+		indices = indices ? (1..8); 
+		
+		elementKeys = orderedCtlNames[indices - 1].postcs; 
+		
+		if (lastIsVol) { 
+			lastKey = elementKeys.pop;
+			indices.pop;
+			
+				// use last slider for proxy volume
+			this.mapCC(lastKey, { |ccval| 
+				var lastVal = lastVals[lastKey];
+				var mappedVol = \amp.asSpec.map(this.norm(ccval));
+				var proxy = gui.proxy;
+				if (proxy.notNil) { proxy.softVol_(mappedVol, softWithin, lastVal: lastVal) };
+				lastVals[lastKey] = mappedVol;
+			});
+		};
+		
+		this.mapToEnvirGui(gui.paramGui, indices);
+	}
+	
+	mapToPdefGui { |gui, indices| 
+		this.mapToEnvirGui(gui.envirGui, indices);
+	}
+	
+	mapToTdefGui { |gui, indices| 
+		this.mapToEnvirGui(gui.envirGui, indices);
+	}
+		
+	mapToMixer { |mixer, numVols = 8, indices, lastEdIsVol = true, lastIsMaster = true| 
+ 	
+		var server = mixer.proxyspace.server;
+		var 	elementKeys, lastKey, spec;
+
+		indices = indices ? (1..16); 
+		elementKeys = orderedCtlNames[indices - 1]; 
+		
+				// add master volume on slider 16
+		if (lastIsMaster) { 
+			lastKey = elementKeys.pop; 
+			spec = Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);
+			// this.mapCC(lastKey, Volume.softMasterVol(0.05, server, \midi.asSpec));
+			this.mapCC(lastKey, { |ccval| server.volume.volume_(spec.map(this.norm(ccval))) });
+		};			
+
+			// map first n sliders to volumes
+		elementKeys.keep(numVols).do { |key, i| 
+			this.mapCC(key, 
+				{ |ccval| 
+					var proxy = mixer.arGuis[i].proxy; 
+					var lastVal, mappedVal, lastVol;
+					var spec = \amp.asSpec;
+					if (proxy.notNil) { 
+						lastVal = lastVals[key]; 
+						mappedVal = spec.map(this.norm(ccval)); 
+						lastVol = if (lastVal.notNil) { spec.asSpec.map(lastVal) }; 
+						proxy.softVol_(spec.map(mappedVal), softWithin, true, lastVol ); 
+					};
+				//	[key, proxy.key, mappedVal].postcs;
+					lastVals[key] =  mappedVal;
+				};
+			)
+		};
+		
+		this.mapToNdefGui(mixer.editGui, (numVols + 1 .. elementKeys.size), lastEdIsVol);
+	}
+	
+	
+	
+	
 			// map to 
 	mapToPxEdit { |editor, indices, lastIsVol = true| 
 		var elementKeys, lastKey; 
@@ -31,9 +136,9 @@ PFKtl : MIDIKtl {
 			lastKey = elementKeys.pop;
 			
 				// use last slider for proxy volume
-			this.mapCC(lastKey, { |ch, cc, val| 
+			this.mapCC(lastKey, { |ccval| 
 				var lastVal = lastVals[lastKey];
-				var mappedVol = \amp.asSpec.map(val / 127);
+				var mappedVol = \amp.asSpec.map(this.norm(ccval));
 				var proxy = editor.proxy;
 				if (proxy.notNil) { proxy.softVol_(mappedVol, softWithin, lastVal: lastVal) };
 				lastVals[lastKey] = mappedVol;
@@ -42,10 +147,10 @@ PFKtl : MIDIKtl {
 		
 		elementKeys.do { |key, i|  	
 			this.mapCC(key, 
-				{ |ch, cc, val| 
+				{ |ccval| 
 					var proxy = editor.proxy;
 					var parKey =  editor.editKeys[i];
-					var normVal = val / 127;
+					var normVal = this.norm(ccval);
 					var lastVal = lastVals[key];
 					if (parKey.notNil and: proxy.notNil) { 
 						proxy.softSet(parKey, normVal, softWithin, lastVal: lastVal) 
@@ -66,18 +171,18 @@ PFKtl : MIDIKtl {
 		if (lastIsMaster) { 
 			lastKey = elementKeys.pop; 
 			Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);
-			this.mapCC(lastKey, { |chan, cc, val| server.volume.volume_(\mastaVol.asSpec.map(val/127)) });
+			this.mapCC(lastKey, { |ccval| server.volume.volume_(\mastaVol.asSpec.map(ccval/127)) });
 		};			
 
 			// map first n sliders to volumes
 		elementKeys.keep(splitIndex).do { |key, i| 
 			this.mapCC(key, 
-				{ |ch, cc, val| 
+				{ |ccval| 
 					var proxy = mixer.pxMons[i].proxy; 
 					var lastVal, mappedVal, lastVol;
 					if (proxy.notNil) { 
 						lastVal = lastVals[key]; 
-						mappedVal = \amp.asSpec.map(val / 127); 
+						mappedVal = \amp.asSpec.map(this.norm(ccval)); 
 						lastVol = if (lastVal.notNil) { \amp.asSpec.map(lastVal) }; 
 						proxy.softVol_( \amp.asSpec.map(mappedVal), softWithin, true, lastVol ); 
 					};

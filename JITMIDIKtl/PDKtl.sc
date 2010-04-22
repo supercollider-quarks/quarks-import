@@ -70,10 +70,10 @@ PDKtl : MIDIKtl {
 			
 			elementKeys.do { |key, i|  	
 				this.mapCCS(scene, key, 
-					{ |ch, cc, val| 
+					{ |ccval| 
 						var proxy = editor.proxy;
 						var parKey =  editor.editKeys[i];
-						var normVal = val / 127;
+						var normVal = ccval / 127;
 						var lastVal = lastVals[key];
 						if (parKey.notNil and: proxy.notNil) { 
 							proxy.softSet(parKey, normVal, softWithin, lastVal: lastVal) 
@@ -89,19 +89,19 @@ PDKtl : MIDIKtl {
 				lastKey = elementKeys.pop;
 				
 					// use last knob for proxy volume
-				this.mapCCS(scene, lastKey, { |ch, cc, val| 
+				this.mapCCS(scene, lastKey, { |ccval| 
 					var proxy = editor.proxy;
-					if (proxy.notNil) { proxy.nudgeVol(val - 64 * step) };
+					if (proxy.notNil) { proxy.nudgeVol(ccval - 64 * step) };
 				});
 			};
 			
 			elementKeys.do { |key, i|  	
 				this.mapCCS(scene, key, 
-					{ |ch, cc, val| 
+					{ |ccval| 
 						var proxy = editor.proxy;
 						var parKey =  editor.editKeys[i];
 						if (parKey.notNil and: proxy.notNil) { 
-							proxy.nudgeSet(parKey, val - 64 * step) 
+							proxy.nudgeSet(parKey, ccval - 64 * step) 
 						};
 					}
 				)
@@ -120,18 +120,18 @@ PDKtl : MIDIKtl {
 			if (lastIsMaster) { 
 				lastKey = elementKeys.pop; 
 				Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);
-				this.mapCCS(scene, lastKey, { |chan, cc, val| server.volume.volume_(\mastaVol.asSpec.map(val/127)) });
+				this.mapCCS(scene, lastKey, { |ccval| server.volume.volume_(\mastaVol.asSpec.map(ccval/127)) });
 			};			
 	
 				// map first n sliders to volumes
 			elementKeys.keep(splitIndex).do { |key, i| 
 				this.mapCCS(scene, key, 
-					{ |ch, cc, val| 
+					{ |ccval| 
 						var proxy = mixer.pxMons[i].proxy; 
 						var lastVal, mappedVal, lastVol;
 						if (proxy.notNil) { 
 							lastVal = lastVals[key]; 
-							mappedVal = \amp.asSpec.map(val / 127); 
+							mappedVal = \amp.asSpec.map(ccval / 127); 
 							lastVol = if (lastVal.notNil) { \amp.asSpec.map(lastVal) }; 
 							proxy.softVol_( \amp.asSpec.map(mappedVal), softWithin, true, lastVol ); 
 						};
@@ -142,24 +142,21 @@ PDKtl : MIDIKtl {
 			
 		} { 			// endless mode:
 					// add master volume on knob 16
-			if (lastIsMaster) { 
-				lastKey = elementKeys.pop; 
-				Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);
-				this.mapCCS(scene, lastKey, { |chan, cc, val| 
-					var oldNormVal = \mastaVol.asSpec.unmap(server.volume.volume).postln;
-					var nudgedVol = (oldNormVal + (val - 64 * step)).clip(0, 1);
-					server.volume.volume_(nudgedVol.ampdb) 
-				});
-			};			
+					// nudging master vol not working yet
+//			if (lastIsMaster) { 
+//				lastKey = elementKeys.pop; 
+//				Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);
+//				this.mapCCS(scene, lastKey, { |ccval| server.volume.volume_(\mastaVol.asSpec.map(ccval/127)) });
+//			};			
 	
 				// map first n knobs to volumes
 			elementKeys.keep(splitIndex).do { |key, i| 
 				
 				this.mapCCS(scene, key, 
-					{ |ch, cc, val| 
+					{ |ccval| 
 						var proxy = mixer.pxMons[i].proxy; 
 						if (proxy.notNil) { 
-							proxy.nudgeVol(val - 64 * step); 
+							proxy.nudgeVol(ccval - 64 * step); 
 						};
 					};
 				)
