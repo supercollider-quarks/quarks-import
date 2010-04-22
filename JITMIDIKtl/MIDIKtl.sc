@@ -3,11 +3,11 @@ MIDIKtl {
 	classvar <defaults; 
 	
 	var <srcID, <ccDict, <ccresp; 
-	var <ctlNames;
-
+	var <ctlNames, <orderedCtlNames;
+			
 	*initClass { 
 		defaults = ();
-		this.subclasses.do(_.makeDefaults); 
+		this.allSubclasses.do(_.makeDefaults); 
 	}
 
 	*makeDefaults { 
@@ -28,11 +28,11 @@ MIDIKtl {
 		ccDict = ccDict ?? ();
 		
 		ccresp.remove; 
-		ccresp = CCResponder({ |src, chan, ccn, val| 
+		ccresp = CCResponder({ |src, chan, ccn, ccval| 
 			var lookie = this.makeCCKey(chan, ccn);
-			if (this.class.verbose, { ['cc', src, chan, ccn, val].postcs });
+			if (this.class.verbose, { ['cc', src, chan, ccn, ccval].postcs });
 			
-			ccDict[lookie].value(chan, ccn, val);
+			ccDict[lookie].value(ccval);
 		}, srcID);
 	}
 
@@ -100,49 +100,49 @@ MIDINKtl : MIDIKtl {
 		^super.newCopyArgs(srcID, ccDict).init(noteOnDict, noteOffDict);
 	}
 
-	init { |noteOnD, noteOffD|
-		super.init.initNote(noteOnD, noteOffD)
-	}
-	
-	initNote { |noteOnD, noteOffD|
-		noteOnDict = noteOnD ?? {()};
-		noteOffDict = noteOffD ?? {()};
-
-		noteOnResp.remove; 
-		noteOnResp = CCResponder({ |src, chan, ccn, val| 
-			var lookie = this.makeCCKey(chan, ccn);
-			if (this.class.verbose, { ['cc', src, chan, ccn, val].postcs });
-			
-			ccDict[lookie].value(chan, ccn, val);
-		}, srcID);
-
-		noteOffResp.remove; 
-		noteOffResp = CCResponder({ |src, chan, ccn, val| 
-			var lookie = this.makeCCKey(chan, ccn);
-			if (this.class.verbose, { ['cc', src, chan, ccn, val].postcs });
-			
-			ccDict[lookie].value(chan, ccn, val);
-		}, srcID);
-	}
-
-		// only for single keys from that source, 
-		// ignore midi channels for now. 
-		// maybe fix later if needed? 
-	mapNoteOn { |note, action| 
-		// assume channels
-	}
-	
-	mapNoteOff { 
-		
-	}
-
-	mapNoteOnS { 
-		
-	}
-	
-	mapNoteOffS { 
-		
-	}
+//	init { |noteOnD, noteOffD|
+//		super.init.initNote(noteOnD, noteOffD)
+//	}
+//	
+//	initNote { |noteOnD, noteOffD|
+//		noteOnDict = noteOnD ?? {()};
+//		noteOffDict = noteOffD ?? {()};
+//
+//		noteOnResp.remove; 
+//		noteOnResp = NoteOnResponder({ |src, chan, note, vel| 
+//			var lookie = this.makeNoteKey(chan, note);
+//			if (this.class.verbose, { ['cc', src, chan, note, vel].postcs });
+//			
+//			ccDict[lookie].value(note, vel);
+//		}, srcID);
+//
+//		noteOffResp.remove; 
+//		noteOffResp = NoteOffResponder({ |src, chan, note, vel| 
+//			var lookie = this.makeNoteKey(chan, note);
+//			if (this.class.verbose, { ['cc', src, chan, note, vel].postcs });
+//			
+//			ccDict[lookie].value(note, vel);
+//		}, srcID);
+//	}
+//
+//		// only for single keys from that source, 
+//		// ignore midi channels for now. 
+//		// maybe fix later if needed? 
+//	mapNoteOn { |chan, note, action| 
+//		// assume channels
+//	}
+//	
+//	mapNoteOff { 
+//		
+//	}
+//
+//	mapNoteOnS { 
+//		
+//	}
+//	
+//	mapNoteOffS { 
+//		
+//	}
 	
 
 	free { 

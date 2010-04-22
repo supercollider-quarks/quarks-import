@@ -19,7 +19,7 @@ BCRKtl : MIDIKtl {
 			var ctlName, paramName;
 			#ctlName, paramName = pair;
 			this.mapCC(ctlName,
-				{ Ê|ch, cc, midival|
+				{ Ê|midival|
 					proxy.set(paramName, paramName.asSpec.map(midival / 127))
 				}
 			);

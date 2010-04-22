@@ -1,7 +1,13 @@
 // adc & haho - joystickbox
 // inherit the rest from PocketFader
 
+
 JSBKtl : PFKtl { 
+	
+	init { 		// make sure we reach top and bottom 
+				// - the joysticks often only reach 15 - 105.
+		^super.init.valRange_([20, 100]);
+	}
 	*makeDefaults { 
 
 		// just one bank of joysticks
