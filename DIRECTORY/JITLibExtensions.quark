@@ -1,10 +1,10 @@
 (
 	\name: 			"JITLib extensions",
 	\path: 			"JITLibExtensions",
-	\summary:		"Some extensions to the common JITLib classes",
+	\summary:		"Some extensions to the common JITLib classes, only for SC 3.4 (earlier versions include these classes in common) ",
 	\author: 		"Alberto de Campo, Julian Rohrhuber",
 	\organisation:	"Art University Graz, University Cologne, University of the Arts Berlin, IMM DŸsseldorf",
 	\helpdoc:		"help",
 	\since: 		"2000",
-	\version:		"0.1"
+	\version:		Ò0.1Ó
 )
