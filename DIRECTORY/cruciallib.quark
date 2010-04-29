@@ -6,5 +6,5 @@
 	version:		1.0,
 	url:			"http://www.crucial-systems.com/",
 	helpdoc:	"Help/CRUCIAL-LIBRARY.html",
-	isCompatible:	{ Main.versionAtMost(3.4).not }
+	isCompatible:	{ Main.versionAtMost(3, 3).not }
 )
