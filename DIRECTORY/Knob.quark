@@ -1,9 +1,0 @@
-(
-	\name: "Knob",
-	\path: "Knob", // path relative to the root Quarks folder
-	\summary: "gui control with round, horizontal or vertical action",
-	\author: "blackrain",
-	\organization: 	"realizedsound",
-	\url:           "http://www. realizedsound.net/",
-\helpdoc: "Help/Knob.html"
-)
