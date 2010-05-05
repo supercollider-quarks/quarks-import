@@ -14,8 +14,11 @@ MixingBoard {
 		<>onClose;	// standard in gui classes
 
 	*initClass {
-		Class.initClassTree(MixerSkin);
-		StartUp.add({ defaultSkin = MixerSkin.new });
+//		Class.initClassTree(MixerSkin);
+		StartUp.add({
+			defaultSkin = MixerSkin.new;
+			boards = Array.new;
+		});
 	}
 	
 	*new { arg name = "Mixer", skin ... mixers;
