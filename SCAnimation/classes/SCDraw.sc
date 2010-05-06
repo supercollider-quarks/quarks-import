@@ -1,21 +1,28 @@
 SCDraw {
 	var score, firstFrame, lastFrame, frameRate, clear;
 	
-	*new { arg list, start=0.0, end=nil, rate=25.0, sort=true;
-		^super.new.init(list, start, end, rate, sort);
+	*new { arg list, start=0.0, end=nil, rate=25.0, sort=true, frameMode=false;
+		^super.new.init(list, start, end, rate, sort, frameMode);
 	}
 	
-	init { arg list, start, end, rate, sort=true;
+	init { arg list, start, end, rate, sort=true, frameMode=false;
 		score = Array.new;
 		frameRate = rate;
-		firstFrame = (start*frameRate).asInteger;
-		if(end.isNil, { lastFrame = 0; }, { lastFrame = (end*frameRate).asInteger; });
+		if(frameMode==true, { firstFrame = start.asInteger; }, { firstFrame = (start*frameRate).asInteger });
+		if(end.isNil, { lastFrame = 0; }, {
+			if(frameMode==true, { lastFrame = end.asInteger; }, { lastFrame = (end*frameRate).asInteger; });
+			});
 		clear = 1;
 		list.do({ arg it, i;
 				var arr, dict=Dictionary.new();
 				arr = Array.new();
-				arr = arr.add((it[1]*frameRate).asInteger);
-				arr = arr.add((it[2]*frameRate).asInteger+arr[0]);
+				if(frameMode==true, {
+					arr = arr.add(it[1].asInteger);
+					arr = arr.add(it[2].asInteger+arr[0]);
+					}, {
+					arr = arr.add((it[1]*frameRate).asInteger);
+					arr = arr.add((it[2]*frameRate).asInteger+arr[0]);
+					});
 				arr = arr.add(it[0]);
 				arr = arr.add(it[1]);
 				arr = arr.add(it[2]);
@@ -106,12 +113,12 @@ SCDraw {
 
 	}
 			
-	*preview	{ arg list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, sort=true;
-		this.new(list, start, end, rate, sort).preview(width, height, color);
+	*preview	{ arg list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, sort=true, frameMode=false;
+		this.new(list, start, end, rate, sort, frameMode).preview(width, height, color);
 	}
 	
-	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true;
-		this.new(list, start, end, rate, sort).render(path, width, height, color, ext);
+	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true, frameMode=false;
+		this.new(list, start, end, rate, sort, frameMode).render(path, width, height, color, ext);
 	}
 }
 
