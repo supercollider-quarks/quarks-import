@@ -16,12 +16,17 @@ p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b7000f}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #b9000d}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #0000b3}
 span.s3 {color: #000000}
 span.s4 {color: #29771e}
 span.s5 {color: #606060}
 span.s6 {color: #b7000f}
+span.s7 {color: #0000bf}
+span.s8 {color: #007300}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -237,72 +242,72 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">Same as first example except with frameMode = true.</p>
 <p class="p6"><br></p>
 <p class="p5">(</p>
-<p class="p5"><span class="s2">var</span> score, circle, square, bkgrnd, image, pict;</p>
-<p class="p6"><br></p>
-<p class="p7"><span class="s3">image = </span><span class="s2">SCImage</span><span class="s3">.open(</span>"/Library/Desktop Pictures/Ripples Blue.jpg"<span class="s3">);</span></p>
-<p class="p6"><br></p>
-<p class="p5">circle = { <span class="s2">arg</span> perc, dict;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">var</span> x, y, r;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>x = dict.at(<span class="s4">\x</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>if(x.class == <span class="s2">Env</span>, { x = x.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span>y = dict.at(<span class="s4">\y</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>if(y.class == <span class="s2">Env</span>, { y = y.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span>r = dict.at(<span class="s4">\r</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>if(r.class == <span class="s2">Env</span>, { r = r.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.fillColor = <span class="s2">Color</span>.blue;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.strokeColor = <span class="s2">Color</span>.green;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.addArc(x@y, r, 0.0, 2pi);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.fillStroke;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p6"><br></p>
-<p class="p5">square = { <span class="s2">arg</span> perc, dict;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">var</span> x, y, r;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>x = dict.at(<span class="s4">\x</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>if(x.class == <span class="s2">Env</span>, { x = x.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span>y = dict.at(<span class="s4">\y</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>if(y.class == <span class="s2">Env</span>, { y = y.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span>r = dict.at(<span class="s4">\r</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span>if(r.class == <span class="s2">Env</span>, { r = r.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.fillColor = <span class="s2">Color</span>.blue;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.strokeColor = <span class="s2">Color</span>.green;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.addRect(<span class="s2">Rect</span>(x-r+rrand(-50.0, 50.0), y-r+rrand(-50.0, 50.0), 2*r, 2*r));</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s2">Pen</span>.stroke;</p>
-<p class="p5"><span class="Apple-tab-span">	</span>};</p>
-<p class="p6"><span class="Apple-tab-span">	</span></p>
-<p class="p5">bkgrnd = { <span class="s2">arg</span> perc, dict;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  </span>image.drawInRect(<span class="s2">Rect</span>(0, 0, 500, 500), image.bounds, fraction: 1.0);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
-<p class="p6"><br></p>
-<p class="p5">pict = { <span class="s2">arg</span> perc, dict;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s2">var</span> x, y, rx, ry;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x = dict.at(<span class="s4">\x</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(x.class == <span class="s2">Env</span>, { x = x.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y = dict.at(<span class="s4">\y</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(y.class == <span class="s2">Env</span>, { y = y.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rx = dict.at(<span class="s4">\rx</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(rx.class == <span class="s2">Env</span>, { rx = rx.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ry = dict.at(<span class="s4">\ry</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(ry.class == <span class="s2">Env</span>, { ry = ry.at(perc); });</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>image.drawInRect(<span class="s2">Rect</span>(x-rx, y-ry, 2*rx, 2*ry), image.bounds);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p5">score = [<span class="Apple-tab-span">	</span>[ bkgrnd, 0.0, 3.0],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 0.1, 2.9, <span class="s4">\x</span>, 100.0, <span class="s4">\y</span>, 100.0, <span class="s4">\r</span>, <span class="s2">Env</span>([ 150.0, 25 ], [1.0]) ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 0.2, 2.8, <span class="s4">\x</span>, 25.0, <span class="s4">\y</span>, <span class="s2">Env</span>([ 50.0, 250], [1.0]), <span class="s4">\r</span>, 10.0 ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 0.3, 2.7, <span class="s4">\x</span>, 150.0, <span class="s4">\y</span>, <span class="s2">Env</span>([ 250.0, 50], [1.0]), <span class="s4">\r</span>, <span class="s2">Env</span>([ 150.0, 25 ], [1.0]) ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 0.3, 2.7, <span class="s4">\x</span>, <span class="s2">Env</span>([ 50.0, 250], [1.0]), <span class="s4">\y</span>, 150.0, <span class="s4">\r</span>, 34.0 ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 0.4, 2.6, <span class="s4">\x</span>, <span class="s2">Env</span>([ 50.0, 250], [1.0]), <span class="s4">\y</span>, <span class="s2">Env</span>([ 50.0, 250], [1.0]), <span class="s4">\r</span>, 30.0 ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ pict, 3.0, 3.0, <span class="s4">\x</span>,<span class="Apple-converted-space">  </span><span class="s2">Env</span>([ 50.0, 450.0, 50.0 ], [ 0.5, 0.5 ]), <span class="s4">\y</span>, <span class="s2">Env</span>([ 50.0, 450.0, 50.0 ], [ 0.5, 0.5 ]),</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">\rx</span>, <span class="s2">Env</span>([ 250.0, 25 ], [1.0]), <span class="s4">\ry</span>, <span class="s2">Env</span>([ 250.0, 25 ], [1.0]) ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ pict, 6.0, 3.0, <span class="s4">\x</span>,<span class="Apple-converted-space">  </span>250.0, <span class="s4">\y</span>, 250.0, <span class="s4">\rx</span>, <span class="s2">Env</span>([ 250.0, 25 ], [1.0]), <span class="s4">\ry</span>, <span class="s2">Env</span>([ 25.0, 250.0 ], [1.0]) ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ <span class="s4">\noRefresh</span>, 9.0, 2.0 ],<span class="Apple-converted-space"> </span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ square, 9.0, 4.0, <span class="s4">\x</span>,<span class="Apple-converted-space">  </span>250.0, <span class="s4">\y</span>, 250.0, <span class="s4">\r</span>, <span class="s2">Env</span>([ 250.0, 25.0, 250.0 ], [ 0.5, 0.5]) ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ square, 13.0, 4.0, <span class="s4">\x</span>,<span class="Apple-converted-space">  </span>250.0, <span class="s4">\y</span>, 250.0, <span class="s4">\r</span>, <span class="s2">Env</span>([ 250.0, 25.0, 250.0 ], [ 0.5, 0.5]) ],</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ <span class="s4">\noRefresh</span>, 15.0, 2.0 ]</p>
-<p class="p5"><span class="Apple-tab-span">	</span>];</p>
-<p class="p6"><span class="Apple-tab-span">	</span></p>
-<p class="p5"><span class="s2">SCDraw</span>.preview(score);</p>
-<p class="p8">//SCDraw.render("~/Desktop/sequence/image".standardizePath, score);</p>
+<p class="p10"><span class="s7">var</span> score, circle, square, bkgrnd, image, pict;</p>
+<p class="p11"><br></p>
+<p class="p7"><span class="s3">image = </span><span class="s7">SCImage</span><span class="s3">.open(</span>"/Library/Desktop Pictures/Ripples Blue.jpg"<span class="s3">);</span></p>
+<p class="p11"><br></p>
+<p class="p10">circle = { <span class="s7">arg</span> perc, dict;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">var</span> x, y, r;</p>
+<p class="p10"><span class="Apple-tab-span">	</span>x = dict.at(<span class="s8">\x</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span>if(x.class == <span class="s7">Env</span>, { x = x.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span>y = dict.at(<span class="s8">\y</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span>if(y.class == <span class="s7">Env</span>, { y = y.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span>r = dict.at(<span class="s8">\r</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span>if(r.class == <span class="s7">Env</span>, { r = r.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.fillColor = <span class="s7">Color</span>.blue;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor = <span class="s7">Color</span>.green;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.addArc(x@y, r, 0.0, 2pi);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.fillStroke;</p>
+<p class="p10"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><br></p>
+<p class="p10">square = { <span class="s7">arg</span> perc, dict;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">var</span> x, y, r;</p>
+<p class="p10"><span class="Apple-tab-span">	</span>x = dict.at(<span class="s8">\x</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span>if(x.class == <span class="s7">Env</span>, { x = x.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span>y = dict.at(<span class="s8">\y</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span>if(y.class == <span class="s7">Env</span>, { y = y.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span>r = dict.at(<span class="s8">\r</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span>if(r.class == <span class="s7">Env</span>, { r = r.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.fillColor = <span class="s7">Color</span>.blue;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.strokeColor = <span class="s7">Color</span>.green;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.addRect(<span class="s7">Rect</span>(x-r+rrand(-50.0, 50.0), y-r+rrand(-50.0, 50.0), 2*r, 2*r));</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.stroke;</p>
+<p class="p10"><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p10">bkgrnd = { <span class="s7">arg</span> perc, dict;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space">  </span>image.drawInRect(<span class="s7">Rect</span>(0, 0, 500, 500), image.bounds, fraction: 1.0);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><br></p>
+<p class="p10">pict = { <span class="s7">arg</span> perc, dict;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">var</span> x, y, rx, ry;</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>x = dict.at(<span class="s8">\x</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(x.class == <span class="s7">Env</span>, { x = x.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>y = dict.at(<span class="s8">\y</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(y.class == <span class="s7">Env</span>, { y = y.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rx = dict.at(<span class="s8">\rx</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(rx.class == <span class="s7">Env</span>, { rx = rx.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>ry = dict.at(<span class="s8">\ry</span>);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(ry.class == <span class="s7">Env</span>, { ry = ry.at(perc); });</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>image.drawInRect(<span class="s7">Rect</span>(x-rx, y-ry, 2*rx, 2*ry), image.bounds);</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p11"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p10">score = [<span class="Apple-tab-span">	</span>[ bkgrnd, 0, 75],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 1, 74, <span class="s8">\x</span>, 100.0, <span class="s8">\y</span>, 100.0, <span class="s8">\r</span>, <span class="s7">Env</span>([ 150.0, 25 ], [1.0]) ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 2, 73, <span class="s8">\x</span>, 25.0, <span class="s8">\y</span>, <span class="s7">Env</span>([ 50.0, 250], [1.0]), <span class="s8">\r</span>, 10.0 ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 3, 72, <span class="s8">\x</span>, 150.0, <span class="s8">\y</span>, <span class="s7">Env</span>([ 250.0, 50], [1.0]), <span class="s8">\r</span>, <span class="s7">Env</span>([ 150.0, 25 ], [1.0]) ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 4, 71, <span class="s8">\x</span>, <span class="s7">Env</span>([ 50.0, 250], [1.0]), <span class="s8">\y</span>, 150.0, <span class="s8">\r</span>, 34.0 ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ circle, 5, 70, <span class="s8">\x</span>, <span class="s7">Env</span>([ 50.0, 250], [1.0]), <span class="s8">\y</span>, <span class="s7">Env</span>([ 50.0, 250], [1.0]), <span class="s8">\r</span>, 30.0 ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ pict, 75, 75, <span class="s8">\x</span>,<span class="Apple-converted-space">  </span><span class="s7">Env</span>([ 50.0, 450.0, 50.0 ], [ 0.5, 0.5 ]), <span class="s8">\y</span>, <span class="s7">Env</span>([ 50.0, 450.0, 50.0 ], [ 0.5, 0.5 ]),</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">\rx</span>, <span class="s7">Env</span>([ 250.0, 25 ], [1.0]), <span class="s8">\ry</span>, <span class="s7">Env</span>([ 250.0, 25 ], [1.0]) ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ pict, 150, 75, <span class="s8">\x</span>,<span class="Apple-converted-space">  </span>250.0, <span class="s8">\y</span>, 250.0, <span class="s8">\rx</span>, <span class="s7">Env</span>([ 250.0, 25 ], [1.0]), <span class="s8">\ry</span>, <span class="s7">Env</span>([ 25.0, 250.0 ], [1.0]) ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ <span class="s8">\noRefresh</span>, 225, 50 ],<span class="Apple-converted-space"> </span></p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ square, 225, 100, <span class="s8">\x</span>,<span class="Apple-converted-space">  </span>250.0, <span class="s8">\y</span>, 250.0, <span class="s8">\r</span>, <span class="s7">Env</span>([ 250.0, 25.0, 250.0 ], [ 0.5, 0.5]) ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ square, 325, 100, <span class="s8">\x</span>,<span class="Apple-converted-space">  </span>250.0, <span class="s8">\y</span>, 250.0, <span class="s8">\r</span>, <span class="s7">Env</span>([ 250.0, 25.0, 250.0 ], [ 0.5, 0.5]) ],</p>
+<p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[ <span class="s8">\noRefresh</span>, 375, 50 ]</p>
+<p class="p10"><span class="Apple-tab-span">	</span>];</p>
+<p class="p11"><span class="Apple-tab-span">	</span></p>
+<p class="p10"><span class="s7">SCDraw</span>.preview(score, frameMode: <span class="s7">true</span>);</p>
+<p class="p12">//SCDraw.render("~/Desktop/sequence/image".standardizePath, score, frameMode: true);</p>
 <p class="p5">)</p>
 </body>
 </html>
