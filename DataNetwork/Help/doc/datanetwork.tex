@@ -159,6 +159,12 @@ You can map datanodes to send data to a MiniBee (see table \ref{oscinterfaceMB})
 % \verb|/map/minibee/digital| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee digital output (reply /mapped/minibee)\\
 \verb|/mapped/minibee/output| & ii & node ID, minibee ID & reply to /map/minibee/output messages \\
 \verb|/mapped/minibee/custom| & ii & node ID, minibee ID & reply to /map/minibee/custom messages \\
+\verb|/unmap/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /unmapped/minibee/output)\\
+\verb|/unmap/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /unmapped/minibee/custom)\\
+% \verb|/map/minibee/pwm| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee pwm output (reply /mapped)\\
+% \verb|/map/minibee/digital| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee digital output (reply /mapped/minibee)\\
+\verb|/unmapped/minibee/output| & ii & node ID, minibee ID & reply to /unmap/minibee/output messages \\
+\verb|/unmapped/minibee/custom| & ii & node ID, minibee ID & reply to /unmap/minibee/custom messages \\
 \hline
 \end{tabular}
 \end{center}
