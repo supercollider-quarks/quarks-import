@@ -75,15 +75,23 @@ SWDataNetwork{
 		var lasttime;
 		var node,type;
 		if ( verbose > 1, { [id,data].postln; } );
-		node = nodes[id];
-
 		
-		if ( node.isNil, {
-			type = this.checkDataType( data );
-			ret = this.registerNode( id, data.size, type );
+		if ( id.isKindOf( Integer ) ){
 			node = nodes[id];
-			if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
-		});
+			if ( node.isNil, {
+				type = this.checkDataType( data );
+				ret = this.registerNode( id, data.size, type );
+				node = nodes[id];
+				if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
+			});
+		}{
+			node = this.at( id.asSymbol );
+			if ( node.isNil ){
+				("unknown node"+id).postln;
+				returnCode = 3;
+			}
+		};
+		
 		if ( ret ) {
 			if ( recTime ){
 				lasttime = node.lasttime;
@@ -164,15 +172,31 @@ SWDataNetwork{
 	}
 
 	mapHiveOutput{ |nodeID, miniBee|
+		//		("network: mapping hive output" + nodeID + miniBee ).postln;
 		if ( hive.notNil ){
-			hive.mapBee( this.nodes[ nodeID ], miniBee, \output );
+			hive.mapBee( miniBee, this.nodes[ nodeID ], \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+	}
+
+	unmapHiveOutput{ |nodeID, miniBee|
+		//		("network: mapping hive output" + nodeID + miniBee ).postln;
+		if ( hive.notNil ){
+			hive.unmapBee( miniBee, this.nodes[ nodeID ], \output );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
 	}
 
 	mapHiveCustom{ |nodeID, miniBee|
 		if ( hive.notNil ){
-			hive.mapBee( this.nodes[ nodeID ], miniBee, \custom );
+			hive.mapBee( miniBee, this.nodes[ nodeID ], \custom );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+	}
+
+	unmapHiveCustom{ |nodeID, miniBee|
+		if ( hive.notNil ){
+			hive.unmapBee( miniBee, this.nodes[ nodeID ], \custom );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
 	}

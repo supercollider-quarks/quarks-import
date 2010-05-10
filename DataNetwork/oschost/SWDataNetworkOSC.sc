@@ -259,6 +259,16 @@ SWDataNetworkOSC{
 				if ( msg.size > 1 ){
 					addr.port = msg[1]; this.mapHiveCustom( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
+			OSCresponderNode( nil, '/unmap/minibee/output', { |t,r,msg,addr|
+				if ( verbose > 1, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmapHiveOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
+			OSCresponderNode( nil, '/unmap/minibee/custom', { |t,r,msg,addr|
+				if ( verbose > 1, { msg.postln; });
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmapHiveCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ if ( verbose > 0, { "missing port in message".postln; }); };			}),
 			OSCresponderNode( nil, '/map/minibee/pwm', { |t,r,msg,addr|
 				if ( verbose > 1, { msg.postln; });
 				if ( msg.size > 1 ){
@@ -912,6 +922,7 @@ SWDataNetworkOSC{
 					if ( there.checkForSetter(node), {
 						// old version:
 						//	if ( setters.at( msg[0] ) == addr, {
+						//		("mapping hive output" + msg).postln;
 						network.mapHiveOutput( msg[0], msg[1] );
 						addr.sendMsg( '/mapped/minibee/output', msg[0], msg[1] );
 					},{
@@ -921,6 +932,32 @@ SWDataNetworkOSC{
 					this.errorMsg( addr, "/map/minibee/output", 5, msg );
 				});
 			this.logMsg( "/map/minibee/output:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+	unmapHiveOutput{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/unmap/minibee/output", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						// old version:
+						//	if ( setters.at( msg[0] ) == addr, {
+						//		("mapping hive output" + msg).postln;
+						network.unmapHiveOutput( msg[0], msg[1] );
+						addr.sendMsg( '/unmapped/minibee/output', msg[0], msg[1] );
+					},{
+						this.errorMsg( addr, "/unmap/minibee/output", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/unmap/minibee/output", 5, msg );
+				});
+			this.logMsg( "/unmap/minibee/output:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
 		});
 	}
 
@@ -946,6 +983,31 @@ SWDataNetworkOSC{
 					this.errorMsg( addr, "/map/minibee/custom", 5, msg );
 				});
 			this.logMsg( "/map/minibee/custom:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+	unmapHiveCustom{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/unmap/minibee/custom", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						// old version:
+						//	if ( setters.at( msg[0] ) == addr, {
+						network.unmapHiveCustom( msg[0], msg[1] );
+						addr.sendMsg( '/unmapped/minibee/custom', msg[0], msg[1] );
+					},{
+						this.errorMsg( addr, "/unmap/minibee/custom", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/unmap/minibee/custom", 5, msg );
+				});
+			this.logMsg( "/unmap/minibee/custom:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
 		});
 	}
 
