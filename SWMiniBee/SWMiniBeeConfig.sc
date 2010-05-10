@@ -331,11 +331,15 @@ SWMiniBeeConfig{
 		noInputs = conf.noInputs;
 		noOutputs = conf.noOutputs;
 		inputSize = conf.inputSize;
+		this.parseConfig;
 	}
 
 	addCustom{ |custom|
-		customSizes = [];
-		custom.clump(2).do{ |it|
+		var customPins;
+		//	customSizes = [];
+		customSizes = Array.fill( custom[0], custom[1] );
+		customPins = custom.clump(2).copyToEnd(1);
+		customPins.do{ |it,i|
 			if ( it[1] > 0 ){
 				pinConfig[ it[0] ] = \CustomIn;
 				noInputs = noInputs + 1;

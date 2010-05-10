@@ -402,8 +402,17 @@ SWMiniHive {
 
 	mapBee{ |id,node,type|
 		var bee = swarm.at(id);
+		//	("mapping bee" + id + bee + node + type).postln;
 		if ( bee.notNil ){
 			bee.setMap( node, type );
+		}
+	}
+
+	unmapBee{ |id,node,type|
+		var bee = swarm.at(id);
+		//	("mapping bee" + id + bee + node + type).postln;
+		if ( bee.notNil ){
+			bee.removeMap( node, type );
 		}
 	}
 }
@@ -656,6 +665,7 @@ SWMiniBee{
 	}
 
 	setMap{ |node, type|
+		//	("BEE: mapping bee"+id+node+type).postln;
 		switch( type,
 			\custom, {
 				if ( dataNodeCustom.notNil ){
@@ -702,6 +712,24 @@ SWMiniBee{
 				dataNodeOutput = node;
 				dataNodeOutput.action = { |data| this.setOutput( data ) };
 
+			}
+		);
+	}
+
+	removeMap{ |node, type|
+		("BEE: unmapping bee"+id+node+type).postln;
+		switch( type,
+			\custom, {
+				if ( dataNodeCustom.notNil ){
+					dataNodeCustom.action = {};
+					dataNodeCustom = nil;
+				};
+			},
+			\output, {
+				if ( dataNodeOutput.notNil ){
+					dataNodeOutput.action = {};
+					dataNodeOutput = nil;
+				};
 			}
 		);
 	}
