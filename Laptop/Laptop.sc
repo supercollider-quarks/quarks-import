@@ -1,5 +1,6 @@
 Laptop {
 	var <internals;
+	var <dn;
 
 	// processes:
 	var <processes,<processWatcher;
@@ -26,6 +27,7 @@ Laptop {
 	init{
 		GeneralHID.buildDeviceList;
 		internals = SWDataNetwork.new;
+		dn = internals;
 		this.initProcesses;
 		this.initTemperature;
 		this.initCamera;
