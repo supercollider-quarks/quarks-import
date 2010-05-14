@@ -86,10 +86,10 @@ AbsoluteTimeSpecLeadTime : AbsoluteTimeSpec {
 // BasicTimeSpec is standard scheduling model: quant, phase, offset
 
 BasicTimeSpec : AbsoluteTimeSpecLeadTime {
-	var	<phase, <offset;
+	var	<phase, <offset, <>wrap = false;
 	var	qstream, pstream, ostream;	// so they can change on successive invocations
-	*new { arg quant, phase, offset;
-		^super.new(quant).phase_(phase).offset_(offset).clock_(TempoClock.default)
+	*new { |quant, phase, offset, wrap(false)|
+		^super.new(quant).phase_(phase).offset_(offset).wrap_(wrap).clock_(TempoClock.default)
 	}
 	quant_ { |q|
 		qstream = q.asPattern.asStream;
@@ -110,29 +110,40 @@ BasicTimeSpec : AbsoluteTimeSpecLeadTime {
 		// if it's fixed in TempoClock, I'll revert this change
 	nextTimeOnGrid { arg argClock;
 		var	schedclock = argClock ? clock ? TempoClock.default,
-			q = qstream.next(schedclock) ? 0, p = pstream.next(schedclock) ? 0;
+			q = qstream.next(schedclock) ? 0, p = pstream.next(schedclock) ? 0,
+			time;
 		if(q < 0) { q = q.neg * schedclock.beatsPerBar };
-		^roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
-			+ p - (ostream.next(schedclock) ? 0)
+		time = roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
+			+ p - (ostream.next(schedclock) ? 0);
+		if(wrap and: { time < schedclock.beats }) { time = time + quant };
+		^time
 	}
 		// BP's leadTime overrides BasicTimeSpec's offset
 	bpSchedTime { |bp|
 		var	schedclock = bp.clock ? clock ? TempoClock.default,
-			q = qstream.next(schedclock) ? 0, p = pstream.next(schedclock) ? 0;
+			q = qstream.next(schedclock) ? 0, p = pstream.next(schedclock) ? 0,
+			time;
 		if(q < 0) { q = q.neg * schedclock.beatsPerBar };
-		^roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
-			+ p - (bp.leadTime ? 0)
+		time = roundUp(schedclock.beats - schedclock.baseBarBeat, q) + schedclock.baseBarBeat
+			+ p - (bp.leadTime ? 0);
+		if(wrap and: { time < schedclock.beats }) { time = time + quant };
+		^time
 	}
-	storeArgs { 
-		^if(offset.isNil) {
+	storeArgs {
+		var	out;
+		if(offset.isNil) {
 			if(phase.isNil) {
-				[quant]
+				out = [quant]
 			} {
-				[quant, phase]
+				out = [quant, phase]
 			}
 		} {
-			[quant, phase, offset]
-		}
+			out = [quant, phase, offset]
+		};
+		if(wrap == true) {
+			out = out.extend(3).add(wrap)
+		};
+		^out
 	}
 }
 
@@ -154,4 +165,8 @@ QuantOffsetLatencyTimeSpec : QuantOffsetTimeSpec {
 }
 
 QuantOffsetLatencyWrapTimeSpec : QuantOffsetLatencyTimeSpec {
+	*new { arg quant, offset, latency;
+		this.deprecated(thisMethod, Meta_BasicTimeSpec.findRespondingMethodFor(\new));
+		^super.new(quant, offset, latency).wrap_(true)
+	}
 }
