@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="1038.11">
+<meta name="CocoaVersion" content="1038.29">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -14,8 +14,9 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #862323}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0023b6}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #4d6d13}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0023b6; min-height: 12.0px}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #1c23b6; min-height: 12.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0023b6; min-height: 12.0px}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #007300}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 9.0px Monaco}
 span.s3 {color: #0023b6}
@@ -78,7 +79,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="Apple-tab-span">	</span>numChannels: 8,<span class="Apple-converted-space"> </span></p>
 <p class="p7"><span class="s4"><span class="Apple-tab-span">	</span>slotNames: [</span>\leakDC<span class="s4">, </span>\krush<span class="s4">, </span>\rollClip<span class="s4">, </span>\ampFin<span class="s4">],<span class="Apple-converted-space"> </span></span></p>
 <p class="p4"><span class="Apple-tab-span">	</span>busIndex: 0);</p>
-<p class="p4">m.gui(nSliders: 12);</p>
+<p class="p8"><br></p>
+<p class="p4">g = m.gui;</p>
 <p class="p4">)</p>
 <p class="p3"><br></p>
 <p class="p4">{ <span class="s6">PinkNoise</span>.ar(0.5) * LFNoise2.kr([5, 8, 13, 21]).max(0); }.play;</p>
@@ -92,7 +94,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p4"><span class="Apple-tab-span">	</span>// make a more specific gui - see also ProxyChainGui</p>
 <p class="p4">(</p>
-<p class="p4">m.pxChain.gui(<span class="s5">\Mestre</span>, [</p>
+<p class="p4">m.gui(<span class="s5">\Mestre</span>, 20, [</p>
 <p class="p7"><span class="s4"><span class="Apple-tab-span">	</span>[</span>\leakDC<span class="s4">, </span>\slotCtl<span class="s4">, 1],</span></p>
 <p class="p7"><span class="s4"><span class="Apple-tab-span">	</span>[</span>\rollClip<span class="s4">, </span>\slotCtl<span class="s4">, 1],</span></p>
 <p class="p7"><span class="s4"><span class="Apple-tab-span">	</span>[</span>\krush<span class="s4">, </span>\slotCtl<span class="s4">, 1],</span></p>
@@ -123,9 +125,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4">~pink = { <span class="s3">PinkNoise</span>.ar * <span class="s3">SinOsc</span>.ar };</p>
 <p class="p4">~pink.play;</p>
 <p class="p6">ProxyMixer<span class="s4">(p);</span></p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
-<p class="p9"><span class="s4">z = </span><span class="s7">MasterFX</span><span class="s4">(s, 8, [</span>\leakDC<span class="s4">, </span>\rollClip<span class="s4">, </span>\dualComp<span class="s4">, </span>\ampFin<span class="s4">]);</span></p>
+<p class="p9"><br></p>
+<p class="p9"><br></p>
+<p class="p10"><span class="s4">z = </span><span class="s7">MasterFX</span><span class="s4">(s, 8, [</span>\leakDC<span class="s4">, </span>\rollClip<span class="s4">, </span>\dualComp<span class="s4">, </span>\ampFin<span class="s4">]);</span></p>
 <p class="p4">z.gui;</p>
 <p class="p3"><br></p>
 <p class="p3"><br></p>

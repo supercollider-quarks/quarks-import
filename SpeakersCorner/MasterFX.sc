@@ -11,6 +11,7 @@ MasterFX {
 		// only one masterfx per server ATM.
 		// could be changed if different MasterFX 
 		// for different outchannel groups are to be used.
+		
 		var fx = all[server.name];
 		if (fx.notNil) { 
 			"// MasterFX for server % exists - use \nMasterFX.clear(%) \n// to make a new one.\n"
@@ -38,8 +39,9 @@ MasterFX {
 		numChannels = inNumChannels ? server.options.numOutputBusChannels;
 		busIndex = inBusIndex ? 0; 
 
-		proxy = NodeProxy.audio(server, numChannels).bus_(this.bus);
-		proxy.vol_(0);	
+		proxy = Ndef(\master -> server.name); 
+		proxy.ar(numChannels); 
+		proxy.bus_(this.bus);
 		pxChain = ProxyChain.from(proxy, inSlotNames ? []);
 		
 		all.put(server.name, this);
@@ -77,12 +79,13 @@ MasterFX {
 		++ "_" ++ pxChain.proxy.numChannels).asSymbol 
 	}
 	
-	gui { |name, buttonList, nSliders, win|
+	gui { |name, numItems, buttonList, parent, bounds, makeSkip = true|
 			// the effects are all on by default: 
 		buttonList = buttonList ?? { pxChain.slotNames.collect ([_, \slotCtl, 1]) };
 		name = name ?? { this.makeName };
-		nSliders = nSliders ? 16; 
-		^pxChain.gui(name, buttonList, nSliders, win);
+		numItems = numItems ? 16; 
+		^MasterFXGui(pxChain, numItems, parent, bounds, makeSkip, buttonList)
+			.name_(name);
 	}
 	
 	*default { ^all[Server.default.name] }
