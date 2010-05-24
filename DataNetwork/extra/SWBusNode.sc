@@ -38,6 +38,11 @@ SWBusNode{
 		}).send(s);
 	}
 
+	clean{
+		this.stop;
+		all.removeAt( id );
+	}
+
 	init{ |ky,ntwork,in,serv,autostart=false|
 		id = ky;
 		network = ntwork;
@@ -340,6 +345,24 @@ MeanStdDevNode : SWBusNode{
 			mean = RunningSum.kr( input, length )/length;
 			stddev = StdDevUGen.kr( input, length, mean);
 			Out.kr( out, Lag.kr( mean ++ stddev , lag) );
+		}).send(s);
+	}
+}
+
+MeanNode : SWBusNode{
+	initSynthDefAndBus{ |s,nc=1|
+		bus = Bus.control( s, nc );
+
+		settings.put( \length, 50 );
+
+		synthDef = (\MeanNode++nc).asSymbol;
+		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
+			var mean, input;
+			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
+			input = In.kr(in, nc ) * mul;
+			mean = RunningSum.kr( input, length )/length;
+			//	stddev = StdDevUGen.kr( input, length, mean);
+			Out.kr( out, Lag.kr( mean, lag) );
 		}).send(s);
 	}
 }

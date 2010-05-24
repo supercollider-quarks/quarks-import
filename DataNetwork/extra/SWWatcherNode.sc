@@ -4,17 +4,24 @@ SWWatcherNode{
 	var <>id;
 	var <>function;
 
-	*new{ |id,network,func,dt=0.05|
-		^super.new.init(id,network,func,dt);
+	*new{ |id,network,func,dt=0.05,autostart=false|
+		^super.new.init(id,network,func,dt,autostart);
 	}
 
-	init{ |ky,netw,func,dt|
+	init{ |ky,netw,func,dt,autostart=false|
 		id = ky;
 		network = netw;
 		function = func;
+
+		network.addExpected( id );
+
 		watcher = SkipJack.new(
 			{ network.setData( id, function.value ) },
-			dt, autostart: false );
+			dt, autostart: autostart );
+	}
+
+	clean{
+		this.stop;
 	}
 
 	start{
