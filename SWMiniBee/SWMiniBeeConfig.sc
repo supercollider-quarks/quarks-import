@@ -369,7 +369,7 @@ SWMiniBeeConfig{
 	getDataFunc{
 		var analog,digital;
 		var dataFunc;
-		// order of data is: analog in (8 or 10 bit), digital, twi, sht, ping
+		// order of data is: custom, analog in (8 or 10 bit), digital, twi, sht, ping
 		var sizes = customSizes;
 		var scales = Array.fill( customSizes.size, 1 );
 
