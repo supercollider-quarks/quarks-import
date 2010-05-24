@@ -24,8 +24,8 @@ SWBusNode{
 		all = IdentityDictionary.new;
 	}
 
-	*new{|id,network,input,serv|
-		^super.new.init( id, network, input,serv );
+	*new{|id,network,input,serv,autostart=false|
+		^super.new.init( id, network, input,serv,autostart );
 	}
 
 	initSynthDefAndBus{ |s,nc=1|
@@ -38,7 +38,7 @@ SWBusNode{
 		}).send(s);
 	}
 
-	init{ |ky,ntwork,in,serv|
+	init{ |ky,ntwork,in,serv,autostart=false|
 		id = ky;
 		network = ntwork;
 		server = serv ? Server.default;
@@ -69,6 +69,12 @@ SWBusNode{
 		//	if ( bus.notNil, { this.node.bus_( bus ); } );
 
 		this.setLabel;
+		if ( autostart ){
+			fork{
+				server.sync;
+				this.start;
+			}
+		};
 	}
 
 	myInit{
