@@ -45,9 +45,13 @@ SWMiniHive {
 		^gui = SWMiniHiveGui.new( this );
 	}
 
-	xbee_{ |xb|
+	xbee_{ |xb,autostart=false|
 		xbee = xb;
 		outMessages.add( [ 0, [ $A, 0, 0, 0 ] ] );
+		if ( autostart ){
+			this.start;
+			this.startSend;
+		}
 	}
 
 	stopXBee{
@@ -158,10 +162,10 @@ SWMiniHive {
 		if ( serial.notNil ){
 			hiveConfig.setStatus( serial, 3 );
 			//		detectedNodes.add( msg[1] );
-			try{ 
-				swarm.at( msg[1] ).parseData( msg[2], msg.copyToEnd( 3 ) );
-			}
-		}
+		};
+		try{ 
+			swarm.at( msg[1] ).parseData( msg[2], msg.copyToEnd( 3 ) );
+		};
 	}
 
 	parseSerialNumber{ |msg|

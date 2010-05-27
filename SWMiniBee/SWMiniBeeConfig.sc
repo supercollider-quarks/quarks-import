@@ -216,7 +216,7 @@ SWMiniHiveConfig{
 		configLib = file.getLine(4196*16).interpret;
 		file.close;
 
-		configLib.do{ |it| it.hive = this };
+		configLib.do{ |it| it.hive = this; it.parseConfig; };
 		hiveMap.keysValuesDo{ |key,it|
 			this.setStatus( key, 5 );
 			idAllocator.allocID( it.nodeID );
