@@ -7,6 +7,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+100602 - removed bugfixes for Collection and FloatArray and moved the species {^this.class} fix into the RedVector class itself
 090629 - helpfiles and examples now uses view redirect instead of GUI
 	bugfix for RedWindow and RedJWindow resize
 090624 - optimised collision detection.  added distance line example

@@ -3,6 +3,7 @@
 
 //--vector of any dimension
 RedVector[float] : FloatArray {
+	species {^this.class}
 	mag {^this.sum{|x| x*x}.sqrt}
 	distance {|redVec| ^(this-redVec).mag}
 	dot {|redVec| ^(this*redVec).sum}
