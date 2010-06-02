@@ -140,9 +140,12 @@ GlobalControlBase : AbstractFunction {
 	asBus { ^bus }
 	index { ^bus.index }
 
-	update { |bus, msg|
+		// pass in updateBus == true to make the update on the server as well
+		// normally this method is meant to get a value from the server,
+		// so updateBus is NOT wanted then
+	update { |bus, msg, updateBus(false)|
 		value = msg[0];
-		this.changed((what: \value, updateGUI: true, resync: true));
+		this.changed((what: \value, updateGUI: true, resync: true, updateBus: updateBus));
 	}
 	
 	watch {
