@@ -65,18 +65,6 @@ unixCmdThen { |action, checkevery=0.3|
 	});
 } // End .unixCmdThen
 
-unixCmdGetStdOut {
-	var pipe, lines, line;
-
-	pipe = Pipe.new(this, "r");
-	lines = "";
-	line = pipe.getLine;
-	while({line.notNil}, {lines = lines ++ line ++ "\n"; line = pipe.getLine; });
-	pipe.close;
-	
-	^lines;
-}
-
 } // End String
 
 
