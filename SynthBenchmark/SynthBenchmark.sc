@@ -97,7 +97,11 @@ runOne{|path|
 	
 	
 	// Invoke the NRT synthesis , remember to set scsynth verbosity low , don't read synthdefs dir, send result to dev null
-	options = Server.default.options.copy.loadDefs_(false).verbosity_(-1).numOutputBusChannels_(2);
+	options = Server.default.options.copy
+		.loadDefs_(false)
+		.verbosity_(-1)
+		.numOutputBusChannels_(2)
+		.memSize_(131072);
 
 	outputFilePath = PathName.tmp +/+ "runOne.aiff";
 	fullCmd = Score.program + " -N" + scorepath + "_" + outputFilePath.quote + "44100 AIFF int16"
