@@ -164,11 +164,12 @@ PR(\abstractTLCommand).clone({
 			};
 		};
 		~stopAction.value(parms);
-		~node.removeDependant(currentEnvironment);
 //"<< synthCmd:done".debug;
 	};
 	~update = { |obj, msg|
 		if(obj == ~node and: { msg == \n_end }) {
+			~node.removeDependant(currentEnvironment);
+			~privateNodeEndAction.value;
 			~stop.value;
 		};
 //// debug
@@ -211,6 +212,11 @@ PR(\synthCmd).clone {
 		};
 		~superDone.(parms);
 	};
+	~privateNodeEndAction = {
+		// make sure client knows the real final value from the synth
+		var	mctl = ~mixer.controls[~controlName];
+		mctl.bus.get({ |value| mctl.value = value });
+	};
 } => PR(\mixerAutoSynthCmd);
 
 PR(\mixerAutoSynthCmd).clone {
@@ -233,6 +239,11 @@ PR(\mixerAutoSynthCmd).clone {
 			~gc.autoSynth = nil;
 		};
 		~superDone.(parms);
+	};
+	~privateNodeEndAction = {
+		// make sure client knows the real final value from the synth
+		var	gc = ~gc;
+		gc.bus.get({ |value| gc.value = value });
 	};
 } => PR(\gcAutoSynthCmd);
 
@@ -364,9 +375,9 @@ PR(\abstractTLCommand).clone({
 //				};
 					// user hook to manipulate BP before play
 				~prepareBP.(BP(name));
-//name.debug("bpcmd - playing");
-//[thisThread.clock.beats, thisThread.clock.baseBarBeat, BP(name).eventSchedTime(~quant)].debug("now, basebar, go time");
-//~quant.dump;
+// name.debug("bpcmd - playing");
+// [thisThread.clock.beats, thisThread.clock.baseBarBeat, BP(name).eventSchedTime(~quant)].debug("now, basebar, go time");
+// ~quant.dump;
 				/*thisThread*/ BP(name).clock.schedAbs(BP(name).eventSchedTime(~quant), e {
 						// if not running, cmd was stopped before BP fired
 						// so skip the .play
@@ -432,7 +443,7 @@ PR(\abstractTLCommand).clone({
 }, parentKeys: #[quant]) => PR(\bpCmd);
 
 // this command triggers one event in the registered bp's
-// it must be non-syncing and have a cleanup function saved in ~done
+// it must be non-syncing and have a cleanup function saved in ~cleanup
 PR(\abstractTLCommand).clone({
 	~shouldSync = false;
 	~fire = { |parms|
@@ -501,12 +512,20 @@ PR(\abstractTLCommand).clone({
 		~myIterator.removeDependant(currentEnvironment);
 		~myIterator.stop;
 	};
-	~update = { |obj, what, activeCmds|
+	~update = { |obj, what, activeCmds, endStatus|
 		if((~isRunning ? false) and: { what == \done }) {
 //			"got done notification; looping back".postln;
 			~myIterator.removeDependant(currentEnvironment);
-			~myIterator = ~makeIterator.();
-			~myIterator.play(argClock: thisThread.clock, runningCmds: activeCmds);
+			if(endStatus == \normal) {
+				~myIterator = ~makeIterator.();
+				~myIterator.play(argClock: thisThread.clock, runningCmds: activeCmds);
+			} {
+				// iterator can stop by a nil item
+				// but hardstop only if a stop is not scheduled by other means
+				if(~dur.isNil and: { ~doneSignal.isNil }) {
+					~stop.()
+				};
+			};
 		};
 	};
 	~makeIterator = {

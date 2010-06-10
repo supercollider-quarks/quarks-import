@@ -11,7 +11,7 @@ TLSequenceIterator {
 	}
 	
 	play { |time = 0, argClock, runningCmds|
-		var	temp, item, now, cmd, lastCmd;
+		var	temp, item, now, cmd, lastCmd, endStatus;
 		clock = argClock ?? { TempoClock.default };
 		if(status == \idle) {
 			condition = Condition.new;
@@ -23,56 +23,62 @@ TLSequenceIterator {
 //"TLSeq: set index to 0".debug;
 				index = 0;
 				this.changed(\play);
-				while { 
+				endStatus = block { |break|
+					while { 
 //[index, array.size].debug("checking to continue");
-				index < array.size } {
-					item = array[index].asTLItem(now);
+					index < array.size } {
+						item = array[index].asTLItem(now);
 //[index, item].debug("got item");
-					case
-						{ item.isNumber } {
+						case
+							{ item.isNumber } {
 //item.debug("number");
-							index = index + 1;
-							now = max(item, 0).yield;
-						}
-						{ item.respondsTo(\isTLCommand) } {
-//"command".debug;
-							cmd = item;
-							index = index + 1;
-							if(array[index].respondsTo(\keysValuesDo)) {
-								this.playCmd(cmd, array[index]);
 								index = index + 1;
-							} {
-								this.playCmd(cmd);
+								now = max(item, 0).yield;
 							}
-						}
-						{ item == \sync } {
-							now = this.fullSync;
-							index = index + 1;
-						}
-						{ item == \cmdSync } {
-							now = this.cmdSync(lastCmd);
-							index = index + 1;
-						}
-						{ item.isKindOf(TLSequenceIterator) } {
-							index = index + 1;
-							if(item.isRunning.not) {
-								// should I set the sequencer var here? can't, no setter
-								item.play(argClock: thisThread.clock);
-								this.addActive(item);
-							};
-						}
-						{ item.isArray } {
+							{ item.respondsTo(\isTLCommand) } {
+//"command".debug;
+								cmd = item;
+								index = index + 1;
+								if(array[index].respondsTo(\keysValuesDo)) {
+									this.playCmd(cmd, array[index]);
+									index = index + 1;
+								} {
+									this.playCmd(cmd);
+								}
+							}
+							{ item == \sync } {
+								now = this.fullSync;
+								index = index + 1;
+							}
+							{ item == \cmdSync } {
+								now = this.cmdSync(lastCmd);
+								index = index + 1;
+							}
+							{ item.isKindOf(TLSequenceIterator) } {
+								index = index + 1;
+								if(item.isRunning.not) {
+									// should I set the sequencer var here? can't, no setter
+									item.play(argClock: thisThread.clock);
+									this.addActive(item);
+								};
+							}
+							{ item.isArray } {
 //"spawn".debug;
-							index = index + 1;
-							cmd = this.class.new(item, sequencer)
-								.play(argClock: thisThread.clock);
-							this.addActive(cmd);
-						}
-						{		// default, ignore unrecognized item
-							"Unrecognized sequence item at index %: %".format(index, item).warn;
-							index = index + 1
-						};
-					lastCmd = cmd;
+								index = index + 1;
+								cmd = this.class.new(item, sequencer)
+									.play(argClock: thisThread.clock);
+								this.addActive(cmd);
+							}
+							{ item.isNil } {
+								break.(nil);
+							}
+							{		// default, ignore unrecognized item
+								"Unrecognized sequence item at index %: %".format(index, item).warn;
+								index = index + 1
+							};
+						lastCmd = cmd;
+					};
+					\normal  // end status
 				};
 //[index, array.size].debug("exit while");
 //thisThread.clock.beats.debug("time at exit");
@@ -87,8 +93,8 @@ TLSequenceIterator {
 					// the next iterator should create them for itself
 				this.removeNotifications(activeCmds);
 					// in case this is a spawned iterator
-				NotificationCenter.notify(this, \done, [(activeCmds: activeCmds)]);
-				this.changed(\done, activeCmds); // .debug("done sent");
+				NotificationCenter.notify(this, \done, [(activeCmds: activeCmds, endStatus: endStatus)]);
+				this.changed(\done, activeCmds, endStatus); // .debug("done sent");
 					// allow old cmds to be GC'ed
 					// not sure if this will break something
 				activeCmds = IdentitySet.new;

@@ -5,7 +5,9 @@
 
 + Object {
 	draggedIntoVoicerGCGUI { |gui|
-		gui.model.spec = this.asSpec;
+		if(this.respondsTo(\asSpec)) {
+			gui.model.spec = this.asSpec;
+		}
 	}
 }
 
