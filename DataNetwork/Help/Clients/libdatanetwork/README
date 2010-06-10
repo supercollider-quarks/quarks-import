@@ -17,7 +17,7 @@ To build, just type:
 
 $ scons
 
-and the library will built, including an example program
+and the library will build, including an example program
 
 $ scons install
 
