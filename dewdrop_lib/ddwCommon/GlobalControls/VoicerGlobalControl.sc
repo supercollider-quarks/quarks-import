@@ -203,6 +203,7 @@ GenericGlobalControl : GlobalControlBase {
 		(midiControl = cc).notNil.if({
 			this.addDependant(midiControl);
 		});
+		this.changed((what: \midi));
 	}
 
 		// because this isn't linked to a voicer, must pass in the destination
@@ -344,6 +345,7 @@ VoicerGCProxy {
 	midiControl_ { |cc|
 		this.removeDependant(midiControl);
 		(midiControl = cc).notNil.if({ this.addDependant(midiControl) });
+		this.changed((what: \midi));
 	}
 	
 	set { arg value, updateGUI = true, latency, resync = true;
