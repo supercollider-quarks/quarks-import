@@ -25,9 +25,10 @@ NPdef : Pdef {
 		);
 	}
 
-	*new{ |proxy,src|
+	*new{ |proxy,src, key|
 		var pat,res;
-		var key = currentEnvironment.findKeyForValue( proxy );
+		key = key ?? { proxy.key };
+
 		if ( proxy.source.isNil, {^nil});
 		res = super.at(key); // look for the pdef. If it exists replace the source
 		if ( src.isNil, { ^res });
@@ -66,9 +67,10 @@ NPxdef : Pdef {
 		);
 	}
 
-	*new{ |proxy,src|
+	*new{ |proxy,src, key|
 		var pat,res;
-		var key = currentEnvironment.findKeyForValue( proxy );
+		key = key ?? { proxy.key };
+
 		if ( proxy.source.isNil, {^nil});
 
 		res = super.at(key); // look for the pdef. If it exists replace the source
