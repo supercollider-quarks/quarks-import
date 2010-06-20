@@ -26,7 +26,7 @@ Morse {
 	}
 	
 	*new { arg text = "Morse Code";
-		^text.split($ ).collect { |word| this.word(word) }
+		^text.split($ ).collect { |word| this.word(word) }.reject(_.isEmpty);
 	}
 	
 	*signs { arg text; ^MorseDict.wordSigns(text) }
