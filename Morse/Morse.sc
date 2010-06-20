@@ -19,8 +19,9 @@ Morse {
 	}
 	
 	*word { arg word; 
-		var times = word.as(Array).collect { |char| this.timesFor(char) };
-		times.last.putLast(medium);
+		var times = word.as(Array).collect { |char| this.timesFor(char) }.reject(_.isEmpty);
+		var lastword = times.last; 
+		if (lastword.notNil) { lastword.putLast(medium) };
 		^times
 	}
 	
