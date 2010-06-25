@@ -10,7 +10,7 @@
 
 EqualTemperament {
 	var	<stepsPerOctave = 12,
-		<basefreq, <ratio;
+		<basefreq, <ratio, <>root = 0;
 	
 	*new { |stepsPerOctave = 12, calibratefreq = 440, calibratenote = 69 ... args|
 		^super.new.init(stepsPerOctave, calibratefreq, calibratenote, *args)
@@ -42,7 +42,7 @@ EqualTemperament {
 		this.stepsPerOctave = steps;
 		this.calibrate(base440, noteindex);
 	}
-	
+
 	cps { |noteindex|
 			// base * (2 ^ octave) * (ratio ^ scaleDegree)
 			// 2 ^ octave factor reduces rounding errors from simpler formula
@@ -62,7 +62,7 @@ EqualTemperament {
 // fractional note indices blend adjacent offsets
 
 TuningOffset : EqualTemperament {
-	var	<tunings;
+	var	<tunings, prTunings;
 	
 	*new { |stepsPerOctave = 12, calibratefreq = 440, calibratenote = 69, tunings = 0|
 		^super.new(stepsPerOctave, calibratefreq, calibratenote, tunings)
@@ -76,19 +76,25 @@ TuningOffset : EqualTemperament {
 	
 	tunings_ { |tuning|
 		tunings = tuning.asArray.collect({ |item| item ? 0.0 }).wrapExtend(stepsPerOctave);
+		this.root_(root);
 	}
 	
 	calibrate { |freq = 440, noteindex = 69|
 		(noteindex != noteindex.trunc).if({
 			MethodError("noteindex should be an integer when calibrating", this).throw;
 		});
-		basefreq = freq / (2 ** ((noteindex - tunings.wrapAt(noteindex)) / stepsPerOctave));
+		basefreq = freq / (2 ** ((noteindex - prTunings.wrapAt(noteindex)) / stepsPerOctave));
 	}
 	
 	cps { |noteindex|
-		noteindex = noteindex + tunings.blendAt(noteindex, \wrapAt);
+		noteindex = noteindex + prTunings.blendAt(noteindex, \wrapAt);
 		^basefreq * (2 ** ((noteindex / stepsPerOctave).trunc))
 			* (ratio ** (noteindex % stepsPerOctave));
+	}
+
+	root_ { |newroot = 0|
+		root = newroot % stepsPerOctave;
+		prTunings = tunings.rotate(root);
 	}
 }
 
@@ -105,6 +111,7 @@ TuningRatios : TuningOffset {
 			MethodError("Ratios array must not have non-numeric values.", this).throw;
 		});
 		tunings = tuning ++ [2.0];	// array must end with 2.0 for blendAt
+		this.root_(root);
 		calibratenote.notNil.if({ this.setStepsPerOctave(stepsPerOctave, calibratenote) });
 	}
 	
@@ -113,12 +120,20 @@ TuningRatios : TuningOffset {
 			MethodError("noteindex should be an integer when calibrating", this).throw;
 		});
 		basefreq = freq / ((2 ** (noteindex / stepsPerOctave).trunc)
-			* tunings[noteindex % stepsPerOctave]);
+			* prTunings[noteindex % stepsPerOctave]);
 	}
 	
 	cps { |noteindex|
 		^basefreq * (2 ** ((noteindex / stepsPerOctave).trunc))
-			* (tunings.blendAt(noteindex % stepsPerOctave));
+			* (prTunings.blendAt(noteindex % stepsPerOctave));
+	}
+
+	root_ { |newroot = 0|
+		root = newroot % stepsPerOctave;
+		prTunings = tunings.drop(-1).rotate(root);
+		prTunings = prTunings.collect { |item, i|
+			item / prTunings[0] * (if(root > 0 and: { i >= root }) { 2 } { 1 })
+		};
 	}
 }
 
