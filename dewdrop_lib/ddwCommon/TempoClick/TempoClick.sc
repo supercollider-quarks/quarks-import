@@ -83,8 +83,14 @@ TempoClick {
 		};
 	}
 	
-	update {
-		aliveThread.notNil.if({ server.sendMsg(\n_set, nodeID, \tempo, clock.tempo) });
+	update { |obj, what|
+		switch(what)
+			{ \tempo } {
+				aliveThread.notNil.if({
+					server.sendMsg(\n_set, nodeID, \tempo, clock.tempo)
+				});
+			}
+			{ \stop } { this.free };
 	}
 	
 	tempo_ { arg tempo;
@@ -99,4 +105,6 @@ TempoClick {
 	index { ^bus.index }
 	asMapArg { ^"c" ++ bus.index }	
 	asMap { ^this.asMapArg }
+	asUGenInput { ^In.kr(bus, 1) }
+	asControlInput { ^this.asMapArg }
 }
