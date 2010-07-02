@@ -90,13 +90,13 @@ RedToolsMenu {
 			['template', 'normalize soundfile'], {
 				Document(
 					"normalize soundfile",
-					"//--edit paths and evaluate...\nSoundFile.normalize(\n\t\"~/Music/SuperCollider Recordings/SC_090410_125330.aiff\".standardizePath,\n\t\"~/Music/SuperCollider Recordings/SC_090410_125330+.aiff\"standardizePath,\n\tnil, //\"AIFF\" \"WAVE\"\n\t\"int16\"\n)"
+					"//--edit paths and evaluate the code below.  it will take a while for large files\nSoundFile.normalize(\n\t\"~/Music/SuperCollider Recordings/SC_090410_125330.aiff\".standardizePath,\n\t\"~/Music/SuperCollider Recordings/SC_090410_125330+.aiff\".standardizePath,\n\tnil, //\"AIFF\" \"WAVE\"\n\t\"int16\"\n)"
 				).syntaxColorize;
 			},
-			['template', 'animationview'], {
+			['template', 'userview'], {
 				Document(
-					"animationview",
-					"(\nvar width= 500, height= 500;\nvar win= Window(\"animationview\", Rect(300, 300, width, height), false);\nvar usr= AnimationView(win, Rect(0, 0, width, height));\nusr.background= Color.white;\nusr.clearOnRefresh= true;\nusr.showInfo= false;\nusr.drawFunc= {|view, index|\n\tPen.setSmoothing(true);\n\tPen.width= 1;\n\tPen.fillColor= Color.red;\n\tPen.fillRect(Rect(index*3%width, index*4%height, 20, 20));\n};\nwin.front;\nCmdPeriod.doOnce({if(win.isClosed.not, {win.close})});\n)"
+					"userview",
+					"(\nvar width= 500, height= 500;\nvar win= Window(\"animation template\", Rect(300, 300, width, height), false);\nvar usr= UserView(win, Rect(0, 0, width, height));\nusr.background= Color.white;\nusr.clearOnRefresh= true;\nusr.animate= true;\nusr.drawFunc= {\n\tPen.smoothing= true;\n\tPen.width= 1;\n\tPen.fillColor= Color.red;\n\tPen.fillOval(Rect(usr.frame*3%width, usr.frame*4%height, 20, 20));\n};\nwin.front;\nCmdPeriod.doOnce({if(win.isClosed.not, {win.close})});\n)"
 				).syntaxColorize;
 			},
 			['extras', 'random helpfile'], {

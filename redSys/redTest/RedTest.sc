@@ -56,7 +56,7 @@ RedTest {
 			var e= EnvGen.kr(Env.perc, gate, doneAction:2);
 			var z= PinkNoise.ar(e);
 			Out.ar(out, z);
-		}).store;
+		}).add;
 		^Pbind(\instrument, \redTestPink, \out, Pseq(channels, inf)).play
 	}
 	*speaker2 {|channels|
@@ -65,7 +65,7 @@ RedTest {
 			var e= EnvGen.kr(Env.perc, gate, doneAction:2);
 			var z= SinOsc.ar(freq, 0, e);
 			Out.ar(out, z);
-		}).store;
+		}).add;
 		^Pbind(\instrument, \redTestPing, \out, Pseq(channels, inf), \degree, Pseq(channels, inf)).play
 	}
 }
