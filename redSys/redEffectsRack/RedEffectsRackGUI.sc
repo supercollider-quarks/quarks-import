@@ -2,6 +2,7 @@
 
 //time should also be a cv or?
 //lag box?
+//window height fix
 
 //--related:
 //RedEffectsRack RedEffectModule RedMixerGUI

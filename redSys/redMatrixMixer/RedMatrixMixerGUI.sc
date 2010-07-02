@@ -192,12 +192,12 @@ RedMatrixMixerGUI {
 			];
 			tab.views[0].flow{|v|
 				mainGUI= {|i|
-					RedGUICVMultiSliderView(v, nil, redMatrixMixer.cvs[("o"++i).asSymbol], nIn);
+					RedGUICVMultiSliderView(v, nil, redMatrixMixer.cvs[("o"++i).asSymbol]);
 				}.dup(nOut);
 			};
 			tab.views[1].flow{|v|
 				mirrorGUI= {|i|
-					RedGUICVMultiSliderViewMirror(v, nil, redMatrixMixer.cvs[("o"++i).asSymbol], nIn);
+					RedGUICVMultiSliderViewMirror(v, nil, redMatrixMixer.cvs[("o"++i).asSymbol]);
 				}.dup(nOut);
 			};
 			
