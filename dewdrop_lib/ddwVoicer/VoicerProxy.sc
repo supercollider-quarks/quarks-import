@@ -277,6 +277,11 @@ VoicerProxy {
 		^voicer.releaseNow(freq, sec)
 	}
 	
+	// hmm... this will not work well for moreVoicers...
+	releaseNode { |node, freq, releaseGate = 0, lat = -1|
+		voicer.releaseNode(node, freq, releaseGate, lat);
+	}
+
 	prGetNodes { |numNodes = 1| ^voicer.prGetNodes(numNodes) }
 	setArgsInEvent { |event| ^voicer.setArgsInEvent(event) }
 	
