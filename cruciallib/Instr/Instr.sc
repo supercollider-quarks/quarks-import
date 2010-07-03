@@ -44,7 +44,8 @@ Instr  {
 				err.throw;
 			});
 		});
-		quarkInstr = (Platform.userExtensionDir ++ "/quarks/*/Instr/*").pathMatch;
+		quarkInstr = (Platform.userExtensionDir ++ "/quarks/*/Instr/*").pathMatch
+			.reject { |path| path.splitext[1] == "sc" };
 		quarkInstr.do({ |path|
 			{
 				if(path.last != $/,{
