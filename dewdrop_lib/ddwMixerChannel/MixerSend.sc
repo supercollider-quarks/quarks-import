@@ -3,7 +3,7 @@ MixerSend {
 		// input must be a mixerchannel; output can be an mc, bus or bus#
 
 	var	<inMixer, <outbus, <levelControl, <level,
-		<sendSynth, <levelSynth, <guiUpdater = nil, targ,
+		<sendSynth, /*<levelSynth,*/ <guiUpdater = nil, targ,
 		<>guiIndex;	// change this from outside at your peril!
 		
 	var <>guiUpdateTime = 0.25;		// see .levelLine / .levelTo
@@ -25,6 +25,7 @@ MixerSend {
 	levelAuto {
 			// place a .kr synthdef onto level control bus
 		arg synthdef, args;
+		var	levelSynth;
 		
 			// if levelSynth is active, kill it
 		this.stopLevelAuto;
@@ -39,6 +40,8 @@ MixerSend {
 		sendSynth.map(\level, levelControl.bus.index);
 		^levelSynth
 	}
+
+	levelSynth { ^levelControl.tryPerform(\autoSynth) }
 	
 		// line automation -- ...To uses current value as start
 		// any warp that can be used in a ControlSpec can be used here
@@ -73,10 +76,11 @@ MixerSend {
 	}
 	
 	stopLevelAuto {
-		levelSynth.notNil.if({
-			sendSynth.map(\level, -1);	// return to static level
-			levelSynth.free;			// kill kr synth
-			levelSynth = nil;
+		this.levelSynth.notNil.if({
+			levelControl.stopAuto;
+// 			sendSynth.map(\level, -1);	// return to static level
+// 			this.levelSynth.free;			// kill kr synth
+// 			levelSynth = nil;
 		});
 		guiUpdater.notNil.if({
 			guiUpdater.stop;
