@@ -170,6 +170,9 @@ CompositeTuning {
 	calibrate { |freq = 440, noteindex = 69|
 		tunings.do(_.tryPerform(\calibrate, freq, noteindex))
 	}
+	root_ { |newroot = 0|
+		tunings.do(_.tryPerform(\root_, newroot))
+	}
 	
 	cps { |noteindex|
 		(noteindex.size == 0).if({
