@@ -238,7 +238,7 @@ RedMstGUI3 : RedMstGUI2 {
 	}
 	prInitTask {|size|
 		task= Routine{
-			var lastNumTracks= -1, lastJump;
+			var lastJump, lastNumTracks= -1;
 			inf.do{
 				{
 					guiPlay.value_(RedMst.isPlaying.binaryValue);

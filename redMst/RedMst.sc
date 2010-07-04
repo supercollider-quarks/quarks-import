@@ -1,5 +1,7 @@
 //redFrik - released under gnu gpl license
 
+//--changes 100704:
+//changed from .store and .memStore to .add in helpfiles
 //--changes 090904:
 //wrote RedSeq
 //--changes 090613:
