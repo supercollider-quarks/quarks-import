@@ -48,7 +48,7 @@ RedMatrixMixer {
 			});
 			
 			//--send definitions
-			this.def.memStore;
+			this.def.add;
 			server.sync;
 			
 			//--create synth
