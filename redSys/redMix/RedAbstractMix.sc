@@ -36,7 +36,7 @@ RedAbstractMix {									//abstract class
 			server.bootSync;
 			
 			//--send definition
-			this.def.memStore;
+			this.def.add;
 			server.sync;
 			
 			//--create synth

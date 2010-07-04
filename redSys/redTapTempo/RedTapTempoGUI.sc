@@ -23,7 +23,7 @@ RedTapTempoGUI {
 			server.bootSync;
 			
 			//--send definition
-			this.def.memStore;
+			this.def.add;
 			server.sync;
 			
 			//--gui

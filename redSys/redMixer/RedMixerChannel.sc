@@ -54,8 +54,8 @@ RedMixerChannel {
 			server.bootSync;
 			
 			//--send definition
-			this.def.memStore;
-			this.defEq.memStore;
+			this.def.add;
+			this.defEq.add;
 			server.sync;
 			
 			//--create synth

@@ -13,17 +13,17 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #062cb0}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0d32ac}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {text-decoration: underline ; color: #1949e0}
+span.s2 {text-decoration: underline ; color: #214fdb}
 span.s3 {color: #000000}
-span.s4 {text-decoration: underline ; color: #4062c4}
+span.s4 {text-decoration: underline ; color: #4565c0}
 span.s5 {text-decoration: underline}
-span.s6 {color: #2854d6}
-span.s7 {color: #45691f}
-span.s8 {color: #062cb0}
+span.s6 {color: #2f58d1}
+span.s7 {color: #4c6724}
+span.s8 {color: #0d32ac}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -31,7 +31,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="s1"><b>RedMatrixMixerGUI<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>gui for RedMatrixMixer</b></p>
 <p class="p2"><br></p>
 <p class="p2"><br></p>
-<p class="p1">req: <a href="../../../quarks/Conductor/help/Conductor-Help/Conductor.html"><span class="s2">Conductor</span></a> quark, <a href="../../../quarks/TabbedView/TabbedView.html"><span class="s2">TabbedView</span></a> quark</p>
+<p class="p1">req: <a href="../../Conductor/help/Conductor-Help/Conductor.html"><span class="s2">Conductor</span></a> quark, <a href="../../TabbedView/TabbedView.html"><span class="s2">TabbedView</span></a> quark</p>
 <p class="p3"><span class="s3">see also: <a href="RedMatrixMixer.html"><span class="s4">RedMatrixMixer</span></a> <a href="../RedEffectsRack/RedEffectsRackGUI.html"><span class="s5">RedEffectsRackGUI</span></a> <a href="../RedMixer/RedMixerGUI.html"><span class="s5">RedMixerGUI</span></a></span></p>
 <p class="p4"><br></p>
 <p class="p5"><span class="s5">class methods:</span></p>
@@ -59,7 +59,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s8">var</span> e= <span class="s8">EnvGen</span>.kr(<span class="s8">Env</span>.asr(0.01, 1, 0.01), gate, doneAction:2);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s8">var</span> z= <span class="s8">SinOsc</span>.ar(freq, 0, amp);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s8">Out</span>.ar(out, z*e);</p>
-<p class="p9">}).memStore;</p>
+<p class="p9">}).add;</p>
 <p class="p9">)</p>
 <p class="p9">b= <span class="s8">Pbind</span>(<span class="s7">\instrument</span>, <span class="s7">\redMatrixMixerTest</span>, <span class="s7">\degree</span>, <span class="s8">Pseq</span>([0, 1, 5, 4], <span class="s8">inf</span>), <span class="s7">\dur</span>, 0.25, <span class="s7">\out</span>, <span class="s8">Pseq</span>((0..7), <span class="s8">inf</span>)).play;</p>
 <p class="p6"><br></p>
