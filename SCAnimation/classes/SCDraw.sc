@@ -1,11 +1,12 @@
 SCDraw {
-	var score, firstFrame, lastFrame, frameRate, clear;
+	var score, firstFrame, lastFrame, frameRate, clear, completeFunc;
 	
-	*new { arg list, start=0.0, end=nil, rate=25.0, sort=true, frameMode=false;
-		^super.new.init(list, start, end, rate, sort, frameMode);
+	*new { arg list, start=0.0, end=nil, rate=25.0, sort=true, frameMode=false, onCompletion=nil;
+		^super.new.init(list, start, end, rate, sort, frameMode, onCompletion);
 	}
 	
-	init { arg list, start, end, rate, sort=true, frameMode=false;
+	init { arg list, start, end, rate, sort=true, frameMode=false, onCompletion=nil;
+		completeFunc = onCompletion;
 		score = Array.new;
 		frameRate = rate;
 		if(frameMode==true, { firstFrame = start.asInteger; }, { firstFrame = (start*frameRate).asInteger });
@@ -74,6 +75,7 @@ SCDraw {
 		win.onClose_({
 			frame = lastFrame;
 			"finished!".postln;
+			completeFunc.notNil.if({ completeFunc.value(); });
 			});
 	}
 		
@@ -106,19 +108,22 @@ SCDraw {
 			img.write((path++"_"++(frame+1)++"."++ext).standardizePath);
 			("frame: "++(frame+1)++" of "++lastFrame++", time: "++((frame+1)/frameRate)++", rendered!").postln;
 			frame = frame+1;
-			if(frame == lastFrame) { ("All done! file is "++(frame/frameRate)++" in duration.").postln; img.free; };
+			if(frame == lastFrame) {
+				("All done! file is "++(frame/frameRate)++" in duration.").postln; img.free;
+				completeFunc.notNil.if({ completeFunc.value(); });
+				};
 			0.0.wait;
 			};
 		}.fork(AppClock);
 
 	}
 			
-	*preview	{ arg list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, sort=true, frameMode=false;
-		this.new(list, start, end, rate, sort, frameMode).preview(width, height, color);
+	*preview	{ arg list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, sort=true, frameMode=false, onCompletion=nil;
+		this.new(list, start, end, rate, sort, frameMode, onCompletion).preview(width, height, color);
 	}
 	
-	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true, frameMode=false;
-		this.new(list, start, end, rate, sort, frameMode).render(path, width, height, color, ext);
+	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true, frameMode=false, onCompletion=nil;
+		this.new(list, start, end, rate, sort, frameMode, onCompletion).render(path, width, height, color, ext);
 	}
 }
 
