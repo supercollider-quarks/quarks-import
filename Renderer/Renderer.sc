@@ -13,8 +13,20 @@ Renderer : Clock {
 	var <audioBusAllocator;
 	var <bufferAllocator;
 	
+	
 	*new { arg lifeTime=60, options;
 		^super.newCopyArgs(lifeTime, options ? ServerOptions.new).init
+	}
+	
+	*use { arg func, lifeTime=60, options;
+		var renderer = this.new(lifeTime, options);
+		var curClock = TempoClock.default, curServer = Server.default;
+		TempoClock.default = renderer;
+		Server.default = renderer;
+		func.value(this);
+		TempoClock.default = curClock;
+		Server.default = curServer;
+		^renderer.score		
 	}
 	
 	init { 
@@ -24,6 +36,8 @@ Renderer : Clock {
 	}
 	
 	/////////////// server /////////////////
+	
+	// perhaps one needs to emulate some more here
 	
 	newAllocators {
 		nodeAllocator = NodeIDAllocator(0);
@@ -35,6 +49,13 @@ Renderer : Clock {
 	latency { ^0 }
 	nextNodeID { ^nodeAllocator.alloc }
 	serverRunning { ^true }
+	asTarget { ^this }
+	server { ^this }
+	notified { ^true }
+	addr { ^this }
+	// well ..
+	defaultGroup { ^this }
+	nodeID { ^1 }
 	
 	////////////// clock //////////////////	
 	
