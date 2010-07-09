@@ -100,7 +100,7 @@ PR(\abstractTLCommand).clone({
 PR(\abstractTLCommand).clone({
 	~fire = { |parms|
 //		~setParms.(parms);
-		currentEnvironment.env.use({ ~func.valueEnvir });
+		currentEnvironment.use({ ~func.valueEnvir });
 	};
 }) => PR(\funcCmd);
 
