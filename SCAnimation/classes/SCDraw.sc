@@ -1,5 +1,5 @@
 SCDraw {
-	var score, firstFrame, lastFrame, frameRate, clear, completeFunc;
+	var score, firstFrame, lastFrame, frameRate, clear, completeFunc, veryLastFrame;
 	
 	*new { arg list, start=0.0, end=nil, rate=25.0, sort=true, frameMode=false, onCompletion=nil;
 		^super.new.init(list, start, end, rate, sort, frameMode, onCompletion);
@@ -14,6 +14,7 @@ SCDraw {
 			if(frameMode==true, { lastFrame = end.asInteger; }, { lastFrame = (end*frameRate).asInteger; });
 			});
 		clear = 1;
+		veryLastFrame = 0;
 		list.do({ arg it, i;
 				var arr, dict=Dictionary.new();
 				arr = Array.new();
@@ -30,6 +31,7 @@ SCDraw {
 				dict.put('start', it[1]);
 				dict.put('duration', it[2]);
 				if(end.isNil, { lastFrame = lastFrame.max(arr[1]); });
+				veryLastFrame = veryLastFrame.max(arr[1]);
 				if(it.size > 3, { ((it.size-3)/2).do({ arg j; dict.put(it[j*2+3], it[j*2+4]); }); });
 				arr = arr.add(dict);
 				if((arr[0] >= firstFrame) && (arr[0] < lastFrame),
@@ -79,7 +81,7 @@ SCDraw {
 			});
 	}
 		
-	render { arg path, width=500, height=500, color=Color.black, ext="png";
+	render { arg path, width=500, height=500, color=Color.black, ext="png", prependZeroes=false;
 		var img, frame=firstFrame, index = 0;
 		var queue = [];
 		var removeThese = [];
@@ -105,7 +107,11 @@ SCDraw {
 			removeThese.reverse.do({ arg it; queue.removeAt(it); });
 			img.unlockFocus;
 			
-			img.write((path++"_"++(frame+1)++"."++ext).standardizePath);
+			if(prependZeroes) {
+				img.write((path++"_"++(frame+1).asStringToBase(width: lastFrame.numDigits)++"."++ext).standardizePath);
+				} {
+				img.write((path++"_"++(frame+1)++"."++ext).standardizePath);
+				};
 			("frame: "++(frame+1)++" of "++lastFrame++", time: "++((frame+1)/frameRate)++", rendered!").postln;
 			frame = frame+1;
 			if(frame == lastFrame) {
@@ -122,8 +128,8 @@ SCDraw {
 		this.new(list, start, end, rate, sort, frameMode, onCompletion).preview(width, height, color);
 	}
 	
-	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true, frameMode=false, onCompletion=nil;
-		this.new(list, start, end, rate, sort, frameMode, onCompletion).render(path, width, height, color, ext);
+	*render	{ arg path, list, start=0.0, end=nil, rate=25.0, width=500, height=500, color=Color.black, ext="png", sort=true, frameMode=false, prependZeroes=false, onCompletion=nil;
+		this.new(list, start, end, rate, sort, frameMode, onCompletion).render(path, width, height, color, ext, prependZeroes);
 	}
 }
 
@@ -149,5 +155,13 @@ SCDraw {
 					};
 			//[r, g, b].postln;
 			^this.new(r, g, b, alpha);
+	}
+}
+
++ Integer {
+	numDigits {
+		var number = this.abs, digits = 1;
+		while { (number = number / 10) > 1 } { digits = digits + 1 };
+		^digits;
 	}
 }
