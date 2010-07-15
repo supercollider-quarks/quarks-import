@@ -106,10 +106,10 @@ TLSequenceIterator {
 	}
 	
 	stop { |parms|
-//parms.debug(">> TLSequenceIterator:stop");
+// parms.debug(">> TLSequenceIterator:stop");
 		parms ?? { parms = () };
 		parms[\manualStop] ?? { parms.put(\manualStop, true) };
-//parms.debug("parms after update");
+// parms.debug("parms after update");
 		activeCmds.copy.do({ |cmd|
 				// stopping non-syncable commands here messes up their status
 				//  for the next iterator
@@ -118,12 +118,12 @@ TLSequenceIterator {
 			};
 		});
 		onStop.value(parms);
-		routine.stop;
 		if(status != \idle) {
 			this.changed(\done).debug("done upon stop");
 			status = \idle;
 		};
-//debug("<< TLSequenceIterator:stop");
+// debug("<< TLSequenceIterator:stop");
+		routine.stop;
 	}
 	
 	isRunning { ^status != \idle }
@@ -214,33 +214,33 @@ TLSequenceIterator {
 	
 	cmdSync { |lastCmd|
 		var	updater;
-//"\n>> cmdSync".debug;
-//if(lastCmd.class == Proto) {
-//	lastCmd.env.debug("removed command");
-//	lastCmd.env.proto.debug;
-//} {
-//	lastCmd.debug("removed command");
-//};
+// "\n>> cmdSync".debug;
+// if(lastCmd.class == Proto) {
+// 	lastCmd.env.debug("removed command");
+// 	lastCmd.env.proto.debug;
+// } {
+// 	lastCmd.debug("removed command");
+// };
 		if(lastCmd.shouldSync and: { lastCmd.tryPerform(\isRunning) ? false }) {
-//"set cmdSync status".debug;
+// "set cmdSync status".debug;
 			status = \cmdSync;
 			NotificationCenter.registerOneShot(lastCmd, \done, ("cmdSync" ++ this.hash).asSymbol,
 			{	|parms, resumeTime|
-//"\n\n\ngot done notification from lastCmd, resuming".debug;
+// "\n\n\ngot done notification from lastCmd, resuming".debug;
 				if(resumeTime.notNil) {
 					clock.schedAbs(resumeTime, { this.prUnhang })
 				} { this.prUnhang };
 			});
-//			updater = Updater(lastCmd, { |obj, what, parms, resumeTime|
-////"sync updater".debug;
-//				if(what == \done) {
-//					updater.remove;
-//					if(resumeTime.notNil) {
-//						clock.schedAbs(resumeTime, { this.prUnhang })
-//					} { this.prUnhang };
-//				};
-//			});
-//"about to hang".debug;
+			updater = Updater(lastCmd, { |obj, what, parms, resumeTime|
+// "sync updater".debug;
+				if(what == \done) {
+					updater.remove;
+					if(resumeTime.notNil) {
+						clock.schedAbs(resumeTime, { this.prUnhang })
+					} { this.prUnhang };
+				};
+			});
+// "about to hang".debug;
 			^condition.hang;
 		} {
 			"TLSequenceIterator: Cannot cmdSync to %. It is either not running or an invalid command."
@@ -250,7 +250,7 @@ TLSequenceIterator {
 	
 	prUnhang {
 		status = \running;
-//"\n\n\nprUnhang: unhanging".debug;
+// "\n\n\nprUnhang: unhanging".debug;
 		condition.unhang;
 	}
 
