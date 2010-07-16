@@ -52,15 +52,15 @@ Proto({
 	~stop = { |parms|
 		var	notifyTime;
 
-//currentEnvironment.env.debug("abstractcmd: stop");
+// currentEnvironment.env.debug("abstractcmd: stop");
 
 		if(~isRunning) {
 			~done.(parms);
 			~clearDoneSignal.(parms);
-//"setting isRunning false".debug;
+// "setting isRunning false".debug;
 			~isRunning = false;
-//"\nsending done notification".debug;
-//currentEnvironment.listVars;
+// "\nsending done notification".debug;
+// currentEnvironment.listVars;
 
 			if((notifyTime = parms.tryPerform(\at, \notifyTime)).notNil) {
 				thisThread.clock.schedAbs(notifyTime, e {
@@ -503,6 +503,10 @@ PR(\abstractTLCommand).clone({
 
 PR(\abstractTLCommand).clone({
 	~autoSync = true;
+	~repeats = inf;
+	// atypical for cmds, but this means the cmd determines when it stops,
+	// not a preset duration (which is 0 by default - very bad here!)
+	~doneSignal = true;
 	~fire = { |parms|
 //		~setParms.(parms);
 		~myIterator = ~makeIterator.();
@@ -510,19 +514,20 @@ PR(\abstractTLCommand).clone({
 	};
 	~done = { |parms|
 		~myIterator.removeDependant(currentEnvironment);
-		~myIterator.stop;
+		if(~myIterator.isRunning) { ~myIterator.stop };
 	};
 	~update = { |obj, what, activeCmds, endStatus|
 		if((~isRunning ? false) and: { what == \done }) {
 //			"got done notification; looping back".postln;
 			~myIterator.removeDependant(currentEnvironment);
-			if(endStatus == \normal) {
+			~repeats = ~repeats - 1;
+			if(endStatus == \normal and: { ~repeats > 0 }) {
 				~myIterator = ~makeIterator.();
 				~myIterator.play(argClock: thisThread.clock, runningCmds: activeCmds);
 			} {
 				// iterator can stop by a nil item
 				// but hardstop only if a stop is not scheduled by other means
-				if(~dur.isNil and: { ~doneSignal.isNil }) {
+				if(~repeats <= 0 or: { ~dur.isNil and: { ~doneSignal.isNil } }) {
 					~stop.()
 				};
 			};
