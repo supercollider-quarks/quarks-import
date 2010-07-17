@@ -1,5 +1,5 @@
 // =====================================================================
-// SimpleMessageSystem interface
+// SWMiniHive and SWMiniBee
 
 SWMiniHive {
 
@@ -200,7 +200,7 @@ SWMiniHive {
 			msg.copyToEnd(1).collect{ |it| { it.asAscii }.try({ it }) }.postln;
 		};
 		serial = hiveConfig.getSerial( msg[1] );
-		cid = hiveConfig.getConfigID( serial );
+		cid = hiveConfig.getConfigIDSerial( serial );
 		if ( msg[2] == cid ){
 			hiveConfig.setStatus( serial, 1 );
 			this.sendConfig( msg[2] );
@@ -222,7 +222,7 @@ SWMiniHive {
 			msg.copyToEnd(1).collect{ |it| { it.asAscii }.try({ it }) }.postln;
 		};
 		serial = hiveConfig.getSerial( msg[1] );
-		cid = hiveConfig.getConfigID( serial );
+		cid = hiveConfig.getConfigIDSerial( serial );
 		if ( msg[2] == cid ){
 			// correct config
 			hiveConfig.setStatus( serial, 2 );
@@ -256,7 +256,7 @@ SWMiniHive {
 				idMsgID = idMsgID%256;
 				outMessages.add( [0, [ $I, idMsgID ] ++ 
 				serial.asString.ascii
-				++ id ++ hiveConfig.getConfigID( serial ) ] ) },
+				++ id ++ hiveConfig.getConfigIDSerial( serial ) ] ) },
 			2, { "Please define configuration".postln; }
 			);
 	}
