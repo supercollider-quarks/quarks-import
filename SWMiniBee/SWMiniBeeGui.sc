@@ -80,7 +80,7 @@ XBeeSMSGui {
 	}
 	
 	xbee_{ |xb|
-	
+		xbee = xb;
 	}
 
 	refreshDetected{
@@ -100,6 +100,7 @@ SWMiniHiveGui {
 
 	var <w, dev, baud;
 	var verb,openBut,startBut;
+	var debugBut;
 	//	var detect,add,reset
 	var config;
 	var sendStart, sendStop;
@@ -134,19 +135,47 @@ SWMiniHiveGui {
 			if ( but.value == 1 ) 
 			{ 
 				minibee.xbee = XBeeSMS.new( dev.menu.item.asString, baud.menu.item.asInteger ); 
-				startBut.enabled_( true );
-				sendStart.enabled_( true );
+				startBut.valueAction = 1;
+				sendStart.valueAction = 1;
+				if ( debugBut.value == 1 ){
+					startBut.enabled_( true );
+					sendStart.enabled_( true );
+					verb.enabled_( true );
+				};
 			}{
 				minibee.stopXBee;
+				startBut.value = 0;
+				sendStart.value = 0;
+				verb.value = 0;
 				startBut.enabled_( false );
 				sendStart.enabled_( false );
+				verb.enabled_( false );
 			}
 		});
+
+		debugBut = Button.new(w, 81@22)
+		.states_( [["DEBUG",Color.red,Color.white],
+			["NO DEBUG",Color.black,Color.red]])
+		.action_( { |but| 
+			if ( but.value == 1 ) 
+			{ 
+				startBut.enabled_( true );
+				sendStart.enabled_( true );
+				verb.enabled_( true );
+			}{
+				verb.valueAction = 0;
+				startBut.enabled_( false );
+				sendStart.enabled_( false );
+				verb.enabled_( false );
+			}
+		});
+
+		w.view.decorator.nextLine;
 		
 		startBut = Button.new(w, 81@22)
 		.states_( 
-			[["START",Color.red,Color.white],
-				["STOP",Color.black,Color.red]])
+			[["START RECV",Color.red,Color.white],
+				["STOP RECV",Color.black,Color.red]])
 		.action_( { |but| 
 			if ( but.value == 1 ) { 
 				minibee.start;
@@ -156,16 +185,11 @@ SWMiniHiveGui {
 		});
 		startBut.enabled_( false );
 
-		verb = GUI.button.new( w, 30@22 )
-		.states_(
-			(0..3).collect{ |it| [ "V"++it, Color.red ] } )
-		.action_( { |but| minibee.xbee.parser.verbose = but.value } );
-
 
 		sendStart = Button.new(w, 81@22)
 		.states_( 
-			[["START",Color.red,Color.white],
-				["STOP",Color.black,Color.red]])
+			[["START SEND",Color.red,Color.white],
+				["STOP SEND",Color.black,Color.red]])
 		.action_( { |but| 
 			if ( but.value == 1 ) { 
 				minibee.startSend;
@@ -175,7 +199,11 @@ SWMiniHiveGui {
 		});
 		sendStart.enabled_( false );
 
-		w.view.decorator.nextLine;
+		verb = GUI.button.new( w, 30@22 )
+		.states_(
+			(0..3).collect{ |it| [ "V"++it, Color.red ] } )
+		.action_( { |but| minibee.xbee.parser.verbose = but.value } );
+		verb.enabled_( false );
 
 		/*
 		Button.new( w, 96@22).states_([["Update nodes"]]).action_( { this.refreshDetected; });
