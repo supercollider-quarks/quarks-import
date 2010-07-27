@@ -1,5 +1,7 @@
 //redFrik
 
+//--changes100727
+//minor fix to initClass so that new gui schemes (e.g. qt) won't break compilation
 //--changes090619
 //now using the redirect classes instead of GUI
 //took out relativeOrigin and rewrote to use sc3.3.1 userview x/y mouse positions
@@ -27,7 +29,11 @@ PopUpTreeMenu : SCViewHolder {
 		pop, usr, hgt, lst, add,
 		lastSelected= 0, xIndexLast, yIndexLast, parentWindow, mouseMoved;
 	*initClass {
-		GUI.schemes.do{|z| z.popUpTreeMenu= PopUpTreeMenu}
+		GUI.schemes.do{|z|
+			try{
+				z.popUpTreeMenu= PopUpTreeMenu;
+			};
+		};
 	}
 	*new {|parent, bounds|
 		^super.new.init(parent, bounds);
