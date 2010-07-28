@@ -21,3 +21,9 @@ RedEfxWave : RedEffectModule {
 		));
 	}
 }
+
+/*
+
+{|in, amount= 25| in*(in.abs+amount)/(in*in+(amount-1)*in.abs+1)}
+
+*/

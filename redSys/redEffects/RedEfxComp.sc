@@ -1,9 +1,8 @@
 //redFrik
+//todo: make into stereo linked
 
 RedEfxComp : RedEffectModule {
 	*def {
-		//make into stereo linked
-		//add limiter after
 		^SynthDef(\redEfxComp, {|out= 0, mix= -1, amp= 1, thresh= 0.5, ratio= 1|
 			var dry, wet;
 			dry= In.ar(out, 2);

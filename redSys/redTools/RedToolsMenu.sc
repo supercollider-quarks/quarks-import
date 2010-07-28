@@ -104,6 +104,7 @@ RedToolsMenu {
 			},
 			['extras', 'swing boot'], {
 				SwingOSC.default.boot;
+				GUI.swing;
 			},
 			['extras', 'Quarks.gui'], {
 				Quarks.gui;

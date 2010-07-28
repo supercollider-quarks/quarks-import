@@ -29,3 +29,9 @@ RedEfxGuit : RedEffectModule {
 		));
 	}
 }
+
+/*
+
+{|in, amount= 0.5, fc= 3500, center= 120, rq= 0.707| var k= 2*amount/(1-amount); var wet= ((1+k)*in)/(1+(k*in.abs)); wet= MidEQ.ar((LPF.ar(wet, fc*#[1, 1.1])*0.5), center, rq, 8)}
+
+*/
