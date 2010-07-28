@@ -28,3 +28,9 @@ RedEfxRing : RedEffectModule {
 		));
 	}
 }
+
+/*
+
+{|in, freq= 440, mul= 1, rate= 6, det= 0| in*SinOsc.ar(freq*[1, 2.pow(det)]+SinOsc.ar(rate, 0, mul))}
+
+*/

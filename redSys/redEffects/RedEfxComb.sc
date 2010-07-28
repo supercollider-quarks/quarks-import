@@ -23,3 +23,9 @@ RedEfxComb : RedEffectModule {
 		));
 	}
 }
+
+/*
+
+{|in, dly= 0.3, dec= 1| CombN.ar(in, 1, dly.min(1), dec)}
+
+*/

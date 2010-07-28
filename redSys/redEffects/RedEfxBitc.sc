@@ -1,4 +1,4 @@
-//redFrik - adapted from adc's bit reduction example found in examples folder
+//redFrik - bitcrusher adapted from adc's bit reduction example found in examples folder
 
 RedEfxBitc : RedEffectModule {
 	*def {
@@ -24,3 +24,9 @@ RedEfxBitc : RedEffectModule {
 		));
 	}
 }
+
+/*
+
+{|in, rate= 0.5, bits= 4| Latch.ar(in, Impulse.ar(SampleRate.ir*0.5*rate)).round(0.5**bits)}
+
+*/
