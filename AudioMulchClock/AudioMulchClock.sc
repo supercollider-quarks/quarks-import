@@ -3,7 +3,7 @@
 //todo:	legato in pbind not working properly - why?
 
 AudioMulchClock {
-	var	<running= false, <synced= false, <tick= 0,
+	var	<running= false, <synced= false, <tick= 0, <>shift= 0,
 		<tempo= 0, avg, lastTime= 0,
 		queue, cmdPeriod, start, stop, pulse;
 	*new {|waitForStart= false|
@@ -35,15 +35,13 @@ AudioMulchClock {
 		}).add;
 		pulse= OSCresponderNode(nil, \t_pulse, {|t, r, m|
 			var time, item, delta;
-			tick= m[1];
+			tick= m[1]-shift;
 			avg.put(tick%10, Main.elapsedTime-lastTime);
 			lastTime= Main.elapsedTime;
 			tempo= 1/(avg.sum*0.1*24);
-			if(tick%96==0, {
-				if(synced.not, {
-					synced= true;
-					(this.class.name++": synced").postln;
-				});
+			if(synced.not and:{tick%96==0}, {
+				synced= true;
+				(this.class.name++": synced").postln;
 			});
 			if(synced, {
 				while({time= queue.topPriority; time.notNil and:{time.floor<=tick}}, {
