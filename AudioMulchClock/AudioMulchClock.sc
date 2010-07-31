@@ -20,7 +20,7 @@ AudioMulchClock {
 				running= true;
 				pulse.add;
 				if(CmdPeriod.objects.includes(cmdPeriod).not, {
-					CmdPeriod.add(cmdPeriod);
+					CmdPeriod.doOnce(cmdPeriod);
 				});
 			});
 		}).add;
@@ -60,7 +60,7 @@ AudioMulchClock {
 			running= true;
 			pulse.add;
 			if(CmdPeriod.objects.includes(cmdPeriod).not, {
-				CmdPeriod.add(cmdPeriod);
+				CmdPeriod.doOnce(cmdPeriod);
 			});
 		});
 	}
