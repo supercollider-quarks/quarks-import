@@ -101,7 +101,7 @@ runOne{|path|
 		.loadDefs_(false)
 		.verbosity_(-1)
 		.numOutputBusChannels_(2)
-		.memSize_(131072);
+		.memSize_(262144);
 
 	outputFilePath = PathName.tmp +/+ "runOne.aiff";
 	fullCmd = Score.program + " -N" + scorepath + "_" + outputFilePath.quote + "44100 AIFF int16"
