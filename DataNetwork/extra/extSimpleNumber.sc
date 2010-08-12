@@ -15,7 +15,7 @@
 	}
 
 	// receiver is a time in frames (25fps)
-	asTimeCode{ |fps=25|
+	asTimeCode{ |fps=25,long=true|
 		var decimal, hours, minutes, seconds, frames;
 		decimal = this.asInteger;
 		
@@ -30,7 +30,11 @@
 		
 		frames = (decimal % fps);
 		
-		^[hours, minutes, seconds, frames, decimal ] 
+		if ( long ){
+			^[hours, minutes, seconds, frames, decimal ] 
+		}{
+			^[hours, minutes, seconds, frames ] 
+		}
 	}
 }
 
