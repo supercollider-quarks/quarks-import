@@ -181,7 +181,7 @@ SWDataNetworkOSCGui{
 		ysize = 400;
 
 		w = w ?? { 
-			w = GUI.window.new("SWDataNetworkOSC", Rect(xposScreen, yposScreen, xsize, ysize )).front; 
+			w = GUI.window.new("DataNetwork client connections", Rect(xposScreen, yposScreen, xsize, ysize )).front; 
 			w.view.decorator = FlowLayout(Rect(2, 2, xsize, ysize), 2@2, 2@2);
 			w;
 		};
@@ -201,7 +201,7 @@ SWDataNetworkOSCGui{
 		restore = GUI.button.new( w, Rect( 0, 0, 55, 20 )).states_(
 			[ [ "restore", Color.blue ] ] ).action_( { network.restoreClients} ).mouseOverAction_({ this.setInfo( "restore client configuration") });
 
-		info = GUI.staticText.new( w, Rect( 0, 0, 240, 16 )).align_( \center );
+		info = GUI.staticText.new( w, Rect( 0, 0, 220, 16 )).align_( \center );
 
 		w.view.decorator.nextLine;
 

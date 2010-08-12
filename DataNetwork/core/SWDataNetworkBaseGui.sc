@@ -17,6 +17,10 @@ SWDataNetworkBaseGui {
 		n.baseGui = this;
 	}
 
+	asClient{ |onoff=true|
+		button2.enabled_( onoff.not );
+	}
+
 	init{
 		w = Window.new( "SenseWorld DataNetwork", Rect( 0, 130, 400, 120 ) );
 		w.view.decorator = FlowLayout.new( Rect( 0, 0, 400, 100), 5@5, 5@5 );
