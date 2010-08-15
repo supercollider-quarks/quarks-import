@@ -34,4 +34,14 @@ RedWindow : SCWindow {
 	}
 	background_ {|color| view.background= color}
 	isOpen {^this.isClosed.not}
+	
+	animate_ {|bool|
+		userView.animate= bool;
+	}
+	frame {
+		^userView.frame;
+	}
+	frameRate {
+		^userView.frameRate;
+	}
 }
