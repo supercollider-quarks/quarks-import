@@ -5,36 +5,36 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #1949e0}
-span.s3 {color: #214fdb}
+span.s2 {color: #2854d6}
+span.s3 {color: #2f58d1}
 span.s4 {color: #000000}
 span.s5 {text-decoration: underline}
-span.s6 {color: #0000bf}
-span.s7 {color: #bf0000}
+span.s6 {font: 9.0px Monaco}
+span.s7 {color: #0019ba}
+span.s8 {color: #ad1d13}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
 <p class="p1"><span class="s1"><b>RedWindow</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>wrapper for SCWindow</b></p>
 <p class="p2"><br></p>
-<p class="p1"><b>superclass: </b><a href="SC://SCWindow"><span class="s2"><b>SCWindow</b></span></a></p>
+<p class="p1"><b>Inherits from: </b><a href="SC://SCWindow"><span class="s2"><b>SCWindow</b></span></a></p>
 <p class="p2"><br></p>
 <p class="p1">adding some functionallity to the standard window class.</p>
 <p class="p1">requires <a href="RedVector.html"><span class="s3">RedVector</span></a></p>
 <p class="p1">note: this class uses cocoa gui.<span class="Apple-converted-space">  </span>if you wan't to run redUniverse on osx with swing, then copy the file RedJWindow into the osx folder.</p>
 <p class="p3"><br></p>
-<p class="p4"><span class="s4">see also [<a href="RedJWindow.html"><span class="s5">RedJWindow</span></a>], [<a href="SC://SCWindow"><span class="s5">SCWindow</span></a>]</span></p>
+<p class="p4"><span class="s4">see also: <a href="RedJWindow.html"><span class="s5">RedJWindow</span></a>, <a href="SC://SCWindow"><span class="s5">SCWindow</span></a></span></p>
 <p class="p3"><br></p>
 <p class="p1"><span class="s5">instance methods:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>draw(func)</b></p>
@@ -58,29 +58,40 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;userView</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>access to the embedded view</p>
 <p class="p5"><br></p>
+<p class="p1"><span class="s5">osx cocoa only:</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>animate_(bool)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>start automatic refresh.<span class="Apple-converted-space">  </span>default at 60fps.</p>
+<p class="p1"><span class="s6"><span class="Apple-tab-span">	</span></span><b>frame</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>current frame.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>frameRate</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>current framerate.</p>
+<p class="p5"><br></p>
 <p class="p5"><br></p>
 <p class="p6">//--</p>
-<p class="p7"><span class="s6">GUI</span>.cocoa;</p>
-<p class="p7">w= <span class="s6">RedWindow</span>.new.front;</p>
-<p class="p7">w.resize(<span class="s6">RedVector2D</span>[200, 200])</p>
-<p class="p7">w.background= <span class="s6">Color</span>.red</p>
-<p class="p8"><br></p>
-<p class="p7">w.draw{<span class="s6">Pen</span>.fillColor= <span class="s6">Color</span>.black; <span class="s6">Pen</span>.fillOval(<span class="s6">Rect</span>.aboutPoint(175.rand@175.rand, 50, 50))}</p>
+<p class="p7"><span class="s7">GUI</span>.cocoa;</p>
+<p class="p7">w= <span class="s7">RedWindow</span>.new.front;</p>
+<p class="p7">w.resize(<span class="s7">RedVector2D</span>[200, 200])</p>
+<p class="p7">w.background= <span class="s7">Color</span>.red</p>
+<p class="p5"><br></p>
+<p class="p7">w.draw{<span class="s7">Pen</span>.fillColor= <span class="s7">Color</span>.black; <span class="s7">Pen</span>.fillOval(<span class="s7">Rect</span>.aboutPoint(175.rand@175.rand, 50, 50))}</p>
 <p class="p6"><span class="s4">w.play<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//start drawing</p>
 <p class="p7">w.stop</p>
-<p class="p8"><br></p>
+<p class="p5"><br></p>
 <p class="p6"><span class="s4">(<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mouse control</p>
 <p class="p7">w.draw{</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s6">var</span> radius= 100.rand;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.fillColor= <span class="s6">Color</span>.blue(0.5, radius/100);</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.fillOval(<span class="s6">Rect</span>.aboutRedVector2D(w.mouse, radius))</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">var</span> radius= 100.rand;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.fillColor= <span class="s7">Color</span>.blue(0.5, radius/100);</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s7">Pen</span>.fillOval(<span class="s7">Rect</span>.aboutRedVector2D(w.mouse, radius))</p>
 <p class="p7">}</p>
 <p class="p7">)</p>
-<p class="p7">w.play(25)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">//25fps</span></p>
+<p class="p7">w.play(25)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">//25fps</span></p>
 <p class="p7">w.mouse</p>
 <p class="p7">w.isPlaying</p>
 <p class="p7">w.isOpen</p>
 <p class="p7">w.stop</p>
+<p class="p7">w.animate= <span class="s7">true</span>;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">//60fps</span></p>
+<p class="p7">w.frame</p>
+<p class="p7">w.frameRate</p>
 <p class="p7">w.close</p>
 </body>
 </html>
