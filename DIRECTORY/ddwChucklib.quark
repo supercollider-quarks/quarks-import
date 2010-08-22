@@ -1,3 +1,7 @@
+var	dep = #["ddwPrototype", "ddwCommon", "ddwGUIEnhancements", "ddwMixerChannel", "ddwPatterns", "ddwTemperament", "MathLib"];
+
+if('Crucial'.asClass.isNil) { dep = dep ++ "cruciallib" };
+
 (
 	name:		"ddwChucklib",
 	path:		"dewdrop_lib/ddwChucklib",
@@ -6,5 +10,5 @@
 	version:		1.0,
 	helpdoc:		"Help/ChuckOverview.html",
 	url:			"http://www.dewdrop-world.net/sc3",
-	dependencies:	#["ddwPrototype", "ddwCommon", "ddwGUIEnhancements", "ddwMixerChannel", "ddwPatterns", "ddwTemperament", "MathLib"]
+	dependencies:	dep
 )

@@ -1,3 +1,7 @@
+var	dep = #["ddwCommon", "ddwGUIEnhancements"];
+
+if('Crucial'.asClass.isNil) { dep = dep ++ "cruciallib" };
+
 (
 	name:		"ddwMixerChannel",
 	path:		"dewdrop_lib/ddwMixerChannel",
@@ -6,5 +10,5 @@
 	version:		1.0,
 	helpdoc:		"Help/MixerChannel.html",
 	url:			"http://www.dewdrop-world.net/sc3",
-	dependencies:	#["ddwCommon", "ddwGUIEnhancements"]
+	dependencies:	dep
 )
