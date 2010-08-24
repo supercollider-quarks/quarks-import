@@ -1,5 +1,5 @@
 /**
-* Unit tests for Machine Listening UGens, (c) 2010 Dan Stowell, published under the GPLv3+.
+* Unit tests for Machine Listening UGens, (c) 2010 Dan Stowell, published under the GPLv2+.
 * These tests check that temporal/spectral features correlate,
 * or don't correlate, with some basic signal modulations. 
 * There's a probabilistic aspect meaning some tests may very rarely fail by chance.
