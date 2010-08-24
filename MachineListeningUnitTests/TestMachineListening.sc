@@ -5,11 +5,11 @@
 * There's a probabilistic aspect meaning some tests may very rarely fail by chance.
 */
 // s.boot;
-TestMachineListening().run;
+//TestMachineListening().run;
 
 TestMachineListening : UnitTest {
 		
-	// array of tests and their exxpected correlation bounds.
+	// array of tests and their expected correlation bounds.
 	// [label, func, min corr cutoff, max corr cutoff, min corr amp, max corr amp]
 	classvar <corrtesters;
 	
