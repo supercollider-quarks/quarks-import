@@ -15,14 +15,14 @@ TestMachineListening : UnitTest {
 	
 	*initClass{
 		corrtesters = [
-		["SpecCentroid", {|a,c| SpecCentroid.kr(c)}          , 0.95, 1, -0.05, 0.05],
+		["SpecCentroid", {|a,c| SpecCentroid.kr(c)}          , 0.95, 1, -0.09, 0.09],
 		["FFTPower",     {|a,c| FFTPower.kr(c) }             , 0.85, 1,  0.92, 1],
 		["SpecPcile 95", {|a,c| SpecPcile.kr(c, 0.95) }      , 0.93, 1, -0.05, 0.05],
-		["SpecPcile 50", {|a,c| SpecPcile.kr(c, 0.50) }      , 0.93, 1, -0.08, 0.08],
-		["SpecPcile 25", {|a,c| SpecPcile.kr(c, 0.25) }      , 0.93, 1, -0.1 , 0.1],
-		["FFTSubbandPower 1600--6400", {|a,c| FFTSubbandPower.kr(c, #[1600, 6400])[1] }, 0.9, 1, 0.9, 1],
+		["SpecPcile 50", {|a,c| SpecPcile.kr(c, 0.50) }      , 0.93, 1, -0.11, 0.11],
+		["SpecPcile 25", {|a,c| SpecPcile.kr(c, 0.25) }      , 0.93, 1, -0.13, 0.13],
+		["FFTSubbandPower 1600--6400", {|a,c| FFTSubbandPower.kr(c, #[1600, 6400])[1] }, 0.87, 1, 0.9, 1],
 //		["", {|a,c| }, 0.9, 1],
-		["ZeroCrossing", {|a,c| A2K.kr(ZeroCrossing.ar(a)) } , 0.8,  1, -0.03, 0.03]
+		["ZeroCrossing", {|a,c| A2K.kr(ZeroCrossing.ar(a)) } , 0.8,  1, -0.08, 0.08]
 		];
 	}
 
