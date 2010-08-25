@@ -66,7 +66,7 @@ TestMcldUGens : UnitTest {
 					avgunit.ar(PlayBuf.ar(1, rndbuf), 1, rnddata.size);
 				}, \ar, 1]
 			].do{|stuff|
-				stuff[0].loadToFloatArray(rndbuf.duration * stuff[2], action: { |array|
+				stuff[0].loadToFloatArray(rnddata.size * stuff[2] / Server.default.sampleRate, action: { |array|
 					this.assertFloatEquals(array.last, rnddata.perform(avgcalc), 
 						"average from %.% should match val calculated in language".format(avgunit, stuff[1]));
 					testsIncomplete = testsIncomplete - 1;
@@ -142,31 +142,52 @@ TestMcldUGens : UnitTest {
 		this.wait{testsIncomplete==0};
 	} // test_insideout
 	
-	test_tree {
-		var testsIncomplete = 1, s = this.s, d, p, c, t;
+	test_planetree_2d {
+		var testsIncomplete = 1, s = this.s, d, p, c, t, precalc;
 		this.bootServer;
 		d = #[
 		/* xoff,yoff, xvec,yvec, lisl, lidx, risl, ridx */
-		   [0.53, 0.53, -0.7, 0.4,    0,    1,    0,    2],
-		   [0.33, 0.73,  0.4, 0.56,   1,    1,    1,    2],
-		   [0.53, 0.23, -0.8,-0.81,   1,    3,    1,    4]
-		   // Note: added some extra decimal places above, since the difference in numerical precision 
-		   // can lead to some near-zero values being classified differently, unavoidable.
+			   [0.5,  0.5, -0.5, 2.0,    0,    0],
+			   [0.25, 0.5,  1.0, 1.0,    1,    1],
+			   [0.5,  0.25, -0.5,-0.5,    1,    1]
+		   // Note: this uses power-of-two values to avoid numerical precision issues.
 		];
 		
-		p = (0, 0.1 .. 1).collect{|y| (0, 0.1 .. 1).collect{|x| [x,y]}}.flatten;
+		precalc = #[
+				[ 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7 ],
+				[ 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7 ],
+				[ 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7 ],
+				[ 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7 ],
+				[ 5, 5, 6, 6, 7, 7, 7, 7, 7, 7, 7 ],
+				[ 5, 5, 5, 4, 4, 7, 7, 7, 7, 7, 7 ],
+				[ 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 7 ],
+				[ 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ],
+				[ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ],
+				[ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ],
+				[ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ]
+			]; // the expected results
+		
+		p = (0, 0.1 .. 1).collect{|y| (0, 0.1 .. 1).collect{|x| [x,y]}};
 		
 		// language-side classification:
-		c = p.collect{|datum| PlaneTree.classify(datum, d) };
+		c = p.collect{|row| row.collect{|datum| PlaneTree.classify(datum, d) }};
 		
 		// now if we do the server-side classification, it should match:
-		t = Buffer.loadCollection(s, d.flat, d[0].size);
+		t = Buffer.sendCollection(s, d.flat, d[0].size);
 		0.3.wait;
 		s.sync;
 		{
-			PlaneTree.kr(t, Duty.kr(ControlDur.ir, 0, [Dseq(p.collect(_[0])), Dseq(p.collect(_[1]))]))
-		}.loadToFloatArray(p.size * s.options.blockSize / s.sampleRate, s, { |data|
-     		this.assertArrayFloatEquals(data, c, "PlaneTree server-side and language-side classifications match");
+			var x, y, c;
+			x = Phasor.kr(end: 11) * 0.1;
+			y = Phasor.kr(rate: 1/11, end: 12).floor * 0.1;
+			c = PlaneTree.kr(t, [x, y]);
+			c
+		}.loadToFloatArray(11 * 11 * s.options.blockSize / s.sampleRate, action:{|data| 
+			var srvrc = data.asInt.clump(11);
+			srvrc.do(_.postln);
+     		this.assertArrayFloatEquals(srvrc, c, "PlaneTree server-side and language-side classifications match");
+     		this.assertArrayFloatEquals(srvrc, precalc, "PlaneTree server-side and hard-coded classifications match");
+     		this.assertArrayFloatEquals(c, precalc, "PlaneTree language-side and hard-coded classifications match");
 			testsIncomplete = testsIncomplete - 1;
 		});
 		// Wait for async tests
