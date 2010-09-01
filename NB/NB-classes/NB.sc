@@ -3,7 +3,7 @@ NB {
 	classvar <methodNames;
 	classvar <>verbose = false;			
 	var <>name, <>width, <>height, <>publishing, <>path = "/tmp", <>fullpath;
-	var fileType = "png";				// options: png, gif, tiff, jpeg, jpg, pdf, mov
+	var fileType = "pdf";				// options: png, gif, tiff, jpeg, jpg, pdf, mov
 	var <>frames = 30, <>fps = 30;
 	var <>mode = "RGB";							
 	var <>pythonString = false; 
@@ -16,7 +16,7 @@ NB {
 			width = 320, 
 			height = 240, 
 			publishing = true,
-			fileType = "png",
+			fileType = "pdf",
 			frames = 30,
 			fps = 30;
 		^super.newCopyArgs(name, width, height, publishing).init(fileType, frames, fps)
@@ -875,7 +875,7 @@ NB {
 			txt = this.asCompileString(txt); }, {
 			txt = txt.asString
 		});
-		^this.publish(CmdString(\text, txt, x, y, width, height, outline))
+		^this.publish(CmdString(\text, "u"++txt, x, y, width, height, outline))
 	}
 	
 	textpath { arg txt, x, y, width="None", height=1000000; 
