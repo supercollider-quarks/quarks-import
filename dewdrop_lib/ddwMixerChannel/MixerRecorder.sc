@@ -1,9 +1,15 @@
 
 MixerRecorder {
 		// a reduced version of RecNodeProxy to work better with MixerChannels
-	classvar	<dir = "sounds/";
+	classvar	<dir; // = "sounds/";
 	var	<mixer, <buffer, <path, <synth, <running = false;
-	
+
+	*initClass {
+		StartUp.add {
+			this.dir = thisProcess.platform.recordingsDir;
+		}
+	}
+
 	*dir_ { |path|
 		dir = path;
 		(dir.last != thisProcess.platform.pathSeparator).if({
