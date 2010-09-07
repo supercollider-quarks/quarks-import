@@ -22,7 +22,7 @@ RedEfxBit8 : RedEffectModule {
 				\mix -> \bit8Mix,
 				\rate -> \bit8Rate,
 				\bits -> \bit8Bits,
-				\rfreq -> \bit8Rfreq
+				\freq -> \bit8Freq
 			]
 		));
 	}
