@@ -95,7 +95,7 @@ PeakMonitor {
 		SynthDef(defname, {
 			arg bus, kbus, t_trig;  // t_trig lets client control timing/reset of Peak
 			var sig;
-			sig = Peak.ar(In.ar(bus, target.numChannels), t_trig);
+			sig = Peak.ar(In.ar(bus, target.numChannels), T2A.ar(t_trig));
 			Out.kr(kbus, sig);
 		}).send(target.server, 
 			synth.newMsg(synthTarget, [\bus, target.index, \kbus, bus.index, \freq, freq],
