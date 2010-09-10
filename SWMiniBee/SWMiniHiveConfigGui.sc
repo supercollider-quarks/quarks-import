@@ -57,12 +57,22 @@ SWMiniHiveConfigGui{
 		if ( str.size == 0 ){ ^nil }{ ^str };
 	}
 
+	getConfigLabelMenu{
+		^([ "*new*" ] ++ hiveConf.configLabels.order({ |a,b| a.value < b.value }));
+	}
+
+	getConfigMenuValue{ |label|
+		^this.getConfigLabelMenu.indexOf( label );
+	}
+
 	addLine{ |key|
 				
 		confs.add([
 			StaticText.new( view, 130@20 ), // serial number
 			StaticText.new( view, 60@20 ).align_('center'), // node ID
-			PopUpMenu.new( view, 150@20 ).items_(  [ "*new*" ] ++ hiveConf.configLabels.keys ).action_({ |men|
+			PopUpMenu.new( view, 150@20 ).items_( 
+				this.getConfigLabelMenu;
+			).action_({ |men|
 				//	men.value.postln;
 				if ( men.value > 0 ){
 					//	"making deep Copy in updating menu in lines action".postln;
@@ -99,7 +109,7 @@ SWMiniHiveConfigGui{
 			configID = hiveConf.getConfigIDLabel( bee.configLabel );
 
 			if ( configID.notNil ){
-				confs.last[2].value_( configID );
+				confs.last[2].value_( this.getConfigMenuValue( bee.configLabel ) );
 			}{
 				confs.last[2].value_( 0 );
 			};
@@ -112,7 +122,9 @@ SWMiniHiveConfigGui{
 
 	updateMenu{
 		confs.do{ |it|
-			it[2].items_( [ "*new*" ] ++ hiveConf.configLabels.keys);
+			it[2].items_( 
+				this.getConfigLabelMenu;
+			);
 		};
 	}
 
