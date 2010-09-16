@@ -32,7 +32,6 @@ SETOServer {
 	var objectIDs;
 	var <format;
 	var <realFormat;
-
 	var setoClass;
 	/**
 	  function defining how to construct a SETObject. 
