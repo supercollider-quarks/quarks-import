@@ -50,10 +50,10 @@ SETO_OSCServer : SETOServer {
 
 SETO_OSCTUIOServer : SETOServer {
 	var interface;
-	var idHash, class;
+	var idHash, class, <>imgRatio;
 	
-	*new {|format, netaddr, setoClass, interactionClass|
-		^super.new(format, setoClass, interactionClass).pr_initSETO_OSCServer(netaddr);
+	*new {|format, netaddr, setoClass, interactionClass, imgRatio=0.57142857142857| // 480/640
+		^super.new(format, setoClass, interactionClass).pr_initSETO_OSCServer(netaddr, imgRatio);
 	}
 	start{
 		interface.start;
@@ -70,7 +70,7 @@ SETO_OSCTUIOServer : SETOServer {
 		aliveFunc = function;
 		OSCReceiverFunction(interface, \alive, aliveFunc);
 	}
-	pr_initSETO_OSCServer {|netaddr|
+	pr_initSETO_OSCServer {|netaddr, argImgRatio|
 		idHash = IdentityDictionary.new;
 		class = IdentityDictionary[
 			108 -> 0,
@@ -81,6 +81,7 @@ SETO_OSCTUIOServer : SETOServer {
 			113 -> 0,
 			0 -> 1
 		];
+		imgRatio = argImgRatio;
 		
 		interface = OSCReceiver(('/tuio/'++format.asSymbol).asSymbol, netaddr);
 		this.setFunc_{|id, classID ... args|
@@ -88,6 +89,9 @@ SETO_OSCTUIOServer : SETOServer {
 			
 			
 			//[id, classID, args].postln;
+
+			// fix ratio
+			args[1] = args[1]*imgRatio;
 			
 			classID = classID ? -1;
 			this.setWithFormat(realFormat, classID, [class[classID]] ++ args);
