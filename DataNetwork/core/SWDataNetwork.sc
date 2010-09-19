@@ -576,7 +576,8 @@ SWDataNode{
 	//	var <>trigger;
 
 	// monitoring support
-	var <busmonitor;
+	var <datamonitor;
+	var <>monitorMode = \plotter; // other option is \gnuplot
 
 	*new{ |id,maxs=4|
 		^super.new.init(id,maxs);
@@ -681,17 +682,21 @@ SWDataNode{
 
 	monitor{ |onoff=true|
 		if ( onoff, {
-			if ( busmonitor.isNil, { 
-				if ( bus.isNil, { this.createBus } );
-				busmonitor = BusMonitor.new( this.bus );
+			if ( datamonitor.isNil, { 
+				if ( monitorMode == \plotter ){
+					datamonitor = SWPlotterMonitor.new( { this.value }, 200, this.size, 0.05, 20 );
+				}{
+					if ( bus.isNil, { this.createBus } );
+					datamonitor = BusMonitor.new( this.bus );
+				};
 			});
-			busmonitor.start;
-		}, { busmonitor.stop; });
+			datamonitor.start;
+		}, { datamonitor.stop; });
 	}
 
 	monitorClose{
-		busmonitor.cleanUp;
-		busmonitor = nil;
+		datamonitor.cleanUp;
+		datamonitor = nil;
 	}
 
 	printOn { arg stream;
@@ -716,8 +721,11 @@ SWDataSlot{
 	var <map;
 	var <range;
 
+	var <>actionSensitivity = 1e-5;
+
 	// monitoring support
-	var <busmonitor;
+	var <datamonitor;
+	var <>monitorMode = \plotter; // other option: gnuplot
 
 	*new{ |id|
 		^super.new.init(id);
@@ -732,10 +740,13 @@ SWDataSlot{
 
 	// ------ data and action -----
 	value_{ |val|
+		var oldval = value;
 		value = val * scale;
 		// map to control spec from input range after scaling
 		if ( map.notNil, { value = map.map( range.unmap( value ) ) } );
-		action.value( value );
+		if ( oldval.equalWithPrecision( value, actionSensitivity ).not ){
+			action.value( value );
+		};
 		debugAction.value( value );
 		if ( bus.notNil, { bus.set( value ) } );
 	}
@@ -816,17 +827,21 @@ SWDataSlot{
 
 	monitor{ |onoff=true|
 		if ( onoff, {
-			if ( busmonitor.isNil, { 
-				this.createBus;
-				busmonitor = BusMonitor.new( this.bus );
+			if ( datamonitor.isNil, {
+				if ( monitorMode == \plotter ){
+					datamonitor = SWPlotterMonitor.new( { this.value }, 200, 1, 0.05, 20 );
+				}{
+					this.createBus;
+					datamonitor = BusMonitor.new( this.bus );
+				};
 			});
-			busmonitor.start;
-		}, { busmonitor.stop; });
+			datamonitor.start;
+		}, { datamonitor.stop; });
 	}
 
 	monitorClose{
-		busmonitor.cleanUp;
-		busmonitor = nil;
+		datamonitor.cleanUp;
+		datamonitor = nil;
 	}
 
 	printOn { arg stream;
