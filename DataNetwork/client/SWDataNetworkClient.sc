@@ -8,6 +8,9 @@ SWDataNetworkClient : SWDataNetwork{
 	var <>name;
 
 	var <subscriptions,<setters;
+
+	// these could be moved to SWDataNetwork later on, as they may be useful there too, to abstract the newNodeHooks.
+	var <hooks;
 	
 	var <>autoregister = true;
 	// do not set unless you are the class itself
@@ -36,6 +39,8 @@ SWDataNetworkClient : SWDataNetwork{
 		subscriptions = Set.new;
 		setters = Set.new;
 
+		hooks = SWHookSet.new;
+
 		this.addResponders;
 
 		if ( reg and: foundHost ){
@@ -60,24 +65,25 @@ SWDataNetworkClient : SWDataNetwork{
 		registered = reg;
 		if ( registered ){
 			"Registered as client at DataNetwork".postln;
+			this.queryAll;
+			subscriptions.do{ |it|
+				if ( it.isArray ){
+					this.subscribeSlot( it );
+				}{
+					this.subscribeNode( it );
+				}
+			};
+			setters.do{ |it|
+				if ( nodes[it].notNil ){
+					this.addExpected( it, spec.findNode( it ), nodes[it].size, nodes[it].type );
+				}{
+					this.addExpected( it, spec.findNode( it ) );
+				};
+			};
 		}{
 			"Unregistered as client at DataNetwork".postln;
 		};
 
-		subscriptions.do{ |it|
-			if ( it.isArray ){
-				this.subscribeSlot( it );
-			}{
-				this.subscribeNode( it );
-			}
-		};
-		setters.do{ |it|
-			if ( nodes[it].notNil ){
-				this.addExpected( it, spec.findNode( it ), nodes[it].size, nodes[it].type );
-			}{
-				this.addExpected( it, spec.findNode( it ) );
-			};
-		};
 	}
 
 	addResponders{
@@ -248,6 +254,7 @@ SWDataNetworkClient : SWDataNetwork{
 				}
 			};
 		},{
+			hooks.perform( \expected, id );
 			("DataNetwork: expected node %, with label % and % slots".format( id, label, size )).postln;
 			// use the method from the super-class
 			super.addExpected( id, label, size, type );
@@ -399,15 +406,65 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( node.isKindOf( SWDataNode ) ){
 			this.sendMsgWithArgs( '/subscribe/node', node.id );
 		}{
-			this.sendMsgWithArgs( '/subscribe/node', node );
+			if ( node.isKindOf( Symbol ) ){
+				this.subscribeBySymbol( node );
+			}{
+				this.sendMsgWithArgs( '/subscribe/node', node );
+			}
 		}
+	}
+
+	subscribeBySymbol{ |label|
+		var thisone = this.at( label );
+		if ( thisone.isNil ){
+			"WARNING: no node or slot found with this name".postln;
+		}{
+			if ( thisone.isKindOf( SWDataNode ) ){
+				this.sendMsgWithArgs( '/subscribe/node', thisone.id );				
+			};
+			if ( thisone.isKindOf( SWDataSlot ) ){
+				this.sendMsgWithArgs( '/subscribe/slot', thisone.id );				
+			}
+		};
+	}
+
+	unsubscribeBySymbol{ |label|
+		var thisone = this.at( label );
+		if ( thisone.isNil ){
+			"WARNING: no node or slot found with this name".postln;
+		}{
+			if ( thisone.isKindOf( SWDataNode ) ){
+				this.sendMsgWithArgs( '/unsubscribe/node', thisone.id );				
+			};
+			if ( thisone.isKindOf( SWDataSlot ) ){
+				this.sendMsgWithArgs( '/unsubscribe/slot', thisone.id );				
+			}
+		};
+	}
+
+	getBySymbol{ |label|
+		var thisone = this.at( label );
+		if ( thisone.isNil ){
+			"WARNING: no node or slot found with this name".postln;
+		}{
+			if ( thisone.isKindOf( SWDataNode ) ){
+				this.sendMsgWithArgs( '/get/node', thisone.id );				
+			};
+			if ( thisone.isKindOf( SWDataSlot ) ){
+				this.sendMsgWithArgs( '/get/slot', thisone.id );				
+			}
+		};
 	}
 
 	unsubscribeNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
 			this.sendMsgWithArgs( '/unsubscribe/node', node.id );
 		}{
-			this.sendMsgWithArgs( '/unsubscribe/node', node );
+			if ( node.isKindOf( Symbol ) ){
+				this.unsubscribeBySymbol( node );
+			}{
+				this.sendMsgWithArgs( '/unsubscribe/node', node );
+			}
 		}
 	}
 
@@ -415,7 +472,11 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( slot.isKindOf( SWDataSlot ) ){
 			this.sendMsgWithArgs( '/subscribe/slot', slot.id );
 		}{
-			this.sendMsgWithArgs( '/subscribe/slot', slot );
+			if ( slot.isKindOf( Symbol ) ){
+				this.subscribeBySymbol( slot );
+			}{
+				this.sendMsgWithArgs( '/subscribe/slot', slot );
+			}
 		}
 	}
 
@@ -423,7 +484,11 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( slot.isKindOf( SWDataSlot ) ){
 			this.sendMsgWithArgs( '/unsubscribe/slot', slot.id );
 		}{
-			this.sendMsgWithArgs( '/unsubscribe/slot', slot );
+			if ( slot.isKindOf( Symbol ) ){
+				this.unsubscribeBySymbol( slot );
+			}{
+				this.sendMsgWithArgs( '/unsubscribe/slot', slot );
+			}
 		}
 	}
 
@@ -431,7 +496,11 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( node.isKindOf( SWDataNode ) ){
 			this.sendMsgWithArgs( '/get/node', node.id );
 		}{
-			this.sendMsgWithArgs( '/get/node', node );
+			if ( node.isKindOf( Symbol ) ){
+				this.getBySymbol( node );
+			}{
+				this.sendMsgWithArgs( '/get/node', node );
+			}
 		}
 	}
 
@@ -439,7 +508,11 @@ SWDataNetworkClient : SWDataNetwork{
 		if ( slot.isKindOf( SWDataSlot ) ){
 			this.sendMsgWithArgs( '/get/slot', slot.id );
 		}{
-			this.sendMsgWithArgs( '/get/node', slot );
+			if ( slot.isKindOf( Symbol ) ){
+				this.getBySymbol( slot );
+			}{
+				this.sendMsgWithArgs( '/get/slot', slot );
+			}
 		}
 	}
 
@@ -518,6 +591,7 @@ SWDataNetworkClient : SWDataNetwork{
 	setterInfo{ |msg|
 		("setter of node: "+msg).postln;
 		setters.add( msg[0]);
+		hooks.perform( \setter, msg[0] );
 		if ( gui.notNil ){ 
 			gui.setInfo( "setter of node:" + msg );
 			gui.subsetChanged = true;
@@ -546,6 +620,11 @@ SWDataNetworkClient : SWDataNetwork{
 	sendPong{
 		this.sendSimpleMsg( '/pong' );
 		lasttime = Process.elapsedTime;
+	}
+
+	addHook{ |type,id,action|
+		//	"adding hook DN".postln;
+		hooks.add( type, id, action );
 	}
 
 	// -------

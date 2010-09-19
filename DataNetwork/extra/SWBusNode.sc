@@ -73,7 +73,6 @@ SWBusNode{
 
 		//	if ( bus.notNil, { this.node.bus_( bus ); } );
 
-		this.setLabel;
 		if ( autostart ){
 			fork{
 				server.sync;
@@ -83,7 +82,18 @@ SWBusNode{
 	}
 
 	myInit{
-		network.setData( id, Array.fill( bus.numChannels, 0 ) ); 
+		if( network.isKindOf( SWDataNetworkClient ) ){
+			//		"adding setter hook".postln;
+			network.addHook( \expected, id, { 
+				network.setData( id, Array.fill( bus.numChannels, 0 ) );
+			});
+			network.addHook( \setter, id, { 
+				this.setLabel;
+			});
+		}{
+			network.setData( id, Array.fill( bus.numChannels, 0 ) );
+			this.setLabel;
+		};
 		// override in subclass
 	}
 
@@ -476,7 +486,7 @@ InRangeGateNode : SWBusNode{
 			var input = In.kr( in,nc );
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			Out.kr( out, 
-				InRange.kr(input, low, hi ) * input
+				Gate.kr( input, InRange.kr(input, low, hi ) )
 				* mul);
 		}).send(s);
 	}
@@ -518,7 +528,7 @@ SchmidtGateNode : SWBusNode{
 			var input = In.kr( in, nc );
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			Out.kr( out, 
-				Schmidt.kr( input, low, hi ) * input
+				Gate.kr( input, Schmidt.kr( input, low, hi ) )
 				* mul);
 		}).send(s);
 	}
@@ -554,7 +564,7 @@ ToggleFFGateNode : SWBusNode{
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
 			Out.kr( out, 
-				ToggleFF.kr( input ) * input
+				Gate.kr( input, ToggleFF.kr( input ) )
 				* mul);
 		}).send(s);
 	}
