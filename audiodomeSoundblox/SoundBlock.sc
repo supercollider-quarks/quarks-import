@@ -164,7 +164,7 @@ SoundBlock {
 	
 	performBlockUpdate {
 		//["/block", id, upFace, posX, posY, rot, visible.binaryValue].postln;
-		visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);
+		visualsAddr.notNil.if{visualsAddr.sendMsg("/block", id, upFace, posX, posY, rot, visible.binaryValue);};
 		//"%: update".format(this.color).inform;
 	}
 	
