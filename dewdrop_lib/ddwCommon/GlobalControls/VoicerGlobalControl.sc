@@ -71,14 +71,16 @@ GlobalControlBase : AbstractFunction {
 	}
 	
 	free { arg updateGUI = true;
-		this.stopWatching.stopAuto;
-		if(BusDict.at(\control, server, bus.index).notNil) {
-			BusDict.free(bus);		// free the bus
-		} {
-			bus.free
-		};
-		bus = nil;
-		this.changed((what: \modelWasFreed, resync: true));
+		if(bus.notNil) {
+			this.stopWatching.stopAuto;
+			if(BusDict.at(\control, server, bus.index).notNil) {
+				BusDict.free(bus);		// free the bus
+			} {
+				bus.free
+			};
+			bus = nil;
+			this.changed((what: \modelWasFreed, resync: true));
+		}
 	}
 	
 	spec_ { |newSpec, updateGUI = true|
