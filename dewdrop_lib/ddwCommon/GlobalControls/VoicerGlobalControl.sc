@@ -71,7 +71,7 @@ GlobalControlBase : AbstractFunction {
 	}
 	
 	free { arg updateGUI = true;
-		if(bus.notNil) {
+		bus !? {
 			this.stopWatching.stopAuto;
 			if(BusDict.at(\control, server, bus.index).notNil) {
 				BusDict.free(bus);		// free the bus
