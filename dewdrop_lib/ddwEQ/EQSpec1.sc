@@ -216,7 +216,7 @@ EQBand : EQSpec1 {
 			def = this.makeSynthDef;
 			bundle = [synth.freeMsg];
 			synth = Synth.basicNew("EQ/"++type.asString++numChannels, target.server);
-			bundle.add([\d_recv, def.asBytes, synth.newMsg(target,
+			bundle = bundle.add([\d_recv, def.asBytes, synth.newMsg(target,
 				this.calc.synthArgs ++ [\outbus, bus.index, \mul, mul], addAction)]);
 			target.server.listSendBundle(nil, bundle);
 		});
