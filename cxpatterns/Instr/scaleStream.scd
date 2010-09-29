@@ -18,7 +18,7 @@ if(checkSpec.isNil,{
 	})
 });*/
 
-scales = Scale.scales.values;
+scales = CXScale.scales.values;
 /* #[ 
 	[ 0, 2, 3, 5, 6, 8, 9, 11 ], 
 	[ 0, 2, 4, 6, 8, 10 ], 
@@ -195,7 +195,7 @@ Instr("scaleStream.bluesprog",{ arg notesPerChord=16,root=0;
 
 //2 5 1
 //coltrane changes
-//Scale.degrees(['bb',	'f#',	'd#',	'b',	'd'])
+//CXScale.degrees(['bb',	'f#',	'd#',	'b',	'd'])
 
 
 
