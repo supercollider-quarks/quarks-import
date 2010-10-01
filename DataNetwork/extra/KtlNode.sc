@@ -69,3 +69,36 @@ HIDNode {
 		}
 	}
 }
+
+WIINode {
+
+	var <>wii, <>network, <>ids, <>name;
+
+	var <cbnodes;
+
+	*new{ |wii,network,ids,name|
+		^super.newCopyArgs( wii, network, ids, name ).init;
+	}
+
+	init{
+		var map,devs;
+		cbnodes = IdentityDictionary.new;
+
+		switch( wii.ext_type,
+			0, { devs = [ \wii_mote ] },
+			1, { devs = [ \wii_mote, \wii_nunchuk ] },
+			2, { devs = [ \wii_mote, \wii_classic ] }
+		);
+
+		devs.do{ |key,i|
+			map = WiiMote.devicesMap[key];
+			cbnodes.put( key, SWCombineNode.new( ids[i], network, map.size ) );
+			network.addExpected( ids[i], key, map.size );
+			map.do{ |jt,j|
+				network.add( (\wii_++jt).asSymbol, [ids[j] , j ] );
+				wii.setAction( jt, { |v| cbnodes[key].set( j, [ v ] ) });
+			};
+		};
+	}
+}
+
