@@ -28,7 +28,7 @@ MIDIKtlNode {
 			cbnodes = SWCombineNode.new( ids, network, dict.size );
 			dict.sortedKeysValuesDo{ |k2,v,j|
 				network.add( name ++ "_" ++ k2, [ ids, j ] );
-				ktl.mapCCS( k2, { |val| cbnodes.set( j, [ val/127 ] ); });
+				ktl.mapCC( k2, { |val| cbnodes.set( j, [ val/127 ] ); });
 			};
 		}
 	}
