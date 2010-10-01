@@ -93,7 +93,7 @@ KeyPlayer {
 
 		 if (verbose) { [KeyPlayer, char, modifiers, unicode, keycode].postcs; };
 		 
-	//	 if (rec.notNil) { rec.recordEvent(unicode, which) };
+		 if (rec.notNil) { rec.recordEvent(unicode, which) };
 
 				// call the function
 		unicode = unicode ?? { char.asUnicode };

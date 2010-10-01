@@ -19,11 +19,9 @@ p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #961e1e}
 p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #961e1f}
 p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #606060}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #dc0000}
-p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000}
-p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #000000; min-height: 14.0px}
-p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #737373}
-p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #3c3232}
-p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #213ba1}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #737373}
+p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #3c3232}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Monaco; color: #213ba1}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 10.0px Monaco}
 span.s3 {font: 12.0px Helvetica; color: #000000}
@@ -64,7 +62,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><br></p>
 <p class="p6"><span class="s4">KeyPlayer</span>.verbose_(false);<span class="Apple-tab-span">	</span></p>
 <p class="p4"><br></p>
-<p class="p6">KeyPlayer.gui;</p>
+<p class="p6">KeyPlayer.gui;<span class="Apple-tab-span">	</span>// shows up to 10 keyplayers</p>
 <p class="p4"><br></p>
 <p class="p1"><b>instance methods:<span class="Apple-converted-space"> </span></b></p>
 <p class="p4"><br></p>
@@ -129,26 +127,26 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span>// random keyboard, no retrig, hold until release with keyUp</p>
 <p class="p6">(</p>
 <p class="p12"><span class="s7">q = q ? ();<span class="Apple-tab-span">	</span></span>// create a dict to keep things:<span class="Apple-converted-space"> </span></p>
-<p class="p13">q.notes = ();</p>
-<p class="p13">q.synths = ();</p>
+<p class="p6">q.notes = ();</p>
+<p class="p6">q.synths = ();</p>
 <p class="p12"><span class="s13">thisThread</span><span class="s7">.randSeed = 2008; </span>// it is not that new</p>
-<p class="p14"><br></p>
-<p class="p15">"qwertzuiopasdfghjklyxcvbnm"<span class="s7">.do { </span><span class="s13">|char|</span><span class="s7"><span class="Apple-converted-space"> </span></span></p>
-<p class="p13"><span class="Apple-tab-span">	</span>q.notes.put(char, rrand(36, 96));</p>
-<p class="p14"><span class="Apple-tab-span">	</span></p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="s7">KeyPlayer(\hold)</span>.putDown(char, { <span class="s13">|char|</span><span class="Apple-converted-space"> </span></p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>char.post;<span class="Apple-converted-space"> </span></p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.synths[char].release;</p>
-<p class="p13"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.synths.put(char, <span class="s13">Synth</span>(<span class="s14">\default</span>, [<span class="s14">\freq</span>, q.notes[char].postln.midicps]));</p>
-<p class="p13"><span class="Apple-tab-span">	</span>}, noRep: true);</p>
-<p class="p14"><span class="Apple-tab-span">	</span></p>
-<p class="p13"><span class="s7"><span class="Apple-tab-span">	</span>KeyPlayer(\hold)</span>.putUp(char.postln, { <span class="s13">|char|</span> q.synths.removeAt(char).release });</p>
-<p class="p13">};</p>
-<p class="p13"><span class="s7">KeyPlayer</span>.gui.front;</p>
+<p class="p4"><br></p>
+<p class="p13">"qwertzuiopasdfghjklyxcvbnm"<span class="s7">.do { </span><span class="s13">|char|</span><span class="s7"><span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>q.notes.put(char, rrand(36, 96));</p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>KeyPlayer(\hold).putDown(char, { <span class="s13">|char|</span><span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>char.post;<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.synths[char].release;</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>q.synths.put(char, <span class="s13">Synth</span>(<span class="s14">\default</span>, [<span class="s14">\freq</span>, q.notes[char].postln.midicps]));</p>
+<p class="p6"><span class="Apple-tab-span">	</span>}, noRep: true);</p>
+<p class="p4"><span class="Apple-tab-span">	</span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>KeyPlayer(\hold).putUp(char.postln, { <span class="s13">|char|</span> q.synths.removeAt(char).release });</p>
+<p class="p6">};</p>
+<p class="p6">KeyPlayer.gui.front;</p>
 <p class="p6">)</p>
 <p class="p4"><br></p>
 <p class="p6">KeyPlayer(\px);</p>
-<p class="p16">// stop and resume a proxyspace:</p>
+<p class="p14">// stop and resume a proxyspace:</p>
 <p class="p6">p = <span class="s15">ProxySpace</span>.push;</p>
 <p class="p6">KeyPlayer(\px).put($p, { p.do(<span class="s15">_</span>.pause) });</p>
 <p class="p6">KeyPlayer(\px).put($r, { p.do(<span class="s15">_</span>.resume) });</p>
@@ -160,7 +158,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span>// re-send or rebuild the sound</p>
 <p class="p6">(</p>
 <p class="p6">~test = {<span class="Apple-converted-space"> </span></p>
-<p class="p17"><span class="s7"><span class="Apple-tab-span">	</span></span>SinOsc<span class="s7">.ar(</span></p>
+<p class="p15"><span class="s7"><span class="Apple-tab-span">	</span></span>SinOsc<span class="s7">.ar(</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">LFNoise0</span>.kr([10, 15] * exprand(0.5, 4.0), 200, [300, 500])<span class="Apple-converted-space"> </span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>* exprand(1.0, 4.0)</p>
 <p class="p6"><span class="Apple-tab-span">	</span>) * XLine.kr(0.5, 0.005, exprand(0.1, 10), doneAction: 2);</p>

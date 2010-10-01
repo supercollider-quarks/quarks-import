@@ -1,7 +1,8 @@
- /*** could be unified with CtLoop, maybe superclass EventLoop. ****/ 
+ /*** could be unified with CtLoop, maybe with a superclass EventLoop. ****/ 
 
 KeyPlayerRec { 
-
+	classvar <>verbose = false; 
+	
 	var <>isOn=false, <>list, <>player;
 	var <then, <task, <>speed = 1, <>loop = true;
 	
@@ -23,7 +24,7 @@ KeyPlayerRec {
 	}
 		
 	stopRec { 
-		("stopRec: kp" + player.key).postln; 
+		if (verbose) { ("stopRec: kp" + player.key).postln }; 
 		isOn = false;
 	}
 		
@@ -33,19 +34,18 @@ KeyPlayerRec {
 			then = then ? now;
 			list.add([now - then, char, type]);
 			then = now;
-		//	list.printAll;
 		}
 	}
 	playFunc {  
-		"KeyPlayRec starts".postln; 
+		if (verbose) { "KeyPlayRec starts!".postln; }; 
 		list.do { |trip| 
 			var time, char, type, unicode; 
-			#time, char, type = trip.postln;
+			#time, char, type = trip;
 			unicode = char.asUnicode; 
 			(time / speed.value).wait;
 			player.keyAction(char, which: type);	
 		};
-		"KeyPlayRec done.".postln; 
+		if (verbose) { "KeyPlayRec done.".postln; };
 	}
 	
 		// play should play with a task proxy?
