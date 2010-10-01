@@ -22,6 +22,10 @@ MIDIKtl {
 		^super.newCopyArgs(srcID, ccDict).init;
 	}
 	
+	hasScenes { 
+		^ctlNames.every(_.isKindOf(Dictionary))
+	}
+	
 	init { 
 		ctlNames = defaults[this.class];
 
@@ -92,58 +96,61 @@ MIDIKtl {
 		^res;
 	}
 }
-
-MIDINKtl : MIDIKtl { 
-	var <noteOnDict, <noteOffDict, <noteOnResp, <noteOffResp;
 	
-	*new { |srcID, ccDict, noteOnDict, noteOffDict| 
-		^super.newCopyArgs(srcID, ccDict).init(noteOnDict, noteOffDict);
+	// add responders for noteOn, noteOff: 
+	
+MIDINKtl : MIDIKtl { 
+	var <chan, <noteOnDict, <noteOffDict, <noteOnResp, <noteOffResp;
+	var <>globalNoteOnFunc, <>globalNoteOffFunc, noGlobal;
+	
+	*new { |srcID, chan = 0, ccDict, noteOnDict, noteOffDict| 
+		^super.newCopyArgs(srcID, ccDict).init(chan, noteOnDict, noteOffDict);
 	}
 
-//	init { |noteOnD, noteOffD|
-//		super.init.initNote(noteOnD, noteOffD)
-//	}
-//	
-//	initNote { |noteOnD, noteOffD|
-//		noteOnDict = noteOnD ?? {()};
-//		noteOffDict = noteOffD ?? {()};
-//
-//		noteOnResp.remove; 
-//		noteOnResp = NoteOnResponder({ |src, chan, note, vel| 
-//			var lookie = this.makeNoteKey(chan, note);
-//			if (this.class.verbose, { ['cc', src, chan, note, vel].postcs });
-//			
-//			ccDict[lookie].value(note, vel);
-//		}, srcID);
-//
-//		noteOffResp.remove; 
-//		noteOffResp = NoteOffResponder({ |src, chan, note, vel| 
-//			var lookie = this.makeNoteKey(chan, note);
-//			if (this.class.verbose, { ['cc', src, chan, note, vel].postcs });
-//			
-//			ccDict[lookie].value(note, vel);
-//		}, srcID);
-//	}
-//
-//		// only for single keys from that source, 
-//		// ignore midi channels for now. 
-//		// maybe fix later if needed? 
-//	mapNoteOn { |chan, note, action| 
-//		// assume channels
-//	}
-//	
-//	mapNoteOff { 
-//		
-//	}
-//
-//	mapNoteOnS { 
-//		
-//	}
-//	
-//	mapNoteOffS { 
-//		
-//	}
+	init { |chan, noteOnD, noteOffD|
+		super.init.initNote(chan, noteOnD, noteOffD)
+	}
 	
+	initNote { |inChan, noteOnD, noteOffD|
+		chan = inChan ? 0; 
+		noteOnDict = noteOnD ?? {()};
+		noteOffDict = noteOffD ?? {()};
+
+		noteOnResp.remove; 
+		noteOnResp = NoteOnResponder({ |src, chan, note, vel| 
+		//	var lookie = this.makeNoteKey(chan, note);
+			var specialFunc = noteOnDict[note];
+			
+			if (this.class.verbose, { ['cc', src, chan, note, vel].postcs });
+			
+			if (specialFunc.notNil) { 
+				specialFunc.value(note, vel / 127) 
+			} { 
+				globalNoteOnFunc.value(note, vel / 127);
+			};
+		}, srcID);
+
+		noteOffResp.remove; 
+		noteOffResp = NoteOffResponder({ |src, chan, note, vel| 
+		//	var lookie = this.makeNoteKey(chan, note);
+			var specialFunc = noteOffDict[note];
+			
+			if (this.class.verbose, { ['cc', src, chan, note, vel].postcs });
+			
+			if (specialFunc.notNil) { 
+				specialFunc.value(note, vel / 127) 
+			} { 
+				globalNoteOffFunc.value(note, vel / 127);
+			};
+		}, srcID);
+	}
+	
+	on_ { |func| globalNoteOnFunc = func }
+	off_ { |func| globalNoteOffFunc = func }
+	
+	mapNoteOn { |note, action| noteOnDict.put(note, action) }
+	
+	mapNoteOff { |note, action| noteOffDict.put(note, action) }	
 
 	free { 
 		super.free;
