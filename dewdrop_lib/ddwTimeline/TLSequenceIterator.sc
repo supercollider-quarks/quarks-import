@@ -119,7 +119,7 @@ TLSequenceIterator {
 		});
 		onStop.value(parms);
 		if(status != \idle) {
-			this.changed(\done).debug("done upon stop");
+			this.changed(\done, activeCmds).debug("done upon stop");
 			status = \idle;
 		};
 // debug("<< TLSequenceIterator:stop");
