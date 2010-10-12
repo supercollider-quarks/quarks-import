@@ -1,5 +1,5 @@
-// (c) 2006, Thor Magnusson - www.ixi-software.net
-// GNU licence - google it.
+// (c) 2006-2010, Thor Magnusson - www.ixi-audio.net
+// GNU license - google it.
 
 MIDIKeyboard {
 
@@ -18,15 +18,15 @@ MIDIKeyboard {
 		bounds = argbounds ? Rect(20, 10, 364, 60);
 				
 		if((win= w).isNil, {
-			win = GUI.window.new("MIDI Keyboard",
-				Rect(10, 250, bounds.left + bounds.width + 40, bounds.top + bounds.height+30));
+			win = Window.new("MIDI Keyboard",
+				Rect(100, 250, bounds.width + 40, bounds.height+30));
 			win.front
 		});
 
- 		mouseTracker = GUI.userView.new(win, bounds); // thanks ron!
+ 		mouseTracker = UserView.new(win, bounds); // thanks ron!
  		bounds = mouseTracker.bounds;
 
-		pen	= GUI.pen;
+		pen	= Pen;
 
 		startnote = argstartnote ? 48;
 		trackKey = 0;
@@ -37,16 +37,16 @@ MIDIKeyboard {
 		octaves.do({arg j;
 			12.do({arg i;
 				if((i == 1) || (i == 3) || (i == 6) || (i == 8) || (i == 10), {
-					r = Rect(	(bounds.left+ (pix[i]*((bounds.width/octaves) -
+					r = Rect(	( (pix[i]*((bounds.width/octaves) -
 								(bounds.width/octaves/7))).round(1) + ((bounds.width/octaves)*j)).round(1)+0.5,
-							bounds.top, 
+							0, 
 							bounds.width/octaves/10, 
 							bounds.height/1.7);
 					keys.add(MIDIKey.new(startnote+i+(j*12), r, Color.black));
 				}, {
-					r = Rect((bounds.left+(pix[i]*((bounds.width/octaves) -
+					r = Rect(((pix[i]*((bounds.width/octaves) -
 								(bounds.width/octaves/7))).round(1) + ((bounds.width/octaves)*j)).round(1)+0.5,
-							bounds.top, 
+							0, 
 							bounds.width/octaves/7, 
 							bounds.height);
 					keys.add(MIDIKey.new(startnote+i+(j*12), r, Color.white));
@@ -56,7 +56,7 @@ MIDIKeyboard {
 
 		mouseTracker
 			.canFocus_(false)
-			.relativeOrigin_(false)
+			//.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 				chosenkey = this.findNote(x, y);
 				trackKey = chosenkey;
@@ -112,15 +112,34 @@ MIDIKeyboard {
 	}
 	
 	keyDown { arg note, color; // midinote
-		if(this.inRange(note), {
-			keys[note - startnote].color = Color.grey;
+		if(note.isArray, {
+			note.do({arg note;
+				if(this.inRange(note), {
+					keys[note - startnote].color = Color.grey;
+				});
+			});
+		}, {
+			if(this.inRange(note), {
+				keys[note - startnote].color = Color.grey;
+			});			
 		});
 		this.refresh;
 	}
 	
 	keyUp { arg note; // midinote
-		if(this.inRange(note), {
-			keys[note - startnote].color = keys[note - startnote].scalecolor;
+//		if(this.inRange(note), {
+//			keys[note - startnote].color = keys[note - startnote].scalecolor;
+//		});
+		if(note.isArray, {
+			note.do({arg note;
+				if(this.inRange(note), {
+					keys[note - startnote].color = keys[note - startnote].scalecolor;
+				});
+			});
+		}, {
+			if(this.inRange(note), {
+				keys[note - startnote].color = keys[note - startnote].scalecolor;
+			});			
 		});
 		this.refresh;	
 	}
