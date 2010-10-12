@@ -1,4 +1,4 @@
-// (c) 2006-2008, Thor Magnusson - www.ixi-software.net
+// (c) 2006-2010, Thor Magnusson - www.ixi-audio.net
 // GNU licence - google it.
 
 
@@ -37,7 +37,7 @@ ParaSpace {
 			win.front;
 		});
 
-		mouseTracker = GUI.userView.new(win, Rect(bounds.left, bounds.top, bounds.width, bounds.height));
+		mouseTracker = UserView.new(win, Rect(bounds.left, bounds.top, bounds.width, bounds.height));
  		bounds = mouseTracker.bounds; // thanks ron!
  		
 		background = Color.white;
@@ -62,7 +62,7 @@ ParaSpace {
 		mouseTracker
 			.canFocus_(true)
 			.focusColor_(Color.clear.alpha_(0.0))
-			.relativeOrigin_(false)
+			//.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 				chosennode = this.findNode(x, y);
 				if( (mod & 0x00040000) != 0, {	// == 262401
@@ -189,7 +189,7 @@ ParaSpace {
 	
 				pen.width = 1;
 				pen.color = background; // background color
-				pen.fillRect(bounds); // background fill
+				pen.fillRect(Rect(0,0, bounds.width, bounds.height)); // background fill
 				backgrDrawFunc.value; // background draw function
 				
 				// the lines
@@ -243,7 +243,7 @@ ParaSpace {
 
 				pen.color = Color.black;
 
-				pen.strokeRect(bounds); // background frame
+				pen.strokeRect(Rect(0,0, bounds.width, bounds.height)); // background frame
 			})
 			.keyDownAction_({ |me, key, modifiers, unicode |
 				if(unicode == 127, {
@@ -301,7 +301,7 @@ ParaSpace {
 
 	createNode {arg x, y, color, refresh=true;
 		fillcolor = color ? fillcolor;
-		paraNodes.add(ParaNode.new(bounds.left+x+0.5, bounds.top+y+0.5, fillcolor, bounds, nodeCount, nodeSize));
+		paraNodes.add(ParaNode.new(x+0.5, y+0.5, fillcolor, bounds, nodeCount, nodeSize));
 		nodeCount = nodeCount + 1;
 		if(refresh == true, {this.refresh});
 	}
@@ -311,7 +311,7 @@ ParaSpace {
 		x = (argX * bounds.width).round(1);
 		y = (argY * bounds.height).round(1);
 		fillcolor = color ? fillcolor;
-		paraNodes.add(ParaNode.new(bounds.left+x+0.5, bounds.top+y+0.5, fillcolor, bounds, nodeCount, nodeSize));
+		paraNodes.add(ParaNode.new(x+0.5, y+0.5, fillcolor, bounds, nodeCount, nodeSize));
 		nodeCount = nodeCount + 1;
 		if(refresh == true, {this.refresh});
 	}
@@ -329,18 +329,18 @@ ParaSpace {
 	}
 	
 	setNodeLoc_ {arg index, argX, argY, refresh=true;
-		var x, y;
-		x = argX+bounds.left + 0.5;
-		y = argY+bounds.top + 0.5;
-		paraNodes[index].setLoc_(Point(x, y));
+//		var x, y;
+//		x = argX+bounds.left;
+//		y = argY+bounds.top;
+		paraNodes[index].setLoc_(Point(argX+0.5, argY+0.5));
 		if(refresh == true, {this.refresh});
 	}
 	
 	setNodeLocAction_ {arg index, argX, argY, action, refresh=true;
-		var x, y;
-		x = argX+bounds.left + 0.5;
-		y = argY+bounds.top + 0.5;
-		paraNodes[index].setLoc_(Point(x, y));
+//		var x, y;
+//		x = argX+bounds.left;
+//		y = argY+bounds.top;
+		paraNodes[index].setLoc_(Point(argX, argY));
 		switch (action)
 			{\down} 	{downAction.value(paraNodes[index])}
 			{\up} 	{upAction.value(paraNodes[index])}
@@ -350,16 +350,16 @@ ParaSpace {
 	
 	getNodeLoc {arg index;
 		var x, y;
-		x = paraNodes[index].nodeloc.x - bounds.left;
-		y = paraNodes[index].nodeloc.y - bounds.top;
-		^[x-0.5, y-0.5];
+		x = paraNodes[index].nodeloc.x-0.5;
+		y = paraNodes[index].nodeloc.y-0.5;
+		^[x, y];
 	}
 
 	setNodeLoc1_ {arg index, argX, argY, refresh=true;
 		var x, y;
 		x = (argX * bounds.width).round(1);
 		y = (argY * bounds.height).round(1);
-		paraNodes[index].setLoc_(Point(x+bounds.left+0.5, y+bounds.top+0.5));
+		paraNodes[index].setLoc_(Point(x+0.5, y+0.5));
 		if(refresh == true, {this.refresh});
 	}
 
@@ -367,7 +367,7 @@ ParaSpace {
 		var x, y;
 		x = (argX * bounds.width).round(1);
 		y = (argY * bounds.height).round(1);
-		paraNodes[index].setLoc_(Point(x+bounds.left+0.5, y+bounds.top+0.5));
+		paraNodes[index].setLoc_(Point(x+bounds.left, y+bounds.top));
 		switch (action)
 			{\down} 	{downAction.value(paraNodes[index])}
 			{\up} 	{upAction.value(paraNodes[index])}
@@ -377,8 +377,8 @@ ParaSpace {
 
 	getNodeLoc1 {arg index;
 		var x, y;
-		x = (paraNodes[index].nodeloc.x - bounds.left) / bounds.width;
-		y = (paraNodes[index].nodeloc.y - bounds.top) / bounds.height;
+		x = paraNodes[index].nodeloc.x  / bounds.width;
+		y = paraNodes[index].nodeloc.y  / bounds.height;
 		^[x, y];
 	}
 	
@@ -571,14 +571,10 @@ ParaNode {
 	setLoc_ {arg point;
 		nodeloc = point;
 		// keep paranode inside the bounds
-		if((point.x) > (bounds.left+bounds.width), 
-			{nodeloc.x = bounds.left+bounds.width - 0.5});
-		if((point.x) < (bounds.left), 
-			{nodeloc.x = bounds.left + 0.5});
-		if((point.y) > (bounds.top+bounds.height), 
-			{nodeloc.y = bounds.top+bounds.height -0.5});
-		if((point.y) < (bounds.top), 
-			{nodeloc.y = bounds.top + 0.5});
+		if((point.x) > bounds.width, {nodeloc.x = bounds.width - 0.5});
+		if((point.x) < 0, {nodeloc.x = 0.5});
+		if((point.y) > bounds.height, {nodeloc.y = bounds.height -0.5});
+		if((point.y) < 0, {nodeloc.y = 0.5});
 		rect = Rect((nodeloc.x-(size/2))+0.5, (nodeloc.y-(size/2))+0.5, size, size);
 	}
 		

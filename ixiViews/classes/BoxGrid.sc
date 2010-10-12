@@ -1,4 +1,4 @@
-// (c) 2006, Thor Magnusson - www.ixi-software.net
+// (c) 2006-2010, Thor Magnusson - www.ixi-audio.net
 // GNU licence - google it.
 
 // (converted to GUI.sc usage by sciss nov-2006 ; last-mod 26-feb-07)
@@ -29,7 +29,7 @@ BoxGrid {
 		lazyRefreshFunc = { this.refresh; refreshDeferred = false; };
 		
 		bounds = argbounds ? Rect(20, 20, 400, 200);
-		bounds = Rect(bounds.left + 0.5, bounds.top + 0.5, bounds.width, bounds.height);
+		bounds = Rect(bounds.left , bounds.top , bounds.width, bounds.height);
 		
 		if((win= w).isNil, {
 			win = GUI.window.new("BoxGrid",
@@ -50,14 +50,14 @@ BoxGrid {
 		
 		gridNodes = Array.newClear(columns) ! rows;
 		
-		mouseTracker = GUI.userView.new(win, Rect(bounds.left+1, bounds.top+1, bounds.width, bounds.height));
- 		bounds = mouseTracker.bounds;
+		mouseTracker = GUI.userView.new(win, Rect(bounds.left, bounds.top, bounds.width+1, bounds.height+1));
+ 		//bounds = mouseTracker.bounds;
 		
 		pen	= GUI.pen;
 		columns.do({arg c;
 			rows.do({arg r;
-				rect = Rect((bounds.left+(c*(bounds.width/columns))).round(1)+0.5, 
-							(bounds.top+(r*(bounds.height/rows))).round(1)+0.5, 
+				rect = Rect(((c*(bounds.width/columns))).round(1)+0.5, 
+							((r*(bounds.height/rows))).round(1)+0.5, 
 							(bounds.width/columns).round(1), 
 							(bounds.height/rows).round(1)
 						);
@@ -68,7 +68,7 @@ BoxGrid {
 				
 		mouseTracker
 			.canFocus_(false)
-			.relativeOrigin_(false)
+			//.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 					chosennode = this.findNode(x, y);
 					if( (mod & 262144) != 0, { // right mouse down (ctrl pressed)
@@ -117,7 +117,7 @@ BoxGrid {
 			pen.width = 1;
 //			background.set; // background color
 			pen.color = background;
-			pen.fillRect(bounds+0.5); // background fill
+			pen.fillRect(Rect(0,0, bounds.width, bounds.height)); // background fill
 			backgrDrawFunc.value; // background draw function
 //			Color.black.set;
 			pen.color = Color.black;
@@ -160,19 +160,19 @@ BoxGrid {
 //			Color.black.set;
 			(columns+1).do({arg i;
 				pen.line(
-					Point(bounds.left+(i*(bounds.width/columns)),
-							bounds.top).round(1) + 0.5, 
-					Point(bounds.left+(i*(bounds.width/columns)),
-							bounds.height+bounds.top).round(1) + 0.5
+					Point((i*(bounds.width/columns)),
+							0).round(1) + 0.5, 
+					Point((i*(bounds.width/columns)),
+							bounds.height).round(1) + 0.5
 				);
 			});
 			
 			(rows+1).do({arg i;
 				pen.line(
-					Point(bounds.left, 
-						bounds.top+(i*(bounds.height/rows))).round(1) + 0.5, 
-					Point(bounds.width+bounds.left, 
-						bounds.top+(i*(bounds.height/rows))).round(1) + 0.5
+					Point(0, 
+						(i*(bounds.height/rows))).round(1) + 0.5, 
+					Point(bounds.width, 
+						(i*(bounds.height/rows))).round(1) + 0.5
 				);
 			});
 			pen.stroke;			

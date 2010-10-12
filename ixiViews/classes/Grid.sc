@@ -1,5 +1,5 @@
-// (c) 2006, Thor Magnusson - www.ixi-software.net
-// GNU licence - google it.
+// (c) 2006-2010, Thor Magnusson - www.ixi-audio.net
+// GNU license - google it.
 
 Grid {
 
@@ -29,10 +29,10 @@ Grid {
 		lazyRefreshFunc = { this.refresh; refreshDeferred = false; };
 		
 		bounds = argbounds ? Rect(20, 20, 400, 200);
-		bounds = Rect(bounds.left + 0.5, bounds.top + 0.5, bounds.width, bounds.height);
+		bounds = Rect(bounds.left , bounds.top , bounds.width, bounds.height);
 
 		if((win= w).isNil, {
-			win = GUI.window.new("Grid",
+			win = Window.new("Grid",
 				Rect(10, 250, bounds.left + bounds.width + 40, bounds.top + bounds.height+30));
 			win.front
 		});
@@ -52,27 +52,41 @@ Grid {
 
 		gridNodes = Array.newClear(columns) ! rows;
 
-		mouseTracker = GUI.userView.new(win, bounds);
- 		bounds = mouseTracker.bounds;
+		mouseTracker = UserView.new(win, Rect(bounds.left, bounds.top, bounds.width+1, bounds.height+1));
+ 		//bounds = mouseTracker.bounds;
 
 		pen	= GUI.pen;
 
 		columns.do({arg c;
 			rows.do({arg r;
+				/*
 				p = Point(
-					bounds.left+(bounds.width/(columns+1))+(c*(bounds.width/(columns+1))),
-					bounds.top+(bounds.height/(rows+1))+(r*(bounds.height/(rows+1)))				).round(1);	
+					(bounds.width/(columns+1))+(c*(bounds.width/(columns+1))),
+					(bounds.height/(rows+1))+(r*(bounds.height/(rows+1)))				).round(1);	
+				*/
+				p = Point(
+					(bounds.width/(columns+1))+(c*(bounds.width/(columns+1))),
+					(bounds.height/(rows+1))+(r*(bounds.height/(rows+1)))				).round(1);	
+				/*
 				rect = Rect(	p.x - ((bounds.width/(columns+1)/2)), 
 							p.y - ((bounds.height/(rows+1)/2)), 
 							(bounds.width/(columns+1)), 
 							(bounds.height/(rows+1)));
+				*/
+				
+				rect = Rect(((c*(bounds.width/columns))).round(1), 
+							((r*(bounds.height/rows))).round(1), 
+							(bounds.width/columns).round(1), 
+							(bounds.height/rows).round(1)
+						);
+
 				gridNodes[r][c] = GridNode.new(p, rect, c, r, fillcolor);
 			});
 		});
 				
 		mouseTracker
 			.canFocus_(false)
-			.relativeOrigin_(false)
+			//.relativeOrigin_(false)
 			.mouseDownAction_({|me, x, y, mod|
 					chosennode = this.findNode(x, y);
 					if(chosennode !=nil, {  
@@ -84,6 +98,7 @@ Grid {
 					});
 			})
 			.mouseMoveAction_({|me, x, y, mod|
+				[\x, x, \y, y].postln;
 				chosennode = this.findNode(x, y);
 				if(chosennode !=nil, {  
 					if(tracknode.point != chosennode.point, {
@@ -120,31 +135,31 @@ Grid {
 			pen.width = 1;
 			//background.set; // background color
 			pen.color = background;
-			pen.fillRect(bounds); // background fil
+			pen.fillRect(Rect(0,0, bounds.width, bounds.height)); // background fill
 
 			backgrDrawFunc.value; // background draw function
 			pen.color = Color.black;
 			
 			if(border == true, 
 				{pen.strokeRect(
-						Rect(bounds.left, bounds.top, bounds.width+1, bounds.height+1))
+						Rect(0, 0, bounds.width+1, bounds.height+1))
 				});
 
 			columns.do({arg i;
 				pen.line(
-					Point(bounds.left+(bounds.width/(columns+1))+(i*(bounds.width/(columns+1))),
-							bounds.top).round(1) + 0.5, 
-					Point(bounds.left+(bounds.width/(columns+1))+(i*(bounds.width/(columns+1))),
-							bounds.height+bounds.top).round(1) + 0.5
+					Point((bounds.width/(columns+1))+(i*(bounds.width/(columns+1))),
+							0).round(1)+0.5, 
+					Point((bounds.width/(columns+1))+(i*(bounds.width/(columns+1))),
+							bounds.height).round(1)+0.5
 				);
 			});
 			
 			rows.do({arg i;
 				pen.line(
-					Point(bounds.left, 
-						bounds.top+(bounds.height/(rows+1))+(i*(bounds.height/(rows+1)))).round(1) + 0.5, 
-					Point(bounds.width+bounds.left, 
-						bounds.top+(bounds.height/(rows+1))+(i*(bounds.height/(rows+1)))).round(1) + 0.5
+					Point(0, 
+						(bounds.height/(rows+1))+(i*(bounds.height/(rows+1)))).round(1)+0.5, 
+					Point(bounds.width, 
+						(bounds.height/(rows+1))+(i*(bounds.height/(rows+1)))).round(1)+0.5
 				);
 			});
 			pen.stroke;
@@ -155,30 +170,30 @@ Grid {
 						if(node.shape == "circle", {							if(fillmode, { // first fill 
 								pen.color = node.color;
 								pen.fillOval(
-									Rect(node.point.x - (node.size/2) + 0.5, 
-										node.point.y - (node.size/2) + 0.5, 
+									Rect(node.point.x - (node.size/2)+0.5, 
+										node.point.y - (node.size/2)+0.5, 
 										node.size, 
 										node.size));
 								pen.color = Color.black;
 							});
 							pen.strokeOval( // then the outline
-								Rect(node.point.x - (node.size/2) + 0.5, 
-									node.point.y - (node.size/2) + 0.5, 
+								Rect(node.point.x - (node.size/2)+0.5, 
+									node.point.y - (node.size/2)+0.5, 
 									node.size, 
 									node.size));
 						},{	// square
 							if(fillmode, {
 								pen.color = node.color;
 								pen.fillRect(
-									Rect(node.point.x - (node.size/2) + 0.5, 
-										node.point.y - (node.size/2) + 0.5, 
+									Rect(node.point.x - (node.size/2)+0.5, 
+										node.point.y - (node.size/2)+0.5, 
 										node.size, 
 										node.size));
 								pen.color = Color.black;
 							});
 							pen.strokeRect(
-								Rect(node.point.x - (node.size/2) + 0.5, 
-									node.point.y - (node.size/2) + 0.5, 
+								Rect(node.point.x - (node.size/2)+0.5, 
+									node.point.y - (node.size/2)+0.5, 
 									node.size, 
 									node.size));
 						});
@@ -388,7 +403,6 @@ Grid {
 		mouseTracker.remove;
 		win.refresh;
 	}
-
 		
 	// local function
 	findNode {arg x, y, action;

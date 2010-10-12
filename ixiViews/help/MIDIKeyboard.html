@@ -5,22 +5,22 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.41">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #95221c}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #bf0000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000; min-height: 12.0px}
-span.s1 {color: #0000bf}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #95221c}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0e17b6}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #95221c; min-height: 12.0px}
+span.s1 {color: #0e17b6}
 span.s2 {color: #000000}
 span.s3 {color: #606060}
-span.s4 {color: #007300}
-span.s5 {color: #bf0000}
+span.s4 {color: #416f16}
+span.s5 {color: #95221c}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -43,7 +43,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b><span class="Apple-tab-span">	</span>keyDownAction_ <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>- The function that key down will trigger.</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span>keyTrackAction_ <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>- The function that moving the cursor will trigger.</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span>keyUpAction_ <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>- The function that key up will trigger.</p>
-<p class="p4"><b></b><br></p>
+<p class="p4"><br></p>
 <p class="p3"><b><span class="Apple-tab-span">	</span>showScale([scale], startnote, color) <span class="Apple-tab-span">	</span></b>- Takes an array with the scale. Startnote is the fundamental.</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span>playScale([scale], startnote, wait) <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>- Takes an array with the scale. Startnote is the fundamental.</p>
 <p class="p3"><b><span class="Apple-tab-span">	</span>inScale(note) <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>- returns true or false if a note is part of a set scale.</p>
@@ -121,11 +121,17 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">)</p>
 <p class="p6">k.clear;</p>
 <p class="p2"><br></p>
+<p class="p6">// or</p>
+<p class="p2"><br></p>
+<p class="p6">k.keyDown([60, 64, 68])</p>
+<p class="p6">k.keyUp([60, 64, 68])</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
 <p class="p5">// a sounding example</p>
 <p class="p6">(</p>
 <p class="p6"><span class="s1">SynthDef</span>(<span class="s4">\midikeyboardsine</span>, {<span class="s1">arg</span> freq, amp = 0.25;</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="s1">Out</span>.ar(0, (<span class="s1">SinOsc</span>.ar(freq,0,amp)*<span class="s1">EnvGen</span>.ar(<span class="s1">Env</span>.perc, doneAction:2)).dup)</p>
-<p class="p6">}).load(s);</p>
+<p class="p6">}).add;</p>
 <p class="p2"><br></p>
 <p class="p8"><span class="s2">k = </span>MIDIKeyboard<span class="s2">.new;</span></p>
 <p class="p6">k.keyDownAction_({<span class="s1">arg</span> note; <span class="s1">Synth</span>(<span class="s4">\midikeyboardsine</span>, [<span class="s4">\freq</span>, note.midicps])});</p>
