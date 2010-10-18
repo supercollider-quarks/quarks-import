@@ -376,14 +376,6 @@ ZPlane {
 		})	
 	}
 	
-	printInfo { arg print;
-		if(print.isKindOf(Boolean), {
-			this.print = print
-		}, {
-			Error("Input is not in required format.\n").throw
-		})
-	}
-	
 	gui { arg bounds = Rect(50, 320, 300, 300); 
 		var zplane, drawzplane, dragcorner, point, index, inRange = false;
 		
