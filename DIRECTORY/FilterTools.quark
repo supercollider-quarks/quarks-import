@@ -1,10 +1,12 @@
 (
-	\name: 		"FilterTools",
-	\path: 		"FilterTools",
+	\name: 			"FilterTools",
+	\path: 			"FilterTools",
 	\summary:		"A set of classes for designing filters according to a pole/zero diagram",
-	\author: 		"Michael Dzjaparidze",
-	\version:		1.0,
-	\country: 	"Netherlands",
-	\since: 		"2010",
-	\helpdoc: 	"ZPlane.html"
+	\author: 			"Michael Dzjaparidze",
+	\version:			1.1,
+	\country: 			"Netherlands",
+	\since: 			"2010",
+	\helpdoc: 			"ZPlane.html"
+	\dependencies:	 ["MathLib"],
+	\ext_dependancy:	 "Uses the method .findMinimum defined in Minimization.sc (part of MathLib)."
 )
