@@ -2,130 +2,150 @@
  * Translation to SC and all other functionality by Michael Dzjaparidze, 2010.
  */
 FilterCoef {
-	var <>poles, <>zeros, <>acoefs, <>bcoefs;
+	var <acoefs, <bcoefs, <poles, fpoles, <zeros, <real, <norm;
 	
-	*new { arg poles, zeros;
-		^super.new.init(poles, zeros)
+	*new { arg poles, zeros, real, norm;
+		^super.new.init(poles, zeros, real, norm)
 	}
 	
-	init { arg poles, zeros; var angle;
+	init { arg poles, zeros, real, norm;
+		this.poles = poles;
+		this.zeros = zeros;
+		this.real = real;
+		this.norm = norm
+	}
+	
+	poles_ { arg newPoles; var angle;
 		//Check and parse input args
-		if(poles != nil, {
-			if(poles.isKindOf(Array), {
-				poles.do({ arg pole;
+		if(newPoles != nil, {
+			if(newPoles.isKindOf(Array), {
+				newPoles.do({ arg pole;
 					if(pole.isKindOf(Polar), {
 						angle = pole.angle.wrap(-pi, pi);
-						this.poles = this.poles.add(Polar.new(pole.magnitude, angle));
+						poles = poles.add(Polar.new(pole.magnitude, angle));
 						//Post a warning if the new pole magnitude is > 1.0
 						if(pole.magnitude > 1.0, {
-							postf("WARNING: Pole magnitude is larger than 1.0.\n")
+							"Pole magnitude is larger than 1.0.".warn
 						})
 					}, {
 						Error("Input is not in required format.\n").throw 
 					})
 				});
-				this.poles = this.poles.insert(0, Polar.new(nil, nil))   //Insert dummy pole
-			}, {
-				Error("Input is not in required format.\n").throw
-			})
-		});
-		
-		if(zeros != nil, {
-			if(zeros.isKindOf(Array), {
-				zeros.do({ arg zero;
-					if(zero.isKindOf(Polar), {
-						angle = zero.angle.wrap(-pi, pi);
-						this.zeros = this.zeros.add(Polar.new(zero.magnitude, angle));
-					}, {
-						Error("Input is not in required format.\n").throw 
-					})
-				});
-				this.zeros = this.zeros.insert(0, Polar.new(nil, nil))   //Insert dummy zero
+				poles = poles.insert(0, 0)   		//Insert dummy pole
 			}, {
 				Error("Input is not in required format.\n").throw
 			})
 		})
+	}
+	
+	zeros_ { arg newZeros; var angle;
+		if(newZeros != nil, {
+			if(newZeros.isKindOf(Array), {
+				newZeros.do({ arg zero;
+					if(zero.isKindOf(Polar), {
+						angle = zero.angle.wrap(-pi, pi);
+						zeros = zeros.add(Polar.new(zero.magnitude, angle));
+					}, {
+						Error("Input is not in required format.\n").throw 
+					})
+				});
+				zeros = zeros.insert(0, 0)   //Insert dummy zero
+			}, {
+				Error("Input is not in required format.\n").throw
+			})
+		})
+	}
+	
+	real_ { arg answer;
+		real = (answer ? true).booleanValue
+	}
+	
+	norm_ { arg answer;
+		norm = (answer ? true).booleanValue
+	}
+	
+	checkIfReal { 
+		block { |break|
+			[poles, zeros].do({ |type|
+				this.format(type).do({ |item| 
+					if(item.size < 2, { 
+						if(item[0].angle.abs != 0.0 and: { item[0].angle.abs != pi }, {
+							real = false;
+							break.value
+						})
+					})
+				})
+			});
+			real = true
+		}
 	}
 	
 	*calc { arg poles, zeros, norm = true;
 		^this.new(poles, zeros).calc(norm)
 	}
 	
-	calc { arg norm = true; var cnegmult, cadd, getcoef;
-		if(poles != nil and: { zeros != nil }, {
-			//Return complex product of -a and b
-			cnegmult = { |a, b|
-				var v = Polar.new(a.magnitude.neg * b.magnitude, a.angle + b.angle);
-			
-				//Negate magnitude when the phase of the result is pi
-				if((v.angle.abs - pi).abs < 1e-6, {
-					v = Polar.new(v.magnitude.neg, 0.0)
-				});
-				v
-			};
-			
-			//Return complex sum of a and b
-			cadd = { |a, b|
-				var v = (a + b).asPolar;
-			
-				//Negate magnitude when the phase of the result is pi
-				if((v.angle.abs - pi).abs < 1e-6, {
-					v = Polar.new(v.magnitude.neg, 0.0)
-				});
-				v
-			};
-		
-			/* Multiply polynomial factors of form (1 - root[i]*x) to find coefficients. Note that 			 * these coefficients may not be real if complex conjugate poles or zeros do not 			 * always occur in conjugate pairs
-			 */
-			getcoef = { |coef, root|
-				//Recursive multiplication to find polynomial coefficients
-				(coef.size-1).do({ arg i; i = i + 1;
-					coef[i] = cnegmult.value(root[i], coef[i-1]);
-					block { |break|
-						i.reverseDo({ arg j;
-							if(j >= 1, {
-								coef[j] = cadd.value(coef[j], cnegmult.value(root[i], 									coef[j-1]));
-							}, {
-								break.value
-							})
-						})
-					}
-				});
-			};
-			
-			acoefs = Array.newClear(zeros.size);
-			bcoefs = Array.newClear(poles.size);
-			acoefs[0] = Polar.new(1.0, 0.0);
-			bcoefs[0] = Polar.new(1.0, 0.0);
-			
-			getcoef.value(acoefs, zeros);	//Find the a coefficients
-			getcoef.value(bcoefs, poles);	//Find the b coefficients
+	calc { arg argNorm = true;
+		norm = argNorm;
+		if(poles.notNil and: { zeros.notNil }, {
+			//Only multiply factors if poles or zeros are supplied
+			if(zeros.every({ |item| item.magnitude == 0 }), {
+				acoefs = [1]
+			}, {
+				acoefs = zeros.mulMonomials
+			});
+			if(poles.every({ |item| item.magnitude == 0 }), {
+				bcoefs = [1]
+			}, {
+				bcoefs = poles.mulMonomials
+			});
 			
 			//If norm is set to true, normalize the frequency response to 1.0
 			if(norm, { acoefs = acoefs * this.returnMaxMag.reciprocal });
-
-			^[acoefs.select({ |item| item.magnitude.abs > 0.0 }).magnitude, 				bcoefs.select({ |item, i| i > 0 and: { item.magnitude.abs > 0.0 } }).magnitude]
+			
+			acoefs = acoefs.select({ |item| item.magnitude.abs > 0.0 });
+			bcoefs = bcoefs.select({ |item| item.magnitude.abs > 0.0 });
+			
+			//If the filter is real, return real part only
+			if(real, { ^[acoefs.real, bcoefs.real] }, { ^[acoefs, bcoefs] })
 		}, {
 			Error("There are no poles and/or zeros specified.\n").throw
 		})
 	}
 	
+	decompose { arg argNorm = true, type = \divPolynomials1; var rem, quo, uniqueFactors, dupCount, 	exp = Array.new;
+		norm = argNorm;
+		if(poles.notNil and: { zeros.notNil } and: { acoefs.notNil or: { bcoefs.notNil } }, {
+			if(acoefs.size >= bcoefs.size, {
+				#rem, quo = acoefs.tryPerform(type, bcoefs)
+			});
+			fpoles = this.format(poles);
+			uniqueFactors = fpoles.asSet.asArray;
+			//dupCount = uniqueFactors.collect({ |item| fpoles.occurrencesOf(item) });
+			/*uniqueFactors.do({ |item| var occ = fpoles.occurrencesOf(item);
+				if(item.size > 2, { 
+			*/
+			[uniqueFactors, dupCount].postln
+		}, {
+			Error("There are no poles/zeros specified or coeffs not calculated yet.\n").throw
+		})
+	}
+	
 	calcImpResp { var imp = Array.fill(80, { arg i; if(i == 0, { 1 }, { 0 }) }), impResp = 	Array.new, poll = Array.fill(3, { 0.1 }), i = 0;
 		//Run the while loop as long as there is a noticeable response and i < 60
-		while({ poll.abs.sum > 0.001 and: { i < 60 } }, {
+		while({ poll.magnitude.sum > 0.001 and: { i < 60 } }, {
 			impResp = impResp.add(0);
 			acoefs.size.do({ arg j;
 				if(imp[i-j] == nil, {
 					impResp[i] = impResp[i] + 0
 				}, {
-					impResp[i] = impResp[i] + (imp[i-j] * acoefs[j].magnitude)
+					impResp[i] = impResp[i] + (imp[i-j] * acoefs[j])
 				})
 			});
 			(bcoefs.size-1).do({ arg j; j = j + 1;
 				if(imp[i-j] == nil, {
 					impResp[i] = impResp[i] - 0
 				}, {
-					impResp[i] = impResp[i] - (impResp[i-j] * bcoefs[j].magnitude)
+					impResp[i] = impResp[i] - (impResp[i-j] * bcoefs[j])
 				})
 			});
 			i = i + 1;
@@ -134,11 +154,34 @@ FilterCoef {
 		^impResp
 	}
 	
-	//PRIVATE METHODS
+	//PRIVATE (CLASS) METHODS
 	
-	//Returns the maximum magnitude in the frequency response of the filter. Can be used for the a0 	//coefficient to normalize the frequency response to 1.0
+	//Groups items into (complex) conjugate pairs
+	format { arg type; var i, b = Array.new;
+		i = 2;		//Normally start from 1, but now from 2 since first item is dummy zero
+		while({ i < (type.size+1) }, {
+			if(type[i].notNil and: { type[i-1].imag.abs != 			0.0 } and: { type[i-1].imag.abs != pi } and: { type[i-1].real == type[i].real and: 			{ type[i-1].imag == type[i].imag.neg } }, {
+				//b = b.add([type[i-1], type[i]]);	
+				//Multiply conjugate terms, resulting in a real-valued 2nd degree polynomial
+				b = b.add([0, type[i-1], type[i]].mulMonomials).real;
+				i = i + 1
+			}, {
+				if(type[i-1].imag.abs < 1e-06, {
+					b = b.add([0, 1, type[i-1]]).real
+				}, {
+					b = b.add([0, 1, type[i-1]])
+				})
+			});
+			i = i + 1
+		});
+		^b
+	}	
+	
+	/* Returns the maximum magnitude in the frequency response of the filter. Can be used for the 	 * a0 coefficient to normalize the frequency response to 1.0
+	 */
 	returnMaxMag { var func;
-		//Function to extract maximum from (In this case a modified version of the method to 		//calculate the frequency response of the filter, see calcFreqResponse in ZPlane)
+		/* Function to extract maximum from (In this case a modified version of the method to 		 * calculate the frequency response of the filter, see calcFreqResponse in ZPlane)
+		 */
 		func = { arg omega; var den, num, amp, dist;
 			//Return the distance from pole/zero location to frequency omega on the unit circle
 			dist = { arg omega, item; var x, y;
@@ -159,9 +202,10 @@ FilterCoef {
 			}, { 
 				if(num >= 0.0, { amp = inf }, { amp = inf.neg }) 
 			});
-			amp.neg	//Negate result because Golden minimizes a function and we want the maximum
+			amp.neg	//Negate result because .golden find min of a function and we want the max
 		};
-		//Golden returns the independant var (a freq in our case). Evaluating the frequency 		//response at this frequency and negating the result gives us the maximum magnitude in the 		//frequency response of the filter
-		^func.value(Golden.bracket(0, pi, func).minimize(func)).neg;
+		/* .golden returns the minimum of the independent and dependent variable. The negated 		 * dependent variable gives us the maximum magnitude in the frequency response of the 		 * filter
+		 */
+		^func.findMinimum(0, pi)[1].neg
 	}
 }

@@ -2,70 +2,99 @@
  * Translation to SC and all other functionality by Michael Dzjaparidze, 2010.
  */
 ZPlane {
-	var <>poles, <>zeros, <>freqResp, <>phaseResp, >print, window, pos;
+	var poles, zeros, function, <real, <freqResp, <phaseResp, window, pos;
 	
-	*new { arg poles, zeros, print;
-		^super.new.init(poles, zeros, print)
+	*new { arg poles, zeros, function, real;
+		^super.new.init(poles, zeros, function, real)
 	}
 	
-	init { arg poles, zeros, print; var angle;
-		this.poles = Array.new; 	//Array holding the poles
-		this.zeros = Array.new;		//Array holding the zeros
-				
+	init { arg poles, zeros, function, real;
+		this.real = real;
+		this.poles = poles;
+		this.zeros = zeros;
+		this.function = function;
+		this.updNumPolesAndZeros
+	}
+	
+	poles {
+		if(poles.size > 0, {
+			^poles
+		}, {
+			^nil
+		})
+	}
+	
+	poles_ { arg newPoles; var angle;
+		poles = Array.new;
 		//Check and parse input args
-		if(poles != nil, {
-			if(poles.isKindOf(Array), {
-				poles.do({ arg pole;
+		if(newPoles != nil, {
+			if(newPoles.isKindOf(Array), {
+				newPoles.do({ arg pole;
 					if(pole.isKindOf(Polar), {
 						angle = pole.angle.wrap(-pi, pi);
-						this.poles = this.poles.add(Polar.new(pole.magnitude, angle));
-						//Add conjugate if the angle is not 0.0 or pi
-						if(angle.abs != 0.0 and: { angle.abs != pi }, {
-							this.poles = this.poles.add(Polar.new(pole.magnitude, angle.neg))
+						if(angle == pi.neg, { angle = pi });
+						poles = poles.add(Polar.new(pole.magnitude, angle));
+						//Add conjugate if arg 'real' is true and the angle is not 0.0 or pi
+						if(real and: { angle.abs != 0.0 } and: { angle.abs != pi }, {
+							poles = poles.add(Polar.new(pole.magnitude, angle.neg))
 						});
 						//Post a warning if the new pole magnitude is > 1.0
 						if(pole.magnitude > 1.0, {
-							postf("WARNING: Pole magnitude is larger than 1.0.\n")
+							"Pole magnitude is larger than 1.0.\n".warn
 						})
 					}, {
-						Error("Input is not in required format.\n").throw 
+						Error("Input must be of type Polar.\n").throw 
 					})
 				})
 			}, {
-				Error("Input is not in required format.\n").throw
+				Error("Input must be an Array of type Polar.\n").throw
 			})
-		});
-		
-		if(zeros != nil, {
-			if(zeros.isKindOf(Array), {
-				zeros.do({ arg zero;
+		})
+	}
+	
+	zeros {
+		if(zeros.size > 0, {
+			^zeros
+		}, {
+			^nil
+		})
+	}
+	
+	zeros_ { arg newZeros; var angle;
+		zeros = Array.new;
+		if(newZeros != nil, {
+			if(newZeros.isKindOf(Array), {
+				newZeros.do({ arg zero;
 					if(zero.isKindOf(Polar), {
 						angle = zero.angle.wrap(-pi, pi);
-						this.zeros = this.zeros.add(Polar.new(zero.magnitude, angle));
+						zeros = zeros.add(Polar.new(zero.magnitude, angle));
 						//Add conjugate if the angle is not 0.0 or pi
-						if(angle.abs != 0.0 and: { angle.abs != pi }, {
-							this.zeros = this.zeros.add(Polar.new(zero.magnitude, angle.neg))
+						if(real and: { angle.abs != 0.0 } and: { angle.abs != pi }, {
+							zeros = zeros.add(Polar.new(zero.magnitude, angle.neg))
 						})
 					}, {
-						Error("Input is not in required format.\n").throw 
+						Error("Input must be of type Polar.\n").throw 
 					})
 				})
 				
 			}, {
-				Error("Input is not in required format.\n").throw
-			})
-		});
-		this.updNumPolesAndZeros;
-		
-		if(print.isKindOf(Boolean), {
-			this.print = print
-		}, {
-			if(print == nil, {
-				this.print = false
-			}, {
-				Error("Input is not in required format.\n").throw
+				Error("Input must be an Array of type Polar.\n").throw
 			})
 		})
+	}
+	
+	function_ { arg newFunc;
+		if(newFunc != nil, {
+			if(newFunc.isKindOf(Function), {
+				function = newFunc
+			}, {
+				Error("Input must be of type Function.\n").throw
+			})
+		})
+	}
+	
+	real_ { arg bool;
+		real = (bool ? true).booleanValue
 	}
 	
 	addPole { arg index, item;
@@ -73,37 +102,43 @@ ZPlane {
 			if(item.isKindOf(Polar) and: { item.magnitude.isKindOf(SimpleNumber) and: 			{ item.angle.isKindOf(SimpleNumber) } }, {
 				//Wrap pole angle between -pi and pi
 				item = Polar.new(item.magnitude, item.angle.wrap(-pi, pi));
-				//Check for duplicate pole zero pairs
+				if(item.angle == pi.neg, { item = Polar.new(item.magnitude, pi) });				//Check for duplicate pole zero pairs
 				if(zeros.detect(_ == item).notNil, { 
-					postf("WARNING: There is already a zero at this loc. Pole removed.\n"); 
+					"There is already a zero at this location. Pole removed.".warn 
 				}, {
 					//If the index arg is nil, add the pole to the tail of the array
 					if(index == nil or: { poles[index] == nil }, {
 						poles = poles.add(item);
-						//Add conjugate when the angle is not 0 or pi radians
-						if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+						//Add conjugate when filter is real and the angle is not 0 or pi radians
+						if(real and: { item.angle.abs != 0.0 } and: { item.angle.abs != pi }, {
 							poles = poles.add(Polar.new(item.magnitude, item.angle.neg))
 						})
 					}, {
-						//Else, insert the pole at the specified index into the array
-						//Make sure we add the new pole AFTER a conjugate 
-						if(poles[index].angle > 0.0, {
-							poles = poles.insert(index, item);
-							//Add conjugate when the angle is not 0 or pi radians
-							if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-								poles = poles.insert(index+1, Polar.new(item.magnitude, 									item.angle.neg))
+						//If the filter is real, handle conjugation
+						if(real, {
+							//Else, insert the pole at the specified index into the array
+							//Make sure we add the new pole AFTER a conjugate 
+							if(poles[index].angle > 0.0, {
+								poles = poles.insert(index, item);
+								//Add conjugate when the angle is not 0 or pi radians
+								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+									poles = poles.insert(index+1, Polar.new(item.magnitude, 										item.angle.neg))
+								})
+							}, {
+								poles = poles.insert(index+1, item);
+								//Add conjugate when the angle is not 0 or pi radians
+								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+									poles = poles.insert(index+2, Polar.new(item.magnitude, 										item.angle.neg))
+								})
 							})
 						}, {
-							poles = poles.insert(index+1, item);
-							//Add conjugate when the angle is not 0 or pi radians
-							if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-								poles = poles.insert(index+2, Polar.new(item.magnitude, 									item.angle.neg))
-							})
+							//If the filter is complex, only insert the original pole
+							poles = poles.insert(index, item)
 						})
 					});
 					//Post a warning if the new pole magnitude is > 1.0
 					if(item.magnitude > 1.0, {
-						postf("WARNING: Pole magnitude is larger than 1.0.\n")
+						"Pole magnitude is larger than 1.0.".warn
 					});
 					this.updNumPolesAndZeros;
 					if(window != nil, { window.refresh })
@@ -112,7 +147,7 @@ ZPlane {
 				Error("Input is not in required format.\n").throw
 			})
 		}, {
-			Error("Index is not an Integer or nil")
+			Error("Index is not an Integer or nil").throw
 		})
 	}
 	
@@ -121,32 +156,39 @@ ZPlane {
 			if(item.isKindOf(Polar) and: { item.magnitude.isKindOf(SimpleNumber) and: 			{ item.angle.isKindOf(SimpleNumber) } }, {
 				//Wrap zero angle between -pi and pi
 				item = Polar.new(item.magnitude, item.angle.wrap(-pi, pi));
+				if(item.angle == pi.neg, { item = Polar.new(item.magnitude, pi) });
 				//Check for duplicate pole zero pairs
 				if(poles.detect(_ == item).notNil, { 
-					postf("WARNING: There is already a pole at this loc. Zero removed.\n"); 
+					"There is already a pole at this location. Zero removed.".warn 
 				}, {
 					//If the index arg is nil, add the zero to the tail of the array
 					if(index == nil or: { zeros[index] == nil }, {
 						zeros = zeros.add(item);
-						//Add conjugate when the angle is not 0 or pi radians
-						if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+						//Add conjugate when filter is real and the angle is not 0 or pi radians
+						if(real and: { item.angle.abs != 0.0 } and: { item.angle.abs != pi }, {
 							zeros = zeros.add(Polar.new(item.magnitude, item.angle.neg))
 						})
 					}, {
-						//Else, insert the zero at the specified index into the array
-						//Make sure we add the new zero AFTER a conjugate 
-						if(zeros[index].angle > 0.0, {
-							zeros = zeros.insert(index, item);
-							//Add conjugate when the angle is not 0 or pi radians
-							if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-								zeros = zeros.insert(index+1, Polar.new(item.magnitude, 									item.angle.neg))
+						//If the filter is real, handle conjugation
+						if(real, {
+							//Else, insert the zero at the specified index into the array
+							//Make sure we add the new zero AFTER a conjugate 
+							if(zeros[index].angle > 0.0, {
+								zeros = zeros.insert(index, item);
+								//Add conjugate when the angle is not 0 or pi radians
+								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+									zeros = zeros.insert(index+1, Polar.new(item.magnitude, 										item.angle.neg))
+								})
+							}, {
+								zeros = zeros.insert(index+1, item);
+								//Add conjugate when the angle is not 0 or pi radians
+								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+									zeros = zeros.insert(index+2, Polar.new(item.magnitude, 										item.angle.neg))
+								})
 							})
 						}, {
-							zeros = zeros.insert(index+1, item);
-							//Add conjugate when the angle is not 0 or pi radians
-							if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-								zeros = zeros.insert(index+2, Polar.new(item.magnitude, 									item.angle.neg))
-							})
+							//If the filter is complex, only insert original zero
+							zeros = zeros.insert(index, item)
 						})
 					});
 					this.updNumPolesAndZeros;
@@ -156,7 +198,7 @@ ZPlane {
 				Error("Input is not in required format.\n").throw
 			})
 		}, {
-			Error("Index is not an Integer or nil")
+			Error("Index is not an Integer or nil").throw
 		})
 	}
 	
@@ -165,7 +207,7 @@ ZPlane {
 		if(index.isKindOf(Integer) and: { poles[index] != nil }, {
 			item = poles.removeAt(index);
 			//If there is a conjugate pole, remove it too
-			if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+			if(real and: { item.angle.abs != 0.0 } and: { item.angle.abs != pi }, {
 				cIndex = poles.detectIndex(_ == Polar.new(item.magnitude, item.angle.neg));
 				poles.removeAt(cIndex)
 			});
@@ -182,7 +224,7 @@ ZPlane {
 		if(index.isKindOf(Integer) and: { zeros[index] != nil }, {
 			item = zeros.removeAt(index);
 			//If there is a conjugate zero, remove it too
-			if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
+			if(real and: { item.angle.abs != 0.0 } and: { item.angle.abs != pi }, {
 				cIndex = zeros.detectIndex(_ == Polar.new(item.magnitude, item.angle.neg));
 				zeros.removeAt(cIndex)
 			});
@@ -210,38 +252,6 @@ ZPlane {
 	setZero { arg index, newLoc;
 		index = this.removeZero(index);		
 		this.addZero(index, newLoc);
-	}
-		
-	getPoles { 
-		if(poles.size > 0, {
-			^poles
-		}, {
-			^nil
-		})
-	}
-	
-	getZeros { 
-		if(zeros.size > 0, {
-			^zeros
-		}, {
-			^nil
-		})
-	}
-	
-	getPolesAndZeros {
-		if(poles.size > 0 and: { zeros.size > 0 }, {
-			^[poles, zeros]
-		}, {
-			if(poles.size > 0 and: { zeros.size == 0 }, {
-				^[poles, nil]
-			}, {
-				if(poles.size == 0 and: { zeros.size > 0 }, {
-					^[nil, zeros]
-				}, {
-					^[nil, nil]
-				})
-			})
-		})
 	}
 	
 	//Calculate frequency response of the filter
@@ -305,7 +315,7 @@ ZPlane {
 				})
 			});
 			if(derivative, {
-				^[phaseResp, phaseResp.differentiate[1..phaseResp.lastIndex]]
+				^[phaseResp, phaseResp.differentiate[1..phaseResp.lastIndex].neg]
 			}, {
 				^phaseResp
 			})
@@ -357,7 +367,7 @@ ZPlane {
 				})
 			});
 			if(derivative, {
-				^[freqResp, phaseResp, phaseResp.differentiate[1..phaseResp.lastIndex]]
+				^[freqResp, phaseResp, phaseResp.differentiate[1..phaseResp.lastIndex].neg]
 			}, {
 				^[freqResp, phaseResp]
 			})
@@ -484,9 +494,6 @@ ZPlane {
 				me.refresh
 			})
 			.mouseUpAction_({ arg me, x, y, mod;
-				if(print, {
-					postf("poles: %\nzeros: %\n", poles, zeros)
-				});
 				me.refresh
 			})
 			.mouseMoveAction_({ arg me, x, y, mod; var diff;
@@ -501,6 +508,7 @@ ZPlane {
 						this.setZero(index - poles.size, pos)
 					})
 				});
+				function.value(this);
 				me.refresh
 			})
 			.resize_(5);	//Does the same as the .drawHook
