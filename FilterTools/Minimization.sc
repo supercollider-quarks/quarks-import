@@ -1,125 +1,191 @@
-/* Code adapted from "Numerical Recipes 3rd edition" Cambridge Press, 2007. Translation to SC done 
- * by Michael Dzjaparidze, 2010
+/* Code adapted from the GNU Scientific Library: http://www.gnu.org/software/gsl. Translation to SC  
+ * done by Michael Dzjaparidze, 2010
  */
-BracketMethod {
-	classvar >ax, >bx, >cx, >fa, >fb, >fc, >thisFunc;
-	
-	*bracket { arg a, b, func; var gold = 1.618034, gLimit = 100.0, tiny = 1e-20, fu, fa, fb, r, q, 	u, ulim, ux, temp;
-		//Check and parse input args
-		if(a.isKindOf(SimpleNumber) and: { b.isKindOf(SimpleNumber) } and: 		{ func.isKindOf(Function) }, {
-			thisFunc = func;
-			ax = a; bx = b;
-			fa = thisFunc.value(ax);
-			fb = thisFunc.value(bx);
-			if(fb > fa, { fb = fa; fa = thisFunc.value(bx); ax = b; bx = a });
-			cx = bx + (gold * (bx - ax));
-			fc = thisFunc.value(cx);
-			while({ fb > fc }, {
-				r = (bx - ax) * (fb - fc);
-				q = (bx - cx) * (fb - fa);
-				u = bx - ((((bx-cx)*q) - ((bx-ax)*r)) / (2.0*((q-r).abs.max(tiny)*(q-r).sign)));
-				ulim = bx + (gLimit * (cx - bx));
-				if(((bx - u) * (u - cx)) > 0.0, {
-					fu = thisFunc.value(u);
-					if(fu < fc, {
-						ax = bx; bx = u; fa = fb; fb = fu;
-						^this;
-					}, { 
-						if(fu < fb, {
-							cx = u; fc = fu;
-							^this;
-						})
-					});
-					ux = cx + (gold * (cx - bx));
-					fu = thisFunc.value(u)
-				}, {
-					if(((cx - u) * (u - ulim)) > 0.0, {
-						fu = thisFunc.value(u);
-						if(fu < fc, {
-							temp = BracketMethod.shft3(bx, cx, u, u + (gold * (u - cx)));
-							bx = temp[0]; cx = temp[1]; u = temp[2];
-							temp = BracketMethod.shft3(fb, fc, fu, thisFunc.value(u));
-							fb = temp[0]; fc = temp[1]; fu = temp[2];
-						})
-					}, {
-						if(((u - ulim) * (ulim - cx)) >= 0.0, {
-							u = ulim;
-							fu = thisFunc.value(u);
-						}, {
-							u = cx + (gold * (cx - bx));
-							fu = thisFunc.value(u)
-						})
-					})
-				});
-				temp = BracketMethod.shft3(ax, bx, cx, u);
-				ax = temp[0]; bx = temp[1]; cx = temp[2];
-				temp = BracketMethod.shft3(fa, fb, fc, fu);
-				fa = temp[0]; fb = temp[1]; fc = temp[2];
-			})
++ AbstractFunction { 	
+	findMinimum { arg a, b, method = \golden, bracket = true; var coord;
+		if(a.isNil or: { b.isNil }, {
+			Error("Please supply a valid interval in which to search for a minimum.").throw
 		}, {
-			Error("Input is not in required format.\n").throw
+			if(bracket.booleanValue, { 
+				coord = this.bracket(a, b) 
+			}, { 
+				coord = [a, 0, b, this.value(a), 0, this.value(b)]
+			});
+			if(method == \brent, {
+				^this.brent(*coord)
+			}, {
+				^this.golden(*coord)
+			})
 		})
 	}
 	
-	*shft2 { arg a, b, c;
-		a = b;
-		b = c;
-		^[a, b]
-	}
-	
-	*shft3 { arg a, b, c, d;
-		a = b;
-		b = c;
-		c = d;
-		^[a, b, c]
-	}
-	
-	*mov3 { arg a, b, c, d, e, f;
-		a = d;
-		b = e;
-		c = f;
-		^[a, b, c]
-	}
-}
-
-Golden : BracketMethod {
-	classvar xmin, fmin, tol = 3e-8;
-	
-	*minimize { arg func; var r = 0.61803399, c = 1.0 - r, x1, x2, x0 = ax, x3 = cx, f1, f2, temp;
-		if(func.isKindOf(Function), {
-			if((cx - bx).abs > (bx - ax).abs, {
-				x1 = bx;
-				x2 = bx + (c * (cx - bx));
-			}, {
-				x2 = bx;
-				x1 = bx - (c * (bx - ax));
-			});
-			f1 = thisFunc.value(x1);
-			f2 = thisFunc.value(x2);
-			while({ (x3 - x0).abs > (tol * (x1.abs + x2.abs)) }, {
-				if(f2 < f1, {
-					temp = super.shft3(x0, x1, x2, (r * x2) + (c * x3));
-					x0 = temp[0]; x1 = temp[1]; x2 = temp[2];
-					temp = super.shft2(f1, f2, thisFunc.value(x2));
-					f1 = temp[0]; f2 = temp[1];
+	bracket { arg a, b; var golden = 0.3819660, xl = a, xr = b, xc, fl = this.value(a), fr = 	this.value(b), fc, nbEval = 0, maxEval = 100, sqrtDblEps = 1.4901161193847656e-08;
+		if(fr >= fl, {
+			xc = ((xr - xl) * golden) + xl;
+			nbEval = nbEval + 1;
+			fc = this.value(xc)
+		}, {
+			xc = xr;
+			fc = fr;
+			xr = ((xc - xl) / golden) + xl;
+			nbEval = nbEval + 1;
+			fr = this.value(xr)
+		});
+		while({ nbEval < maxEval and: { (xr-xl) > (sqrtDblEps*((xr+xl)*0.5)+sqrtDblEps) } }, {
+			if(fc < fl, {
+				if(fc < fr, {
+					//Return x_lower, x_upper, x_min, fx_lower, fx_upper, fx_min
+					^[xl, xr, xc, fl, fr, fc]
 				}, {
-					temp = super.shft3(x3, x2, x1, (r * x1) + (c * x0));
-					x3 = temp[0]; x2 = temp[1]; x1 = temp[2];
-					temp = super.shft2(f2, f1, thisFunc.value(x1));
-					f2 = temp[0]; f1 = temp[1];
+					if(fc > fr, {
+						xl = xc;
+						fl = fc;
+						xc = xr;
+						fc = fr;
+						xr = ((xc - xl) / golden) + xl;
+						nbEval = nbEval + 1;
+						fr = this.value(xr)
+					}, { /* fc == fr */
+						xr = xc;
+						fr = fc;
+						xc = ((xr - xl) * golden) + xl;
+						nbEval = nbEval + 1;
+						fc = this.value(xc)
+					})
+				})
+			}, { /* fc >= fl */
+				xr = xc;
+				fr = fc;
+				xc = ((xr - xl) * golden) + xl;
+				nbEval = nbEval + 1;
+				fc = this.value(xc)
+			});
+		});
+		//"Method bracket has failed.".warn;
+		^[xl, xr, xc, fl, fr, fc]
+	}
+
+	brent { arg xlow, xup, xmin, fxlow, fxup, fxmin; var golden = 0.3819660, xl, xr, z, fz, d = 0, 	e = 0, u, fu, v = xlow + (golden * (xup - xlow)), w = v, fv = this.value(v), fw = fv, wlow, 	wup, tol, p, q, r, mid, iter = 0, maxIter = 100, t2, epsAbs = 0.001, epsRel = 0.001, absMin, 	continue = true;
+		while({ continue and: { iter < maxIter } }, {
+			xl = xlow;
+			xr = xup;
+			z = xmin;
+			fz = fxmin;
+			d = e;
+			e = d;
+			wlow = z - xl;
+			wup = xr - z;
+			tol = 1.4901161193847656e-08 * z.abs;
+			p = 0; q = 0; r = 0;
+			mid = 0.5 * (xl + xr);
+			if(e.abs > tol, {
+				r = (z - w) * (fz - fv);
+				q = (z - v) * (fz - fw);
+				p = ((z - v) * q) - ((z - w) * r);
+				q = 2 * (q - r);
+				if(q > 0.0, { p = p.neg }, { q = q.neg });
+				r = e;
+				e = d
+			});
+			if(p.abs < (0.5 * q * r).abs and: { p < (q * wlow) } and: { p < (q * wup) }, {
+				t2 = 2 * tol;
+				d = p / q;
+				u = z + d;
+				if((u - xl) < t2 or: { (xr - u) < t2 }, {
+					d = if(z < mid, { tol }, { tol.neg })
+				})
+			}, {
+				e = if(z < mid, { xr - z }, { (z - xl).neg });
+				d = golden * e
+			});
+			if(d.abs >= tol, {
+				u = z + d
+			}, {
+				u = z + if(d > 0.0, { tol }, { tol.neg })
+			});
+			fu = this.value(u);
+			if(fu <= fz, {
+				if(u < z, {
+					xup = z;
+					fxup = fz
+				}, {
+					xlow = z;
+					fxlow = fz
+				});
+				v = w;
+				fv = fw;
+				w = z;
+				fw = fz;
+				xmin = u;
+				fxmin = fu;
+			}, {
+				if(u < z, {
+					xlow = u;
+					fxlow = fu
+				}, {
+					xup = u;
+					fxup = fu
+				});
+				if(fu <= fw or: { w == z }, {
+					v = w;
+					fv = fw;
+					w = u;
+					fw = fu;
+				}, {
+					if(fu <= fv or: { v == z } or: { v == w }, {
+						v = u;
+						fv = fu;
+					})
 				})
 			});
-			if(f1 < f2, {
-				xmin = x1;
-				fmin = f1
+			//Test the interval
+			if(xlow > 0.0 and: { xup > 0.0 } or: { xlow < 0.0 and: { xup < 0.0 } }, {
+				absMin = xlow.abs.min(xup.abs)
 			}, {
-				xmin = x2;
-				fmin = f2
-			})
-			^xmin
-		}, {
-			Error("Input is not in required format.\n").throw
-		})
+				absMin = 0.0
+			});
+			if((xup - xlow).abs < (epsAbs + (epsRel * absMin)), { continue = false });
+			iter = iter + 1
+		});
+		//Return found values
+		^[xmin, fxmin]
+	}
+	
+	golden { arg xlow, xup, xmin, fxlow, fxup, fxmin; var golden = 0.3819660, xc, xl, xr, fm, wlow, 	wup, xn, fn, iter = 0, maxIter = 100, epsAbs = 0.001, epsRel = 0.001, absMin, continue = true;
+		while({ continue and: { iter < maxIter } }, {
+			xc = xmin;
+			xl = xlow;
+			xr = xup;
+			fm = fxmin;
+			wlow = xc - xl;
+			wup = xr - xc;
+			xn = xc + (golden * if(wup > wlow, { wup }, { wlow.neg })); 
+			fn = this.value(xn);
+			if(fn < fm, {
+				xmin = xn;
+				fxmin = fn
+			}, {
+				if(xn < xc and: { fn > fm }, {
+					xlow = xn;
+					fxlow = fn
+				}, {
+					if(xn > xc and: { fn > fm }, {
+						xup = xn;
+						fxup = fn
+					})
+				})
+			});
+			//Test the interval
+			if(xlow > 0.0 and: { xup > 0.0 } or: { xlow < 0.0 and: { xup < 0.0 } }, {
+				absMin = xlow.abs.min(xup.abs)
+			}, {
+				absMin = 0.0
+			});
+			if((xup - xlow).abs < (epsAbs + (epsRel * absMin)), { continue = false });
+			iter = iter + 1
+		});
+		//Return found values
+		^[xmin, fxmin]		
 	}
 }
 			
