@@ -6,7 +6,7 @@
 	\version:			1.1,
 	\country: 			"Netherlands",
 	\since: 			"2010",
-	\helpdoc: 			"ZPlane.html"
+	\helpdoc: 			"ZPlane.html",
 	\dependencies:	 ["MathLib"],
 	\ext_dependancy:	 "Uses the method .findMinimum defined in Minimization.sc (part of MathLib)."
 )
