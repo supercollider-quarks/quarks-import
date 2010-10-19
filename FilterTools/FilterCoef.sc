@@ -112,24 +112,6 @@ FilterCoef {
 		})
 	}
 	
-	decompose { arg argNorm = true, type = \divPolynomials1; var rem, quo, uniqueFactors, dupCount, 	exp = Array.new;
-		norm = argNorm;
-		if(poles.notNil and: { zeros.notNil } and: { acoefs.notNil or: { bcoefs.notNil } }, {
-			if(acoefs.size >= bcoefs.size, {
-				#rem, quo = acoefs.tryPerform(type, bcoefs)
-			});
-			fpoles = this.format(poles);
-			uniqueFactors = fpoles.asSet.asArray;
-			//dupCount = uniqueFactors.collect({ |item| fpoles.occurrencesOf(item) });
-			/*uniqueFactors.do({ |item| var occ = fpoles.occurrencesOf(item);
-				if(item.size > 2, { 
-			*/
-			[uniqueFactors, dupCount].postln
-		}, {
-			Error("There are no poles/zeros specified or coeffs not calculated yet.\n").throw
-		})
-	}
-	
 	calcImpResp { var imp = Array.fill(80, { arg i; if(i == 0, { 1 }, { 0 }) }), impResp = 	Array.new, poll = Array.fill(3, { 0.1 }), i = 0;
 		//Run the while loop as long as there is a noticeable response and i < 60
 		while({ poll.magnitude.sum > 0.001 and: { i < 60 } }, {
@@ -207,5 +189,26 @@ FilterCoef {
 		/* .golden returns the minimum of the independent and dependent variable. The negated 		 * dependent variable gives us the maximum magnitude in the frequency response of the 		 * filter
 		 */
 		^func.findMinimum(0, pi)[1].neg
+	}
+}
+
++ SequenceableCollection {
+	/* Multiply polynomial factors of form (1 - root[i]*x) to find coefficients. Note that 	 * these coefficients may not be real if complex conjugate poles or zeros do not 	 * always occur in conjugate pairs. (Must include an extra zero valued coefficient as the first 	 * entry of the receiver array.) 
+	 */
+	mulMonomials { var coef = Array.newClear(this.size);
+		if(this.detect({ |item| item.isKindOf(Complex) or: { item.isKindOf(Polar) } }).notNil, {
+			coef[0] = Complex(1.0, 0.0)
+		}, {
+			coef[0] = 1.0
+		});
+		//Recursive multiplication to find polynomial coefficients
+		for(1, coef.size-1, { |i| var j = i - 1;
+			coef[i] = this[i].neg * coef[i-1];
+			while({ j >= 1 }, {
+				coef[j] = coef[j] + (this[i].neg * coef[j-1]);
+				j = j - 1
+			});
+		});
+		^coef
 	}
 }
