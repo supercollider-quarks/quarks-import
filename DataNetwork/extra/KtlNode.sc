@@ -8,27 +8,28 @@ MIDIKtlNode {
 	}
 
 	init{
+		var mydict;
 		cbnodes = IdentityDictionary.new;
 
 		if ( ktl.hasScenes ){
-			ktl.ctlNames.sortedKeysValuesDo{ |ky,dict,i|
+			ktl.ktlNames.sortedKeysValuesDo{ |ky,dict,i|
 				network.addExpected( ids[i], ( name ++ "_" ++ ky).asSymbol, dict.size );
 				cbnodes.put( ky, SWCombineNode.new( ids[i], network, dict.size ) );
 				dict.sortedKeysValuesDo{ |k2,v,j|
 					network.add( name ++ "_" ++ k2, [ ids[i], j ] );
-					ktl.mapCCS( ky, k2, { |val| cbnodes[ ky ].set( j, [ val/127 ] ); });
+					ktl.mapS( ky, k2, { |val| cbnodes[ ky ].set( j, [ val/127 ] ); });
 				};
 			};
 		}{
-			var dict = ktl.ctlNames;
+			mydict = ktl.ktlNames;
 			if ( ids.isKindOf( Array ) ){
 				ids = ids[0];
 			};
-			network.addExpected( ids, name.asSymbol, ktl.dict.size );
-			cbnodes = SWCombineNode.new( ids, network, dict.size );
-			dict.sortedKeysValuesDo{ |k2,v,j|
+			network.addExpected( ids, name.asSymbol, mydict.size );
+			cbnodes = SWCombineNode.new( ids, network, mydict.size );
+			mydict.sortedKeysValuesDo{ |k2,v,j|
 				network.add( name ++ "_" ++ k2, [ ids, j ] );
-				ktl.mapCC( k2, { |val| cbnodes.set( j, [ val/127 ] ); });
+				ktl.map( k2, { |val| cbnodes.set( j, [ val/127 ] ); });
 			};
 		}
 	}
