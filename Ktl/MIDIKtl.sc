@@ -10,7 +10,7 @@ MIDIKtl : Ktl {
 			var lookie = this.makeCCKey(chan, ccn);
 			if (this.class.verbose, { ['cc', src, chan, ccn, ccval].postcs });
 			
-			ktlDict[lookie].value(ccval);
+			ktlDict[lookie].valueAll(ccval);
 		}, srcID);
 	}
 

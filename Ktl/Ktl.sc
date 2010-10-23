@@ -51,18 +51,33 @@ Ktl {
 		// subclass responsibility
 	}
 
+	addAction{ |ctlKey, action, actKey=\user|
+		if ( ktlDict.at( ctlKey).isNil ){
+			ktlDict.put( ctlKey, FunctionDict.new );
+		};
+		ktlDict.at( ctlKey ).put( actKey, action );
+	}
+
+	removeAction{ |ctlKey, actKey = \user|
+		ktlDict.at( ctlKey ).removeAt( actKey );
+		if ( ktlDict.at( ctlKey ).isEmpty ){
+			ktlDict.removeAt( ctlKey );
+		};
+	}
+
 	// use when ktlNames is one flat dict
-	map { |ctl= \sl1, action| 
+	map { |ctl= \sl1, action, actKey = \user| 
 		var ktlDictKey = ktlNames[ctl]; // '0_42'
 		if (ktlDictKey.isNil) { 
 			warn("key % : no control found!\n".format(ctl));
 			^this
-		}; 
-		ktlDict.put(ktlDictKey, action);
+		};
+		this.addAction( ktlDictKey, action, actKey );
+		//		ktlDict.put(ktlDictKey, action);
 	}
 	
 		// use when ktlNames are scene-based dicts (NanoKtl, PDKtl)
-	mapS { |scene=2, ctl= \sl1, action| 
+	mapS { |scene=2, ctl= \sl1, action,actKey = \user| 
 		var mapScene, ktlDictKey; 
 		
 		mapScene = ktlNames[scene];
@@ -75,7 +90,8 @@ Ktl {
 			warn("key % : no control found in scene: % !\n".format(ctl,scene));
 			^nil			
 		};	
-		ktlDict.put(ktlDictKey, action);
+		this.addAction( ktlDictKey, action, actKey );
+		//		ktlDict.put(ktlDictKey, action);
 	}
 
 	findKey { |val| ^ktlNames.findKeyForValue(val); } 

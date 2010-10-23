@@ -42,7 +42,7 @@ NanoKtl : MIDIKtl {
 						envir.softSet(parKey, normVal, softWithin, false, lastVal, gui.getSpec(parKey))
 					};
 					lastVals.put(key, normVal) ;
-				}
+				}, \mapEnvir
 			)
 		};
 	}
@@ -57,7 +57,7 @@ NanoKtl : MIDIKtl {
 			this.mapS(scene, ctlName, 
 				{  |ccval| 
 					proxy.softSet(paramName, ccval / 127, softWithin, false, lastVals[ctlName], spec)
-				}
+				}, \mapProxyPar
 			);
 		};
 	}
@@ -79,7 +79,7 @@ NanoKtl : MIDIKtl {
 						proxy.softSet(parKey, normVal, softWithin, mapped: false, lastVal: lastVal) 
 					};
 					lastVals.put(key, normVal);
-				}
+				}, \mapNdef
 			)
 		};
 			// and use 9th knob for proxy volume 
@@ -92,7 +92,7 @@ NanoKtl : MIDIKtl {
 				proxy.softVol_(mappedVol, softWithin, pause: volPause, lastVal: lastVal) 
 			};
 			lastVals[\kn9] = mappedVol;
-		} );
+		}, \mapNdef );
 	}
 	
 
@@ -127,7 +127,7 @@ NanoKtl : MIDIKtl {
 					};
 					
 					lastVals[key] =  normVal;
-				};
+				}, \mapProxyMix
 			)
 		};
 			// upper buttons: send to editor
@@ -136,7 +136,7 @@ NanoKtl : MIDIKtl {
 				defer { if (ccval > 0) { 
 						pxmixers[scene].pxMons[i + pxOffsets[scene]].edBut.doAction 
 				} }; 
-			})
+			}, \mapProxyMix)
 		};
 		
 			// lower buttons: toggle play/stop 
@@ -160,11 +160,29 @@ NanoKtl : MIDIKtl {
 						};
 					}; 
 				};
-			});
+			}, { |ccval| defer { 
+
+					var pxGui = pxmixers[scene].pxMons[i + pxOffsets[scene]]; 
+					var playBut = pxGui.monitorGui.playBut;
+					var proxy = pxGui.proxy;
+					
+					 
+					if (proxy.notNil) {	 
+						if ( ktlNames[scene]['mode'] == 'push' ){
+							if (ccval == 127) { 
+								playBut.valueAction_(1 - playBut.value); // toggle on pushing
+							};
+						}; 
+						if ( ktlNames[scene]['mode'] == 'toggle' ) { 
+							playBut.valueAction_(ccval.sign);
+						};
+					}; 
+				};
+			}, \mapProxyMix);
 		};
 
-		this.mapS(scene, \bu9, { |ccval| if (ccval > 0) { this.pxShift(1, scene) } });
-		this.mapS(scene, \bd9, { |ccval| if (ccval > 0) { this.paramShift(1, scene) } });
+		this.mapS(scene, \bu9, { |ccval| if (ccval > 0) { this.pxShift(1, scene) } }, \mapProxyMix );
+		this.mapS(scene, \bd9, { |ccval| if (ccval > 0) { this.paramShift(1, scene) } }, \mapProxyMix );
 
 		this.pxShift(0, scene);		
 		this.mapToNdefGui(mixer.editor, scene, true);
@@ -191,7 +209,7 @@ NanoKtl : MIDIKtl {
 						proxy.softSet(parKey, normVal, softWithin, lastVal: lastVal) 
 					};
 					lastVals.put(key, normVal);
-				}
+				}, \mapPxEdit
 			)
 		};
 			// and use 9th knob for proxy volume 
@@ -204,7 +222,7 @@ NanoKtl : MIDIKtl {
 				proxy.softVol_(mappedVol, softWithin, pause: volPause, lastVal: lastVal) 
 			};
 			lastVals[\kn9] = ccval / 127;
-		} );
+		}, \mapPxEdit );
 	}
 
 
@@ -220,7 +238,7 @@ NanoKtl : MIDIKtl {
 //		mastaFunc = Volume.softMasterVol(0.05, server, \midi.asSpec);
 		
 			Spec.add(\mastaVol, [server.volume.min, server.volume.max, \db]);
-			(1..4).do { |scene| this.mapS(scene, \sl9, mastaFunc) };
+			(1..4).do { |scene| this.mapS(scene, \sl9, mastaFunc, \mapPxMix) };
 			
 			// scene 1: 
 
@@ -240,7 +258,7 @@ NanoKtl : MIDIKtl {
 						.softVol_( \amp.asSpec.map(mappedVal), softWithin, true, lastVol ); 
 					};
 					lastVals[key] =  mappedVal;
-				};
+				},\mapPxMix
 			)
 		};
 			// upper buttons: send to editor
@@ -248,7 +266,7 @@ NanoKtl : MIDIKtl {
 			this.mapS(scene, key, { |ccval| 
 											////////////// FIXXXXX
 				defer { if (ccval > 0) { pxmixers[scene].editBtnsAr[i + pxOffsets[scene]].doAction } }; 
-			})
+			}, \mapPxMix )
 		};
 		
 			// lower buttons: toggle play/stop 
@@ -268,11 +286,11 @@ NanoKtl : MIDIKtl {
 						if (ccval == 0) { px.stop };
 					};
 					};
-				});
+				}, \mapPxMix);
 		};
 
-		this.mapS(scene, \bu9, { |ccval| if (ccval > 0) { this.pxShift(1, scene) } });
-		this.mapS(scene, \bd9, { |ccval| if (ccval > 0) { this.paramShift(1, scene) } });
+		this.mapS(scene, \bu9, { |ccval| if (ccval > 0) { this.pxShift(1, scene) } }, \mapPxMix);
+		this.mapS(scene, \bd9, { |ccval| if (ccval > 0) { this.paramShift(1, scene) } }, \mapPxMix);
 
 		this.pxShift(0, scene);		
 		this.mapToPxEdit(mixer.editor, scene);
