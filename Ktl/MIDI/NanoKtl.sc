@@ -160,24 +160,6 @@ NanoKtl : MIDIKtl {
 						};
 					}; 
 				};
-			}, { |ccval| defer { 
-
-					var pxGui = pxmixers[scene].pxMons[i + pxOffsets[scene]]; 
-					var playBut = pxGui.monitorGui.playBut;
-					var proxy = pxGui.proxy;
-					
-					 
-					if (proxy.notNil) {	 
-						if ( ktlNames[scene]['mode'] == 'push' ){
-							if (ccval == 127) { 
-								playBut.valueAction_(1 - playBut.value); // toggle on pushing
-							};
-						}; 
-						if ( ktlNames[scene]['mode'] == 'toggle' ) { 
-							playBut.valueAction_(ccval.sign);
-						};
-					}; 
-				};
 			}, \mapProxyMix);
 		};
 
