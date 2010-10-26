@@ -64,4 +64,24 @@ fork {
 
 p.close;
 
+/// There is also ArduinoTSV for tab-separated values
+// e.g. in Arduino code:
+/*
+	Serial.print(millis() - start);        // check on performance in milliseconds
+    Serial.print("\t");                    // tab character for debug windown spacing
+    Serial.print(total[0]);                  // print sensor output 1
+    Serial.print("\t");
+    Serial.print(total[1]);                  // print sensor output 2
+    Serial.print("\t");
+    Serial.print(total[2]);                // print sensor output 3
+    Serial.print("\t");
+    Serial.println(total[3]); 
+*/
+
+SerialPort.devices;
+a = ArduinoTSV.new( "/dev/ttyACM0", 9600 );
+a.action = { |... msg| msg.postln };
+
+a.close;
+
 // EOF
