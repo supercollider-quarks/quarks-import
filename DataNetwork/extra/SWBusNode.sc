@@ -84,12 +84,12 @@ SWBusNode{
 	myInit{
 		if( network.isKindOf( SWDataNetworkClient ) ){
 			//		"adding setter hook".postln;
-			network.addHook( \expected, id, { 
+			network.addHook( id, { 
 				network.setData( id, Array.fill( bus.numChannels, 0 ) );
-			});
-			network.addHook( \setter, id, { 
+			}, \expected );
+			network.addHook( id, { 
 				this.setLabel;
-			});
+			}, \setter );
 		}{
 			network.setData( id, Array.fill( bus.numChannels, 0 ) );
 			this.setLabel;
