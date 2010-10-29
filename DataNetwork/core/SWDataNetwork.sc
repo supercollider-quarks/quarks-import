@@ -26,7 +26,8 @@ SWDataNetwork{
 
 	var <>hive;
 
-	var <>newNodeHooks;
+	var <>hooks;
+	//	var <>newNodeHooks;
 
 	*new{ 
 		^super.new.init;
@@ -36,7 +37,7 @@ SWDataNetwork{
 		expectedNodes = Array.new;
 		//		expectedSize = IdentityDictionary.new;
 		nodes = IdentityDictionary.new;
-		newNodeHooks = IdentityDictionary.new;
+		hooks = SWHookSet.new;
 		spec = SWDataNetworkSpec.new( this );
 		watcher = SkipJack.new(
 			{
@@ -53,15 +54,16 @@ SWDataNetwork{
 		this.watch( false );
 	}
 
-	addHook{ |id,action|
-		newNodeHooks.put( id, action );
-		if ( nodes.at(id).notNil ){ // perform the action rightaway if node is already there
-			action.value( nodes.at(id) );
+	addHook{ |id,action, type=\newnode|
+		hooks.add( type, id, action );
+		if ( nodes.at(id).notNil and: type == \newnode ){ // perform the action rightaway if node is already there
+			hooks.perform( type, id, [nodes[id]] );
+			//		action.value( nodes.at(id) );
 		};
 	}
 
-	removeHook{ |id|
-		newNodeHooks.removeAt( id )
+	removeHook{ |id,type=\newnode|
+		hooks.removeAt( id, type );
 	}
 
 	/// --------- NODE control ---------
@@ -246,7 +248,7 @@ SWDataNetwork{
 			if ( nnode.notNil ){
 				nodes.put( id, nnode );
 				// perform the action to be performed when the node is created
-				newNodeHooks.at( id ).value( nnode );
+				hooks.perform( \newnode, id, [nnode] );
 			//	nodes.postcs;
 			//	nodes[id].postcs;
 				if ( osc.notNil, {

@@ -10,7 +10,7 @@ SWDataNetworkClient : SWDataNetwork{
 	var <subscriptions,<setters;
 
 	// these could be moved to SWDataNetwork later on, as they may be useful there too, to abstract the newNodeHooks.
-	var <hooks;
+	//	var <hooks;
 	
 	var <>autoregister = true;
 	// do not set unless you are the class itself
@@ -39,7 +39,7 @@ SWDataNetworkClient : SWDataNetwork{
 		subscriptions = Set.new;
 		setters = Set.new;
 
-		hooks = SWHookSet.new;
+		//	hooks = SWHookSet.new;
 
 		this.addResponders;
 
@@ -254,7 +254,7 @@ SWDataNetworkClient : SWDataNetwork{
 				}
 			};
 		},{
-			hooks.perform( \expected, id );
+			hooks.perform( \expected, id, [id,label,size,type] );
 			("DataNetwork: expected node %, with label % and % slots".format( id, label, size )).postln;
 			// use the method from the super-class
 			super.addExpected( id, label, size, type );
@@ -591,7 +591,7 @@ SWDataNetworkClient : SWDataNetwork{
 	setterInfo{ |msg|
 		("setter of node: "+msg).postln;
 		setters.add( msg[0]);
-		hooks.perform( \setter, msg[0] );
+		hooks.perform( \setter, msg[0], msg );
 		if ( gui.notNil ){ 
 			gui.setInfo( "setter of node:" + msg );
 			gui.subsetChanged = true;
@@ -622,10 +622,12 @@ SWDataNetworkClient : SWDataNetwork{
 		lasttime = Process.elapsedTime;
 	}
 
-	addHook{ |type,id,action|
+	/*
+	addHook{ |id,action,type=\newnode|
 		//	"adding hook DN".postln;
 		hooks.add( type, id, action );
 	}
+	*/
 
 	// -------
 

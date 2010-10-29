@@ -15,12 +15,18 @@ SWHookSet {
 		collection.put( (type++id).asSymbol, SWHook.new( type,id,action ) );
 	}
 
-	perform{ |type,id|
+	removeAt{ |id,type=\newnode|
+		var mykey;
+		mykey = (type++id).asSymbol;
+		collection.removeAt( mykey );
+	}
+
+	perform{ |type,id, args|
 		var myhook,mykey;
 		mykey = (type++id).asSymbol;
 		myhook = collection.at( mykey );
 		if ( myhook.notNil ){
-			myhook.perform;
+			myhook.perform( *args );
 			collection.removeAt( mykey ); // remove the hook after executing it
 		}{
 			("no hooks for" + type + id ).postln;
@@ -37,9 +43,9 @@ SWHook {
 		^super.newCopyArgs( *args );
 	}
 
-	perform{
-		"performing hook action".value;
-		this.action.value;
+	perform{ |...args|
+		("performing hook action" + type + id).value;
+		this.action.value( *args );
 	}
 
 }
