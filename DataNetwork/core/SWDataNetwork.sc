@@ -975,7 +975,8 @@ SWDataNetworkSpec{
 	// --- the methods below can all be accessed from the network directly ----
 
 	add{ |key, slot|
-		if ( key.asSymbol != 'nil' ){
+		key = key.asSymbol;
+		if ( key != 'nil' ){
 			map.put( key, slot );
 		};
 		if ( this.at( key ).notNil, {
@@ -989,6 +990,7 @@ SWDataNetworkSpec{
 	at{ |key|
 		var id1,id2;
 		var item;
+		key = key.asSymbol;
 		item = map.at( key );
 		if ( item.isKindOf( Array ), {
 			id1 = map.at(key)[0];
@@ -1002,6 +1004,7 @@ SWDataNetworkSpec{
 	}
 
 	value{ |key|
+		key = key.asSymbol;
 		^this.at(key).value;
 	}
 
@@ -1016,6 +1019,7 @@ SWDataNetworkSpec{
 
 	action_{ |key,action|
 		var slot;
+		key = key.asSymbol;
 		slot = this.at(key);
 		slot.action_(action);
 		^slot;		
@@ -1024,14 +1028,17 @@ SWDataNetworkSpec{
 	//-------- node bus control ---------
 
 	bus{ |key|
+		key = key.asSymbol;
 		^this.at(key).bus;
 	}
 
 	createBus{ |key,server|
+		key = key.asSymbol;
 		this.at( key ).createBus( server );
 	}
 
 	freeBus{ |key|
+		key = key.asSymbol;
 		this.at( key ).freeBus;
 	}
 
