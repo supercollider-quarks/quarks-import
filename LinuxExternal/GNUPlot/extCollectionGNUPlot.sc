@@ -1,10 +1,12 @@
 
 + ArrayedCollection {
 	gnuplot { GNUPlot.plot( this ) }
+	gnuplotd { |ns=1,label=""| GNUPlot.plotd( this, ns, label ) }
 }
 
 + Env {
 	gnuplot { GNUPlot.plotenv( this ) }
+	gnuplotd { |ns=1,label=""| GNUPlot.plotd( this, ns, label ) }
 }
 
 + AbstractFunction{
