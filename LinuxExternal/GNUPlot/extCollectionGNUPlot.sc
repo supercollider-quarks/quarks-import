@@ -2,6 +2,7 @@
 + ArrayedCollection {
 	gnuplot { GNUPlot.plot( this ) }
 	gnuplotd { |ns=1,label=""| GNUPlot.plotd( this, ns, label ) }
+	gnuhistod { |ns=1,label="",verb=true| GNUPlot.plotdHisto( this, ns, label, verb ) }
 }
 
 + Env {
