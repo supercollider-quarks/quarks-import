@@ -48,11 +48,20 @@ GNUPlot {
 		fh.close;
 	}
 
-	*plotd{ |data,ns=1,label=""|
+	*bootDefault{
 		if ( default.isNil ){
 			default = GNUPlot.new;
 			ShutDown.add( { default.stop; })
 		};
+	}
+
+	*plotdHisto{ |data,ns=1,label="",verb=true|
+		this.bootDefault;
+		default.plotdHisto( data, ns, label, verb );
+	}
+
+	*plotd{ |data,ns=1,label=""|
+		this.bootDefault;
 		default.plotd( data, ns, label );
 	}
 	
