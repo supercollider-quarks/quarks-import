@@ -7,6 +7,7 @@ GNUPlot {
 	// additions and some refactoring by Dan Stowell (2009)
 
 	classvar id, <>folder = "SC_to_GNUPlot/", <>initCode = "set data style lines\n", <>gnuplotpath="gnuplot";
+	classvar <>default;
 
 	var pipe,gid,<hisdata,monrout,updateFunc,<lastdata;
 
@@ -45,6 +46,14 @@ GNUPlot {
 		fh.putString(initCode);
 		fh.putString("plot \"" ++ tmpname ++ "\" title \"\" \n");
 		fh.close;
+	}
+
+	*plotd{ |data,ns=1,label=""|
+		if ( default.isNil ){
+			default = GNUPlot.new;
+			ShutDown.add( { default.stop; })
+		};
+		default.plotd( data, ns, label );
 	}
 	
 	// Helper function to convert an envelope into a suitable array
