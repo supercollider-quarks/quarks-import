@@ -322,7 +322,7 @@ SWDataNetworkClient : SWDataNetwork{
 		host.sendMsg( msg, NetAddr.langPort, name.asString );
 	}
 
-	sendMsgWithArgs{ |msg,args|
+	sendMsgWithArgs{ |msg, args|
 		var fullMsg = [ msg, NetAddr.langPort, name.asString ]++args;
 		host.sendMsg( *fullMsg );
 	}
@@ -397,8 +397,8 @@ SWDataNetworkClient : SWDataNetwork{
 			mb = miniBee;
 		};
 		switch( type,
-			'custom', { this.sendMsgWithArgs( '/map/minibee/custom', id, mb )},
-			'output', { this.sendMsgWithArgs( '/map/minibee/output', id, mb )}
+			'custom', { this.sendMsgWithArgs( '/map/minibee/custom', [id, mb] )},
+			'output', { this.sendMsgWithArgs( '/map/minibee/output', [id, mb] )}
 		);
 	}
 
