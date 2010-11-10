@@ -8,5 +8,5 @@
 	\country: "Mexico",
 	\since: "2007",
 	\url: "http://web.me.com/jslach/",
-	\dependencies: ["MathLib", "VectorSpace"]
+	\dependencies: ["MathLib", "VectorSpace", "cruciallib"]
 )
