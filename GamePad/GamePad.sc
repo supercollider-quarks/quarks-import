@@ -82,7 +82,7 @@ GamePad {
 			if (cookieMap.notNil, { 
 				this.hidAction(locID, cookie, val);
 			}, { 
-				if(vendorID != 131){ // catch ugly exception!
+				if(vendorID != 131){ // catch ugly exception in Ferrari!
 //					"GamePad defaultAction:".postln;
 					defaultAction.value(productID, vendorID, locID, cookie, val);
 				}
@@ -120,8 +120,11 @@ GamePad {
 			ctLoop: ctLoop, 
 			map: map, 
 			meta: false, 
-			recNames: [\joyRY, \joyLX, \joyRX, \joyLY, \midL, \midR, \lHat, \rHat 
-/* $$ add /rfTop here??...*/		] 
+			recNames: [
+				\joyRY, \joyLX, \joyRX, \joyLY, 
+				\midL, \midR, \lHat, \rHat, 
+				\throtL, \throtR, \wheel
+			] 
 		));
 	}	
 
