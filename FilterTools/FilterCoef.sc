@@ -91,12 +91,12 @@ FilterCoef {
 			if(zeros.every({ |item| item.magnitude == 0 }), {
 				acoefs = [1]
 			}, {
-				acoefs = zeros.mulMonomials
+				acoefs = zeros.multiplyFactors
 			});
 			if(poles.every({ |item| item.magnitude == 0 }), {
 				bcoefs = [1]
 			}, {
-				bcoefs = poles.mulMonomials
+				bcoefs = poles.multiplyFactors
 			});
 			
 			//If norm is set to true, normalize the frequency response to 1.0
@@ -145,7 +145,7 @@ FilterCoef {
 			if(type[i].notNil and: { type[i-1].imag.abs != 			0.0 } and: { type[i-1].imag.abs != pi } and: { type[i-1].real == type[i].real and: 			{ type[i-1].imag == type[i].imag.neg } }, {
 				//b = b.add([type[i-1], type[i]]);	
 				//Multiply conjugate terms, resulting in a real-valued 2nd degree polynomial
-				b = b.add([0, type[i-1], type[i]].mulMonomials).real;
+				b = b.add([0, type[i-1], type[i]].multiplyFactors).real;
 				i = i + 1
 			}, {
 				if(type[i-1].imag.abs < 1e-06, {
@@ -189,26 +189,5 @@ FilterCoef {
 		/* .golden returns the minimum of the independent and dependent variable. The negated 		 * dependent variable gives us the maximum magnitude in the frequency response of the 		 * filter
 		 */
 		^func.findMinimum(0, pi)[1].neg
-	}
-}
-
-+ SequenceableCollection {
-	/* Multiply polynomial factors of form (1 - root[i]*x) to find coefficients. Note that 	 * these coefficients may not be real if complex conjugate poles or zeros do not 	 * always occur in conjugate pairs. (Must include an extra zero valued coefficient as the first 	 * entry of the receiver array.) 
-	 */
-	mulMonomials { var coef = Array.newClear(this.size);
-		if(this.detect({ |item| item.isKindOf(Complex) or: { item.isKindOf(Polar) } }).notNil, {
-			coef[0] = Complex(1.0, 0.0)
-		}, {
-			coef[0] = 1.0
-		});
-		//Recursive multiplication to find polynomial coefficients
-		for(1, coef.size-1, { |i| var j = i - 1;
-			coef[i] = this[i].neg * coef[i-1];
-			while({ j >= 1 }, {
-				coef[j] = coef[j] + (this[i].neg * coef[j-1]);
-				j = j - 1
-			});
-		});
-		^coef
 	}
 }
