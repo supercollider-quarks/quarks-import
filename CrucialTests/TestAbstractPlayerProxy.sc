@@ -43,7 +43,6 @@ TestAbstractPlayerProxy : UnitTest {
 		// makePatchOut { arg agroup,private = false,bus,bundle;
 		app.makePatchOut(g,true,b,n);
 		
-		//app.insp;
 		po = app.patchOut;
 		// you should now have a 1 channel audio patch out
 		this.assert( po.notNil,"should have a patchOut");
