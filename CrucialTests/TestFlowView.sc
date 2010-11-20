@@ -22,7 +22,7 @@ TestFlowView : UnitTest {
 	}
 	
 	test_removeAll {
-		var f,g;
+		var f,g,k;
 
 		g = SCWindow.new;
 		//g.front;
@@ -38,10 +38,13 @@ TestFlowView : UnitTest {
 		ActionButton(f,"next line");
 
 		//
+		k = f.children;
 		f.removeAll;
 		
 		this.assertEquals( f.children.size, 0 , "after removeAll there should be 0 children");
-		
+		k.do({ |oldchild|
+			this.assert( oldchild.isClosed,"children views should all now be isClosed, but this one isn't: "+oldchild )
+		});
 		g.close;
 	}
 	
@@ -65,7 +68,7 @@ TestFlowView : UnitTest {
 		});
 
 
-		this.assertEquals( innerFlow.absoluteBounds,Rect(100 + GUI.skin.margin.x, 100, 100, 100),
+		this.assertEquals( innerFlow.absoluteBounds.moveTo(0,0),Rect(0,0, 100, 100),
 					" flow should not resizeToFit if the bounds passed to it were explicit");
 		// w.close
 	}

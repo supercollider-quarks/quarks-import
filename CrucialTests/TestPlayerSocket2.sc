@@ -15,6 +15,22 @@ TestPlayerSocket2 : TestAbstractPlayer {
 		this.stopPlayer;
 	}
 
+	test_setSource {
+		var q,r;
+		
+		
+		q = Patch({ Saw.ar(40.midicps) * 0.05 });
+		r = Patch({ Saw.ar(52.midicps) * 0.05 });
+
+		this.startPlayer;
+
+		player.preparePlayer(q);
+		this.wait({ q.isPrepared },"waiting for player socket to prepare patch for play");
+		
+		player.setSource(q);
+		this.wait({ q.isPlaying },"waiting for the Patch q to play inside the socket");
+		this.assertEquals(player.socketStatus,\isPlaying,"socket status");
+	}
 
 	test_setSourceToBundle {
 		var q,r;

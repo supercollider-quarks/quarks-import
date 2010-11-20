@@ -56,7 +56,6 @@ TestPlayerSocket : UnitTest {
 		// makePatchOut { arg agroup,private = false,bus,bundle;
 		ps.makePatchOut(g,true,b,n);
 		
-		//ps.insp;
 		po = ps.patchOut;
 		// you should now have a 1 channel audio patch out
 		this.assert( po.notNil,"should have a patchOut");
