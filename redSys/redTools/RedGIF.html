@@ -9,24 +9,24 @@
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #9d281b}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0024b5}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #902f20}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #062cb0}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b; min-height: 12.0px}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #9d281b}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024b5}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 9.0px Monaco}
 span.s3 {color: #000000}
 span.s4 {text-decoration: underline ; color: #000000}
 span.s5 {text-decoration: underline}
-span.s6 {color: #0024b5}
+span.s6 {color: #062cb0}
 span.s7 {color: #606060}
-span.s8 {color: #9d281b}
-span.s9 {color: #0019ba}
+span.s8 {color: #902f20}
+span.s9 {color: #0024b5}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -137,7 +137,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span>a.images[0].data= a.images[0].data.reverse;<span class="Apple-tab-span">	</span><span class="s8">//mess with the image pixel data</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span>win.view.background= a.background;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>win.drawHook= {</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.setSmoothing(<span class="s6">false</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.smoothing= <span class="s6">false</span>;</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.images[0].data.do{<span class="s6">|col, i|</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(a.controls[0].transparentFlag.not or:{a.controls[0].transparent!=col}, {</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">Pen</span>.fillColor= col;</p>
@@ -158,7 +158,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s9">var</span> win= <span class="s9">Window</span>(<span class="s7">"gif"</span>, <span class="s9">Rect</span>(300, 300, a.width*scale, a.height*scale), <span class="s9">false</span>);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="s9">var</span> index= 0, img;</p>
 <p class="p9"><span class="Apple-tab-span">	</span>win.drawHook= {</p>
-<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.setSmoothing(<span class="s9">false</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.smoothing= <span class="s9">false</span>;</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>img= a.images.wrapAt(index);</p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>img.data.do{<span class="s9">|col, i|</span></p>
 <p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if(img.control.transparentFlag.not or:{img.control.transparent!=col}, {</p>

@@ -1,5 +1,7 @@
 //redFrik
 
+//related: RedBMP
+
 RedGIF {
 	var	<>type,									//string
 		
@@ -52,7 +54,7 @@ RedGIF {
 		};
 		win.view.background= background ?? {Color.grey};
 		win.drawHook= {
-			Pen.setSmoothing(false);
+			Pen.smoothing= false;
 			img= images.wrapAt(index);
 			if(img.interlaced, {
 				row= 0;
