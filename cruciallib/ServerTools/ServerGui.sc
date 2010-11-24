@@ -104,7 +104,11 @@ ServerGui : ObjectGui {
 					}];
 	}
 	update { arg changer,what;
-		updater[what].value;
+		if(view.isClosed,{
+			this.remove
+		},{
+			updater[what].value;
+		})
 	}
 }
 
