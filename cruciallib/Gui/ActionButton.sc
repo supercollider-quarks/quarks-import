@@ -6,7 +6,7 @@ SCButtonAdapter : SCViewHolder {
 	}
 	makeView { arg layout,x,y;
 		var rect;
-		if((layout.isNil or: { layout.isKindOf(MultiPageLayout) }),{ layout = layout.asFlowView; });
+		if((layout.isNil or: { layout.isKindOf(PageLayout) }),{ layout = layout.asFlowView; });
 		this.view = GUI.button.new(layout,Rect(0,0,x,y ? GUI.skin.buttonHeight));
 		if(consumeKeyDowns,{ this.view.keyDownAction_({nil}) });
 	}
@@ -35,6 +35,9 @@ SCButtonAdapter : SCViewHolder {
 		s.at(0).put(2,color);
 		view.states = s;
 		view.refresh;
+	}
+	background {
+		^view.states[0][2]
 	}
 	labelColor_ { arg color;
 		var s;

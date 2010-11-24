@@ -165,17 +165,10 @@ Crucial {
 		var a,rec,pause;
 		if(menu.notNil,{ menu.close });
 
-		menu = MultiPageLayout.new("-Library-");
+		menu = PageLayout.new("");
 
 		Server.default.gui(menu);
 		menu.startRow;
-
-		a = ActionButton(menu.startRow,"     Library Menu Items...     ",{
-			MLIDbrowser(\menuItems)
-				.onSelect_({ arg f; f.value })
-		},minWidth: 250)
-		.background_(Color.new255(112, 128, 144))
-		.labelColor_(Color.white);
 
 		ToggleButton(menu.startRow,"Server dumpOSC",{
 			Server.default.stopAliveThread;
@@ -237,10 +230,20 @@ Crucial {
 		//TempoGui.setTempoKeys;
 		Tempo.default.gui(menu.startRow);
 
-		menu.resizeToFit.front;
+		menu.resizeToFit;
+		menu.front;
 
 		a.focus;
 	}
+	*cocoaMenuAddLibraryItems {
+		Library.global.treeCollect(nil,{ arg name,obj;
+			var names;
+			if(name[0] == 'menuItems', {
+				names = name.copyToEnd(1).collect({|a| a.asString});
+				CocoaMenuItem.add( names, obj )
+			})
+		})
+	}		
 	*initLibraryItems {
 		Library.put(\menuItems,'introspection','ClassBrowser',{
 			Object.gui
