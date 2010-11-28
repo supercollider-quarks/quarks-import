@@ -260,7 +260,7 @@ Voicer {		// collect and manage voicer nodes
 		susPedal.if({
 			susPedalNodes.add(node);
 		}, {
-			node.release(releaseGate, (lat ? 0).isNegative.if({ latency }, { lat }));
+			node.release(releaseGate, (lat ? 0).isNegative.if({ latency }, { lat }), freq);
 		});
 	}
 
