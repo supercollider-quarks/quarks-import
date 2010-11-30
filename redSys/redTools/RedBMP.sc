@@ -3,9 +3,8 @@
 //related: RedGIF
 
 //todo:
-//* fix 4, 16 and 24bit support for when creating images from scratch and writing to disk
-//* support 1bit images
-//* still some 24bit files not loading correctly
+//* still some 24bit files not loading correctly - file ending mismatch
+//* someday maybe add support for compression and different header versions
 
 RedBMP {
 	var	<type,									//string "BM"
@@ -33,15 +32,21 @@ RedBMP {
 		width= argWidth;
 		height= argHeight;
 		depth= argDepth;
-		if(depth!=32, {"only depth 32 supported for now".warn});
 		fileSize= switch(depth,
-			1, {},//TODO
-			4, {(((width/4).ceil*4)*height/2).asInteger},//TODO
-			8, {(((width/4).ceil*4)*height).asInteger},//TODO
-			24, {(((width/4).ceil*4)*height*3).asInteger},//TODO
-			32, {width*height*4+54}
+			1, {(((width/4).ceil*4)*height/8).asInteger+(2*4)+54},
+			4, {(((width/4).ceil*4)*height/2).asInteger+(16*4)+54},
+			8, {(((width/4).ceil*4)*height).asInteger+(256*4)+54},
+			16, {(((width/4).ceil*4)*height*2).asInteger+54},
+			24, {(((width/4).ceil*4)*height*3).asInteger+54},
+			32, {width*height*4+54},
+			{(this.class.name++": depth"+depth+"not supported").error}
 		);
-		offset= 54;
+		offset= switch(depth,
+			1, {2*4+54},
+			4, {16*4+54},
+			8, {256*4+54},
+			54
+		);
 		headerSize= 40;
 		planes= 1;
 		compression= 0;
@@ -118,8 +123,8 @@ RedBMP {
 	prReadFileHeader {|file|
 		type= {file.getChar}.dup(2).join;
 		fileSize= file.getInt32LE;					//file size
-		file.getInt16;							//creator 1
-		file.getInt16;							//creator 2
+		file.getInt16LE;							//creator 1 - ignored
+		file.getInt16LE;							//creator 2 - ignored
 		offset= file.getInt32LE;					//data offset
 	}
 	prReadInfoHeader {|file|
@@ -143,7 +148,7 @@ RedBMP {
 	}
 	prReadPalette {|file|
 		if(numColors==0, {
-			numColors= offset-54/4;
+			numColors= (offset-54/4).asInteger;
 		});
 		palette= {
 			var b= file.getInt8&0xFF;
@@ -154,25 +159,43 @@ RedBMP {
 		}.dup(numColors);
 	}
 	prReadData {|file|
+		var cnt;
 		data= Array.newClear(width*height);
 		switch(depth,
-			1, {	//TODO
+			1, {
+				height.do{|y|
+					var i;
+					cnt= 0;
+					width.do{|x|
+						var index;
+						if(x%8==0, {
+							i= file.getInt8&0xFF;
+						});
+						index= i.bitTest(7-(x%8)).binaryValue;
+						data[y*width+x]= palette[index];
+					};
+					while({cnt%4>0}, {				//read padding bytes
+						file.getInt8;
+						cnt= cnt+1;
+					});
+				};
 			},
 			4, {
 				height.do{|y|
-					var cnt= width;
+					var i;
+					cnt= 0;
 					width.do{|x|
-						var i, l, r;
+						var index;
 						if(x%2==0, {
 							i= file.getInt8&0xFF;
-							l= i&0xF0>>4;
-							r= i&0x0F;
-							data[y*width+x]= palette[l];
-							if(x+1<width, {
-								data[y*width+x+1]= palette[r];
-								cnt= cnt+1;
-							});
+							cnt= cnt+1;
 						});
+						if(x%2==0, {
+							index= (i&2r11110000)>>4;
+						}, {
+							index= (i&2r00001111);
+						});
+						data[y*width+x]= palette[index];
 					};
 					while({cnt%4>0}, {				//read padding bytes
 						file.getInt8;
@@ -182,10 +205,10 @@ RedBMP {
 			},
 			8, {
 				height.do{|y|
-					var cnt= width;
+					cnt= width;
 					width.do{|x|
-						var i= file.getInt8&0xFF;
-						data[y*width+x]= palette[i];
+						var index= file.getInt8&0xFF;
+						data[y*width+x]= palette[index];
 					};
 					while({cnt%4>0}, {				//read padding bytes
 						file.getInt8;
@@ -193,20 +216,40 @@ RedBMP {
 					});
 				};
 			},
+			16, {
+				height.do{|y|
+					cnt= width;
+					width.do{|x|
+						var i= file.getInt16LE&0xFFFF;
+						var a= (i&2r1000000000000000)>>15;
+						var r= (i&2r0111110000000000)>>10;
+						var g= (i&2r0000001111100000)>>5;
+						var b= (i&2r0000000000011111);
+						data[y*width+x]= Color(r/31, g/31, b/31, 1-a);
+					};
+					while({cnt%4>0}, {				//read padding bytes
+						file.getInt16LE;
+						cnt= cnt+1;
+					});
+				};
+			},
 			24, {
 				height.do{|y|
+					cnt= width*3;
 					width.do{|x|
 						var b= file.getInt8&0xFF;
 						var g= file.getInt8&0xFF;
 						var r= file.getInt8&0xFF;
 						data[y*width+x]= Color.new255(r, g, b);
 					};
-					(width-(width.div(4)*4)).do{	//read padding bytes
+					while({cnt%4>0}, {				//read padding bytes
 						file.getInt8;
-					};
+						cnt= cnt+1;
+					});
 				};
 			},
 			32, {
+				cnt= 0;
 				height.do{|y|
 					width.do{|x|
 						var b= file.getInt8&0xFF;
@@ -214,13 +257,18 @@ RedBMP {
 						var r= file.getInt8&0xFF;
 						var a= file.getInt8&0xFF;
 						data[y*width+x]= Color.new255(r, g, b, a);
+						if(a==0, {cnt= cnt+1});
 					};
 				};
+				if(cnt==(width*height), {			//hack. do not know why some images have alpha 0
+					(this.class.name++": all alpha was 0. flipping.").warn;
+					data= data.collect{|c| c.alpha= 1};
+				});
 			},
 			{(this.class.name++": bitdepth"+depth+"not yet implemented").error}
 		);
 		if(fileSize!=file.pos, {
-			(this.class.name++": file ending mismatch: fileSize:"+fileSize+"file.pos:"+file.pos).error
+			(this.class.name++": file ending mismatch: fileSize:"+fileSize+"file.pos:"+file.pos).warn;
 		});
 	}
 	prWrite {|path|
@@ -231,7 +279,7 @@ RedBMP {
 			if(depth<16, {
 				this.prWritePalette(file);
 			}, {
-				(this.class.name++": palette not used because depth >= 16").error
+				(this.class.name++": palette not used because depth >= 16").warn;
 			});
 		});
 		this.prWriteData(file);
@@ -263,17 +311,126 @@ RedBMP {
 		file.putInt32LE(numImportantColors);
 	}
 	prWritePalette {|file|
-		//TODO
+		palette.do{|c|
+			file.putInt8((c.blue*255).round.asInteger);
+			file.putInt8((c.green*255).round.asInteger);
+			file.putInt8((c.red*255).round.asInteger);
+			file.putInt8((c.alpha*255).round.asInteger);
+		};
 	}
 	prWriteData {|file|
+		var cnt;
 		switch(depth,
-			1, {	//TODO
+			1, {
+				height.do{|y|
+					var ii= 0, wrote;
+					cnt= 0;
+					width.do{|x|
+						var c= data[y*width+x];
+						var i= palette.indexOf(c);
+						wrote= false;
+						if(i.isNil, {
+							(this.class.name++": color"+c+"at data index"+(y*width*x)+"not found in palette. replacing with 1st color").warn;
+							i= 0;
+						});
+						ii= ii+(2.pow(7-(x%8))*i);
+						if(x%8==7, {
+							file.putInt8(ii);
+							cnt= cnt+1;
+							ii= 0;
+							wrote= true;
+						});
+					};
+					if(wrote.not, {
+						file.putInt8(ii);
+						cnt= cnt+1;
+					});
+					while({cnt%4>0}, {				//write padding bytes
+						file.putInt8(0);
+						cnt= cnt+1;
+					});
+				};
 			},
-			4, {	//TODO
+			4, {
+				height.do{|y|
+					var ii= 0, wrote;
+					cnt= 0;
+					width.do{|x|
+						var c= data[y*width+x];
+						var i= palette.indexOf(c);
+						wrote= false;
+						if(i.isNil, {
+							(this.class.name++": color"+c+"at data index"+(y*width*x)+"not found in palette. replacing with 1st color").warn;
+							i= 0;
+						});
+						if(x%2==0, {
+							ii= i;
+						}, {
+							file.putInt8(ii<<4+i);
+							cnt= cnt+1;
+							ii= 0;
+							wrote= true;
+						});
+					};
+					if(wrote.not, {
+						file.putInt8(ii<<4);
+						cnt= cnt+1;
+					});
+					while({cnt%4>0}, {				//write padding bytes
+						file.putInt8(0);
+						cnt= cnt+1;
+					});
+				};
 			},
-			8, {	//TODO
+			8, {
+				height.do{|y|
+					cnt= width;
+					width.do{|x|
+						var c= data[y*width+x];
+						var i= palette.indexOf(c);
+						if(i.isNil, {
+							(this.class.name++": color"+c+"at data index"+(y*width*x)+"not found in palette. replacing with 1st color").warn;
+							i= 0;
+						});
+						file.putInt8(i);
+					};
+					while({cnt%4>0}, {				//write padding bytes
+						file.putInt8(0);
+						cnt= cnt+1;
+					});
+				};
 			},
-			24, {	//TODO
+			16, {
+				height.do{|y|
+					cnt= width;
+					width.do{|x|
+						var c= data[y*width+x];
+						var a= (1-c.alpha).round.asInteger<<15;
+						var r= (c.red*31).round.asInteger<<10;
+						var g= (c.green*31).round.asInteger<<5;
+						var b= (c.blue*31).round.asInteger;
+						file.putInt16LE(a+r+g+b);
+					};
+					while({cnt%4>0}, {				//write padding bytes
+						file.putInt16LE(0);
+						cnt= cnt+1;
+					});
+				};
+			},
+			24, {
+				height.do{|y|
+					cnt= width*3;
+					width.do{|x|
+						var c= data[y*width+x];
+						file.putInt8((c.blue*255).round.asInteger);
+						file.putInt8((c.green*255).round.asInteger);
+						file.putInt8((c.red*255).round.asInteger);
+					};
+					while({cnt%4>0}, {				//write padding bytes
+						file.putInt8(0);
+						cnt= cnt+1;
+					});
+				};
 			},
 			32, {
 				height.do{|y|
