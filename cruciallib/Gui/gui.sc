@@ -27,25 +27,7 @@
 }
 
 + ObjectGui {
-/*
-	guify { arg parent,bounds,title;
-		// converts the parent to a FlowView or compatible object
-		// thus creating a window from nil if needed
-		// registers to remove self as dependent on model if window closes
-		[parent,bounds].postln;
-		if(bounds.notNil,{
-			bounds = bounds.asRect;
-		});
-		if(parent.isNil,{
-			parent = FlowView(nil,bounds,windowTitle:title ?? {model.asString.copyRange(0,50)});
-		},{
-			parent = parent.asFlowView(bounds);
-		});
-		// i am not really a view in the hierarchy
-		parent.removeOnClose(this);
-		^parent
-	}
-*/	
+
 	guiBody { arg layout;
 		// if your model implement guiBody then call that
 		// this is a lazy way to write simple guis for simple objects
