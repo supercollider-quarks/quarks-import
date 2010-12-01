@@ -15,12 +15,10 @@ CCIn {
 		
 		responder = CCResponder({ |src,chan,num,value|
 			if (verbose and:{lastNum != num or:{ lastChan != chan or:{ lastSrc != src}}} ) { 
-			//if (lastNum != num || lastChan != chan || lastSrc != src && verbose) { 
 				("| CCIn" + "src:" + src + "chan:" + chan + "num:" + num + "|").postln; 
 				lastNum = num; lastChan = chan ; lastSrc = src;
 				};
 			if ( source.isNil or:{ src == source } and: {busses[chan][num].notNil} ) {
-			//if ( (src == source || source.isNil) && busses[chan][num].notNil) { 
 				this.prSetBusValue(chan, num, value/127, busses[chan][num].last) 
 				};
 			});
@@ -28,7 +26,6 @@ CCIn {
 	
 	prSetBusValue{ |chan, num, value, last|
 		busses[chan][num].bus.get( { |busValue|			if ( abs(last - busValue) < 1e-6 or: { abs(busValue-value) <= softWithin }) {
-		//	if ( ( abs(last - busValue) < 1e-6) || (abs(busValue-value) <= softWithin) ) {
 				busses[chan][num].bus.set(value);
 				busses[chan][num].last = value;
 				}
@@ -51,8 +48,6 @@ CCIn {
 			# ch, n, sp, lg = args;
 			(sp.asSpec.map( In.kr(this.prGetBus(ch, n).index) ).lag3(lg))
 			};
-		
-		//^(spec.asSpec.map( In.kr(this.prGetBus(chan, num).index) ).lag3(lag))
 		}
 		
 	free {
