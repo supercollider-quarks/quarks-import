@@ -53,7 +53,6 @@ s.waitForBoot{
 		
 		Pen.fillColor= Color.grey(0, 0.5);
 		objs.do{|obj, i|
-			obj.addForce(world.gravity);
 			obj.update;
 			world.contain(obj);
 			
@@ -62,7 +61,7 @@ s.waitForBoot{
 				\freq, obj.size,
 				\phase, obj.vel.abs.maxItem*1000,
 				\amp, 0.01,
-				\pan, obj.loc[1].linlin(0, width, -1, 1)
+				\pan, obj.loc[0].linlin(0, width, -1, 1)
 			);
 			
 			//--render objects
