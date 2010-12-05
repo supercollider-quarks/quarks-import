@@ -1,5 +1,5 @@
 ClockFace {
-	var <starttime, <tempo, <>inc, <cursecs, isPlaying = false, clock, <window, timeString;
+	var <starttime, <tempo, <>inc, <cursecs, isPlaying = false, <clock, <window, timeString;
 	var remFun, <mod, start, <>onMod, <>onBeat;
 	
 	*new{ arg starttime = 0, tempo = 1, inc = 0.1;
@@ -45,7 +45,10 @@ ClockFace {
 		cursecs = curtime;
 		curdisp = curtime.asTimeString;
 		curdisp = curdisp[0 .. (curdisp.size-3)];
-		updateStart.if({starttime = cursecs; 	start = clock.elapsedBeats;});
+		updateStart.if({starttime = cursecs; (isPlaying).if({
+			start = clock.elapsedBeats;
+			});
+		});
 		{timeString.string_(curdisp)}.defer;
 		}
 		
