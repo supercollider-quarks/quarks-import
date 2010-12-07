@@ -89,14 +89,14 @@ FilterCoef {
 		if(poles.notNil and: { zeros.notNil }, {
 			//Only multiply factors if poles or zeros are supplied
 			if(zeros.every({ |item| item.magnitude == 0 }), {
-				acoefs = [1]
+				acoefs = Polynomial[1]
 			}, {
-				acoefs = zeros.multiplyFactors
+				acoefs = zeros.neg.multiplyFactors
 			});
 			if(poles.every({ |item| item.magnitude == 0 }), {
-				bcoefs = [1]
+				bcoefs = Polynomial[1]
 			}, {
-				bcoefs = poles.multiplyFactors
+				bcoefs = poles.neg.multiplyFactors
 			});
 			
 			//If norm is set to true, normalize the frequency response to 1.0
