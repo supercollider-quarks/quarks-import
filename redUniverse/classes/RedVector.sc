@@ -9,12 +9,14 @@ RedVector[float] : FloatArray {
 	dot {|redVec| ^(this*redVec).sum}
 	normalize {^this/this.mag}
 	limit {|max| if(this.mag>max, {^this.normalize*max})}
+	manhattan {|redVec| ^(this-redVec).abs.sum}
 }
 
 //--2d vector optimised for speed
 RedVector2D[float] : RedVector {
 	mag {^this[0].sumsqr(this[1]).sqrt}
 	distance {|redVec| ^(redVec[0]-this[0]).hypot(redVec[1]-this[1])}
+	manhattan {|redVec| ^(this[0]-redVec[0]).abs+(this[1]-redVec[1]).abs}
 	dot {|redVec| ^(this[0]*redVec[0])+(this[1]*redVec[1])}
 	asPoint{ ^Point(this[0], this[1])}
 }
@@ -23,6 +25,7 @@ RedVector2D[float] : RedVector {
 RedVector3D[float] : RedVector {
 	mag {^(this[0].sumsqr(this[1])+this[2].pow(2)).sqrt}
 	distance {|redVec| ^(redVec[0]-this[0]).hypot((redVec[1]-this[1]).hypot(redVec[2]-this[2]))}
+	manhattan {|redVec| ^(this[0]-redVec[0]).abs+(this[1]-redVec[1]).abs+(this[2]-redVec[2]).abs}
 	dot {|redVec| ^(this[0]*redVec[0])+(this[1]*redVec[1])+(this[2]*redVec[2])}
 	cross {|redVec|
 		var x1, y1, z1, x2, y2, z2;

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="949.54">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {font: 9.0px Monaco}
+span.s3 {color: #0022f8}
+span.s4 {color: #000000}
+span.s5 {color: #0000bf}
+span.s6 {color: #bf0000}
+span.s7 {color: #606060}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedKMeans</b></span><span class="s2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><b>k-means clustering</b></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">group points in space.<span class="Apple-converted-space">  </span>similar to KMeans quark by Dan Stowell but this one is implemented slightly differently and also uses <a href="../RedVector.html"><span class="s3">RedVector</span></a>.</p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*new(k, max)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>k is the number of centroids.<span class="Apple-converted-space">  </span>the default is 5.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>max is the maximum number of tries in undecided/borderline situations.<span class="Apple-converted-space">  </span>the default is 15.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>reset</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>this will reset any previously calculated centroids on next update.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>classify(vec)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>test only one vector on the current centroids.<span class="Apple-converted-space">  </span>rarely needed.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>update(vectors)</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>vectors should be an array of <a href="../RedVector.html"><span class="s3">RedVector</span></a> objects.<span class="Apple-converted-space">  </span>the vectors can be of any dimension.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;k</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;max</b></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;centroids</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an array containing the result after the update method is called.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>it holds k number of <a href="../RedVector.html"><span class="s3">RedVector</span></a> objects representing the found centroids.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>&lt;classifications</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an array containing the result after the update method is called.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>it holds indices and have the same size as the number of items in the vectors array.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>each index represents which centroid each vector belongs to.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>so to look up the closest centroid for vector i, do centroids[classifications[i]].</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s4">a= </span>RedKMeans<span class="s4">(5);</span></p>
+<p class="p5">b= {<span class="s5">RedVector2D</span>[640, 480].rand}.dup(1000);<span class="Apple-tab-span">	</span><span class="s6">//create some test 2d points</span></p>
+<p class="p6"><span class="s4">a.update(b);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//calculate.<span class="Apple-converted-space">  </span>results will be in variables centroids and classifications</p>
+<p class="p6"><span class="s4">a.centroids;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//returns a list with 5 centroids</p>
+<p class="p6"><span class="s4">a.classifications;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//returns a list with 1000 centroid indices.<span class="Apple-converted-space">  </span>one for each vector</p>
+<p class="p7"><br></p>
+<p class="p5">(</p>
+<p class="p5"><span class="Apple-tab-span">	</span>w= <span class="s5">Window</span>(<span class="s7">"k-means plot"</span>, <span class="s5">Rect</span>(100, 100, 640, 480), <span class="s5">false</span>);</p>
+<p class="p5"><span class="Apple-tab-span">	</span>w.view.background= <span class="s5">Color</span>.black;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>w.drawHook= {</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">var</span> colors= {<span class="s5">|i|</span> <span class="s5">Color</span>.hsv(i/a.k, 1, 1)}.dup(a.k);</p>
+<p class="p4"><span class="s4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.do{</span>|vec, i|</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.fillColor= colors[a.classifications[i]];</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.fillRect(<span class="s5">Rect</span>.aboutRedVector2D(vec, 1));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.fillColor= <span class="s5">Color</span>.white;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.centroids.do{<span class="s5">|cent, i|</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.strokeColor= colors[i];</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.strokeOval(<span class="s5">Rect</span>.aboutRedVector2D(cent, 8));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">Pen</span>.stringAtPoint(i.asString, <span class="s5">Point</span>(cent[0], cent[1]));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p5"><span class="Apple-tab-span">	</span>};</p>
+<p class="p5"><span class="Apple-tab-span">	</span>w.front;</p>
+<p class="p5">)</p>
+<p class="p7"><br></p>
+<p class="p6"><span class="s4">a.k= 8;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//add some more centroids</p>
+<p class="p6"><span class="s4">a.update(b);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//call update on the same data to recalculate and find the new centroids</p>
+<p class="p5">a.centroids.size<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//will be 8</span></p>
+<p class="p6"><span class="s4">w.refresh;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//now plot again.<span class="Apple-converted-space">  </span>3 new centroids added and the previous ones made room</p>
+<p class="p7"><br></p>
+<p class="p5">b= {<span class="s5">RedVector2D</span>[640, 480].rand}.dup(1000);<span class="Apple-tab-span">	</span><span class="s6">//replace the data completely</span></p>
+<p class="p6"><span class="s4">a.update(b);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//call update again</p>
+<p class="p6"><span class="s4">w.refresh;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//data changed and old centroids adapted by moving a bit</p>
+<p class="p7"><br></p>
+<p class="p5">b= b.copyRange(0, 499);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//strip away half the data</span></p>
+<p class="p6"><span class="s4">a.update(b);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//call update again</p>
+<p class="p6"><span class="s4">w.refresh;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//data loss and old centroids adapted by moving a tiny bit</p>
+<p class="p7"><br></p>
+<p class="p6"><span class="s4">a.reset;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//forget centroids</p>
+<p class="p5">a.update(b);</p>
+<p class="p6"><span class="s4">w.refresh;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//same data but new centroids found</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p6"><span class="s4">a.classify(</span><span class="s5">RedVector2D</span><span class="s4">[320, 240]);<span class="Apple-tab-span">	</span></span>//test middle point and see which class it would belong to</p>
+<p class="p7"><br></p>
+<p class="p5">w.close</p>
+</body>
+</html>
