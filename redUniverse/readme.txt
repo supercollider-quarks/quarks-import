@@ -7,6 +7,10 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+101208 - added manhattanDistance to RedVector
+	added RedKMeans class and example 190
+	minor fix to RedAutoScale - changed to inf and -inf for min and max
+	added animate, frame and frameRate for RedJWindow to fake primitive
 100602 - removed bugfixes for Collection and FloatArray and moved the species {^this.class} fix into the RedVector class itself
 090629 - helpfiles and examples now uses view redirect instead of GUI
 	bugfix for RedWindow and RedJWindow resize
