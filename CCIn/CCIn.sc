@@ -42,12 +42,12 @@ CCIn {
 		}
 	
 	kr { |chan = 0, num = 0, spec = \amp, lag = 0.05|
-		var argArray = [chan, num, spec, lag];
-		^argArray.flop.collect{ |args| 
+		var outArray = [chan, num, spec, lag].flop.collect{ |args| 
 			var ch, n, sp, lg;
 			# ch, n, sp, lg = args;
 			(sp.asSpec.map( In.kr(this.prGetBus(ch, n).index) ).lag3(lg))
 			};
+		if (outArray.size>1) {^outArray} {^(outArray[0])} //fix to work with muliout
 		}
 		
 	free {
