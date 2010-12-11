@@ -11,7 +11,7 @@
 	
 	//--objects
 	{
-		var loc= RedVector[width/2, height/2, 290];
+		var loc= RedVector[width*0.5, height*0.5, 290];
 		var vel= RedVector3D[0, 0, -10];
 		var acc= RedVector3D[0, 0, 0];
 		RedObject(world, loc, vel, acc, 1.5, 10); //world,loc,vel,acc,mass,size
@@ -33,5 +33,7 @@
 			Pen.addRect(Rect.aboutRedObject3D(o, 1.00, 0.1));
 		};
 		Pen.stroke;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

@@ -27,5 +27,7 @@
 		Pen.strokeColor= Color.white;
 		Pen.translate(width*0.5, height*0.8);
 		lplot.draw;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

@@ -87,6 +87,8 @@ s.waitForBoot{
 			});
 		}
 		*/
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 }
 )

@@ -63,7 +63,9 @@ s.waitForBoot{
 				\freq2, (5-o.mass).linexp(0, 5, 200, 2000)
 			);
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 	w.onClose= {synths.do{|x| x.free}};
 }
 )

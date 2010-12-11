@@ -38,5 +38,7 @@
 		};
 		minDist= minDist*(sin(cnt/25)*0.02+1);
 		cnt= cnt+1;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

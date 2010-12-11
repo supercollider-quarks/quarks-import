@@ -108,7 +108,9 @@ s.waitForBoot{
 			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
 		//human.state.freq.postln;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 	w.onClose= {
 		syn.free;
 		bus.free;

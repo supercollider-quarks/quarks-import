@@ -50,5 +50,7 @@
 		//--render mouse
 		Pen.fillColor= Color.red;
 		Pen.fillOval(Rect.aboutRedObject2D(trg));
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

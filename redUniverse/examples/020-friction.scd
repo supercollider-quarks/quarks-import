@@ -33,5 +33,7 @@
 		Pen.fillRect(fric);
 		Pen.strokeColor= Color.white;
 		Pen.strokeRect(Rect.aboutRedObject2D(obj));
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

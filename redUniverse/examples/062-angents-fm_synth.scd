@@ -153,7 +153,9 @@ s.waitForBoot{
 			Pen.fillColor= Color.yellow(o.state[\level]*0.85+0.15, 0.5);
 			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 	w.onClose= {
 		Tdef(\seq).stop;
 		fmbusses.free;

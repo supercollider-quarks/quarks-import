@@ -65,5 +65,7 @@
 			Pen.fillColor= Color.grey(o.state[\cell]*0.85+0.15, 0.5);
 			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

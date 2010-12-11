@@ -63,6 +63,8 @@ s.waitForBoot{
 				Pen.fillRect(Rect.aboutRedObject2D(o));
 			});
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 	w.onClose= {synths.do{|x| x.free}};
 })

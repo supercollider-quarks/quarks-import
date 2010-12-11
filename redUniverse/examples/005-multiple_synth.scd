@@ -53,5 +53,7 @@ s.waitForBoot{
 			Pen.strokeRect(Rect.aboutRedObject2D(o));
 			Pen.fillRect(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 })

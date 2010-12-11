@@ -64,7 +64,8 @@ s.waitForBoot{
 				\pan, obj.loc[0].linlin(0, width, -1, 1)
 			);
 		};
-	}.play(60);
+	};
+	w.animate= true;
 	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 }
 )
