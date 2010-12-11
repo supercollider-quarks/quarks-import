@@ -60,6 +60,8 @@ s.waitForBoot{
 			Pen.fillColor= Color.grey(dep, 0.5);
 			Pen.fillOval(Rect.aboutRedObject3D(o, ff, ss));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 	w.onClose= {synths.do{|x| x.free}};
 })

@@ -68,6 +68,8 @@ s.waitForBoot{
 			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
 		Pen.stroke;
-	}.play(40);
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 }
 )

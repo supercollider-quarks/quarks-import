@@ -37,5 +37,7 @@
 			//Pen.lineTo(o.loc.asPoint);
 		};
 		//Pen.stroke;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

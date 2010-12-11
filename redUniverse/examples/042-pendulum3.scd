@@ -34,5 +34,7 @@
 			Pen.addOval(Rect.aboutPoint(ploc, o.size/5, o.size/5));
 		};
 		Pen.stroke;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

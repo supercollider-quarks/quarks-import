@@ -32,5 +32,7 @@
 			Pen.strokeColor= Color.grey(o.mass/4);
 			Pen.strokeRect(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

@@ -55,6 +55,8 @@ s.waitForBoot{
 			Pen.strokeColor= Color.grey(0.7, 0.5);
 			Pen.strokeOval(Rect.aboutRedObject2D(o));
 		}
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 	w.onClose= {world.objects.do{|o| o.state.at(\synth).free}};
 })

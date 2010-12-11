@@ -1,4 +1,5 @@
 //one object pushes away the other in a world without bounds
+//with mouse controlling repulsive object location
 
 (
 	var width= 300, height= 300, w, wgrav, world, rep, obj;
@@ -6,7 +7,7 @@
 	//--world
 	w= RedWindow("repulsive test1", Rect(128, 64, width, height)).front;
 	wgrav= RedVector2D[0, 0.98];
-	world= RedWorld2(RedVector2D[width, height], wgrav, 10); //dim,grav,maxvel,damp
+	world= RedWorld3(RedVector2D[width, height], wgrav, 10); //dim,grav,maxvel,damp
 	
 	//--objects
 	rep= RedObject(world, RedVector2D[100, 100], RedVector2D[0, 0], RedVector2D[0, 0], 105, 5);
@@ -14,8 +15,8 @@
 	
 	//--loop
 	w.draw{
+		rep.loc= w.mouse;
 		obj.addForce(obj.gravityForce(rep).neg);
-		obj.addForce(world.gravity);
 		obj.update;
 		world.contain(obj);
 		
@@ -24,5 +25,7 @@
 		Pen.strokeRect(Rect.aboutRedObject2D(rep));
 		Pen.strokeColor= Color.white;
 		Pen.strokeRect(Rect.aboutRedObject2D(obj));
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

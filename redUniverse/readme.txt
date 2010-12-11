@@ -7,6 +7,10 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+101210 - cleaned up and added helpfiles for RedHiddenObject, RedParticle, RedBoid, RedRock, RedFood, RedAgent
+	added 2 boids examples and cleaned up a few others
+	wrote addForceWander1D and addForceWander3D methods for RedBoid
+	wrote addForceAngular3D, pendulumOffset3D, pendulumLoc3D
 101208 - added manhattanDistance to RedVector
 	added RedKMeans class and example 190
 	minor fix to RedAutoScale - changed to inf and -inf for min and max

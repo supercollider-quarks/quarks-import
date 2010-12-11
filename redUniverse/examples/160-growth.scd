@@ -50,7 +50,7 @@
 			Pen.addRect(Rect.aboutRedObject2D(o));
 		};
 		Pen.stroke;
-	}.play(40);
+	}.play(25);
 )
 
 ~initSize= {5};		//varying object sizes

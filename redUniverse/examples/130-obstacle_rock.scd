@@ -25,5 +25,7 @@
 			Pen.addOval(Rect.aboutRedObject2D(o));
 		};
 		Pen.stroke;
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

@@ -13,13 +13,13 @@
 	//--world
 	w= RedWindow("wave phase test2", Rect(128, 64, width, height)).front;
 	w.background= Color.white;
-	wgrav= RedVector2D[0, 0.4];
-	world= RedWorld(RedVector2D[width, height], wgrav, 20, 0.8); //dim,grav,maxvel,damp
+	wgrav= RedVector2D[0, 0.004];
+	world= RedWorld(RedVector2D[width, height], wgrav, 5, 0.8); //dim,grav,maxvel,damp
 	
 	//--objects
 	{|i|
-		var loc= RedVector2D[width/n*i, height/2];
-		RedObject(world, loc, nil, nil, 1.5, 10) //world,loc,vel,acc,mass,size
+		var loc= RedVector2D[width/n*i, height*0.5];
+		RedObject(world, loc, nil, nil, 10, 10) //world,loc,vel,acc,mass,size
 	}.dup(n);
 	
 	//--loop
@@ -41,5 +41,7 @@
 		world.objects.do{|o, i|
 			Pen.fillOval(Rect.aboutRedVector2D(o.loc, i.linexp(0, n, 1, n)+5));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

@@ -47,5 +47,7 @@
 		world.objects.do{|o, i|
 			Pen.fillRect(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

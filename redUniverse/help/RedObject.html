@@ -5,42 +5,40 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="949.54">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; min-height: 22.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #062cb0}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #902f20}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0d32ac}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {text-decoration: underline ; color: #0030f2}
-span.s3 {color: #000000}
-span.s4 {text-decoration: underline}
+span.s2 {color: #000000}
+span.s3 {text-decoration: underline}
+span.s4 {color: #083aec}
 span.s5 {color: #0030f2}
-span.s6 {color: #0022f8}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>RedObject</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fundamental object in the RedUniverse toolkit</b></p>
+<p class="p1"><span class="s1"><b>RedObject</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fundamental object in the RedUniverse toolkit</b></p>
 <p class="p2"><br></p>
-<p class="p3"><br></p>
-<p class="p1">base for all other object like <a href="RedPendulum.html"><span class="s2">RedPendulum</span></a>, RedParticle, RedBoid etc.<span class="Apple-converted-space">  </span>implements simplified physical laws.<span class="Apple-converted-space">  </span>all objects register themselves in the world when created.</p>
-<p class="p3"><br></p>
-<p class="p4"><span class="s3">see also [<a href="RedWorld.html"><span class="s4">RedWorld</span></a>], [<a href="RedUniverse.html"><span class="s4">RedUniverse</span></a>]</span></p>
-<p class="p3"><br></p>
-<p class="p1"><span class="s4">class methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1">base for all other object like <a href="RedPendulum.html">RedPendulum</a>, RedParticle, RedBoid etc.<span class="Apple-converted-space">  </span>implements simplified physical laws.<span class="Apple-converted-space">  </span>all objects register themselves in the world when created.</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2">see also: <a href="RedWorld.html"><span class="s3">RedWorld</span></a>, <a href="RedUniverse.html"><span class="s3">RedUniverse</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s3">class methods:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>*new(world, location, velocity, acceleration, mass, size)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>create a new object.<span class="Apple-converted-space">  </span>see class source for defaults.</p>
-<p class="p3"><br></p>
-<p class="p1"><span class="s4">instance methods:</span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s3">instance methods:</span></p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>update</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>moves the object by updating the loc, vel and accel instance variables.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>addForce(force)</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>adds a force (<a href="RedVector.html"><span class="s5">RedVector</span></a>) to the accel variable to push the object somewhere.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>adds a force (<a href="RedVector.html"><span class="s4">RedVector</span></a>) to the accel variable to push the object somewhere.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>gravityForce(redObj)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns a scalar value representing the gravity force from another object within this world.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>frictionForce(constant)</b></p>
@@ -50,32 +48,32 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><b>contains(redObj)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns true if two objects touch.<span class="Apple-converted-space">  </span>see size below</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>containsLoc(location)</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns true if location (<a href="RedVector.html"><span class="s6">RedVector</span></a>) is within the object.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns true if location (<a href="RedVector.html"><span class="s5">RedVector</span></a>) is within the object.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>collide(redObj, safety)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>collision detection.<span class="Apple-converted-space">  </span>add acceleration vector to both objects if they touch.<span class="Apple-converted-space">  </span>returns boolean.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>safety is how many times the method should nudge objects apart.<span class="Apple-converted-space">  </span>default is 3.</p>
-<p class="p3"><span class="Apple-tab-span">	</span></p>
-<p class="p1"><span class="s4">instance variables:</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="s3">instance variables:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;world</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a world (<a href="RedWorld.html"><span class="s5">RedWorld</span></a> of any dimension) that currently holds this object.<span class="Apple-converted-space">  </span>the object will add itself.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a world (<a href="RedWorld.html"><span class="s4">RedWorld</span></a> of any dimension) that currently holds this object.<span class="Apple-converted-space">  </span>the object will add itself.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;loc</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the current location (<a href="RedVector.html"><span class="s5">RedVector</span></a> of any dimension) within the world.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the current location (<a href="RedVector.html"><span class="s4">RedVector</span></a> of any dimension) within the world.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;vel</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the current velocity (<a href="RedVector.html"><span class="s5">RedVector</span></a> of any dimension) that the object has.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the current velocity (<a href="RedVector.html"><span class="s4">RedVector</span></a> of any dimension) that the object has.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;accel</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a vector or scalar representing current acceleration.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;mass</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a scalar.<span class="Apple-converted-space">  </span>how hard it will be to move this object around.<span class="Apple-converted-space">  </span>used for gravity forces.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;size</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a scalar.<span class="Apple-converted-space">  </span>the distance from location to the outer border ie radius.<span class="Apple-converted-space">  </span>used for contains and rendering.</p>
-<p class="p5"><br></p>
-<p class="p5"><br></p>
-<p class="p6"><span class="s3">a= </span>RedWorld<span class="s3">.new</span></p>
-<p class="p6"><span class="s3">b= </span>RedObject<span class="s3">(a)</span></p>
-<p class="p5"><br></p>
-<p class="p7">a.objects</p>
-<p class="p7">b.dump</p>
-<p class="p5"><br></p>
-<p class="p8">//see examples folder</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5"><span class="s2">a= </span>RedWorld<span class="s2">.new</span></p>
+<p class="p5"><span class="s2">b= </span>RedObject<span class="s2">(a)</span></p>
+<p class="p4"><br></p>
+<p class="p6">a.objects</p>
+<p class="p6">b.dump</p>
+<p class="p4"><br></p>
+<p class="p7">//see examples folder</p>
 </body>
 </html>

@@ -31,5 +31,7 @@
 			Pen.fillColor= Color.grey(1-(o.mass/12), 0.5);
 			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

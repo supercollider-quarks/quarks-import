@@ -75,6 +75,7 @@ RedObject {
 	}
 }
 
+//--an invisible object
 RedHiddenObject : RedObject {
 	initRedObject {}								//hides it from the world
 }
@@ -94,20 +95,31 @@ RedPendulum : RedObject {							//size is used as radius here
 		taccel= taccel+(g*force/mass/size).sum;
 	}
 	pendulumOffset2D {								//pendulum location relative to object loc
-		^RedVector2D[sin(theta)*size, cos(theta)*size]
+		^RedVector2D[sin(theta)*size, cos(theta)*size];
 	}
 	pendulumLoc2D {								//pendulum actual location
-		^this.pendulumOffset2D+loc
+		^this.pendulumOffset2D+loc;
 	}
 	addForceAngular1D {|force|
 		var g= RedVector[cos(theta)];
 		taccel= taccel+(g*force/mass/size).sum;
 	}
-	pendulumOffset1D {^RedVector[sin(theta)*size]}
-	pendulumLoc1D {^this.pendulumOffset1D+loc}
-	//addForceAngular3D {"todo".postln}				//TODO
-	//pendulumOffset3D {"todo".postln}				//TODO
-	//pendulumLoc3D {"todo".postln}					//TODO
+	pendulumOffset1D {
+		^RedVector[sin(theta)*size];
+	}
+	pendulumLoc1D {
+		^this.pendulumOffset1D+loc;
+	}
+	addForceAngular3D {|force|
+		var g= RedVector3D[cos(theta), sin(theta).neg, cos(theta)];
+		taccel= taccel+(g*force/mass/size).sum;
+	}
+	pendulumOffset3D {
+		^RedVector3D[sin(theta)*size, cos(theta)*size, cos(theta)*size];
+	}
+	pendulumLoc3D {
+		^this.pendulumOffset3D+loc;
+	}
 }
 
 //--an object that ages with time
@@ -134,6 +146,20 @@ RedBoid : RedParticle {
 		wtheta= wtheta+wchange.rand2;
 		^target									//return target vector
 	}
+	addForceWander1D {
+		var flicker= vel.normalize*wdistance+(wradius*cos(wtheta));
+		var target= flicker+loc;					//target is a point on a circle ahead
+		this.addForceSeek(target);
+		wtheta= wtheta+wchange.rand2;
+		^target									//return target vector
+	}
+	addForceWander3D {
+		var flicker= vel.normalize*wdistance+RedVector3D[wradius*cos(wtheta), wradius*sin(wtheta), wradius*tan(wtheta)];
+		var target= flicker+loc;					//target is a point on a circle ahead
+		this.addForceSeek(target);
+		wtheta= wtheta+wchange.rand2;
+		^target									//return target vector
+	}
 	steer {|redVec, slowdown= 0|					//target vector, 0 means no slowdown
 		var dir= redVec-loc;
 		var dist= dir.mag;
@@ -143,8 +169,6 @@ RedBoid : RedParticle {
 		});
 		^(dir*world.maxVel-vel).limit(maxForce);		//return steer vector
 	}
-	//addForceWander1D {"todo".postln}				//TODO
-	//addForceWander3D {"todo".postln}				//TODO
 }
 
 //--an object that can sense and act.  has a state dict
@@ -158,10 +182,10 @@ RedAgent : RedBoid {
 	}
 }
 
-//--an obstacle with near infinite mass
+//--an obstacle with infinite mass
 RedRock : RedObject {
 	initRedObject {
-		mass= 0x7fffffff;
+		mass= inf;
 		super.initRedObject
 	}
 	mass_ {}

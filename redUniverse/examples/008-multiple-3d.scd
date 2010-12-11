@@ -19,17 +19,19 @@
 	//--loop
 	w.draw{
 		Pen.strokeColor= Color.grey(0.5);
-		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, depth], width/2, width, height, depth, f, s));
+		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width*0.5, height*0.5, depth], width*0.5, width, height, depth, f, s));
 		Pen.strokeColor= Color.white;
-		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width/2, height/2, 0], width/2, width, height, depth, f, s));
+		Pen.strokeRect(Rect.aboutRedVector3D(RedVector[width*0.5, height*0.5, 0], width*0.5, width, height, depth, f, s));
 		world.objects.do{|o|
 			o.addForce(world.gravity);
 			o.update;
 			world.contain(o);
 			
 			//--render
-			Pen.strokeColor= Color.grey(depth-o.loc[2]/(depth/2));
+			Pen.strokeColor= Color.grey(depth-o.loc[2]/(depth*0.5));
 			Pen.strokeRect(Rect.aboutRedObject3D(o, f, s));
 		};
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )

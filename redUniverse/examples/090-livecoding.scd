@@ -23,7 +23,9 @@
 			Pen.strokeRect(Rect.aboutRedObject2D(o));
 		};
 		//Pen.strokeRect(Rect.aboutRedVector2D(~win.mouse, 10));
-	}.play;
+	};
+	~win.animate= true;
+	CmdPeriod.doOnce({if(~win.isOpen, {~win.close})});
 )
 
 //--swapping in new object
@@ -38,3 +40,5 @@ a.size= 50
 b.size= 100
 b.mass= 0.25
 c.loc= RedVector2D[100, 100]
+
+~world.gravity= RedVector2D[0.1, 0.1].rand2

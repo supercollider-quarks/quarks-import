@@ -40,7 +40,9 @@
 			Pen.fillColor= Color.grey(1-(i/~n), 0.5);
 			Pen.fillOval(Rect.aboutRedObject2D(o));
 		};
-	}.play;
+	};
+	~win.animate= true;
+	CmdPeriod.doOnce({if(~win.isOpen, {~win.close})});
 )
 
 

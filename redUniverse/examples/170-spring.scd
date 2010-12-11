@@ -34,5 +34,7 @@
 		Pen.fillOval(Rect.aboutRedObject2D(trg));
 		Pen.fillColor= Color.white;
 		Pen.fillOval(Rect.aboutRedObject2D(obj));
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )
