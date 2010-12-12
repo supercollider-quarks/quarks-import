@@ -368,7 +368,7 @@ InstrSynthDef : SynthDef {
 			);
 			t
 		}).play
-		
+	*/
 	// execute the func in the client whenever triggered
 	// see Patch help
 	onTrig { |trig,func,value=0.0|
