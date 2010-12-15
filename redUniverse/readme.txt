@@ -7,6 +7,8 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+101214 - support for discrete worlds with surroundings and neighbours
+	one new discrete world example added
 101210 - cleaned up and added helpfiles for RedHiddenObject, RedParticle, RedBoid, RedRock, RedFood, RedAgent
 	added 2 boids examples and cleaned up a few others
 	wrote addForceWander1D and addForceWander3D methods for RedBoid
