@@ -38,7 +38,7 @@ RedWorld {
 	//--support for discrete worlds
 	neighbours {|redObj|
 		var surr= this.surroundingLocations(redObj);
-		^objects.select{|obj| surr.any{|surr| surr==obj.loc}};
+		^objects.select{|obj| surr.any{|surr| surr.every{|l, i| l==obj.loc[i]}}};
 	}
 	surroundingLocations {|redObj|
 		^surroundings.collect{|arr| arr+redObj.loc%dim};
