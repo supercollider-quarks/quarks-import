@@ -11,12 +11,19 @@ p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
-p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #062cb0}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline}
-span.s4 {color: #0030f2}
+span.s4 {color: #0022f8}
+span.s5 {color: #1142e6}
+span.s6 {color: #bf0000}
+span.s7 {color: #0000bf}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -42,18 +49,33 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>brings the object back on the left.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>contains(redObj)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>check if an object is within world dimensions.<span class="Apple-converted-space">  </span>used for detecting wall bounce.<span class="Apple-converted-space">  </span>returns boolean.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>neighbours(redObj)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns an <a href="SC://Array"><span class="s4">Array</span></a> of objects that are in the surrounding locations.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>only useful when working with discrete worlds.<span class="Apple-converted-space">  </span>eg cellular automata.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note: subclasses will treat the neighbourhood at world borders differently.<span class="Apple-converted-space">  </span>eg RedWorld3 filters out.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>surroundingLocations(redObj)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>returns an <a href="SC://Array"><span class="s4">Array</span></a> of <a href="RedVector.html"><span class="s4">RedVector</span></a> objects representing the surrounding locations.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>only useful when working with discrete worlds.<span class="Apple-converted-space">  </span>eg cellular automata.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note: subclasses will treat the neighbourhood at world borders differently.<span class="Apple-converted-space">  </span>eg RedWorld3 filters out.</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
 <p class="p1"><span class="s3">instance variables:</span></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;dim</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>size of this world (<a href="RedVector.html"><span class="s4">RedVector</span></a> of any dimension).<span class="Apple-converted-space">  </span>ie the world can have any number of dimensions.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>size of this world (<a href="RedVector.html"><span class="s5">RedVector</span></a> of any dimension).<span class="Apple-converted-space">  </span>ie the world can have any number of dimensions.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;gravity</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>world gravity (<a href="RedVector.html"><span class="s4">RedVector</span></a> of any dimension) for each dimension.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>world gravity (<a href="RedVector.html"><span class="s5">RedVector</span></a> of any dimension) for each dimension.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;maxVel</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>scalar with maximum velocity.<span class="Apple-converted-space">  </span>ie 'speed of light' for this world.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;damping</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>scalar.<span class="Apple-converted-space">  </span>the cost of running into walls etc.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;objects</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>array of all objects currently in this world.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;surroundings</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an <a href="SC://Array"><span class="s4">Array</span></a> containing arrays with a size that matches the current world dimensions.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>only useful when working with discrete worlds.<span class="Apple-converted-space">  </span>eg cellular automata.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;surroundingArea</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an <a href="SC://Integer"><span class="s4">Integer</span></a> specifying how far the surroundings will be.<span class="Apple-converted-space">  </span>a 1 (default) lists only the adjacent locations.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>eg a 1 gives 8 locations in the surroundings array if the world is 2D, while 2 gives 24 and 3 48</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in a 3D world 1 gives 26, 2 124 and 3 342.</p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
 <p class="p5"><span class="s2">a= </span>RedWorld<span class="s2">.new</span></p>
@@ -64,5 +86,29 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5">RedUniverse<span class="s2">.worlds</span></p>
 <p class="p5">RedUniverse<span class="s2">.remove(a)</span></p>
 <p class="p5">RedUniverse<span class="s2">.worlds</span></p>
+<p class="p4"><br></p>
+<p class="p7"><br></p>
+<p class="p8">//--</p>
+<p class="p9"><span class="s2">a= </span>RedWorld<span class="s2">(</span>RedVector<span class="s2">[100, 100])</span></p>
+<p class="p9"><span class="s2">b= </span>RedObject<span class="s2">(a, </span>RedVector<span class="s2">[50, 50])</span></p>
+<p class="p9"><span class="s2">c= </span>RedObject<span class="s2">(a, </span>RedVector<span class="s2">[51, 50])</span></p>
+<p class="p8"><span class="s2">a.surroundings<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//adjacent locations excluding [0, 0]</p>
+<p class="p8"><span class="s2">a.surroundingLocations(b)<span class="Apple-tab-span">	</span></span>//the neighbourhood of object b</p>
+<p class="p10">a.neighbours(b)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//yes c is nearby</span></p>
+<p class="p7"><br></p>
+<p class="p10">a.surroundingArea= 2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s6">//look farther away</span></p>
+<p class="p8"><span class="s2">a.surroundingLocations(b)<span class="Apple-tab-span">	</span></span>//bigger neighbourhood of object b</p>
+<p class="p7"><br></p>
+<p class="p8">//--</p>
+<p class="p9"><span class="s2">a= </span>RedWorld<span class="s2">(</span>RedVector<span class="s2">[50])<span class="Apple-tab-span">	</span></span><span class="s6">//a 1d world</span></p>
+<p class="p9"><span class="s2">b= </span>RedObject<span class="s2">(a, </span>RedVector<span class="s2">[0])</span></p>
+<p class="p8"><span class="s2">a.surroundings<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//adjacent locations excluding [0, 0, 0]</p>
+<p class="p8"><span class="s2">a.surroundingLocations(b)<span class="Apple-tab-span">	</span></span>//the neighbourhood of object b</p>
+<p class="p7"><br></p>
+<p class="p8">//--</p>
+<p class="p10">a= <span class="s7">RedWorld</span>(<span class="s7">RedVector</span>[25, 25, 25])<span class="Apple-tab-span">	</span><span class="s6">//a 3d world</span></p>
+<p class="p9"><span class="s2">b= </span>RedObject<span class="s2">(a, </span>RedVector<span class="s2">[0, 0, 0])</span></p>
+<p class="p8"><span class="s2">a.surroundings<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//adjacent locations excluding [0, 0, 0]</p>
+<p class="p8"><span class="s2">a.surroundingLocations(b)<span class="Apple-tab-span">	</span></span>//the neighbourhood of object b</p>
 </body>
 </html>

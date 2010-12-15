@@ -3,9 +3,11 @@
 
 //--world without walls (wrapping)
 RedWorld {
-	var <>dim, <>gravity,							//vectors
+	var <dim, <>gravity,							//vectors
 		<>maxVel, <>damping,						//floats
-		<>objects;								//array
+		<>objects,								//array
+		<surroundings,							//array
+		<surroundingArea= 1;						//integer
 	*new {|dim, gravity, maxVel, damping|
 		^super.newCopyArgs(
 			dim ?? {RedVector2D[300, 300]},			//2d world for defaults
@@ -17,6 +19,7 @@ RedWorld {
 	initRedWorld {
 		objects= [];
 		RedUniverse.add(this);						//add world to universe
+		this.prInitSurroundings;
 	}
 	add {|redObj|									//add it here and update object's world
 		objects= objects.add(redObj);
@@ -31,11 +34,37 @@ RedWorld {
 	contains {|redObj|								//returns boolean if object inside world dim
 		^redObj.loc.any{|l, i| l-redObj.size<0 or:{l+redObj.size>dim[i]}}.not
 	}
+	
+	//--support for discrete worlds
+	neighbours {|redObj|
+		var surr= this.surroundingLocations(redObj);
+		^objects.select{|obj| surr.any{|surr| surr==obj.loc}};
+	}
+	surroundingLocations {|redObj|
+		^surroundings.collect{|arr| arr+redObj.loc%dim};
+	}
+	dim_ {|redVec|
+		dim= redVec;
+		this.prInitSurroundings;
+	}
+	surroundingArea_ {|val|
+		surroundingArea= val;
+		this.prInitSurroundings;
+	}
+	prInitSurroundings {
+		surroundings= Array.series(surroundingArea*2+1, 0-surroundingArea)
+			.dup(dim.size)
+			.allTuples
+			.reject{|x| x.every{|y| y==0}};
+	}
 }
 
 //--world without walls (non wrapping)
 RedWorld1 : RedWorld {
 	contain {|redObj|								//just not contain object at all
+	}
+	surroundingLocations {|obj|
+		^surroundings.collect{|arr| arr+obj.loc};
 	}
 }
 
@@ -58,5 +87,8 @@ RedWorld3 : RedWorld {
 				redObj.loc.put(i, l.fold(redObj.size, dim[i]-redObj.size));
 			});
 		}
+	}
+	surroundingLocations {|obj|
+		^surroundings.collect{|arr| arr+obj.loc}.reject{|vec| vec.any{|v, i| v<0 or:{v>dim[i]}}};
 	}
 }
