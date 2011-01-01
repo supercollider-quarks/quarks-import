@@ -56,7 +56,9 @@ Proto({
 
 		if(~isRunning) {
 			~done.(parms);
+
 			~clearDoneSignal.(parms);
+
 // "setting isRunning false".debug;
 			~isRunning = false;
 // "\nsending done notification".debug;
@@ -225,7 +227,7 @@ PR(\mixerAutoSynthCmd).clone {
 		if(~gc.notNil) {
 			~server = ~gc.server;
 			~target = ~target ?? { ~server.asTarget };
-			~outName = parms.tryPerform(\at, \outName) ? \out;
+			~outName ?? { ~outName = parms.tryPerform(\at, \outName) ? \out };
 			~outName.envirPut(~gc.index);
 			~gc.stopAuto.watch;	// should replace existing automation
 			~superFire.(parms);
@@ -518,7 +520,7 @@ PR(\abstractTLCommand).clone({
 	};
 	~update = { |obj, what, activeCmds, endStatus|
 		if((~isRunning ? false) and: { what == \done }) {
-//			"got done notification; looping back".postln;
+			// activeCmds.debug("got done notification; looping back");
 			~myIterator.removeDependant(currentEnvironment);
 			~repeats = ~repeats - 1;
 			if(endStatus == \normal and: { ~repeats > 0 }) {
@@ -534,7 +536,7 @@ PR(\abstractTLCommand).clone({
 		};
 	};
 	~makeIterator = {
-		var iterator = TLSequenceIterator(~cmds, autoSync: ~autoSync);
+		var iterator = TLSequenceIterator(~cmds, ~sequencer, autoSync: ~autoSync);
 			// looping works by receiving "stop" signal, then restarting upon that signal
 		iterator.addDependant(currentEnvironment);	// returns iterator
 	};
@@ -603,10 +605,17 @@ Proto({
 		}	// else, there should be a user input trigger to move to the next section
 	};
 	~stop = { |notifyTime, manualStop = true|
+		var	stopParms;
 		if(~isRunning.()) {
 			~status = \idle;
-			~currentIterator.stop((manualStop: manualStop ? true));
-			~done.();
+			stopParms = (manualStop: manualStop ? true);
+			~currentIterator.stop(stopParms);
+			// that was a nasty bug: it's possible to be between iterators --
+			// this one's iterator ended and it's waiting for a trigger to go on.
+			// So there are commands in ~savedCmds not owned by any iterator,
+			// and it isn't sufficient to stop the iterator alone.
+			if(manualStop) { ~savedCmds.do(_.stop(stopParms)) };
+			~done.(manualStop);
 			~clearDoneSignal.();
 			~clock.schedAbs((notifyTime ?? { ~clock.beats }), e {
 //~clock.beats.debug("sending done notification at");
@@ -666,14 +675,16 @@ Proto({
 					delta = ~playItem.(item);
 					delta.yield;	// playItem returns time to wait
 				} {
-					~stop.(nil, false)
+					// always stop last section as if manually stopped
+					// (forcing all children to stop)
+					~stop.(nil, ~isLastSection ? false)
 				};
 			}
 		})
 	};
 	
 	~update = { |obj, what, args|
-//[obj, what, args].debug("section % received update".format(~name));
+// [obj, what, args].debug("section % received update".format(~name));
 		if(obj === ~currentIterator) {
 			switch(what)
 				{ \done } {
