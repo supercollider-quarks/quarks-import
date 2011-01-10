@@ -164,7 +164,7 @@ SWMiniHive {
 			//		detectedNodes.add( msg[1] );
 		};
 		try{ 
-			swarm.at( msg[1] ).parseData( msg[2], msg.copyToEnd( 3 ) );
+			swarm.at( msg[1] ).parseData( msg[2], msg ); // .copyToEnd( 3 )
 		};
 	}
 
@@ -404,19 +404,19 @@ SWMiniHive {
 		}
 	}
 
-	mapBee{ |id,node,type|
+	mapBee{ |id,node,type,char|
 		var bee = swarm.at(id);
 		//	("mapping bee" + id + bee + node + type).postln;
 		if ( bee.notNil ){
-			bee.setMap( node, type );
+			bee.setMap( node, type, char );
 		}
 	}
 
-	unmapBee{ |id,node,type|
+	unmapBee{ |id,node,type,char|
 		var bee = swarm.at(id);
 		//	("mapping bee" + id + bee + node + type).postln;
 		if ( bee.notNil ){
-			bee.removeMap( node, type );
+			bee.removeMap( node, type, char );
 		}
 	}
 }
@@ -549,10 +549,11 @@ SWMiniBee{
 		dt = config.msgInterval / samplesPerMsg;
 	}
 	
-	parseData{ |msgID, data|
+	parseData{ |msgID, data| // now still includes 0,1,2 of msg
 		var diffTime;
 		if ( msgID != msgRecvID ){ // parse only if we didn't haven't parsed this message yet
 			msgRecvID = msgID;
+			data = data.at( (3..(data.size-1) ) );
 			if ( samplesPerMsg == 1 ){
 				// if only one sample per message, directly put it on the network
 				dataFunc.value( parseFunc.value( data ) );

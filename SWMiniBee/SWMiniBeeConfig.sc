@@ -38,6 +38,7 @@ SWMiniBeeConfig{
 	//	var <noCustomOut;
 	var <customSizes;
 
+	var <numberOfPins = 19;
 
 	*initClass{
 		pinTypes = [
@@ -135,7 +136,7 @@ SWMiniBeeConfig{
 	}
 
 	init{
-		pinConfig = Array.fill( 19, { \unconfigured } );
+		pinConfig = Array.fill( numberOfPins, { \unconfigured } );
 		customSizes = [];
 	}
 

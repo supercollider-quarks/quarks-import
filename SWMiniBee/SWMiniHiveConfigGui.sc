@@ -15,7 +15,7 @@ SWMiniHiveConfigGui{
 	init{ |hc|
 		hiveConf = hc;
 		
-		w = Window.new("MiniHive Configuration", Rect( 200, 0, 500, 375 + 380 ));
+		w = Window.new("MiniHive Configuration", Rect( 200, 0, 500, 300 + 380 ));
 		
 		hview = CompositeView.new(w, Rect( 0,0, 500, 50));
 		hview.addFlowLayout(2@2);
@@ -39,7 +39,7 @@ SWMiniHiveConfigGui{
 			StaticText.new( hview, 80@20 ).string_( "send config").align_( \center ), // send config
 		];
 
-		view = ScrollView.new( w, Rect( 0,50, 500, 310 ));
+		view = ScrollView.new( w, Rect( 0,50, 500, 235 ));
 		view.addFlowLayout(2@2);
 
 		confs = List.new;
