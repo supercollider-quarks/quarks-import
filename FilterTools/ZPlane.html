@@ -16,22 +16,22 @@ p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helve
 p.p7 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; min-height: 14.0px}
 p.p8 {margin: 0.0px 0.0px 0.0px 85.0px; text-indent: -85.0px; font: 12.0px Helvetica}
 p.p9 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
-p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; color: #615e51; min-height: 14.0px}
-p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #615e51; min-height: 12.0px}
-p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p10 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 12.0px Helvetica; color: #615e52; min-height: 14.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #615e52; min-height: 12.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a81b16}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
-span.s2 {color: #414f6c}
-span.s3 {color: #536692}
-span.s4 {color: #0033ea}
-span.s5 {color: #56678f}
-span.s6 {color: #615e51}
-span.s7 {font: 9.0px Monaco; color: #615e51}
+span.s2 {color: #43506a}
+span.s3 {color: #56678f}
+span.s4 {color: #003de0}
+span.s5 {color: #59688c}
+span.s6 {color: #615e52}
+span.s7 {font: 9.0px Monaco; color: #615e52}
 span.s8 {font: 9.0px Monaco}
-span.s9 {color: #0000bf}
+span.s9 {color: #001bb7}
 span.s10 {color: #606060}
 span.s11 {color: #000000}
-span.s12 {color: #007300}
+span.s12 {color: #326f17}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -98,7 +98,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>index</b> - An instance of <a href="SC://Integer"><span class="s5">Integer</span></a> or nil</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>location</b> - An instance of <a href="SC://Polar"><span class="s5">Polar</span></a></p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="s7"><span class="Apple-tab-span">	</span></span><b>calcFreqResp(res, norm)</b></p>
+<p class="p6"><span class="s7"><span class="Apple-tab-span">	</span></span><b>calcAmpResp(res, norm)</b></p>
 <p class="p10"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p6"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Calculates the frequency response of the filter and returns an <a href="SC://Array"><span class="s5">Array</span></a><span class="s5"> </span>of <a href="SC://Integer"><span class="s5">Integer</span></a> length res (default is 512),<span class="s5"> </span>holding the result. Norm is a<span class="Apple-converted-space">  </span><a href="../../../../../Applications/SuperCollider/Help/Core/Boolean.html"><span class="s2">Boolean</span></a><span class="s2"> </span>indicating wether the response should be normalized to 1.0 or not. The default for norm is 'true'.</p>
 <p class="p10"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
@@ -106,10 +106,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p10"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
 <p class="p6"><span class="s6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>Calculates the phase response of the filter and returns an <a href="SC://Array"><span class="s5">Array</span></a> of <a href="SC://Integer"><span class="s5">Integer</span></a> length res (default is 512), holding the result. Unwrap is a <a href="../../../../../Applications/SuperCollider/Help/Core/Boolean.html"><span class="s2">Boolean</span></a><span class="s2"> i</span>ndicating wether the phase of the filter should be unwrapped or not. The default for unwrap is ' true'. Derivative is a <a href="../../../../../Applications/SuperCollider/Help/Core/Boolean.html"><span class="s2">Boolean</span></a><span class="s2"> i</span>ndicating wether the negative valued derivative (group delay) of the phase of the filter should be calculated too. The default for derivative is ' true'.</p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
-<p class="p6"><b><span class="Apple-tab-span">	</span>calcFreqAndPhaseResp(res, norm, unwrap, derivative)</b></p>
+<p class="p6"><b><span class="Apple-tab-span">	</span>calcAmpAndPhaseResp(res, norm, unwrap, derivative)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b><span class="Apple-tab-span">	</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Calculates the frequency and phase response of the filter and returns an <a href="SC://Array"><span class="s5">Array</span></a> of arrays, both of <a href="SC://Integer"><span class="s5">Integer</span></a> length res (default is 512), holding the results. Norm is a<span class="Apple-converted-space">  </span><a href="../../../../../Applications/SuperCollider/Help/Core/Boolean.html"><span class="s2">Boolean</span></a><span class="s2"> </span>indicating wether the response should be normalized to 1.0 or not, and unwrap is a <a href="../../../../../Applications/SuperCollider/Help/Core/Boolean.html"><span class="s2">Boolean</span></a><span class="s2"> i</span>ndicating wether the phase of the filter should be unwrapped or not. Derivative is a <a href="../../../../../Applications/SuperCollider/Help/Core/Boolean.html"><span class="s2">Boolean</span></a><span class="s2"> i</span>ndicating wether the negative valued derivative (group delay)<span class="Apple-converted-space">  </span>of the phase of the filter should be calculated too. The default for all three is ' true'.<span class="Apple-converted-space"> </span></p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><i>If one desires the frequency and phase response simultaneously, this method is slightly more efficient than calling calFreqResp and calcPhaseResp separately.</i><span class="s8"><span class="Apple-tab-span">	</span></span></p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><i>If one desires the frequency and phase response simultaneously, this method is slightly more efficient than calling calcAmpResp and calcPhaseResp separately.</i><span class="s8"><span class="Apple-tab-span">	</span></span></p>
 <p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6"><span class="Apple-tab-span">	</span><b>gui(bounds)</b></p>
 <p class="p7"><b><span class="Apple-tab-span">	</span></b></p>
@@ -151,14 +151,14 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13">)</p>
 <p class="p3"><br></p>
 <p class="p3"><br></p>
-<p class="p12">// Plotting the frequency and phase response of a filter</p>
+<p class="p12">// Plotting the amplitude and phase response of a filter</p>
 <p class="p13">(</p>
 <p class="p12">// Create a new instance of ZPlane with a pole at 0.8, 0.25pi and a zero at 1.0/0.8, 0.25pi. An<span class="Apple-converted-space"> </span></p>
 <p class="p12">// example of an allpass filter.</p>
 <p class="p13">a = <span class="s9">ZPlane</span>.new([<span class="s9">Polar</span>.new(0.8, 0.25pi)], [<span class="s9">Polar</span>.new(0.8.reciprocal, 0.25pi)]);</p>
 <p class="p3"><br></p>
-<p class="p13">b = a.calcFreqAndPhaseResp;</p>
-<p class="p13">b[0].plot(<span class="s10">"Frequency Response"</span>, <span class="s9">Rect</span>(50, 300, 400, 200), minval: 0.0, maxval: 1.2);</p>
+<p class="p13">b = a.calcAmpAndPhaseResp;</p>
+<p class="p13">b[0].plot(<span class="s10">"Amplitude Response"</span>, <span class="s9">Rect</span>(50, 300, 400, 200), minval: 0.0, maxval: 1.2);</p>
 <p class="p13">b[1].plot(<span class="s10">"Phase Response"</span>, <span class="s9">Rect</span>(460, 300, 400, 200));</p>
 <p class="p13">b[2].plot(<span class="s10">"Group Delay"</span>, <span class="s9">Rect</span>(870, 300, 400, 200));</p>
 <p class="p13">)</p>
@@ -168,8 +168,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13">(</p>
 <p class="p12">// Create a new instance of ZPlane with a zero at 0.8, 0.75pi. A lowpass filter.</p>
 <p class="p13">a = <span class="s9">ZPlane</span>.new(zeros: [<span class="s9">Polar</span>.new(0.8, 0.75pi)]);</p>
-<p class="p13">b = a.calcFreqAndPhaseResp;</p>
-<p class="p13">b[0].plot(<span class="s10">"Frequency Response"</span>, <span class="s9">Rect</span>(50, 300, 400, 200));</p>
+<p class="p13">b = a.calcAmpAndPhaseResp;</p>
+<p class="p13">b[0].plot(<span class="s10">"Amplitude Response"</span>, <span class="s9">Rect</span>(50, 300, 400, 200));</p>
 <p class="p13">b[1].plot(<span class="s10">"Phase Response"</span>, <span class="s9">Rect</span>(460, 300, 400, 200));</p>
 <p class="p13">b[2].plot(<span class="s10">"Group Delay"</span>, <span class="s9">Rect</span>(870, 300, 400, 200));</p>
 <p class="p3"><br></p>
@@ -189,8 +189,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p13">a = <span class="s9">ZPlane</span>.new([<span class="s9">Polar</span>.new(0.997, 0.0pi), <span class="s9">Polar</span>.new(0.997, (1/6)*pi), <span class="s9">Polar</span>.new(0.997, (1/3)*pi), <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Polar</span>.new(0.997, (1/2)*pi), <span class="s9">Polar</span>.new(0.997, (2/3)*pi), <span class="s9">Polar</span>.new(0.997, (5/6)*pi), <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Polar</span>.new(0.997, pi)]);</p>
 <p class="p3"><br></p>
 <p class="p12"><span class="s11">a.gui;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// Watch the Z-plane graph</p>
-<p class="p12"><span class="s11">b = a.calcFreqAndPhaseResp;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// Calculate frequency and phase response</p>
-<p class="p13">b[0].plot(<span class="s10">"Frequency Response"</span>, <span class="s9">Rect</span>(50, 90, 400, 200));</p>
+<p class="p12"><span class="s11">b = a.calcAmpAndPhaseResp;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// Calculate amplitude and phase response</p>
+<p class="p13">b[0].plot(<span class="s10">"Amplitude Response"</span>, <span class="s9">Rect</span>(50, 90, 400, 200));</p>
 <p class="p13">b[1].plot(<span class="s10">"Phase Response"</span>, <span class="s9">Rect</span>(460, 90, 400, 200));</p>
 <p class="p13">b[2].plot(<span class="s10">"Group Delay"</span>, <span class="s9">Rect</span>(870, 90, 400, 200));</p>
 <p class="p13">)</p>
