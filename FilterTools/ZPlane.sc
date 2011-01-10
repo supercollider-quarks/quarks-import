@@ -254,8 +254,8 @@ ZPlane {
 		this.addZero(index, newLoc);
 	}
 	
-	//Calculate frequency response of the filter
-	calcFreqResp { arg res = 512, norm = true; var den, num;
+	//Calculate amplitude response of the filter
+	calcAmpResp { arg res = 512, norm = true; var den, num;
 		if(res.isKindOf(Integer) and: { norm.isKindOf(Boolean) }, {
 			freqResp = Array.new;
 			res.do({ arg i; var omega, mag;
@@ -324,8 +324,8 @@ ZPlane {
 		})	
 	}
 	
-	//Calculate frequency and phase response simultaneously (bit more efficient if one requires 	//both responses, thus calling calcFreqResp and calcPhaseResp separately)
-	calcFreqAndPhaseResp { arg res = 512, norm = true, unwrap = true, derivative = true; var num, 	den, phase;
+	//Calculate amplitude and phase response simultaneously (bit more efficient if one requires 	//both responses, thus calling calcFreqResp and calcPhaseResp separately)
+	calcAmpAndPhaseResp { arg res = 512, norm = true, unwrap = true, derivative = true; var num, 	den, phase;
 		if(res.isKindOf(Integer) and: { norm.isKindOf(Boolean) }, {
 			freqResp = Array.new;
 			phaseResp = Array.new;
