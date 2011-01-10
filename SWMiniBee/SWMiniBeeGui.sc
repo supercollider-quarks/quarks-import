@@ -50,10 +50,10 @@ XBeeSMSGui {
 				["STOP",Color.black,Color.red]])
 		.action_( { |but| 
 			if ( but.value == 1 ) { 
-				xbee.action = { |msg| 
-					detectedNodes.add( msg[0] );
+				xbee.action = { |type,msg| 
+					detectedNodes.add( msg[1] );
 					fork{ 
-						network.setData( msg[0], msg.copyToEnd(1) );
+						network.setData( msg[1], msg.copyToEnd(3) );
 					}
 				}
 			}{ 

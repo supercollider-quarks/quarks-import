@@ -39,7 +39,10 @@ SWMiniBeeConfigGui{
 
 
 		menu = PopUpMenu.new( top, 150@20 );
-		label = TextField.new( top, 205@25 ).focusLostAction_( { arg field; config.label = field.value } ).action_( { arg field; config.label = field.value } );
+		label = TextField.new( top, 205@25 ).action_( { arg field; config.label = field.value } );
+		if ( GUI.id == \swing ){
+			label.focusLostAction_( { arg field; config.label = field.value } );
+		};	
 		store = Button.new( top, 50@25 ).states_( [[ "store"]]).action_({ 
 			this.storeConfig;
 		});
