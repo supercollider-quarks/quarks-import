@@ -19,9 +19,7 @@ AudioMulchClock {
 				synced= false;
 				running= true;
 				pulse.add;
-				if(CmdPeriod.objects.includes(cmdPeriod).not, {
-					CmdPeriod.doOnce(cmdPeriod);
-				});
+				CmdPeriod.doOnce(cmdPeriod);
 			});
 		}).add;
 		stop= OSCresponderNode(nil, \t_stop, {|t, r, m|
@@ -59,9 +57,7 @@ AudioMulchClock {
 		if(waitForStart.not, {
 			running= true;
 			pulse.add;
-			if(CmdPeriod.objects.includes(cmdPeriod).not, {
-				CmdPeriod.doOnce(cmdPeriod);
-			});
+			CmdPeriod.doOnce(cmdPeriod);
 		});
 	}
 	play {|task, quant= 1|
