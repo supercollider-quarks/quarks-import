@@ -629,6 +629,8 @@ NB {
 	
 	py { arg ... code; 
 		var result = "";
+		var wasPublishing = publishing ;
+		publishing = false ;
 		code.do({ arg eachLine, i; 
 			result = result ++ this.addTab( this.python(eachLine) );
 		});
@@ -636,6 +638,7 @@ NB {
 		if(result.beginsWith("\t\t"), {
 			result = this.popPop(result)
 		});
+		publishing = wasPublishing  ;
 		^this.publish(result);
 	}
 	
