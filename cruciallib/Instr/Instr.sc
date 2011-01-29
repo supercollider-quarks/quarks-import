@@ -290,8 +290,9 @@ Instr  {
 			},{
 				orcname = PathName(file).fileNameWithoutExtension;
 				if(orcname == pathPartsFirst,{
+				    //("Loading:" + path).postln;
 					path.load;
-
+					
 					//fullInstrName copied up until including orcname
 					symbols = [];
 					fullInstrName.any({ |n|
@@ -306,7 +307,7 @@ Instr  {
 
 		^nil
 	}
-	dotNotation {
+	dotNotation { // "dir.subdir.file.instrName"
 		^String.streamContents({ arg s;
 			name.do({ arg n,i;
 				if(i > 0,{ s << $. });
@@ -364,14 +365,14 @@ Instr  {
 		this.class.put(this);
 	}
 	makeSpecs { arg argspecs;
-		explicitSpecs = specs ? [];
+		explicitSpecs = argspecs ? [];
 		specs =
 			Array.fill(this.argsSize,{ arg i;
 				var sp,name;
 				name = this.argNameAt(i);
-				sp = argspecs.at(i);
+				sp = explicitSpecs.at(i);
+				// backwards compatibility with old spec style
 				if(sp.isSequenceableCollection,{
-					// backwards compatibility with old spec style
 					// [\envperc]
 					// [[0,1]]
 					// [StaticSpec()]
@@ -384,7 +385,6 @@ Instr  {
 				},{
 					sp = (sp ? name).asSpec ?? {ControlSpec.new};
 				});
-				//sp.copy;
 				sp
 			});
 	}

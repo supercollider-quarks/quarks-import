@@ -82,6 +82,9 @@ ToggleButton : SCButtonAdapter {
 				.onFunction_(onFunction).offFunction_(offFunction)
 	}
 	value { ^state }
+	value_ { arg way;
+		this.toggle(way,false)
+	}
 	toggle { arg way,doAction = true;
 		if(doAction,{
 			this.prSetState(way ? state.not)
@@ -107,9 +110,10 @@ ToggleButton : SCButtonAdapter {
 	prSetState { arg newstate;
 		state = newstate;
 		if(state,{
-			onFunction.value(this)
+			onFunction.value(this,state)
 		},{
-			(offFunction ? onFunction).value(this)
+			// if there is no offFunction value the onFunction
+			(offFunction ? onFunction).value(this,state)
 		});
 	}
 }

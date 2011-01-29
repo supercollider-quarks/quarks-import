@@ -607,13 +607,13 @@ Crucial {
 //		});
 
 		Library.put(\menuItems,\post,'post Instr address',{
-			MLIDbrowser(\Instr,{ arg instr;
-				instr.name.asCompileString.post;
+			MLIDbrowser(Instr,{ arg instr;
+				instr.dotNotation.post;
 			}).gui;
 		});
 
 		Library.put(\menuItems,\sounds,'make new Patch',{
-			MLIDbrowser(\Instr,{ arg instr;
+			MLIDbrowser(Instr,{ arg instr;
 				Patch(instr.name).topGui
 			}).gui;
 		});
