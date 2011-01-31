@@ -422,7 +422,8 @@ MixerChannel {
 		mc.updateMixersInChain(numMixersInChain.neg);
 		bundle = List.new;
 		this.class.fixNodeOrderToBundle(server, bundle);
-		(bundle.size > 0).if({ 
+		(bundle.size > 0).if({
+			bundle = [#[error, -1]] ++ bundle ++ [#[error, -2]];
 			MixerChannelReconstructor.queueBundle(server, bundle);
 		});
 	}
