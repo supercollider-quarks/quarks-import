@@ -123,7 +123,15 @@ TLSequenceIterator {
 			status = \idle;
 		};
 // debug("<< TLSequenceIterator:stop");
-		routine.stop;
+		if(thisThread !== routine) {
+			routine.stop;
+		} {
+			// it's possible to get here from within the iterator's routine
+			// it is VERY DANGEROUS to stop the routine from within itself
+			// -- functions magically fail to return and havoc ensues --
+			// so make sure this doesn't happen until after the routine yields
+			thisThread.clock.sched(0, { routine.stop; nil })
+		};
 	}
 	
 	isRunning { ^status != \idle }
@@ -175,14 +183,18 @@ TLSequenceIterator {
 		var	oldCmds;
 //var temp;
 //
-//status.debug(">> cmdStopped");
+// cmd.debug(">> cmdStopped");
+// if(cmd.class == Proto) { cmd.listVars };
+
 		activeCmds.remove(cmd);
 		
 			// I hope this works - the idea is that any non-syncable commands
 			// from a spawned iterator should be registered in the parent,
 			// so they can be passed up the chain if needed until they finally stop for real
 		if((oldCmds = parms.tryPerform(\at, \activeCmds)).notNil) {
-			oldCmds.do({ |cmd| this.addActive(cmd) });
+			oldCmds.do({ |cmd|
+				this.addActive(cmd);
+			});
 		};
 		
 //if(cmd.class == Proto) {
