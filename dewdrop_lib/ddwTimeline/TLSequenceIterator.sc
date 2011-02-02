@@ -5,7 +5,8 @@ TLSequenceIterator {
 	classvar	<>defaultAutoSync = true;
 	var	<array, <sequencer, <activeCmds, <>autoSyncAtEnd,
 		<>onStop,
-		<status = \idle, routine, <condition, <>index, <clock, <>shouldSync = true;
+		<status = \idle, routine, <condition, <>index, <clock, <>shouldSync = true,
+		<>id;  // useful only when a TLSeq is forked within another TLSeq
 	*new { |array, sequencer, autoSync|
 		^super.newCopyArgs(array, sequencer, IdentitySet.new, autoSync ? defaultAutoSync)
 	}
