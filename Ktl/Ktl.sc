@@ -4,6 +4,7 @@ Ktl {
 	classvar <defaults; 
 	
 	var <srcID; // (port in MIDIKtl, for HID can be the findBy parameters)
+	var <destID; //  (port in MIDIKtl )
 	var <ktlDict; // (was ccDict in MIDIKtl) - this contains all the mapped controls
 	var <resp; // (was ccresp in MIDIKtl) responder that listens to incoming messages
 	var <ktlNames, <orderedKtlNames; // (names as in MIDIKtl) - the defined ctlNames for the device; defined in subclass
@@ -21,8 +22,8 @@ Ktl {
 		defaults.put(this.class, ());
 	}
 	
-	*new { |srcID, ccDict| 
-		^super.newCopyArgs(srcID, ccDict).init;
+	*new { |srcID, destID, ccDict| 
+		^super.newCopyArgs(srcID, destID, ccDict).init;
 	}
 	
 	hasScenes { 
