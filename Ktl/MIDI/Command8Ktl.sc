@@ -1,7 +1,8 @@
 Command8Ktl : MIDIKtl {
 	classvar <>verbose = false;
 	
-	*makeDefaults { 
+	*defaultsDict {
+			
 		//preset for default MIDI mapping of Command8
 		//select buttons were assigned cc 16, since by default they are not assigned any cc.
 		// bank 1 is from 1 to 8, bank 2 is from 9 to 16
@@ -39,9 +40,29 @@ Command8Ktl : MIDIKtl {
 			dict.put( ("button"++(j+1)).asSymbol, ("0_"++i).asSymbol )
 		};
 		
-		defaults.put(this,dict);
+		^dict
+	}
+	
+	*makeDefaults { 	
+		defaults.put(this,this.defaultsDict);
 		
 	}
 	
 }
 
+Command8PagedKtl : MIDIPagedKtl {
+	classvar <>verbose = false;
+	
+	*makeDefaults { 		
+		defaults.put(this,Command8Ktl.defaultsDict);	
+	}
+	
+	init{		
+		super.init;
+		
+		//page < and  page > buttons are used to flip between scenes
+		this.mapAll(\button5,{ this.previousScene; });
+		this.mapAll(\button6,{ this.nextScene; });
+	}
+	
+}
