@@ -49,8 +49,8 @@ All messages to the server now have a reply, which is either the requested info,
 
 See table \ref{oscinterface} for an overview of commands.
 
-\begin{table}
-% \begin{sidewaystable}[!tbp]
+% \begin{table}
+ \begin{sidewaystable}[!tbp]
 \small
 \begin{center}
 % use packages: array
@@ -126,8 +126,8 @@ See table \ref{oscinterface} for an overview of commands.
 \end{center}
 \caption{OSC namespace for the Data Network}
 \label{oscinterface}
-\end{table}
-% \end{sidewaystable}
+% \end{table}
+ \end{sidewaystable}
 
 \section{Interaction with the MiniBees}
 
@@ -141,37 +141,59 @@ You can map datanodes to send data to a MiniBee (see table \ref{oscinterfaceMB})
  \item [custom] The DataNode that is used to map from, has to have as many slots as the custom message received in the MiniBee has data bytes.
 \end{description}
 
+A client can also provide a hive of MiniBees, by using the special hive register message. It has to request a certain number of nodes that it will create (the amount of MiniBees), and the DataNetwork host will reply with the minimum and maximum id that are reserved for the hive's nodes. Mapping messages for the minibees of the hive are then forwarded by the DataNetwork to the hive client.
+
 % Note that an \textbf{output}-mapping will remove any previous \textbf{pwm} or \textbf{digital} mappings. A \textbf{pwm} or \textbf{digital} mapping will remove a previous \textbf{output} mapping.
 
 
-\begin{table}
-% \begin{sidewaystable}[!tbp]
+% \begin{table}
+ \begin{sidewaystable}[!tbp]
 \small
 \begin{center}
 % use packages: array
 \begin{tabular}{|llll|}
 \hline
+\verb|/query/hives| & is & port no., name& query which hives are in the network (reply /info/hive) \\
+\verb|/info/hive| & sis & ip, port no., name, min ID, max ID & info about a hive \\
+\verb|/register/hive| & is & port no., name, no Nodes & register as a hive to the DataNetwork. The last argument is the number of MiniBee nodes the hive will have. \\
+\verb|/registered/hive| & i & port no., name, min ID, max ID & reply to register to the network as a hive. min ID and max ID are the node IDs that are reserved for this hive. \\
+\verb|/unregister/hive| & is & port no., name & unregister to the network as a hive \\  
+\verb|/unregistered/hive| & is & port no., name & reply to unregister to the network as a hive \\
+\hline
 \verb|/query/minibees| & is & port no., name& query which minibees are in the network (reply /info/minibee) \\
-\verb|/info/minibee| & isii & node ID, number of slots (inputs), number of outputs & info about a minibee \\
-\verb|/map/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output)\\
-\verb|/map/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /mapped/minibee/custom)\\
+\verb|/info/minibee| & isii & node ID, number of slots (inputs), number of outputs & info about a minibee - host -> client \\
+\verb|/info/minibee| & isisii & port no., name, node ID, number of slots (inputs), number of outputs & info about a minibee - hiveclient -> host \\
+\verb|/remove/minibee| & isi & port no., name, node ID & remove a minibee (only possible if client is setter) \\
+\verb|/removed/minibee| & i & node ID & reply to remove a node \\
+\hline
+\verb|/map/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output) - client -> host\\
+\verb|/map/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /mapped/minibee/custom) - client -> host\\
+\verb|/map/minibee/output| & ii & node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output) - host -> hiveclient\\
+\verb|/map/minibee/custom| & ii & node ID, minibee ID & map node output to MiniBee custom output (reply /mapped/minibee/custom) - host -> hiveclient\\
 % \verb|/map/minibee/pwm| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee pwm output (reply /mapped)\\
 % \verb|/map/minibee/digital| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee digital output (reply /mapped/minibee)\\
-\verb|/mapped/minibee/output| & ii & node ID, minibee ID & reply to /map/minibee/output messages \\
-\verb|/mapped/minibee/custom| & ii & node ID, minibee ID & reply to /map/minibee/custom messages \\
-\verb|/unmap/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /unmapped/minibee/output)\\
-\verb|/unmap/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /unmapped/minibee/custom)\\
+\verb|/mapped/minibee/output| & ii & node ID, minibee ID & reply to /map/minibee/output messages - host -> client\\
+\verb|/mapped/minibee/custom| & ii & node ID, minibee ID & reply to /map/minibee/custom messages - host -> client \\
+\verb|/mapped/minibee/output| & isii & port no., name, node ID, minibee ID & reply to /map/minibee/output messages - hiveclient -> host \\
+\verb|/mapped/minibee/custom| & isii & port no., name, node ID, minibee ID & reply to /map/minibee/custom messages - hiveclient -> host \\
+\hline
+\verb|/unmap/minibee/output| & isii & port no., name, node ID, minibee ID & unmap node output to MiniBee output (reply /unmapped/minibee/output)\\
+\verb|/unmap/minibee/custom| & isii & port no., name, node ID, minibee ID & unmap node output to MiniBee custom output (reply /unmapped/minibee/custom)\\
+\verb|/unmap/minibee/output| & ii & node ID, minibee ID & unmap node output to MiniBee output (reply /unmapped/minibee/output) - host -> hiveclient\\
+\verb|/unmap/minibee/custom| & ii & node ID, minibee ID & unmap node output to MiniBee custom output (reply /unmapped/minibee/custom) - host -> hiveclient\\
 % \verb|/map/minibee/pwm| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee pwm output (reply /mapped)\\
 % \verb|/map/minibee/digital| & isii & port no., name, node ID, minibee ID &  map node output to MiniBee digital output (reply /mapped/minibee)\\
-\verb|/unmapped/minibee/output| & ii & node ID, minibee ID & reply to /unmap/minibee/output messages \\
-\verb|/unmapped/minibee/custom| & ii & node ID, minibee ID & reply to /unmap/minibee/custom messages \\
+\verb|/unmapped/minibee/output| & ii & node ID, minibee ID & reply to /unmap/minibee/output messages - host -> client\\
+\verb|/unmapped/minibee/custom| & ii & node ID, minibee ID & reply to /unmap/minibee/custom messages - host -> client \\
+\verb|/unmapped/minibee/output| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/output messages - hiveclient -> host \\
+\verb|/unmapped/minibee/custom| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/custom messages - hiveclient -> host \\
 \hline
 \end{tabular}
 \end{center}
 \caption{OSC namespace for the Data Network - interaction with MiniBees. }
 \label{oscinterfaceMB}
-\end{table}
-% \end{sidewaystable}
+% \end{table}
+ \end{sidewaystable}
 
 \begin{table}
 \small
