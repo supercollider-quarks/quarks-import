@@ -511,6 +511,7 @@ PR(\abstractTLCommand).clone({
 	~doneSignal = true;
 	~fire = { |parms|
 //		~setParms.(parms);
+		~repeats = ~repeats.value;
 		~myIterator = ~makeIterator.();
 		~myIterator.play(argClock: thisThread.clock);
 	};
