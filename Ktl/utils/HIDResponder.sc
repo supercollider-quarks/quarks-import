@@ -24,7 +24,7 @@ HIDResponder {
 	}
 
 	*makeDevVendorSymbol{ |device,vendor|
-		^("dev" ++ device.asString ++ "_" ++ (vendor.asString) ).asSymbol
+		^("dev_" ++ device.asString ++ "_" ++ (vendor.asString) ).asSymbol
 	}
 
 	*getSlotArr{ |slot,device,vendor,dev|
@@ -42,20 +42,20 @@ HIDResponder {
 
 	*makeDVSlotSymbol{ |slot,device,vendor,dev|
 		var slotarr = this.getSlotArr( slot,device,vendor,dev);
-		^(device.asString ++ "_" ++ (vendor.asString) ++ "_" ++ slotarr[0] ++ "_" ++ slotarr[1] ).asSymbol;
+		^("slot_" ++ device.asString ++ "_" ++ (vendor.asString) ++ "_" ++ slotarr[0] ++ "_" ++ slotarr[1] ).asSymbol;
 	}
 
 	*openDevice{ |device,vendor|
-		var dev,spec,mydev;
+		var dev,specs,mydev;
 		GeneralHID.buildDeviceList;
 		mydev = GeneralHID.findBy( vendor, device );
 		if ( mydev.notNil ){
 			dev = GeneralHID.open( mydev );
 			if ( dev.notNil ){
 				// set spec if there is one:
-				spec = dev.findSpec;
-				if ( spec.notNil ){
-				dev.setSpec( spec.first );
+				specs = dev.findSpec;
+				if ( specs.size > 0 ){
+					dev.setSpec( specs.first );
 				};
 				openHIDDevices.put( this.makeDevVendorSymbol( device, vendor ), dev );
 			};
@@ -67,9 +67,12 @@ HIDResponder {
 		var dev = this.getOpenDevice( device, vendor );
 		var sdv = this.makeDVSlotSymbol( slot,device,vendor, dev );
 		var slotarr = this.getSlotArr( slot,device,vendor,dev);
+		//	("slotarr" + slotarr + "slot" + slot).postln;
+		//	dev.slots.postln;
+		//	dev.slots[ slotarr[0] ].postln;
 		if ( allSlotResponders[ sdv ].isNil ){
 			allSlotResponders[ sdv ] = List.new;
-			dev.slots[ slotarr[0] ][ slotarr[1]].action = { |myslot|
+			dev.slots[ slotarr[0] ][ slotarr[1] ].action = { |myslot|
 				allSlotResponders[ sdv ].do{ |it|
 					it.value( myslot.value );
 				};
