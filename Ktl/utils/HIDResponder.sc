@@ -7,6 +7,8 @@ HIDResponder {
 
 	var <>action,<>device,<>vendor,<>slot,<hwdev;
 
+	var <lastValue;
+
 	*initClass{
 		openHIDDevices = IdentityDictionary.new;
 		all = List.new;
@@ -48,6 +50,7 @@ HIDResponder {
 	*openDevice{ |device,vendor|
 		var dev,specs,mydev;
 		GeneralHID.buildDeviceList;
+		GeneralHID.startEventLoop;
 		mydev = GeneralHID.findBy( vendor, device );
 		if ( mydev.notNil ){
 			dev = GeneralHID.open( mydev );
@@ -96,6 +99,17 @@ HIDResponder {
 		allSlotResponders[sdv].remove( resp );
 	}
 
+	*removeAll{
+		all.copy.do{ |it|
+			this.removeResponder( it );
+			all.remove( it );
+		};
+		this.openHIDDevices.copy.keysValuesDo{ |key,dev|
+			dev.close;
+			this.openHIDDevices.removeAt( key );
+		}
+	}
+
 	init{ //|function,device,vendor,slot|
 		hwdev = this.class.getOpenDevice( device, vendor );
 		if ( hwdev.notNil ){
@@ -108,6 +122,7 @@ HIDResponder {
 	}
 
 	value{ |v|
+		lastValue = v;
 		action.value( v );
 	}
 
