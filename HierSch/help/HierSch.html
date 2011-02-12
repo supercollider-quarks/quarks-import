@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="824.48">
+<meta name="CocoaVersion" content="1038.35">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -21,6 +21,7 @@ p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #236b22}
 p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0026ad}
+p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d00c0c}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 12.0px Monaco}
 span.s3 {color: #0026ad}
@@ -32,7 +33,7 @@ span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>HierSch</b></span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b> <span class="Apple-tab-span">	</span>Hierarchical Scheduler</b></p>
+<p class="p1"><span class="s1"><b>HierSch</b></span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b><span class="Apple-tab-span">	</span>Hierarchical Scheduler</b></p>
 <p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></p>
 <p class="p1">HierSch schedules and quantises prioritised<b> </b>functions to a TempoClock grid. At any given time by default only the function with the highest priority is evaluated.<span class="Apple-converted-space"> </span></p>
 <p class="p2"><br></p>
@@ -145,7 +146,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p12"><span class="Apple-tab-span">	</span><span class="s3">SinOsc</span>.ar(mfreq.midicps, 0,<span class="Apple-converted-space"> </span></p>
 <p class="p12"><span class="Apple-tab-span">	</span><span class="s3">EnvGen</span>.kr(envelope: (<span class="s3">Env</span>.perc(0.01, dur)), doneAction: 2)),</p>
 <p class="p12"><span class="Apple-tab-span">	</span>pan, gain));</p>
-<p class="p12">}).memStore;</p>
+<p class="p12">}).add;</p>
 <p class="p11"><br></p>
 <p class="p12">m = {<span class="s3">|f|</span> <span class="s3">Synth</span>(<span class="s5">\midiPing</span>, [<span class="s5">\mfreq</span>, f + 69]);}</p>
 <p class="p12">)</p>
@@ -188,7 +189,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p11"><br></p>
 <p class="p11"><br></p>
 <p class="p11"><br></p>
-<p class="p10">// Demonstrates quantisation</p>
+<p class="p10">// Quantisation demonstration</p>
 <p class="p12">b.restart</p>
 <p class="p12">t.tempo_(48/60);</p>
 <p class="p12">b.rate_(128); <span class="s7">// per beat</span></p>
@@ -222,6 +223,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p12">t.play(r);</p>
 <p class="p12">)</p>
 <p class="p11"><br></p>
+<p class="p15">// Try each below while the above running</p>
 <p class="p10"><span class="s4">b.default; </span>// many notes are not played due to the quant values</p>
 <p class="p10"><span class="s4">b.playAll; </span>// all notes played</p>
 <p class="p11"><br></p>
