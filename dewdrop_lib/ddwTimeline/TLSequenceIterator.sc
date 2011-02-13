@@ -120,8 +120,8 @@ TLSequenceIterator {
 		});
 		onStop.value(parms);
 		if(status != \idle) {
-			this.changed(\done, activeCmds); //.debug("done upon stop");
 			status = \idle;
+			this.changed(\done, activeCmds); //.debug("done upon stop");
 		};
 // debug("<< TLSequenceIterator:stop");
 		if(thisThread !== routine) {
