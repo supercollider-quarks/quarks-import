@@ -8,6 +8,9 @@ TLSequenceIterator {
 		<status = \idle, routine, <condition, <>index, <clock, <>shouldSync = true,
 		<>id;  // useful only when a TLSeq is forked within another TLSeq
 	*new { |array, sequencer, autoSync|
+		if(array.includes(nil)) {
+			Error("TLSequenceIterator *new: array contains nil\n" ++ array.asString).throw
+		};
 		^super.newCopyArgs(array, sequencer, IdentitySet.new, autoSync ? defaultAutoSync)
 	}
 	
