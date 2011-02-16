@@ -86,7 +86,7 @@ RedToolsMenu {
 				['system', 'post all document positions'], {
 					Document.allDocuments.do{|x| x.title.post; "   ".post; x.bounds.postln};
 				},
-				['template', 'post incoming osc'], {
+				['template', 'post all incoming osc'], {
 					Document(
 						"listen to all incoming osc",
 						"//start\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0].asString.contains(\"status.reply\").not, {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;"
