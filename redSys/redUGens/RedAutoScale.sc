@@ -4,7 +4,7 @@ RedAutoScale {
 	
 	//--lang
 	var <>lo, <>hi, <>inLo, <>inHi, <>min, <>max;
-	*new {|lo= 0, hi= 1, inLo= 2147483647, inHi= -2147483648|
+	*new {|lo= 0, hi= 1, inLo= inf, inHi= -inf|
 		^super.newCopyArgs(lo, hi, inLo, inHi).reset;
 	}
 	reset {
@@ -17,13 +17,13 @@ RedAutoScale {
 	}
 	
 	//--ugen
-	*ar {|in, lo= 0, hi= 1, inLo= 999999, inHi= -999999, reset= 0|
+	*ar {|in, lo= 0, hi= 1, inLo= inf, inHi= -inf, reset= 0|
 		var min, max;
 		min= RunningMin.ar(in.min(inLo), reset);
 		max= RunningMax.ar(in.max(inHi), reset);
 		^in-min/(max-min)*(hi-lo)+lo
 	}
-	*kr {|in, lo= 0, hi= 1, inLo= 999999, inHi= -999999, reset= 0|
+	*kr {|in, lo= 0, hi= 1, inLo= inf, inHi= -inf, reset= 0|
 		var min, max;
 		min= RunningMin.kr(in.min(inLo), reset);
 		max= RunningMax.kr(in.max(inHi), reset);
