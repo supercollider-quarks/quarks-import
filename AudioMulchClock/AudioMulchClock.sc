@@ -5,6 +5,7 @@
 AudioMulchClock {
 	var	<running= false, <synced= false, <tick= 0, <>shift= 0,
 		<tempo= 0, avg, lastTime= 0,
+		<>startAction, <>syncAction, <>stopAction,
 		queue, cmdPeriod, start, stop, pulse;
 	*new {|waitForStart= false|
 		^super.new.initAudioMulchClock(waitForStart);
@@ -20,6 +21,7 @@ AudioMulchClock {
 				running= true;
 				pulse.add;
 				CmdPeriod.doOnce(cmdPeriod);
+				startAction.value;
 			});
 		}).add;
 		stop= OSCresponderNode(nil, \t_stop, {|t, r, m|
@@ -29,6 +31,10 @@ AudioMulchClock {
 				running= false;
 				pulse.remove;
 				CmdPeriod.remove(cmdPeriod);
+				if(queue.topPriority.notNil, {
+					queue.postpone(queue.topPriority.neg);
+				});
+				stopAction.value;
 			});
 		}).add;
 		pulse= OSCresponderNode(nil, \t_pulse, {|t, r, m|
@@ -40,6 +46,7 @@ AudioMulchClock {
 			if(synced.not and:{tick%96==0}, {
 				synced= true;
 				(this.class.name++": synced").postln;
+				syncAction.value;
 			});
 			if(synced, {
 				while({time= queue.topPriority; time.notNil and:{time.floor<=tick}}, {
@@ -64,7 +71,7 @@ AudioMulchClock {
 		this.schedAbs(this.nextTimeOnGrid(quant), task);
 	}
 	beatDur {
-		^1/tempo;
+		if(tempo==0, {^1}, {^1/tempo});
 	}
 	beats {
 		^tick/24;

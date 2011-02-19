@@ -12,18 +12,19 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #001fe8}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0019ba}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #ad1d13}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0d32ac}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #843424}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {color: #000000}
 span.s3 {text-decoration: underline}
-span.s4 {color: #2854d6}
-span.s5 {color: #4062c4}
-span.s6 {color: #3b5fc8}
-span.s7 {color: #214fdb}
-span.s8 {color: #0019ba}
-span.s9 {color: #2b6f11}
+span.s4 {color: #3b5fc8}
+span.s5 {color: #4e69b8}
+span.s6 {color: #4a67bc}
+span.s7 {color: #355ccc}
+span.s8 {color: #0030f2}
+span.s9 {color: #0d32ac}
+span.s10 {color: #4c6724}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -103,8 +104,17 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>A <a href="SC://Float"><span class="s6">Float</span></a> that represents the average tempo in beats per minutes.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Note: this value will fluctuate because of network jitter.</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
-<p class="p1"><span class="Apple-tab-span">	</span>&lt;&gt;<b>shift</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;shift</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>an <a href="SC://Integer"><span class="s7">Integer</span></a> specifying latency compentation in ticks. If negative items will be scheduled slightly early.</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;startAction</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Function"><span class="s8">Function</span></a> that is evaluated when the external clock is started (a \t_start is received).</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;syncAction</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Function"><span class="s8">Function</span></a> that is evaluated when the clock is synced (the first tick%96==0).</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;stopAction</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a <a href="SC://Function"><span class="s8">Function</span></a> that is evaluated when the clock is synced (a \t_stop is received).</p>
 <p class="p2"><br></p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
@@ -122,7 +132,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p4"><br></p>
 <p class="p7">//--patterns - note that legato needs to be scaled down - still not working properly</p>
-<p class="p5">b= <span class="s8">Pbind</span>(<span class="s9">\degree</span>, <span class="s8">Pseq</span>([0, 5, 2, 1, 0, 5, 2, 1, 0, -1], <span class="s8">inf</span>), <span class="s9">\dur</span>, <span class="s8">Pseq</span>([1, 1, 1, 1, 0.25, 0.25, 0.5, 1, 1, 1], <span class="s8">inf</span>), <span class="s9">\legato</span>, <span class="s8">Pfunc</span>({a.beatDur})).play(a, quant:4)</p>
+<p class="p5">b= <span class="s9">Pbind</span>(<span class="s10">\degree</span>, <span class="s9">Pseq</span>([0, 5, 2, 1, 0, 5, 2, 1, 0, -1], <span class="s9">inf</span>), <span class="s10">\dur</span>, <span class="s9">Pseq</span>([1, 1, 1, 1, 0.25, 0.25, 0.5, 1, 1, 1], <span class="s9">inf</span>), <span class="s10">\legato</span>, <span class="s9">Pfunc</span>({a.beatDur})).play(a, quant:4)</p>
 <p class="p7"><span class="s2">a.shift= -3;<span class="Apple-tab-span">	</span></span>//latency compenstation.<span class="Apple-converted-space">  </span>3 ticks early</p>
 <p class="p7">//now try changing tempo in AudioMulch</p>
 <p class="p5">b.stop</p>
@@ -141,7 +151,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p5">(</p>
 <p class="p7">//note: schedAbs works in ticks so you need to scale with ticks per beat (24)</p>
-<p class="p5">a.schedAbs(a.tick+(2*24), {<span class="s8">|tick, time, clock|</span></p>
+<p class="p5">a.schedAbs(a.tick+(2*24), {<span class="s9">|tick, time, clock|</span></p>
 <p class="p8"><span class="s2"><span class="Apple-tab-span">	</span>(</span>"2 beats later - absolute time"<span class="s2">+tick+time+clock).postln;</span></p>
 <p class="p6"><span class="s2"><span class="Apple-tab-span">	</span></span>nil<span class="s2">;</span></p>
 <p class="p5">})</p>
@@ -149,11 +159,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p5">(</p>
 <p class="p7">//schedules a synth at half a beat after the beginning of the next bar</p>
-<p class="p5">a.schedAbs(a.nextTimeOnGrid(4, 0.5), {<span class="s8">|tick, time, clock|</span></p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s8">var</span> syn= <span class="s8">Synth</span>(<span class="s9">\default</span>);</p>
+<p class="p5">a.schedAbs(a.nextTimeOnGrid(4, 0.5), {<span class="s9">|tick, time, clock|</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s9">var</span> syn= <span class="s9">Synth</span>(<span class="s10">\default</span>);</p>
 <p class="p5"><span class="Apple-tab-span">	</span>a.sched(1, {</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>syn.release;</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">nil</span>;</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">nil</span>;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>});</p>
 <p class="p7"><span class="s2"><span class="Apple-tab-span">	</span>4;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//reschedule every 4 beat</p>
 <p class="p5">})</p>
@@ -164,22 +174,22 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p7">//--note: use separate clocks for now - some problem</p>
 <p class="p5">(</p>
-<p class="p6">SynthDef<span class="s2">(</span><span class="s9">\audiomulchclock</span><span class="s2">, {</span>|out= 0, atk= 0.01, rel= 0.2, gate= 1, freq= 400, pan= 0, amp= 1|</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s8">var</span> env= <span class="s8">EnvGen</span>.kr(<span class="s8">Env</span>.asr(atk, amp, rel), gate, doneAction:2);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s8">var</span> src= <span class="s8">MoogFF</span>.ar(</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">Pulse</span>.ar(freq-(amp-env*50), env*0.25+0.5, env),</p>
+<p class="p6">SynthDef<span class="s2">(</span><span class="s10">\audiomulchclock</span><span class="s2">, {</span>|out= 0, atk= 0.01, rel= 0.2, gate= 1, freq= 400, pan= 0, amp= 1|</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s9">var</span> env= <span class="s9">EnvGen</span>.kr(<span class="s9">Env</span>.asr(atk, amp, rel), gate, doneAction:2);</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s9">var</span> src= <span class="s9">MoogFF</span>.ar(</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pulse</span>.ar(freq-(amp-env*50), env*0.25+0.5, env),</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>env.lag(2).exprange(freq*0.5, freq*2),</p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>3</p>
 <p class="p5"><span class="Apple-tab-span">	</span>);</p>
-<p class="p5"><span class="Apple-tab-span">	</span><span class="s8">Out</span>.ar(out, <span class="s8">Pan2</span>.ar(src, pan));</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s9">Out</span>.ar(out, <span class="s9">Pan2</span>.ar(src, pan));</p>
 <p class="p5">}).add;</p>
 <p class="p5">)</p>
 <p class="p6"><span class="s2">a= </span>AudioMulchClock<span class="s2">(</span>false<span class="s2">);</span></p>
 <p class="p5">a.shift= -4;</p>
-<p class="p5">b= <span class="s8">Pbind</span>(<span class="s9">\instrument</span>, <span class="s9">\audiomulchclock</span>, <span class="s9">\degree</span>, <span class="s8">Pseq</span>([0, 5, 2, 1, 0, 5, 2, 1], <span class="s8">inf</span>)*[1, 0.5], <span class="s9">\strum</span>, 0.2, <span class="s9">\dur</span>, 0.5, <span class="s9">\pan</span>, [0.5, -0.5], <span class="s9">\amp</span>, cos(<span class="s8">Ptime</span>()*0.3), <span class="s9">\legato</span>, <span class="s8">Pfunc</span>({a.beatDur})).play(a, quant:4);</p>
+<p class="p5">b= <span class="s9">Pbind</span>(<span class="s10">\instrument</span>, <span class="s10">\audiomulchclock</span>, <span class="s10">\degree</span>, <span class="s9">Pseq</span>([0, 5, 2, 1, 0, 5, 2, 1], <span class="s9">inf</span>)*[1, 0.5], <span class="s10">\strum</span>, 0.2, <span class="s10">\dur</span>, 0.5, <span class="s10">\pan</span>, [0.5, -0.5], <span class="s10">\amp</span>, cos(<span class="s9">Ptime</span>()*0.3), <span class="s10">\legato</span>, <span class="s9">Pfunc</span>({a.beatDur})).play(a, quant:4);</p>
 <p class="p6"><span class="s2">c= </span>AudioMulchClock<span class="s2">(</span>false<span class="s2">);</span></p>
 <p class="p5">c.shift= -4;</p>
-<p class="p5">d= <span class="s8">Pbind</span>(<span class="s9">\instrument</span>, <span class="s9">\audiomulchclock</span>, <span class="s9">\degree</span>, <span class="s8">Pn</span>(<span class="s8">Pshuf</span>([0, 5, 2, 1, 0, 5, 2, 1], 4), <span class="s8">inf</span>)*[1, 0.5], <span class="s9">\strum</span>, 0.1, <span class="s9">\dur</span>, 0.5, <span class="s9">\pan</span>, [-0.5, 0.5], <span class="s9">\amp</span>, cos(<span class="s8">Ptime</span>()*0.2), <span class="s9">\legato</span>, <span class="s8">Pfunc</span>({c.beatDur}), <span class="s9">\octave</span>, 7).play(c, quant:4);</p>
+<p class="p5">d= <span class="s9">Pbind</span>(<span class="s10">\instrument</span>, <span class="s10">\audiomulchclock</span>, <span class="s10">\degree</span>, <span class="s9">Pn</span>(<span class="s9">Pshuf</span>([0, 5, 2, 1, 0, 5, 2, 1], 4), <span class="s9">inf</span>)*[1, 0.5], <span class="s10">\strum</span>, 0.1, <span class="s10">\dur</span>, 0.5, <span class="s10">\pan</span>, [-0.5, 0.5], <span class="s10">\amp</span>, cos(<span class="s9">Ptime</span>()*0.2), <span class="s10">\legato</span>, <span class="s9">Pfunc</span>({c.beatDur}), <span class="s10">\octave</span>, 7).play(c, quant:4);</p>
 <p class="p5">d.stop</p>
 <p class="p5">b.stop</p>
 <p class="p5">c.clear</p>
