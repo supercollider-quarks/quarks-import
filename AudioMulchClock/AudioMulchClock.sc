@@ -1,77 +1,91 @@
-//f.olofsson 2010
+//f.olofsson & j.liljedahl 2010-2011
 
-//todo:	legato in pbind not working properly - why?
+//todo:	legato in pbind not working properly - why? (is this still the case??)
+
+//edits by jonatan liljedahl:
+// - works for multiple routines using the same clock
+// - restart routines at t_start 0, so we get the behaviour of oldschool midi-synced hardware boxes:
+//   1 press start on master, slaves starts at zero
+//   2 press stop at master, slaves stop
+//   3 press start again, slaves starts again at zero
+//   pausing should work out of the box..
+// - fractional tick scheduling should work, even though the precision isn't perfect
+//   (sometimes it lags one tick behind)
+// - got rid of waitForStart
+
+// - added permanent flag, beatsPerBar, start and stop actions.
 
 AudioMulchClock {
-	var	<running= false, <synced= false, <tick= 0, <>shift= 0,
-		<tempo= 0, avg, lastTime= 0,
-		<>startAction, <>syncAction, <>stopAction,
-		queue, cmdPeriod, start, stop, pulse;
-	*new {|waitForStart= false|
-		^super.new.initAudioMulchClock(waitForStart);
+	var	<running = false, <tick = 0, <>shift = 0, <>beatsPerBar= 4, <>permanent= false,
+		<tempo = 1, <>startAction = nil, <>stopAction = nil, avg, lastTime = 0,
+		queue, start, stop, pulse;
+	*new {
+		^super.new.initAudioMulchClock;
 	}
-	initAudioMulchClock {|waitForStart|
+	initAudioMulchClock {
 		queue= PriorityQueue.new;
-		cmdPeriod= {this.clear};
 		avg= FloatArray.newClear(10);
 		start= OSCresponderNode(nil, \t_start, {|t, r, m|
-			if(running.not, {
-				(this.class.name++": start").postln;
-				synced= false;
-				running= true;
-				pulse.add;
-				CmdPeriod.doOnce(cmdPeriod);
-				startAction.value;
+			var items = [];
+			if(m[1]!=tick, {
+				(this.class.name++": start "++m[1]).postln;
+				queue.array.pairsDo{|time, item| items = items.add(item)};
+				queue.clear;
+				items.do {|item| item.reset; this.schedAbs(m[1].roundUp(beatsPerBar*24), item)};
+			}, {
+				(this.class.name++": resumed "++m[1]).postln;
 			});
+			running= true;
+			this.startAction.value;
+			this.doPulse(t,r,m);
 		}).add;
 		stop= OSCresponderNode(nil, \t_stop, {|t, r, m|
 			if(running, {
 				(this.class.name++": stop").postln;
-				synced= false;
 				running= false;
-				pulse.remove;
-				CmdPeriod.remove(cmdPeriod);
-				if(queue.topPriority.notNil, {
-					queue.postpone(queue.topPriority.neg);
-				});
 				stopAction.value;
 			});
 		}).add;
 		pulse= OSCresponderNode(nil, \t_pulse, {|t, r, m|
-			var time, item, delta;
-			tick= m[1]-shift;
-			avg.put(tick%10, Main.elapsedTime-lastTime);
-			lastTime= Main.elapsedTime;
-			tempo= 1/(avg.sum*0.1*24);
-			if(synced.not and:{tick%96==0}, {
-				synced= true;
-				(this.class.name++": synced").postln;
-				syncAction.value;
-			});
-			if(synced, {
-				while({time= queue.topPriority; time.notNil and:{time.floor<=tick}}, {
-					item= queue.pop;
-					SystemClock.sched(avg[tick%10]*time.frac, {
-						delta= item.awake(tick, Main.elapsedTime, this);
-						if(delta.isNumber, {
-							this.sched(delta, item);
-						});
-						nil;
-					});
-				});
+			this.doPulse(t,r,m);
+		}).add;
+		
+		running= true;
+		CmdPeriod.doOnce({
+			if(permanent, {
+				queue.array.pairsDo{|time, item| item.removedFromScheduler};
+				queue.clear;
+			}, {
+				this.clear;
 			});
 		});
-		if(waitForStart.not, {
-			running= true;
-			pulse.add;
-			CmdPeriod.doOnce(cmdPeriod);
+	}
+	doPulse {|t,r,m|
+		var time;
+		tick = m[1]-shift;
+		avg.put(tick%10, Main.elapsedTime-lastTime);
+		lastTime = Main.elapsedTime;
+		tempo = 10/(avg.sum*24);
+		while({time = queue.topPriority; time.notNil and:{time.floor<=tick}}, { 
+			this.doSched(time-tick, queue.pop, avg.sum*0.1);
+			//note: avg.sum won't be correct before the first 10 ticks.. probably not a big deal in most cases.
+		});
+	}
+	doSched {|ofs, item, tickdur|
+		var delta;
+		SystemClock.sched(ofs * tickdur, {
+			delta = item.awake(tick, Main.elapsedTime, this);
+			if(delta.isNumber, {
+				this.sched(delta+(ofs/24), item);
+			});
+			nil;
 		});
 	}
 	play {|task, quant= 1|
 		this.schedAbs(this.nextTimeOnGrid(quant), task);
 	}
 	beatDur {
-		if(tempo==0, {^1}, {^1/tempo});
+		^1/tempo;
 	}
 	beats {
 		^tick/24;
@@ -87,6 +101,7 @@ AudioMulchClock {
 			quant= quant.quant;
 		});
 		if(quant==0, {^tick+(phase*24)});
+		if(tick==0, {^phase*24});
 		^tick+((24*quant)-(tick%(24*quant)))+(phase%quant*24);
 	}
 	clear {
@@ -96,5 +111,6 @@ AudioMulchClock {
 		start.remove;
 		stop.remove;
 		pulse.remove;
+		running= false;
 	}
 }
