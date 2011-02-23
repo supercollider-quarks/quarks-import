@@ -28,7 +28,7 @@ SWDataNetworkOSCClient{
 		nodeSubs = Set.new;
 		slotSubs = IdentityDictionary.new;
 
-		setters = Set.new;
+		setters = IdentityDictionary.new;
 		//		this.sendRegistered;
 	}
 
@@ -60,11 +60,15 @@ SWDataNetworkOSCClient{
 	addSetter{ |node|
 		var existing;
 		// check for nodes with same id:
+		/*
 		existing = setters.select( { |it| it.id == node.id });
+		existing.postln;
 		if ( existing.notNil ){
-			existing.do{ |it| setters.remove( it ) };
+			existing.do{ |it| setters.remove( it ).postln; };
 		};
 		setters.add( node );
+		*/
+		setters.put( node.id, node );
 		addr.sendMsg( '/info/setter', node.id, node.key.asString, node.slots.size, node.type );
 	}
 
@@ -91,7 +95,7 @@ SWDataNetworkOSCClient{
 
 
 	checkForSetter{ |node|
-		^setters.includes(node);
+		^setters.at(node.id).notNil;
 	}
 
 	subscriptionQuery{

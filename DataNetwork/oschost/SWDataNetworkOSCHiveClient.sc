@@ -4,7 +4,7 @@ SWMiniBeeOSC{
 	var <>id, <>inputs, <>outputs;
 
 	*new{ arg ...args;
-		^super.newCopyArgs( args );
+		^super.newCopyArgs( *args );
 	}
 }
 
@@ -49,10 +49,12 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 	}
 
 	addBee{ |id,inputs,outputs|
-		if ( nodeRange[0] >= id and: ( nodeRange[1] <= id ) ){
+		if ( nodeRange[0] <= id and: ( nodeRange[1] >= id ) ){
 			activeBees.put( id, SWMiniBeeOSC.new( id, inputs, outputs ) );
+			^true;
 		}{
 			"Bee ID not within range of HiveClient".warn;
+			^false;
 		}
 	}
 
@@ -62,22 +64,30 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 	}
 
 	mapHiveOutput{ |nodeid, beeid|
-		addr.sendMsg( '/map/minibee/output', nodeid, beeid );
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/map/minibee/output', nodeid, beeid );
+		};
 		// hive client should subscribe to nodeid, and map it to the output of the beeid
 	}
 
 	mapHiveCustom{ |nodeid, beeid|
-		addr.sendMsg( '/map/minibee/custom', nodeid, beeid );
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/map/minibee/custom', nodeid, beeid );
+		};
 		// hive client should subscribe to nodeid, and map it to the custom output of the beeid
 	}
 
 	unmapHiveOutput{ |nodeid, beeid|
-		addr.sendMsg( '/unmap/minibee/output', nodeid, beeid );
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/unmap/minibee/output', nodeid, beeid );
+		};
 		// hive client should unsubscribe from nodeid, and unmap it from the output of the beeid
 	}
 
 	unmapHiveCustom{ |nodeid, beeid|
-		addr.sendMsg( '/unmap/minibee/custom', nodeid, beeid );
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/unmap/minibee/custom', nodeid, beeid );
+		};
 		// hive client should unsubscribe from nodeid, and unmap it from the custom output of the beeid
 	}
 
