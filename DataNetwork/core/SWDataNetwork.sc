@@ -34,7 +34,7 @@ SWDataNetwork{
 	}
 
 	init{
-		expectedNodes = Array.new;
+		expectedNodes = Set.new;
 		//		expectedSize = IdentityDictionary.new;
 		nodes = IdentityDictionary.new;
 		hooks = SWHookSet.new;
@@ -187,6 +187,24 @@ SWDataNetwork{
 		)
 	}
 
+	unmapBee{ |node,miniBee,type=\output|
+		var id,mb;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		if ( miniBee.isKindOf( SWMiniBee ) ){
+			mb = miniBee.id;
+		}{
+			mb = miniBee;
+		};
+		switch( type,
+			'custom', { this.unmapHiveCustom(id,mb)},
+			'output', { this.unmapHiveOutput(id,mb)}
+		)
+	}
+
 	mapHiveOutput{ |nodeID, miniBee|
 		//		("network: mapping hive output" + nodeID + miniBee ).postln;
 		if ( hive.notNil ){
@@ -236,7 +254,7 @@ SWDataNetwork{
 		if ( type == -1){
 			ret = false;
 		}{
-			ret = ( (sz > 0) and: (expectedNodes.indexOf( id ).notNil) and: (nodes.at(id).isNil ) );
+			ret = ( (sz > 0) and: ( this.isExpected( id ) ) and: (nodes.at(id).isNil ) );
 		};
 		if ( ret ) {
 			if ( type == 0 ){
@@ -305,7 +323,7 @@ SWDataNetwork{
 	}
 
 	isExpected{ |id|
-		^expectedNodes.indexOf( id ).notNil;
+		^expectedNodes.includes( id );
 	}
 
 	//---- spec (labeling and so on) ---------
