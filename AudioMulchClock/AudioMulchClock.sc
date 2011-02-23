@@ -12,15 +12,21 @@
 // - fractional tick scheduling should work, even though the precision isn't perfect
 //   (sometimes it lags one tick behind)
 // - got rid of waitForStart
-
+// - added default clock
 // - added permanent flag, beatsPerBar, start and stop actions.
 
 AudioMulchClock {
 	var	<running = false, <tick = 0, <>shift = 0, <>beatsPerBar= 4, <>permanent= false,
 		<tempo = 1, <>startAction = nil, <>stopAction = nil, avg, lastTime = 0,
 		queue, start, stop, pulse;
+	classvar defaultClock = nil;
 	*new {
 		^super.new.initAudioMulchClock;
+	}
+	*default {
+		^defaultClock ?? {
+			(defaultClock = AudioMulchClock.new).permanent = true;
+		};
 	}
 	initAudioMulchClock {
 		queue= PriorityQueue.new;
@@ -35,6 +41,7 @@ AudioMulchClock {
 			}, {
 				(this.class.name++": resumed "++m[1]).postln;
 			});
+			lastTime = Main.elapsedTime;
 			running= true;
 			this.startAction.value;
 			this.doPulse(t,r,m);
@@ -50,29 +57,24 @@ AudioMulchClock {
 			this.doPulse(t,r,m);
 		}).add;
 		
-		running= true;
-		CmdPeriod.doOnce({
-			if(permanent, {
-				queue.array.pairsDo{|time, item| item.removedFromScheduler};
-				queue.clear;
-			}, {
-				this.clear;
-			});
-		});
+		CmdPeriod.doOnce {this.clear};
 	}
 	doPulse {|t,r,m|
-		var time;
+		var time, avgs;
 		tick = m[1]-shift;
 		avg.put(tick%10, Main.elapsedTime-lastTime);
 		lastTime = Main.elapsedTime;
-		tempo = 10/(avg.sum*24);
+		avgs = avg.sum;
+		tempo = 10/(avgs*24);
 		while({time = queue.topPriority; time.notNil and:{time.floor<=tick}}, { 
-			this.doSched(time-tick, queue.pop, avg.sum*0.1);
+			this.doSched(time-tick, queue.pop, avgs/tick.clip(1,10));
 			//note: avg.sum won't be correct before the first 10 ticks.. probably not a big deal in most cases.
 		});
+		running= true;
 	}
 	doSched {|ofs, item, tickdur|
 		var delta;
+		//("doSched tickdur: "++tickdur++" ofs: "++ofs++" tick: "++tick).postln;
 		SystemClock.sched(ofs * tickdur, {
 			delta = item.awake(tick, Main.elapsedTime, this);
 			if(delta.isNumber, {
@@ -108,9 +110,13 @@ AudioMulchClock {
 		(this.class.name++": clear").postln;
 		queue.array.pairsDo{|time, item| item.removedFromScheduler};
 		queue.clear;
-		start.remove;
-		stop.remove;
-		pulse.remove;
+		if(permanent.not, {
+			start.remove;
+			stop.remove;
+			pulse.remove;
+		},{
+			CmdPeriod.doOnce {this.clear};
+		});
 		running= false;
 	}
 }
