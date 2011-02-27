@@ -1,0 +1,29 @@
+#N canvas 349 185 692 322 10;
+#X floatatom 24 130 5 0 0 0 - - -;
+#X floatatom 67 130 5 0 0 0 - - -;
+#X floatatom 112 129 5 0 0 0 - - -;
+#X obj 159 185 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 25 184 pack 0 0 0;
+#X text 180 153 Bang in right inlet re-initializes \, as does bang
+sent to "dn.node" (see above);
+#X obj 45 157 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 80 159 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 21 45 pv dn-host 192.168.1.102;
+#X obj 25 215 dn.mapnode 500 3 2;
+#X obj 24 81 pv dn-clientName PdClient;
+#X text 6 237 Arguments: node id \, number of slots \, minibee id;
+#X text 274 35 MAPPING A DATANODE TO A MINIBEE OUTPUT MAKE SURE THAT
+THE NUMBER OF SLOTS IS EQUAL TO THE NUMBER OF OUTPUTS OF THE MINIBEE
+;
+#X connect 0 0 4 0;
+#X connect 1 0 4 1;
+#X connect 1 0 6 0;
+#X connect 2 0 4 2;
+#X connect 2 0 7 0;
+#X connect 3 0 9 1;
+#X connect 4 0 9 0;
+#X connect 6 0 4 0;
+#X connect 7 0 4 0;
