@@ -1,39 +1,36 @@
-#N canvas 274 27 717 720 12;
+#N canvas 0 0 1341 673 12;
 #X text 25 80 This abstraction learns the host IP address using the
 "pv dn-host" object - this MUST be included in the parent patcher.
 ;
 #X obj 63 517 prepend set;
 #X msg 63 566 0 0 0;
-#X text 51 281 Send data as a list of floats. Each element corresponds
+#X text 46 251 Send data as a list of floats. Each element corresponds
 to a slot.;
 #X obj 204 223 s dn.node;
-#X floatatom 63 317 5 0 0 0 - - -;
-#X floatatom 107 317 5 0 0 0 - - -;
-#X floatatom 151 317 5 0 0 0 - - -;
-#X obj 218 365 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+#X floatatom 62 295 5 0 0 0 - - -;
+#X floatatom 105 295 5 0 0 0 - - -;
+#X floatatom 150 294 5 0 0 0 - - -;
+#X obj 197 350 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 63 465 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 63 349 pack 0 0 0;
-#X obj 486 446 r senseworld.local;
-#X obj 486 509 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+#X obj 537 428 r senseworld.local;
+#X obj 537 495 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#X obj 560 506 print SENSEWORLD;
-#X obj 437 87 pv dn-host 192.168.0.104;
-#X obj 486 477 route /ping;
-#X text 42 445 this node subscribes to the node you just made!;
-#X text 469 423 Print messages from the server;
+#X obj 640 498 print SENSEWORLD;
+#X obj 537 462 route /ping;
+#X text 39 429 this node subscribes to the node you just made!;
+#X text 536 395 Print messages from the server;
 #X text 71 542 data here matches the data sent to makenode;
-#X text 53 396 Arguments: node id \, number of slots;
-#X text 149 485 Arguments: node id;
-#X obj 63 488 dn.node 759;
-#X obj 63 380 dn.makenode 759 3;
+#X text 44 402 Arguments: node id \, number of slots;
+#X text 208 487 Arguments: node id;
 #X obj 204 200 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 301 195 cnv 10 400 20 empty empty Important! 5 10 0 14 -261234
 -86277 0;
-#X text 412 195 Re-init after changing client name;
-#X text 200 331 Bang in right inlet re-initializes \, as does bang
+#X text 457 192 Re-init after changing client name;
+#X text 218 318 Bang in right inlet re-initializes \, as does bang
 sent to "dn.node" (see above);
 #X text 24 155 Similarly \, the client name of the patch is shared
 between all objects and must also be included.;
@@ -47,16 +44,27 @@ to its data slots with "dn.node" objects as seen here. Other people
 on the datanetwork can also subscribe to your node by referencing its
 unique ID.;
 #X text 224 194 <---------;
-#X obj 438 171 pv dn-clientName PdClient;
+#X obj 539 107 pv dn-host 192.168.1.102;
+#X obj 63 380 dn.makenode 500 3;
+#X obj 63 488 dn.node 500;
+#X obj 83 322 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 118 324 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 538 137 pv dn-clientName PdClient;
 #X connect 1 0 2 0;
 #X connect 5 0 10 0;
 #X connect 6 0 10 1;
+#X connect 6 0 31 0;
 #X connect 7 0 10 2;
-#X connect 8 0 22 1;
-#X connect 9 0 21 0;
-#X connect 10 0 22 0;
-#X connect 11 0 15 0;
-#X connect 15 0 12 0;
-#X connect 15 1 13 0;
-#X connect 21 0 1 0;
-#X connect 23 0 4 0;
+#X connect 7 0 32 0;
+#X connect 8 0 29 1;
+#X connect 9 0 30 0;
+#X connect 10 0 29 0;
+#X connect 11 0 14 0;
+#X connect 11 0 13 0;
+#X connect 14 0 12 0;
+#X connect 20 0 4 0;
+#X connect 30 0 1 0;
+#X connect 31 0 10 0;
+#X connect 32 0 10 0;
