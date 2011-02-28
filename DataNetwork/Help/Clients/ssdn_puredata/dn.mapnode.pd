@@ -39,7 +39,7 @@
 #X connect 6 1 7 0;
 #X connect 12 0 10 0;
 #X restore 367 511 pd Error;
-#N canvas 0 22 350 271 Destroy_On_Close 0;
+#N canvas 588 41 539 632 Destroy_On_Close 1;
 #X obj 18 13 cnv 15 200 200 empty empty Destructor 20 12 0 14 -233017
 -66577 0;
 #X obj 41 109 i;
@@ -48,17 +48,31 @@
 #X obj 41 183 s \$0_send;
 #X obj 80 111 r \$0_nodeName;
 #X obj 41 136 prepend;
-#X obj 41 83 spigot;
 #X obj 41 39 closebang;
 #X obj 74 61 dn.freeclear;
+#X obj 88 340 r \$0_nodeName;
+#X obj 34 340 prepend;
+#X obj 57 275 r \$0_nodeID;
+#X obj 98 295 r \$0_minibeeID;
+#X obj 41 83 spigot;
+#X obj 34 362 prepend /unmap/minibee/output 6010;
+#X obj 33 385 s \$0_send;
+#X obj 34 316 pack f f;
 #X connect 1 0 6 0;
 #X connect 2 0 4 0;
 #X connect 3 0 1 1;
 #X connect 5 0 6 1;
 #X connect 6 0 2 0;
-#X connect 7 0 1 0;
-#X connect 8 0 7 0;
-#X connect 9 0 7 1;
+#X connect 7 0 13 0;
+#X connect 8 0 13 1;
+#X connect 9 0 10 1;
+#X connect 10 0 14 0;
+#X connect 11 0 16 0;
+#X connect 12 0 16 1;
+#X connect 13 0 1 0;
+#X connect 13 0 16 0;
+#X connect 14 0 15 0;
+#X connect 16 0 10 0;
 #X restore 46 457 pd Destroy_On_Close;
 #N canvas 0 22 450 300 Network_Announced 0;
 #X obj 39 26 cnv 15 200 150 empty empty Announcement 20 12 0 14 -233017
@@ -70,7 +84,7 @@
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;
 #X restore 41 390 pd Network_Announced;
-#N canvas 159 22 561 673 Initialize_and_Register 1;
+#N canvas 159 22 561 673 Initialize_and_Register 0;
 #X obj 48 39 cnv 15 500 700 empty empty Init_and_register 20 12 0 14
 -228856 -66577 0;
 #X obj 161 114 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
@@ -114,7 +128,7 @@
 #X obj 203 305 r \$0_nodeName;
 #X obj 164 330 prepend;
 #X obj 164 355 prepend set /remove/node 6010;
-#X msg 131 376 /remove/node 6010 PdMarije 500;
+#X msg 131 376 /remove/node 6010 PdClient 500;
 #X obj 107 400 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 85 128 delay 500;
@@ -126,14 +140,14 @@
 #X text 294 468 REGISTER ON THE NET;
 #X obj 57 419 delay 1000;
 #X obj 23 554 delay 1000;
-#X obj 49 849 s \$0_/add/expected;
 #X obj 103 804 r \$0_nodeName;
 #X obj 49 804 prepend;
 #X obj 49 826 prepend /map/minibee/output 6010;
 #X obj 255 753 r \$0_nodeID;
-#X obj 255 795 pack f f;
 #X obj 265 774 r \$0_minibeeID;
 #X obj 190 778 zl reg;
+#X obj 255 795 pack f f;
+#X obj 49 849 s \$0_send;
 #X connect 1 0 7 0;
 #X connect 2 0 10 0;
 #X connect 2 0 1 0;
@@ -177,14 +191,14 @@
 #X connect 44 0 31 0;
 #X connect 48 0 15 0;
 #X connect 49 0 11 0;
-#X connect 49 0 57 0;
-#X connect 51 0 52 1;
-#X connect 52 0 53 0;
-#X connect 53 0 50 0;
-#X connect 54 0 55 0;
-#X connect 55 0 57 1;
+#X connect 49 0 55 0;
+#X connect 50 0 51 1;
+#X connect 51 0 52 0;
+#X connect 52 0 57 0;
+#X connect 53 0 56 0;
+#X connect 54 0 56 1;
+#X connect 55 0 51 0;
 #X connect 56 0 55 1;
-#X connect 57 0 52 0;
 #X restore 40 368 pd Initialize_and_Register;
 #N canvas 583 256 450 300 Handle_Unregistered_Message 0;
 #X obj 172 93 cnv 15 130 120 empty empty Unregistered 20 12 0 14 -233017
@@ -347,12 +361,12 @@
 #X obj 132 281 r \$0_remove;
 #X obj 124 306 r \$0_register;
 #X obj 22 240 s \$0_/add/expected;
-#X obj 165 260 s \$0_/map/minibee/output;
 #X obj 126 333 r \$0_addExpected;
+#X obj 63 147 r \$0_minibeeID;
 #X restore 148 237 pd All_Sends_And_Receives;
 #X text 39 -7 !!!! The parent patcher must have an object called "pv
 dn-host <IP of host>" !!!!;
-#N canvas 582 113 253 314 Handle_Node_Removed 0;
+#N canvas 582 113 235 306 Handle_Node_Removed 0;
 #X obj -1 14 cnv 15 150 200 empty empty Node_Removal 20 12 0 14 -233017
 -66577 0;
 #X obj 10 77 zl nth 2;
