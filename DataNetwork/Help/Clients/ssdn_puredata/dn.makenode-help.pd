@@ -1,4 +1,4 @@
-#N canvas 0 0 1341 673 12;
+#N canvas 0 0 830 673 12;
 #X text 25 80 This abstraction learns the host IP address using the
 "pv dn-host" object - this MUST be included in the parent patcher.
 ;
@@ -44,7 +44,6 @@ to its data slots with "dn.node" objects as seen here. Other people
 on the datanetwork can also subscribe to your node by referencing its
 unique ID.;
 #X text 224 194 <---------;
-#X obj 539 107 pv dn-host 192.168.1.102;
 #X obj 63 380 dn.makenode 500 3;
 #X obj 63 488 dn.node 500;
 #X obj 83 322 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
@@ -52,19 +51,21 @@ unique ID.;
 #X obj 118 324 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 538 137 pv dn-clientName PdClient;
+#X obj 539 107 pv dn-host 192.168.0.197;
+#X text 523 546 See also dn.node and dn.mapnode!;
 #X connect 1 0 2 0;
 #X connect 5 0 10 0;
 #X connect 6 0 10 1;
-#X connect 6 0 31 0;
+#X connect 6 0 30 0;
 #X connect 7 0 10 2;
-#X connect 7 0 32 0;
-#X connect 8 0 29 1;
-#X connect 9 0 30 0;
-#X connect 10 0 29 0;
+#X connect 7 0 31 0;
+#X connect 8 0 28 1;
+#X connect 9 0 29 0;
+#X connect 10 0 28 0;
 #X connect 11 0 14 0;
 #X connect 11 0 13 0;
 #X connect 14 0 12 0;
 #X connect 20 0 4 0;
-#X connect 30 0 1 0;
+#X connect 29 0 1 0;
+#X connect 30 0 10 0;
 #X connect 31 0 10 0;
-#X connect 32 0 10 0;
