@@ -1,18 +1,43 @@
-#N canvas 593 195 625 376 12;
+#N canvas 565 56 765 445 12;
 #X text 22 28 dn.node;
 #X text 23 44 Easy interaction with the SenseStage Data Network!;
-#X text 19 251 This abstraction learns the host IP address using the
+#X text 227 131 This abstraction learns the host IP address using the
 "pv dn-host" object - this MUST be included in the parent patcher.
 ;
-#X text 198 135 Arguments specify nodes to subscribe to.;
-#X obj 28 168 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+#X obj 44 279 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#X obj 56 168 prepend set;
-#X msg 56 193 32 229;
-#X obj 28 94 pv dn-host 192.168.0.107;
-#X obj 28 136 dn.node pd_client 197;
-#X text 109 196 Bang in inlet re-initializes \, as does "symbol init"
+#X obj 72 279 prepend set;
+#X msg 72 304 32 229;
+#X obj 521 24 pv dn-host 192.168.0.107;
+#X text 191 269 Bang in inlet re-initializes \, as does "symbol init"
 message sent to "dn.node".;
-#X connect 5 0 6 0;
-#X connect 8 0 4 0;
-#X connect 8 0 5 0;
+#X obj 521 51 pv dn-clientName PdClient;
+#X obj 44 247 dn.node 197;
+#X obj 144 108 s dn.node;
+#X obj 144 85 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 241 80 cnv 10 320 40 empty empty Important! 5 10 0 14 -261234
+-86277 0;
+#X text 245 100 Re-init after changing client name;
+#X text 228 194 Similarly \, the client name of the patch is shared
+between all objects and must also be included.;
+#X text 162 79 <---------;
+#X obj 45 222 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 65 216 comment;
+#X text 77 375 See also dn.makenode and dn.mapnode!;
+#X obj 479 347 r senseworld.local;
+#X obj 479 414 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 582 417 print SENSEWORLD;
+#X obj 479 381 route /ping;
+#X text 478 314 Print messages from the server;
+#X text 171 245 Argument specifies the node to subscribe to.;
+#X connect 4 0 5 0;
+#X connect 9 0 3 0;
+#X connect 9 0 4 0;
+#X connect 11 0 10 0;
+#X connect 16 0 9 0;
+#X connect 19 0 22 0;
+#X connect 19 0 21 0;
+#X connect 22 0 20 0;
