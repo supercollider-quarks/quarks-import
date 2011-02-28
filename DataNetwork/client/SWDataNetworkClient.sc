@@ -402,6 +402,24 @@ SWDataNetworkClient : SWDataNetwork{
 		);
 	}
 
+	unmapBee{ |node,miniBee,type=\output|
+		var id,mb;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		if ( miniBee.isKindOf( SWMiniBee ) ){
+			mb = miniBee.id;
+		}{
+			mb = miniBee;
+		};
+		switch( type,
+			'custom', { this.sendMsgWithArgs( '/unmap/minibee/custom', [id, mb] )},
+			'output', { this.sendMsgWithArgs( '/unmap/minibee/output', [id, mb] )}
+		);
+	}
+
 	subscribeNode{ |node|
 		if ( node.isKindOf( SWDataNode ) ){
 			this.sendMsgWithArgs( '/subscribe/node', node.id );
