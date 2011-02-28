@@ -11,6 +11,7 @@ SWBusNode{
 	var <bus, <synth, <server;	
 	var <inbus;
 	var <settings;
+	var <restartsettings;
 
 	var <watcher;
 
@@ -26,6 +27,10 @@ SWBusNode{
 
 	*new{|id,network,input,serv,autostart=false|
 		^super.new.init( id, network, input,serv,autostart );
+	}
+
+	*at{ |id|
+		^all.at( id );
 	}
 
 	initSynthDefAndBus{ |s,nc=1|
@@ -50,6 +55,7 @@ SWBusNode{
 		inbus = in;
 
 		settings = IdentityDictionary.new;
+		restartsettings = Set.new;
 
 		network.addExpected( id );
 
@@ -71,8 +77,6 @@ SWBusNode{
 
 		this.myInit;
 
-		//	if ( bus.notNil, { this.node.bus_( bus ); } );
-
 		if ( autostart ){
 			fork{
 				server.sync;
@@ -89,12 +93,18 @@ SWBusNode{
 			}, \expected );
 			network.addHook( id, { 
 				this.setLabel;
+				this.setBus;
 			}, \setter );
 		}{
 			network.setData( id, Array.fill( bus.numChannels, 0 ) );
 			this.setLabel;
+			this.setBus;
 		};
 		// override in subclass
+	}
+
+	setBus{
+		if ( bus.notNil, { this.node.bus_( bus ); } );
 	}
 
 	start{
@@ -131,7 +141,15 @@ SWBusNode{
 	set{ arg ... args;
 		args.clump( 2 ).do{ |it|
 			settings.put( it[0], it[1] );
-			if ( synth.notNil, { synth.set( it[0], it[1] ); } );
+			if ( synth.notNil, 
+				{
+					if ( restartsettings.includes( it[0] ) ){
+						this.stop;
+						this.start;
+					}{
+						synth.set( it[0], it[1] );
+					}
+				} );
 		};
 	}
 	
@@ -346,6 +364,7 @@ MeanStdDevNode : SWBusNode{
 		bus = Bus.control( s, nc*2 );
 
 		settings.put( \length, 50 );
+		restartsettings.add( \length );
 
 		synthDef = (\MeanStddevNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
@@ -364,6 +383,7 @@ MeanNode : SWBusNode{
 		bus = Bus.control( s, nc );
 
 		settings.put( \length, 50 );
+		restartsettings.add( \length );
 
 		synthDef = (\MeanNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
@@ -383,6 +403,7 @@ StdDevNode : SWBusNode{
 		bus = Bus.control( s, nc );
 
 		settings.put( \length, 50 );
+		restartsettings.add( \length );
 
 		synthDef = (\StddevNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
@@ -399,6 +420,7 @@ SumStdDevNode : SWBusNode{
 		synthDef = (\SumStddevNode++nc).asSymbol;
 
 		settings.put( \length, 50 );
+		restartsettings.add( \length );
 
 		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, length=50;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
