@@ -11,7 +11,7 @@ CXObjectInspector : ObjectGui {
 	}
 
 	guiBody { arg layout;
-		var vert,list,listItems,actions;
+		var vert,list,listItems,actions,val;
 		listItems = List.new;
 		actions = List.new;
 
@@ -38,12 +38,19 @@ CXObjectInspector : ObjectGui {
 			});
 		});
 
-		list = GUI.listView.new(layout,550@600);
+		list = ListView(layout,(layout.bounds.width-20)@600);
 		list.font = GUI.font.new("Courier",10);
-		list.background = Color(0.65,0.75,0.65,0.15);
+		list.background = Color(0.96777196663153, 0.97014925373134, 0.95566941412341);
 		list.items = listItems.array.add("");
 		list.action = {
-			actions[list.value].value };
+			val = actions[list.value];
+		};
+		list.mouseUpAction = {
+			val.value
+		};
+		list.enterKeyAction = {
+			val.value
+		};
 		list.value = list.items.size - 1;
 		this.dependantsGui(layout);
 		this.actionsGui(layout);

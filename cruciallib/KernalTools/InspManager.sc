@@ -72,11 +72,16 @@ InspManager {
 	*initClass { global = this.new }
 
 	watch { arg insp;
+		if(insp.isNil,{
+			//"Insp was nil, asked to watch".error;
+			//this.dump;
+			^this
+		});			
 		insps = insps.add(insp);
 		if(menu.isNil, {
 			menu = \pleaseWait;
 			{
-				var h,fb,f,w;
+				var h,fb,f,w,val;
 				f = GUI.window.new("inspect",Rect(440,500,1100,900));
 				f.view.background = Color.white;
 				h = f.bounds.height - 50;
@@ -85,8 +90,9 @@ InspManager {
 				menu.font = GUI.font.new("Courier",10);
 				menu.background = Color(0.7,0.7,0.7,0.5);
 				menu.items = [insp.name];
-				menu.action = { this.showInsp(insps.at(menu.value)) };
-
+				menu.action = { val = insps.at(menu.value); };
+				menu.mouseUpAction = { this.showInsp(insps.at(menu.value)); };
+				menu.enterKeyAction = { this.showInsp(val); }; 
 				inspView = GUI.compositeView.new(f, Rect(203,0,w - 205,h));
 				inspView.background = Color(0.17,0.1,0.1,0.15);
 				this.showInsp(insp);
