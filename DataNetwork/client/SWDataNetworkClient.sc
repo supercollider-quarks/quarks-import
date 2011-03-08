@@ -286,7 +286,7 @@ SWDataNetworkClient : SWDataNetwork{
 	}
 
 	// overloaded from base class
-	add{ |key, slot,fromnw=false|
+	add{ |key, slot,fromnw=true|
 		var ns;
 		super.add( key, slot );
 		//	spec.add( key, slot );
