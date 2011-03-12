@@ -180,7 +180,17 @@ TLSequenceIterator {
 	}
 	
 	findActive { |id, thisCmd|
-		^activeCmds.detect({ |item| (item !== thisCmd) and: { item.id == id } })
+		var	result;
+		activeCmds.do { |item| 
+			if((item !== thisCmd) and: { item.id == id }) {
+				^item
+			} {
+				if(item.respondsTo(\findActive)) {
+					(result = item.findActive(id, thisCmd)) !? { ^result }
+				};
+			}
+		};
+		^nil
 	}
 	
 	cmdStopped { |cmd, parms, resumeTime|
