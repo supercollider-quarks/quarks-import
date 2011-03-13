@@ -5,7 +5,6 @@ CXPatterns {
 		var scale;
 		Class.initClassTree(Spec);
 		Class.initClassTree(Crucial);
-		Class.initClassTree(CXScale);
 		Crucial.initSpecs;
 		
 		Spec.specs.addAll([

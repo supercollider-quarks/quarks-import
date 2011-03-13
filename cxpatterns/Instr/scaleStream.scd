@@ -18,7 +18,7 @@ if(checkSpec.isNil,{
 	})
 });*/
 
-scales = CXScale.scales.values;
+//scales = CXScale.scalesArray;
 /* #[ 
 	[ 0, 2, 3, 5, 6, 8, 9, 11 ], 
 	[ 0, 2, 4, 6, 8, 10 ], 
@@ -90,7 +90,7 @@ pentatonics = 	#[
 	
 // returns a scale as an array
 Instr("scaleStream.scaleAt",{ arg scaleIndex=0,root=0;
-	scales.at(scaleIndex) + root
+	CXScale.scalesArray.at(scaleIndex) + root
 },[
 	StaticIntegerSpec(0,scales.size - 1),
 	StaticIntegerSpec(-100,100)
@@ -119,7 +119,7 @@ Instr("scaleStream.randchordprog",{ arg chords=2,notesPerChord=16,root=0;
 		Pstutter(notesPerChord,
 			Pseq(
 				Array.fill(chords,{ arg i;
-					scales.choose + 12.rand + root
+					CXScale.scalesArray.choose + 12.rand + root
 				}) ,inf)
 		)
 		
@@ -167,7 +167,7 @@ Instr("scaleStream.twopentas",{ arg notesPerChord=16,root1=0,scale1=0,root2=0,sc
 // 1 4
 Instr("scaleStream.onefour",{ arg notesPerChord=16,root=0;
 	var scale;
-	scale = 	scales.choose;//at(\aeloian);
+	scale = 	CXScale.scalesArray.choose;//at(\aeloian);
 
 	Pstutter(notesPerChord,
 		Pseq([scale,scale + 4] + root,inf)
@@ -181,7 +181,7 @@ Instr("scaleStream.onefour",{ arg notesPerChord=16,root=0;
 // 1 4 1 4 1 5 4 1
 Instr("scaleStream.bluesprog",{ arg notesPerChord=16,root=0;
 	var scale;
-	scale = 	scales.choose;//at(\aeloian);
+	scale = CXScale.scalesArray.choose;//at(\aeloian);
 
 	Pstutter(notesPerChord,
 		Pseq(root + [scale,scale + 4, scale, scale + 4, scale, scale + 5, scale + 4, scale],inf)
