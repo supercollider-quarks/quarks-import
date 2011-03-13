@@ -102,9 +102,13 @@ NumberEditorGui : EditorGui {
 				model.activeValue_(model.spec.constrain(nb.value)).changed(numv);
 			});
 		numv.mouseDownAction = { arg view,x, y, modifiers, buttonNumber, clickCount;
-			startValue = model.unmappedValue;
-			mod = modifiers;
-			startPoint = 0@0;
+			if(modifiers.isAlt,{
+				model.activeValue_(model.spec.default).changed
+			},{
+				startValue = model.unmappedValue;
+				mod = modifiers;
+				startPoint = 0@0;
+			})
 		};
 		numv.mouseMoveAction = { arg view,x,y,modifiers;
 			var move,val,unimove;
@@ -134,6 +138,13 @@ NumberEditorGui : EditorGui {
 		numv.clipLo = model.spec.minval;
 		numv.clipHi = model.spec.maxval;
 		
+		/*numv.keyDownAction = { arg char,modifiers,unicode,keycode;
+			if("012356789-.".includes(char),{
+				this.defaultKeyDownAction(char, modifiers, unicode, keycode);
+			},{
+				nil
+			})
+		};*/
 		//if(consumeKeyDowns,{
 		//	numv.keyDownAction = {nil};
 		//});
@@ -169,15 +180,19 @@ KrNumberEditorGui : NumberEditorGui {
 
 PopUpEditorGui : EditorGui {
 	var popV;
-
+	    // temp, I don't really have a spec here
+        // we arent editing a "pop up", so the class is misnamed
+        // just to get this gui representation
+        // maybe NumberEditor should use this gui if it has a named integers spec
 	guiBody { arg layout;
 		var horSize;
 		horSize = model.labels.maxValue({arg item; item.size }) * 12;
-		popV = GUI.popUpMenu.new(layout,Rect(0,0,horSize,15))
+		popV = PopUpMenu(layout,Rect(0,0,horSize,GUI.skin.buttonHeight))
 			.items_(model.labels)
 			.action_({ arg nb;
 				model.selectByIndex(popV.value).changed(this)
 			});
+		popV.background = GUI.skin.background;
 		if(consumeKeyDowns,{ popV.keyDownAction = {nil}; });
 		popV.setProperty(\value,model.selectedIndex)
 	}
