@@ -31,14 +31,15 @@ SynthConsole : AbstractConsole  {
 	}
 
 	play {
-		ActionButton(layout,">",{this.doPlay }).background_(Color.green);
+		ActionButton(layout,">",{this.doPlay })
+		    .background_(Color(0.0, 0.86567164179104, 0.28425038984184));
 	}
 	prepare {
-		ActionButton(layout,"pre",{this.doPrepare}).background_(Color.green(1.0,0.2))
+		ActionButton(layout,"pre",{this.doPrepare})
+		    .background_(Color(0.41676819981724, 0.92857142857143, 0.2771855010661, 0.2089552238806))
 	}
 	scope {arg duration=0.5;
-		//ActionButton(layout,"scope",{this.doScope(duration)})
-		//	.background_(Color.green);
+		ActionButton(layout,"scope",{this.doScope(duration)})
 	}
 	fftScope {
 		//ActionButton(layout,"fftScope",{this.doFFTScope})
@@ -51,23 +52,15 @@ SynthConsole : AbstractConsole  {
 		}).background_(Color.red);
 		*/
 	}
-	pauseableRecord { arg defpath;
-		//if(defpath.notNil,{ defaultPath = defpath });
-		// should be a multi state button
-		//ActionButton(layout,"|,|",{
-		//	this.getPathThen(\doPauseableRecord);
-		//}).background_(Color.red);
-		//pauseControl = CheckBoxView(layout.win,layout.layRight(29,13),",");
-	}
 	write {arg dur,defpath;
 		//		if(defpath.notNil,{ defaultPath = defpath });
 		//		ActionButton(layout, "{}",{ this.getPathThen(\doWrite,dur.value ? duration ?? { 120 }) } ); // do a dialog
 	}
 
 	stop { arg stopFunc;
-		ActionButton(layout,"[_]",{
+		ActionButton(layout,"stop",{
 			this.doStop(stopFunc)
-		});
+		}).background_(Color(0.7910447761194, 0.20998949813831, 0.16529293829361));
 	}
 	free {
 		ActionButton(layout,"free",{
@@ -80,7 +73,6 @@ SynthConsole : AbstractConsole  {
 
 	tempo {
 		Tempo.default.gui(layout);
-		//TempoGui.setTempoKeys;
 	}
 
 	// pr
@@ -92,10 +84,7 @@ SynthConsole : AbstractConsole  {
 	}
 
 	doScope { arg duration=0.5;
-//		Synth.scope({ arg synth;
-//			Tempo.setTempo;
-//			this.ugenFunc.value(synth)
-//		},duration)
+	    this.ugenFunc.scope(duration)
 	}
 	doFFTScope {
 //		Synth.fftScope({ arg synth;
@@ -133,46 +122,6 @@ SynthConsole : AbstractConsole  {
 //		onRecordOrWrite.value(path);
 //		NotificationCenter.notify(this,\didRecordOrWrite);
 	}
-	doPauseableRecord { arg path;
-//
-//		var file, newsynth;
-//		var hformat,sformat;
-//		# hformat, sformat = this.getFormats;
-//
-//		newsynth = Synth.new({ arg synth;
-//			var ugenGraph;
-//
-//			Tempo.setTempo;
-//
-//			ugenGraph = this.ugenFunc.value(synth).asArray;
-//
-//			file = SoundFile.new;
-//			file.headerFormat = hformat;
-//			file.sampleFormat = sformat;
-//			file.numChannels = ugenGraph.size;
-//			if (file.writeHeader(path), {
-//				file.prepareRecord;
-//				Pause.ar({
-//					DiskOut.ar(file, 32768, ugenGraph)
-//				},pauseControl.kr);
-//				ugenGraph
-//			},{
-//				file = nil;
-//				nil
-//			});
-//		});
-//
-//		if (newsynth.notNil, {
-//			NotificationCenter.registerOneShot(this,\didStop,this,{
-//				//Synth.stop appears to return asynch
-//				if(Synth.isPlaying.not,{
-//					file.endRecord
-//				});
-//			});
-//			newsynth.play;
-//			file.endRecord;
-//		});
-	}
 
 }
 
@@ -205,7 +154,7 @@ SaveConsole : AbstractConsole {
 		 	})
 	 	},minWidth).background_(
 	 		if(path.value.isNil,{ // virgin
-	 			Color.new255(202,255,161)
+	 			GUI.skin.background
 	 		},{
 	 			Color.new255(255,242,89)
 	 		})
@@ -224,7 +173,7 @@ SaveConsole : AbstractConsole {
 				onOpenF.value(paths[0]);
 			});
 		});
-	}				
+	}
 	getPathThen {  arg then ... args;
 		//var defPath;
 		//defPath=(defaultPath.value ? object).asString;
@@ -237,7 +186,7 @@ SaveConsole : AbstractConsole {
 	doSave {
 		var clobber,vpath,evpath;
 		vpath = path.value;
-		if(File.exists(vpath),{
+		if(File.exists(vpath),{ // whoops, sorry microsoft
 			evpath = vpath.escapeChar($ );
 			("cp " ++ evpath + evpath ++ ".bak").unixCmd;
 		});
