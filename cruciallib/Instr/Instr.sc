@@ -27,35 +27,27 @@ Instr  {
 		^super.newCopyArgs(name,func).init(specs,outSpec)
 	}
 	*at { arg  name;
-		var search;
-		search = this.objectAt(name);
-		//if(search.notNil,{ search = search.asInstr; });
-		^search
+		^this.objectAt(name);
 	}
 	*loadAll {
-		var quarkInstr;
-		(this.dir ++ "*").pathMatch.do({ arg path;
-			{
-				if(path.last != $/,{
-					path.loadPath(false)
-				})
-			}.try({ arg err;
-				("ERROR while loading " + path).postln;
-				err.throw;
-			});
-		});
-		quarkInstr = (Platform.userExtensionDir ++ "/quarks/*/Instr/*").pathMatch
-			.reject { |path| path.splitext[1] == "sc" };
-		quarkInstr.do({ |path|
-			{
-				if(path.last != $/,{
-					path.loadPath(false);
-				})
-			}.try({ arg err;
-				("ERROR while loading " + path).postln;
-				err.throw;
-			});
-		});
+	    this.prLoadDir(this.dir);
+		this.prLoadDir(Platform.userExtensionDir ++ "/quarks/*/Instr");
+	}
+	*prLoadDir { arg dir;
+	    var paths;
+	    paths = (dir +/+ "*").pathMatch.reject { |path| path.splitext[1] == "sc" };
+	    paths.do { |path|
+	        if(path.last == $/,{
+	            this.prLoadDir(path)
+	        },{
+    			{
+				path.loadPath(false);
+    			}.try({ arg err;
+    				("ERROR while loading " + path).postln;
+    				err.throw;
+    			});
+    		});
+		};
 	}
 	*clearAll {
 		Library.global.removeAt(this)
@@ -82,6 +74,9 @@ Instr  {
 	}
 	valueArray { arg inputs;
 		^func.valueArray(inputs)
+	}
+	*kr { arg name, args;
+		^this.ar(name,args)
 	}
 	kr { arg ... inputs;
 		^func.valueArrayEnvir(inputs);
@@ -167,7 +162,7 @@ Instr  {
 	asDefName {
 		^this.store.name
 	}
-
+	funcDef { ^func.def }
 	test { arg ... args;
 		var p;
 		p = Patch(this.name,args);
@@ -176,6 +171,9 @@ Instr  {
 	}
 	play { arg ... args;
 		^Patch(this.name,args).play
+	}
+	plot { arg args,duration=5.0;
+		^Patch(this.name,args).plot(duration)
 	}
 	*choose { arg start;
 		// this is only choosing from Instr in memory,
@@ -235,13 +233,15 @@ Instr  {
 		});
 		error("Invalid name for Instr : "++name);
 	}
-
+	*isDefined { arg name;
+		^Library.atList([this] ++ this.symbolizeName(name)).notNil;
+	}		
 	*objectAt { arg name;
-		var symbolized,search,path,pathParts,rootPath,instr;
+		var symbolized,search;
 		symbolized = this.symbolizeName(name);
 		search = Library.atList([this] ++ symbolized);
 		if(search.notNil,{ ^search });
-
+		symbolized.debug("Instr not found, loading file...");
 		this.findFileFor(symbolized);
 
 		// its either loaded now or its nil
@@ -279,7 +279,7 @@ Instr  {
 		// or synths/stereo/SinOsc/pmod.scd
 
 		(rootPath++"*").pathMatch.do({ |path|
-			var file,orcname,symbols;
+			var file,orcname,symbols,pn;
 			file = path.copyRange(rootPath.size,path.size-1);
 			if(file.last == $/,{
 				if(file.copyRange(0,file.size-2) == pathPartsFirst,{
@@ -288,20 +288,26 @@ Instr  {
 										fullInstrName );
 				});
 			},{
-				orcname = PathName(file).fileNameWithoutExtension;
-				if(orcname == pathPartsFirst,{
-				    //("Loading:" + path).postln;
-					path.load;
+			    pn = PathName(file);
+			    if(["scd","rtf",""].includesEqual(pn.extension),{
+    				orcname = pn.fileNameWithoutExtension;
+    				if(orcname == pathPartsFirst,{
+    				    ("Loading instr file:" + path).debug(orcname);
+    					
+    					// compiles and creates all Instr
+    					// which are now findable in the Library
+    					path.load;
 					
-					//fullInstrName copied up until including orcname
-					symbols = [];
-					fullInstrName.any({ |n|
-						symbols = symbols.add(n);
-						n == orcname
-					});
-					Instr.leaves(symbols).do({ |instr| instr.path = path });
-					^path
-				});
+    					// set path on all those within this file that we just loaded
+    					symbols = [];
+    					fullInstrName.any({ |n|
+    						symbols = symbols.add(n.asSymbol);
+    						n.asSymbol === orcname.asSymbol
+    					});
+    					Instr.leaves(symbols).do({ |instr| instr.path = path });
+    					^path
+    				});
+    			})
 			});
 		});
 
@@ -363,6 +369,7 @@ Instr  {
 			});
 		});
 		this.class.put(this);
+		this.class.changed(this)
 	}
 	makeSpecs { arg argspecs;
 		explicitSpecs = argspecs ? [];
@@ -391,44 +398,8 @@ Instr  {
 	// a filter is any instr that has an input the same spec as its output
 	isFilter { ^this.specs.any({ |sp| sp == this.outSpec }) }
 	
-	guiBody { arg layout;
-		var defs,tf,source,lines,h,w,specWidth;
-
-		this.argNames.do({ arg a,i;
-			layout.startRow;
-			ArgNameLabel(  a ,layout,150);
-			CXLabel(layout, " = " ++ this.defArgAt(i).asString,100);
-			specWidth = min(layout.indentedRemaining.width,300);
-			this.specs.at(i).asCompileString.gui(layout,specWidth@GUI.skin.buttonHeight);
-		});
-
-		layout.startRow;
-		source = this.func.def.sourceCode;
-		if(source.notNil,{
-			lines = ["\n"] ++ source.split($\n).collect({|l| " "++l}) ++ ["\n"];
-
-			w = lines.maxValue({ |l| l.size }) * 7;
-			h = lines.size * 13;
-
-			tf = GUI.textField.new(layout,Rect(0,0,w,h));
-			tf.string = source;
-			tf.font_(GUI.font.new("Helvetica",10.0));
-		});
-
-		ArgNameLabel("outSpec:",layout.startRow,150);
-		this.outSpec.asString.gui(layout);
-
-		if(path.notNil,{
-			CXLabel(layout.startRow,path);
-			// ActionButton(layout.startRow,"open file...",{ path.openTextFile });
-		});
-
-		layout.startRow;
-		if(path.notNil and: { File.exists(this.path) },{
-			ActionButton(layout,"edit File",{ this.path.openTextFile });
-		});
-		ActionButton(layout,"make a Patch",{ Patch(this.name).topGui });
-	}
+	guiClass { ^InstrGui }
+	
 }
 
 
@@ -472,9 +443,21 @@ UGenInstr {
 
 		//specs
 		specs = this.argNames.collect({ arg ag,i;
+		    var da,sp;
 			ag.asSpec ?? {
-				("UGenInstr:init Spec.specs has no entry for: % so guessing ControlSpec".format(ag.asCompileString)).warn;
-				nil.asSpec
+			    da = this.defArgAt(i) ? 0;
+			    if(da.isNumber) {
+    			    if(da.inclusivelyBetween(0.0,1.0),{
+    				    //("UGenInstr:init Spec.specs has no entry for: % so guessing default ControlSpec".format(ag.asCompileString)).warn;
+    				    nil.asSpec
+    				},{
+    				    sp = ControlSpec(da,da,default:da);
+    				    ("UGenInstr:init Spec.specs has no entry for: % so creating spec: %".format(ag.asCompileString,sp)).warn;
+    				    sp
+    				});
+    			} {
+    			    ObjectSpec.new
+    			};
 			}
 		});
 	}
@@ -489,14 +472,28 @@ UGenInstr {
 	ar { arg ... args; ^this.value(args) }
 	kr { arg ... args; ^this.value(args) }
 	outSpec {
-		if(rate=='ar',{
-			^\audio
-		},{
-			^\control
-		})
+		^rate.switch(
+	            \ar,\audio,
+	            \kr,\control,
+	            \new,\fft // temp hack
+	            );
 	}
-	dotNotation { ^ugenClass.asString }
-	funcDef { ^ugenClass.class.findMethod(rate) }
+	dotNotation { ^ugenClass }
+	funcDef { 
+	    ^ugenClass.class.findMethod(rate) ?? {
+	        ugenClass.superclasses.do { arg sc;
+	            var fd;
+	            if(sc == UGen) {
+	                ^nil
+	            };
+	            fd = sc.class.findMethod(rate);
+	            if(fd.notNil,{
+	                ^fd
+	            });
+	        }
+	    };
+	}
+	path { ^ugenClass.filenameSymbol.asString }
 	maxArgs { ^this.argsSize }
 	argsSize { ^this.funcDef.argNames.size - 1 }
 	argNames {
@@ -529,10 +526,25 @@ UGenInstr {
 		^if(nn.notNil,{nn.at(i + 1)},{nil});
 	}
 
-//	guiClass { ^UGenInstrGui }
+	guiClass { ^UGenInstrGui }
 	asString { ^"UGenInstr " ++ ugenClass.name.asString }
 	asInstr { ^this }
 	name { ^ugenClass.asString }
+	
+	*leaves { arg rateMethod; // ar kr new
+		var ll;
+		^Library.atList([this,'leaves',rateMethod ? 'all']) ?? {
+			ll = UGen.allSubclasses;
+			if(rateMethod.notNil,{
+				ll = ll.select({ arg cls; cls.class.findMethod(rateMethod).notNil })
+			});
+			ll = ll.sort({ arg a,b; a.charPos <= b.charPos });
+			ll = ll.sort({ arg a,b; a.filenameSymbol.asString <= b.filenameSymbol.asString });
+			ll = ll.collect(UGenInstr(_));
+			Library.putList([this,'leaves',rateMethod ? 'all',ll]);
+			ll
+		}
+	}
 
 }
 
