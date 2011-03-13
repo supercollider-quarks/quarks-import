@@ -1,25 +1,4 @@
-/*
-a user view based grid of boxes
 
-can drag elements
-   calls dragged(from,to)
-on click
-on double click
-set state/color of an element
-set label of element
-add column and row headers via a flow at that location
-focus (x@y)
-moveFocusBy(x@y)
-
-handlers:
-   mouseDown.value( x@y, modifiers
-   controlClick(x@y)
-   shiftClick(x@y)
-   dragAction(x@y,p@q)
-
-   client uses either 2d array or dict of points
-
-*/
 
 BoxMatrix : SCViewHolder {
 
@@ -68,9 +47,9 @@ BoxMatrix : SCViewHolder {
         bounds = bounds.moveTo(0,0); // my reference
         boxWidth = bounds.width.asFloat / numCols;
         boxHeight = bounds.height.asFloat / numRows;
-
+	   view.focusColor = defaultStyle.borderColor;
+	   
         view.drawFunc = { this.drawGrid };
-        view.canFocus = false;
 
         // mouses
         view.mouseOverAction = { |me,x,y,modifiers|
@@ -113,25 +92,22 @@ BoxMatrix : SCViewHolder {
             });
         };
 
-        // drags, synthetically implemented
-        /*view.beginDragAction = { arg me;
-            this.handleCoords(x,y,'beginDragAction',[])
+	   // dragging off the matrix
+        view.beginDragAction = { arg me;
+            this.handleByFocused('beginDragAction',[]) ?? {this.focusedBox}
         };
         view.canReceiveDragHandler = { arg me;
-            // doesn't give x y
-            // would have to watch mouseMove
-            //this.handle( 'canReceiveDragHandler',[]) ? true
-            true
+            this.handleByFocused('canReceiveDragHandler',[]) ? true
         };
-        view.receiveDragHandler = { arg me,x,y;
-            this.handleCoords(x,y,'receiveDragHandler',[])
-        };*/
+        view.receiveDragHandler = { arg me;
+		   this.handleByFocused('receiveDragHandler',[])
+        };
 
 
         // keys
-        view.keyDownAction = { arg me,char,modifiers,unicode,keycode;
+        view.keyDownAction_({ arg me,char,modifiers,unicode,keycode;
             this.handleByFocused('keyDownAction',[char,modifiers,unicode,keycode])
-        };
+        });
         view.keyUpAction = { arg me,char,modifiers,unicode,keycode;
             this.handleByFocused('keyUpAction',[char,modifiers,unicode,keycode])
         };
@@ -143,48 +119,40 @@ BoxMatrix : SCViewHolder {
     // same interface as a view
     // but the box's environment is pushed
     // and these args are supplied:
-    //  boxPoint,  modifiers, buttonNumber, clickCount
+    //  box,  modifiers, buttonNumber, clickCount
     mouseDownAction_ { arg func;
         this.setHandler('mouseDownAction',func)
     }
-    //  boxPoint,  modifiers
+    //  box,  modifiers
     mouseUpAction_ { arg func;
         this.setHandler('mouseUpAction',func)
     }
-    //  boxPoint,  modifiers
+    //  box,  modifiers
     mouseOverAction_ { arg func;
         this.setHandler('mouseOverAction',func)
     }
-    //  boxPoint,  x, y, modifiers
+    //  box,  x, y, modifiers
     mouseMoveAction_ { arg func;
-        // todo: give x/y as relative
         this.setHandler('mouseMoveAction',func)
     }
 
 
-    // boxPoint
-        // by default dragLabel is ~title,
-        // set ~dragLabel to change
-        // it will be unset/consumed afterwards
-    /*
+	// dragging on or off the matrix using command-drag
+    // box
     beginDragAction_ { arg func;
-        this.setHandler('beginDragAction',{ arg boxPoint;
-            var obj;
-            obj = func.value;
-            view.dragLabel = currentEnvironment.at(\dragLabel) ? currentEnvironment[\title];
-            obj
-        })
+        this.setHandler('beginDragAction',func)
     }
-    // boxPoint
+    // itemBeingDragged
     canReceiveDragHandler_ { arg func;
         this.setHandler('canReceiveDragHandler',func)
     }
-    // boxPoint
+    // focusedBoxPoint for now, should be the box at the drop point
+    // but user view doesnt give x,y yet
     receiveDragHandler_ { arg func;
-        this.setHandler('receiveDragHandler',func)
+        this.setHandler('receiveDragHandler',{arg box;func.value(box,View.currentDrag)})
     }
-    */
 
+	// box to box dragging
     // args: fromBox,toBox,modifiers
     onBoxDrag_ { arg func;
         this.setHandler('onBoxDrag',{ arg toBox,draggingPoint,modifiers;
@@ -227,15 +195,15 @@ BoxMatrix : SCViewHolder {
 
 
     // the key responders are passed to the FOCUSED box
-    // boxPoint, char,modifiers,unicode,keycode
+    // box, char,modifiers,unicode,keycode
     keyUpAction_ { arg func;
         this.setHandler('keyUpAction',func)
     }
-    // boxPoint, char,modifiers,unicode,keycode
+    // box, char,modifiers,unicode,keycode
     keyDownAction_ { arg func;
         this.setHandler('keyDownAction',func)
     }
-    // boxPoint,modifiers
+    // box,modifiers
     keyModifiersChangedAction_ { arg func;
         this.setHandler('keyModifiersChangedAction',func)
     }
@@ -243,6 +211,17 @@ BoxMatrix : SCViewHolder {
     /* SETTING AND GETTING */
     at { arg boxPoint;
         ^this.getBox(boxPoint)
+    }
+    colsRowsDo { arg f,createBoxes=false;
+	    numRows.do({ arg ri;
+		    numCols.do({ arg ci;
+			    if(createBoxes,{
+				    f.value(this.getBox(ci@ri),ci@ri)
+			    },{
+				    f.value(boxes.at(ci@ri),ci@ri)
+			    })
+		    })
+	    })
     }
     set { arg boxPoint,attr,value;
         this.getBox(boxPoint).put(attr,value)
@@ -299,17 +278,18 @@ BoxMatrix : SCViewHolder {
         handlers.put(selector,func)
     }
     handle { arg boxPoint,selector,args,preFunc;
-	   var box;
+	   var box,ret;
 	   box = this.at(boxPoint);
         preFunc.valueArray([boxPoint] ++ args);
-        handlers.at(selector).valueArray([box] ++ args);
+        ret = handlers.at(selector).valueArray([box] ++ args);
         this.view.refresh;
+        ^ret
     }
     handleCoords { arg x,y,selector,args,preFunc;
-        this.handle(this.boxPoint(x,y),selector,args,preFunc)
+        ^this.handle(this.boxPoint(x,y),selector,args,preFunc)
     }
     handleByFocused { arg selector,args,preFunc;
-        focusedPoint !? {
+        ^focusedPoint !? {
             this.handle(focusedPoint,selector,args,preFunc)
         }
     }
@@ -371,7 +351,7 @@ BoxMatrix : SCViewHolder {
 	        });
 	        styleNames.do { arg sn;
 		        styles[sn].keysValuesDo { arg k,v;
-			        style[k] = v.value(style[k])
+			        style[k] = v.value(style[k],envir)
 		        }
 	        };        
 			        
