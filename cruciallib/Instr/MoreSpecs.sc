@@ -22,7 +22,7 @@ AudioSpec : Spec {
 			];
 		)
 	}
-	defaultControl{
+	defaultControl {
 		if(numChannels.isNil,{
 			// the purpose is to occupy an input
 			// so a fixed numChannels is needed
@@ -36,20 +36,48 @@ AudioSpec : Spec {
 	canAccept { arg thing;
 		^(thing.isKindOf(AbstractPlayer) and: { thing.spec == this })
 	}
-
 }
+
 
 // an array of mono/stereo signals
 MultiTrackAudioSpec : AudioSpec {
+	
 	var <>tracks;
+	
 	*new { arg tracks=2,numChannels=2;
 		^super.new(numChannels).tracks_(tracks)
 	}
 	storeArgs { ^[tracks,numChannels] }
 }
 
+
+BFormatSpec : AudioSpec {
+	
+	// w, x, y, z
+	
+	*new {
+		^super.new.numChannels_(4)
+	}
+	storeArgs { ^[] }
+	*initClass {
+		specs.addAll(
+		 [
+			\bformat -> this.new
+			];
+		)
+	}
+	/*constrain { arg value;
+		^value
+	}*/
+
+}
+
+
 // has a gate. generally short duration.  for Pbind, InstrGateSpawner etc.
+// this specifies that the output is audio and that the synth can be expected
+// to end via an internal envelope
 AudioEventSpec : AudioSpec {
+
 	*initClass {
 		var a;
 		specs.addAll(
@@ -62,10 +90,15 @@ AudioEventSpec : AudioSpec {
 	default{
 		^Event.default
 	}
+	
 }
 
+
+// this specifies that the output is audio and it has an input which is also audio
 EffectSpec : AudioSpec {
+	
 	var <>numInputs;
+	
 	*new { arg numChannels=2,numInputs=1;
 		^super.new(numChannels).numInputs_(numInputs)
 	}
@@ -80,6 +113,26 @@ EffectSpec : AudioSpec {
 			\dualStereoEffect -> EffectSpec(2,2)
 			];
 		)
+	}
+}
+
+// specifies an FFT chain output or for an input that takes an FFT chain
+FFTSpec : Spec {
+
+	var <>bufSize;
+
+	*new { arg bufSize=2048;	
+		^super.new.bufSize_(bufSize)
+	}
+	*initClass {
+		specs.addAll(
+		[
+			\chain -> FFTSpec.new,
+			\fft -> FFTSpec.new
+		])
+	}	
+	defaultControl {
+		^Patch(Instr("FFTblank",{FFT(LocalBuf(2048),Silent.ar)}))
 	}
 }
 
@@ -102,6 +155,14 @@ TrigSpec : ControlSpec {
 }
 
 
+DemandSpec : ControlSpec {
+	
+	// defaultControl { Dwhite(this.minval,this.maxval,this.step,inf) }
+	rate { ^\demand }
+
+}
+
+
 TempoSpec : Spec {
 	defaultControl { ^TempoPlayer.new }
 	rate { ^\control }
@@ -117,6 +178,7 @@ TempoSpec : Spec {
 	}
 }
 
+
 NoLagControlSpec : ControlSpec {
 
 	*initClass {
@@ -131,8 +193,8 @@ NoLagControlSpec : ControlSpec {
 	defaultControl { arg val;
 		^KrNumberEditor.new(this.constrain(val ? this.default),this).lag_(nil)
 	}
-
 }
+
 
 StaticSpec : NoLagControlSpec {
 	// also a scalar spec, but better to inherit ControlSpec
@@ -144,7 +206,9 @@ StaticSpec : NoLagControlSpec {
 	}
 }
 
+
 StaticIntegerSpec : StaticSpec {
+    
 	*new { arg minval=0, maxval=10, default, units;
 		^super.new(minval.asInteger, maxval.asInteger, \lin, 1, default , units )
 	}
@@ -179,6 +243,47 @@ StaticIntegerSpec : StaticSpec {
 	}
 }
 
+
+NamedIntegersSpec : ControlSpec {
+    
+    var <values,<names,<static;
+    /*
+    two styles for names:
+        0 indexed integers 
+        [ "LINEAR","CAUCHY",...]   
+        using a custom integer list
+        [ [512,"512"],[1024,"1024"],[2048,"2048"] ...]
+    */
+    *new { arg names,default,static=false;
+        ^super.new(0,names.size-1,\linear,1,default).nisinit(names,static,default)
+    }
+	storeArgs { ^[[values,names].flop,default,static] }
+	*newFrom { arg similar;
+		^this.new([similar.values,similar.names].flop, similar.default,similar.static)
+	}
+
+    nisinit { arg n,s,d;
+        if(n[0].isString.not) {
+            # names, values = n.flop;
+            if(d.isNil,{
+                default = 0;
+            },{
+                default = values.indexOf(d) ? 0
+            })
+        } {
+            names = n;
+            values = Array.series(names.size);
+            default = d ? 0;
+        };
+        static = s;
+    }
+ 	canKr { ^static.not }
+	rate { ^if(static,\noncontrol,\control) }
+	defaultControl { arg val;
+	    ^PopUpEditor(default,names,values)
+	}
+}
+
 ScalarSpec : ControlSpec {
 	// \scalar means .ir or i_initialValue
 	// SendTrig etc. output a 0.0
@@ -190,10 +295,13 @@ ScalarSpec : ControlSpec {
 	}
 }
 
+
 NonControlSpec : Spec {
+    
 	rate { ^\noncontrol }
 	canKr { ^false }
 }
+
 
 EnvSpec : NonControlSpec {
 
@@ -220,12 +328,10 @@ EnvSpec : NonControlSpec {
 				\envperc -> this.new(Env.perc),
 				\envadsr -> this.new(Env.adsr),
 				\envasr -> this.new(Env.asr),
-				\env3 -> this.new(Env.new([0,1,1,0],[0,1,0])),
-				\env3sustain -> this.new(Env.new([0,1,1,0],[0,1,0]).releaseNode_(2)),
-				\fenv -> this.new(Env.new([ 0, 1, 0.2, 0 ], [ 0.04, 0.4, 0.3 ], [ -6.31, 1.1, -2 ], nil, nil)),
-				\rqenv -> this.new(  Env.new([ 0.194444, 0.0810185, 0.0648148, 0.444444 ], [ 0.01, 0.111111, 0.0833333 ], [ -0.583333, 3.33333, 1.66667 ], nil, nil)),
-				\envpercshort -> this.new(Env.new([ 0, 1, 1, 0.444444, 0 ], [ 0.166667, 1, 0.805556, 0.777778 ], [ -7.16667, -2, 2, -2 ], nil, nil))
 
+				// personal, will remove
+				// filter envelope
+				\fenv -> this.new(Env.new([ 0, 1, 0.2, 0 ], [ 0.04, 0.4, 0.3 ], [ -6.31, 1.1, -2 ], nil, nil))
 			]
 		)
 	}
@@ -233,6 +339,7 @@ EnvSpec : NonControlSpec {
 		^thing.isKindOf(Env) or: {thing.isKindOf(EnvEditor)}
 	}
 }
+
 
 BufferProxySpec : NonControlSpec {
 
@@ -263,17 +370,21 @@ BufferProxySpec : NonControlSpec {
 	}
 }
 
+
 BusSpec : NonControlSpec {
+	
 	/* this is not for i_bus inputs but rather for specifying that you need a Bus object
 	for kr or ir bus indices use
 		a ControlSpec(0, 4096, 'linear', 1, 0, "Bus")
 		or ScalarSpec(0,4096,'linear',1,0,"Bus")
 	*/
 	var <>rate,<>numChannels,<>private;
+	
 	*new { |rate,numChannels,private|
 		^super.new.rate_(rate).numChannels_(numChannels).private_(private)
 	}
 }
+
 
 SampleSpec : NonControlSpec {
 
@@ -288,8 +399,8 @@ SampleSpec : NonControlSpec {
 	defaultControl { ^Sample.new } // silent sample
 	default { ^this.defaultControl }
 	canAccept { arg ting; ^ting.isKindOf(Sample) }
-
 }
+
 
 ScaleSpec : NonControlSpec {
 	/*
@@ -312,7 +423,9 @@ ScaleSpec : NonControlSpec {
 
 // abstract class for container objects whose content items conform to itemSpec
 HasItemSpec : NonControlSpec {
+
 	var <>itemSpec;
+
 	*new { arg itemSpec;
 		var spec;
 		spec = itemSpec.asSpec;
@@ -335,9 +448,12 @@ HasItemSpec : NonControlSpec {
 	storeArgs { ^[itemSpec] }
 }
 
+
 // an array that has items that conform to itemSpec
 ArraySpec : HasItemSpec {
+
 	var <>size;
+
 	*new { arg itemSpec,size=16;
 		^super.new(itemSpec).size_(size)
 	}
@@ -352,6 +468,7 @@ ArraySpec : HasItemSpec {
 
 // a stream that returns items conforming to the itemSpec
 StreamSpec : HasItemSpec {
+
 	constrain { arg value; ^itemSpec.constrain(value) }
 	canAccept { arg ting;
 		^(ting.rate == \stream or: {itemSpec.canAccept(ting) })
@@ -365,23 +482,30 @@ StreamSpec : HasItemSpec {
 	maxval { ^itemSpec.maxval }
 }
 
+
 // an EventStream is playable as audio, but its also a stream of events for further pattern work
 EventStreamSpec : NonControlSpec {
+
 	rate { ^\stream }
 	defaultControl { ^Pbind.new }
 }
 
+
 // a player whose output conforms to itemSpec
 PlayerSpec : HasItemSpec {
+    
 	canAccept { arg ting;
 		^(ting.isKindOf(AbstractPlayer) and: {ting.spec == itemSpec})
 	}
 	rate { ^itemSpec.rate }
 }
 
-// should change to InstrSpec : could be as an instr or a string or a function
+
+// should change to InstrSpec : could be an instr or a string or a function
 InstrNameSpec : HasItemSpec {
+
 	var <>hasGate,<>hasAudioInput; // nil means "does not care"
+
 	*new { arg outSpec,hasGate,hasAudioInput;
 		^super.new(outSpec).hasGate_(hasGate).hasAudioInput_(hasAudioInput)
 	}
@@ -391,9 +515,10 @@ InstrNameSpec : HasItemSpec {
 	}
 }
 
-// for generic object input to a Patch
 
+// jh: for generic object input to a Patch
 ObjectSpec : Spec {
+
 	var  <>defaultControl;
 
 	*new { |obj|
