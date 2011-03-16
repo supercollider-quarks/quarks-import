@@ -216,8 +216,11 @@ PR(\synthCmd).clone {
 	};
 	~privateNodeEndAction = {
 		// make sure client knows the real final value from the synth
-		var	mctl = ~mixer.controls[~controlName];
-		mctl.bus.get({ |value| mctl.value = value });
+		var	mctl;
+		try {
+			mctl = ~mixer.controls[~controlName];
+			mctl.bus.get({ |value| try { mctl.value = value } });
+		};
 	};
 } => PR(\mixerAutoSynthCmd);
 
@@ -245,7 +248,7 @@ PR(\mixerAutoSynthCmd).clone {
 	~privateNodeEndAction = {
 		// make sure client knows the real final value from the synth
 		var	gc = ~gc;
-		gc.bus.get({ |value| gc.value = value });
+		gc.bus.get({ |value| try { gc.value = value } });
 	};
 } => PR(\gcAutoSynthCmd);
 
