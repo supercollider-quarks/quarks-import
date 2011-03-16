@@ -248,7 +248,7 @@ PR(\mixerAutoSynthCmd).clone {
 	~privateNodeEndAction = {
 		// make sure client knows the real final value from the synth
 		var	gc = ~gc;
-		gc.bus.get({ |value| try { gc.value = value } });
+		try { gc.bus.get({ |value| try { gc.value = value } }) };
 	};
 } => PR(\gcAutoSynthCmd);
 
