@@ -7,6 +7,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+110323 - moved RedWindow cocoa into scide_scapp folder
 101214 - support for discrete worlds with surroundings and neighbours
 	one new discrete world example added
 101210 - cleaned up and added helpfiles for RedHiddenObject, RedParticle, RedBoid, RedRock, RedFood, RedAgent
@@ -15,7 +16,6 @@ note! some of the examples require additional classes like RedGA etc.  these are
 	wrote addForceAngular3D, pendulumOffset3D, pendulumLoc3D
 101208 - added manhattanDistance to RedVector
 	added RedKMeans class and example 190
-	minor fix to RedAutoScale - changed to inf and -inf for min and max
 	added animate, frame and frameRate for RedJWindow to fake primitive
 100602 - removed bugfixes for Collection and FloatArray and moved the species {^this.class} fix into the RedVector class itself
 090629 - helpfiles and examples now uses view redirect instead of GUI
