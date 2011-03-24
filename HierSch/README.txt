@@ -7,6 +7,10 @@ GPLv3, http://gnu.org/copyleft/
 
 // Changes log
 
+2011-03-24
+TempoClock.default used if no tempoClock supplied
+Updated Helpfile
+
 2009-01-22
 Changed priority structure from priority 12 to priority 0 always plays.
 Updated Helpfile
