@@ -1,5 +1,5 @@
-// HierSch (c) 2007-2009 Tom Hall
-// version 2009-01-22
+// HierSch (c) 2007-2011 Tom Hall
+// version 2011-03-24
 
 HierSch { 
 	var <>t, <dict, myRate, myQuant, <isRunning=true;
@@ -7,13 +7,13 @@ HierSch {
 	var myflipH = false, myPlayEach = false, myHierFlip=false;
 	var ignoredHiers, <>muteH0=false, ceaseAllBool=false;
 		
-	*new { arg t; 
-		if (t.isNil, {^"Please specify a TempoClock".error});
-		^super.new.initRulesSched(t)
+	*new { arg clock; 
+		// if (clock.isNil, {^"Please specify a TempoClock".error});
+		^super.new.initRulesSched(clock)
 	}
 		
 	initRulesSched { arg aClock;
-		t = aClock;
+		t = aClock ? TempoClock.default;
 //		t.clear; // in case a schedChecker is already running
 		dict = HierSchDict.new; 
 		myRate = 2 ** 5; // 32
