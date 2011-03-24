@@ -19,6 +19,7 @@ b = {
 
 MinBox {
 	classvar <>defaultMode;
+	classvar <>defaultSkin;
 	classvar <modes, <textModes, <aligns;
 
 	var <view, <bounds;
@@ -42,21 +43,22 @@ MinBox {
 		textModes = [\both,\switch,\label,\value];
 		aligns = [\left, \right, \center, \full];
 		
+		defaultSkin = if(defaultSkin.isNil) { (
+			hi:	Color(0.6, 0.2, 0.0, 1.0),
+			lo:	Color(0.2, 0.4, 0.6, 1.0),
+			text:	Color.gray(0.9,0.8),
+			type:	Color(1.0, 0.8, 0.2, 1.0),
+			line:	Color.gray(0.1,0.8),
+			font:	Font("Monaco", 12.0),
+			defaultMode: 'vert'
+		) } {
+			defaultSkin
+		};
+		
 		Class.initClassTree(GUI);	
 
 		StartUp.add({
-			GUI.skins.default.put('minbox', (
-				default: (
-					hi:	Color(0.6, 0.2, 0.0, 1.0),
-					lo:	Color(0.2, 0.4, 0.6, 1.0),
-					text:	Color.gray(0.9,0.8),
-					type:	Color(1.0, 0.8, 0.2, 1.0),
-					line:	Color.gray(0.1,0.8),
-					font:	Font("Monaco", 12.0),
-					defaultMode: 'vert'
-				)
-			));
-			
+			GUI.skins.default.put('minbox', defaultSkin);
 		});
 
 	}
@@ -76,7 +78,11 @@ MinBox {
 		round = 0.01;
 		this.spec = \unipolar; // also sets value
 
-		skin = GUI.skins.default.minbox.default;
+		skin = if(GUI.skins.default.minbox.isNil) {
+			this.class.defaultSkin
+		} {
+			GUI.skins.default.minbox.default 
+		};
 
 		this.oldMethodsCompat(skin);
 
