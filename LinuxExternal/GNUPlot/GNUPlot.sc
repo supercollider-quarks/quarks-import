@@ -439,8 +439,8 @@ GNUPlot {
 	
 	write{ |path, term="pdf", termopts="fsize 10"|
 		path ?? {
-			path = PathName.tmp +/+ "gnuplot_sc";
-			"GNUPlot:write - path ".format(path).postln;
+			path = PathName.tmp +/+ "gnuplot_sc.%".format(term);
+			"GNUPlot:write - path %".format(path).postln;
 		};
 		^this.sendCmd(
 			"set term % %
