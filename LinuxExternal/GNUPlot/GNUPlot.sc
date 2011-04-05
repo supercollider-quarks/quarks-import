@@ -425,6 +425,52 @@ GNUPlot {
 		}
 	}
 
+	/*
+	GNUPlot.new.errorbar([7,6,2,4,3], [4, 2, 1, 0.5, 0.25]);
+	GNUPlot.new.errorbar([[7,6,2,4,3], [2, 6, 8, 6, 4]], [[4, 2, 1, 0.5, 0.25], [1, 1, 0.1, 0.5, 0.5]], ["miscreantjuice", "soresal"]);
+	*/
+	errorbar {|data, errors, label="", title, grplabels, drawlines=true, extracmds|
+		var fh, tmpname, tmpdata, command;
+		
+		// Ensure we're working with 2D data (promote 1D as needed)
+		data.shape.size.switch(
+			1, {
+				// Single dataset is fine, turn it into same layout as multi
+				data   = [data];
+				errors = [errors];
+				label  = [label];
+			},
+			2, {},
+			{Error("data must be a 1D or 2D array").throw}
+		);
+		// Here we check that errors and label are 2D (they may have been auto-promoted)
+		if(errors.shape.size != 2){Error("'errors' dimensionality must match that of the data").throw};
+		if(label .shape.size != 2){Error("'label'  dimensionality must match that of the data").throw};
+		
+		// Marshal the data into a 2D table: [index, A, Aerr, B, Berr, C, Cerr ...]
+		tmpdata = [data, errors].flop.flatten.flop.collect{|row, index| [index+1] ++ row};
+		
+		defer {
+			tmpname = this.pr_tmpname;
+			this.class.pr_writeTempData2(tmpdata, tmpname: tmpname);
+			
+			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
+			grplabels !? {pipe.putString("set xtics (" ++ grplabels.collect{|alabel, index| alabel.quote + (index+1) }.join(", ") ++ ")\n")};
+			extracmds !? {pipe.putString(extracmds ++ "\n")};
+			pipe.putString("set xrange [ 0.00000 : %.0000 ] noreverse nowriteback\n".format(data[0].size+1));
+
+			// The string needs to have a separate command for each dataset plotted, in fact two commands each if adding lines.
+			command = "plot %".format(tmpname.asString.quote) +
+				data.size.collect{|i|
+					"using 1:%:% title '' with errorbars ls %".format(2*i+2, 2*i+3, i+1)
+					++ if(drawlines){", '' using 1:% title '%' with lines ls %".format(2*i+2, label[i], i+1) }{""}
+				}.join(", '' ");
+			pipe.putString(command ++ Char.nl);
+			lastdata = [ data ];
+			pipe.flush;
+		}
+	}
+
 	// http://gnuplot.info/docs/node281.html
 	setView{ |...vals|
 		pipe.putString("set view %\n".format(vals.join($,)));
