@@ -320,7 +320,7 @@ GNUPlot {
 
 
 	// Oswalds' additions:
-	plot3 {|data, label="", title|
+	plot3 {|data, label="", title, style="lines"|
 		var fh, tmpname; // = this.createTempFile3( data, ns );
 		defer {
 			tmpname = this.pr_tmpname;
@@ -328,7 +328,7 @@ GNUPlot {
 			
 			["GNUPlot.plot3 data size: ", data.size].postln;
 			title !? {pipe.putString("set title %\n".format(title.asString.quote))};
-			pipe.putString("splot % with lines title %\n".format(tmpname.asString.quote, label.asString.quote));
+			pipe.putString("splot % with % title %\n".format(tmpname.asString.quote, style, label.asString.quote));
 			lastdata = [ data ];
 			pipe.flush;
 		}
