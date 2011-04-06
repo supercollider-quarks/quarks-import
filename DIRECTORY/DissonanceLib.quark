@@ -8,5 +8,6 @@
 	\country: "Mexico",
 	\since: "2007",
 	\url: "http://web.me.com/jslach/",
-	\dependencies: ["MathLib", "VectorSpace", "cruciallib"]
+	\dependencies: ["MathLib", "VectorSpace"],
+	\isCompatible: { Main.versionAtMost(3,3).not }
 )
