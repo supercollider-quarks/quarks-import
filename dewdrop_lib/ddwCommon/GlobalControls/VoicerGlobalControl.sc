@@ -71,14 +71,32 @@ GlobalControlBase : AbstractFunction {
 	}
 	
 	free { arg updateGUI = true;
-		bus !? {
-			this.stopWatching.stopAuto;
-			if(BusDict.at(\control, server, bus.index).notNil) {
-				BusDict.free(bus);		// free the bus
-			} {
-				bus.free
+		var	oldAutoNode = autoSynth, updater,
+			freeBusFunc = {
+				if(BusDict.at(\control, server, bus.index).notNil) {
+					BusDict.free(bus);		// free the bus
+				} {
+					bus.free
+				};
+				bus = nil;
 			};
-			bus = nil;
+		server !? {
+			this.stopWatching.stopAuto;
+			// sync problem: bus could be freed, and reallocated,
+			// before autoSynth *really* went away
+			// so, if we were automating and getting server notifications,
+			// wait until n_end comes back before freeing the bus number
+			if(server.notified and: { oldAutoNode.notNil }) {
+				updater = Updater(oldAutoNode, { |node, what|
+					if(what == \n_end) {
+						updater.remove;
+						freeBusFunc.value;
+					};
+				})
+			} {
+				freeBusFunc.value
+			};
+			server = nil;
 			this.changed((what: \modelWasFreed, resync: true));
 		}
 	}
@@ -96,23 +114,35 @@ GlobalControlBase : AbstractFunction {
 		^thing.playOnGlobalControl(this, args, target, addAction)
 	}
 	automate { |thing, args, target, addAction = \addToTail|
-		var	targetServer = target.asTarget.server;
+		var	targetServer = target.asTarget.server, updater;
 		if(targetServer !== server) {
 			MethodError("Target is not on the same server as the GlobalControl.", this).throw;
 		};
 		if(autoSynth.notNil) { this.stopAuto };
+if(this.index == 0) {
+	this.dumpBackTrace;
+	"^^^ DON'T PANIC, DEBUG TRACE -- automating kr bus 0".debug;
+};
 		autoSynth = this.play(thing, args, target, addAction);
 		if(server.notified and: { autoSynth.respondsTo(\asNodeID) }) {
-			OSCpathResponder(server.addr, ['/n_end', autoSynth.asNodeID],
-				{ |time, resp, msg|
-						// when replacing the synth, this action could fire for the old synth
-						// after the autoSynth variable changed
-						// so doublecheck if the n_end node ID matches the current autoSynth
-					if(autoSynth.asNodeID == msg[1]) {
+			updater = Updater(autoSynth, { |node, what|
+				if(what == \n_end) {
+					updater.remove;
+					if(node === autoSynth) {
 						autoSynth = nil;
 					};
-					resp.remove;
-				}).add;
+				}
+			});
+			// OSCpathResponder(server.addr, ['/n_end', autoSynth.asNodeID],
+			// 	{ |time, resp, msg|
+			// 			// when replacing the synth, this action could fire for the old synth
+			// 			// after the autoSynth variable changed
+			// 			// so doublecheck if the n_end node ID matches the current autoSynth
+			// 		if(autoSynth.asNodeID == msg[1]) {
+			// 			autoSynth = nil;
+			// 		};
+			// 		resp.remove;
+			// 	}).add;
 		};
 		^autoSynth
 	}
