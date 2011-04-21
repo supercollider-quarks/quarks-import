@@ -76,10 +76,10 @@ SpeakerAdjust {
 			out = ins[i];
 			#amp, dt ... eqSpecs = specList; 
 
-			delayCtl = NamedControl(("eqDt_c" ++ (i+1)).asSymbol, amp ? 0, 0.2);
-			out = DelayN.ar(out, 0.1, dt);
+			delayCtl = NamedControl.kr(("eqDt_c" ++ (i+1)).asSymbol, dt ? 0, 0.2);
+			out = DelayN.ar(out, 0.1, delayCtl);
 
-			ampCtl = NamedControl(("eqAmp_c" ++ (i+1)).asSymbol, amp ? 1, 0.2);
+			ampCtl = NamedControl.kr(("eqAmp_c" ++ (i+1)).asSymbol, amp ? 1, 0.2);
 			out * (ampCtl * vol);
 		
 			eqSpecs.do { |specBand, j|
@@ -88,9 +88,9 @@ SpeakerAdjust {
 				var ctlNames = this.makeNames(i, j); 
 				#freq, db, rq = specBand.postcs;
 				
-				freqCtl = NamedControl(ctlNames[0], freq, 0.2);
-				gainCtl = NamedControl(ctlNames[1], db, 0.2);
-				rqCtl   = NamedControl(ctlNames[2], rq, 0.2);
+				freqCtl = NamedControl.kr(ctlNames[0], freq, 0.2);
+				gainCtl = NamedControl.kr(ctlNames[1], db, 0.2);
+				rqCtl   = NamedControl.kr(ctlNames[2], rq, 0.2);
 				
 				out = MidEQ.ar(out, freqCtl, gainCtl, rqCtl);
 			};
