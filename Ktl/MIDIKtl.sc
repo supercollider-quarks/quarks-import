@@ -6,7 +6,11 @@ MIDIKtl : Ktl {
 		super.init;
 		
 		if( destID.notNil ) {
-			midiOut = MIDIOut(destID)
+			midiOut = MIDIOut(destID);
+			ktlNames.pairsDo{ |key| 
+				var chanCtl = this.keyToChanCtl(key);
+				midiOut.control(chanCtl[0], chanCtl[1], 0)
+			}	 
 		}
 	}
 	
@@ -39,7 +43,7 @@ MIDIKtl : Ktl {
 	}
 	
 	sendCtlCcKey{ |ccKey,value|
-		var chanCtl = this.ccKeyToChanCtl(ccKey).postln;
+		var chanCtl = this.ccKeyToChanCtl(ccKey);
 		midiOut.control(chanCtl[0], chanCtl[1], value)	
 	}
 
@@ -68,7 +72,8 @@ MIDIPagedKtl : MIDIKtl {
 		ktlDict = numOfscenes.collect{ () };
 		valueArray = numOfscenes.collect{ 
 			ktlNames.invert.collect{ |thing, key| 0 }
-		}
+		};
+		
 	}
 	
 	makeResp {
@@ -109,18 +114,35 @@ MIDIPagedKtl : MIDIKtl {
 	}
 	
 	mapAll{ |ctl= \sl1, action, actKey = \user|
+		var ktlDictKey = ktlNames[ctl];
 		numOfscenes.do{ |i|
-			this.map(i,ctl, action, actKey)
+			var newAction, otherScenes = valueArray.copy;
+			otherScenes.removeAt(i);
+			newAction = { |val| 
+				action.value(val); 
+				otherScenes.do{ |dict| dict.put( ktlDictKey, val ) };
+			};
+			this.map(i,ctl, newAction, actKey)
 		}
+	}
+	
+	sendCtl { |scene = 0, key, value|
+		var chanCtl;
+		
+		valueArray[scene][ktlNames.at(key)] = value;
+		if(scene == currentScene) {
+			chanCtl = this.keyToChanCtl(key);
+			midiOut.control(chanCtl[0], chanCtl[1], value)
+		}	
 	}
 	
 	changeScene{ |scene|
 		if( scene < numOfscenes ) {
 			currentScene = scene;
 			valueArray[currentScene].keysValuesDo{ |key,value|
-				[key,value].postln;
 				this.sendCtlCcKey(key,value)
-			}
+			};
+			("MIDIPagedKtl: changed to scene "++ (currentScene + 1)).postln;
 		}
 	}
 	
