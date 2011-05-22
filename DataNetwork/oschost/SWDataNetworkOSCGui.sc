@@ -190,7 +190,7 @@ SWDataNetworkOSCGui{
 			[ [ "ANNOUNCE", Color.black, Color.green ] ] ).action_( { network.announce } ).mouseOverAction_({ this.setInfo( "announce the network") });
 
 		verb = GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
-			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ], [ "V3", Color.red ] ] ).action_( { |but| network.verbose = but.value } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
+			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ], [ "V3", Color.red ] ] ).action_( { |but| network.verbose.level_( but.value ) } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
 
 		log = GUI.button.new( w, Rect( 0, 0, 40, 20 )).states_(
 			[ [ "log >", Color.green ], ["log []", Color.red ] ] ).action_( { |but| if ( but.value == 1 ){ network.initLog }{ network.closeLog } } ).mouseOverAction_({ this.setInfo( "write a log to file") });
