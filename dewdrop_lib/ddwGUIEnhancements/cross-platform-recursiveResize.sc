@@ -11,9 +11,7 @@
 // despite "SC" prefix, SCViewHolder is not a cocoa view! Thus not osx-specific
 + SCViewHolder {
 	findRightBottom { 
-		var	out;
-		out = view.findRightBottom;
-		^out
+		^view.findRightBottom;
 	}
 }
 
@@ -22,23 +20,13 @@
 			// need bounds relative to parent's bounds
 		var new, maxpt, comparept, mybounds, used;
 		mybounds = this.bounds;
-			// FlowViews are only relative now; this test is deprecated
-//		if(view.tryPerform(\relativeOrigin) ? false) {
-			maxpt = Point(0, 0);
-//		} {
-//			maxpt = mybounds.leftTop;
-//		};
+		maxpt = Point(0, 0);
 		this.children.do({ arg c;
 			comparept = c.findRightBottom;
 			maxpt = maxpt.max(comparept);
 		});
-//		if(view.tryPerform(\relativeOrigin) ? false) {
-			new = mybounds.resizeTo(maxpt.x + this.decorator.margin.x,
-				maxpt.y + this.decorator.margin.y);
-//		} {
-//			new = mybounds.resizeTo(maxpt.x - mybounds.left + this.decorator.margin.x,
-//				maxpt.y - mybounds.top + this.decorator.margin.y);
-//		};
+		new = mybounds.resizeTo(maxpt.x + this.decorator.margin.x,
+			maxpt.y + this.decorator.margin.y);
 		this.bounds_(new, reflow: false);	// don't reflow unless asked
 		^new
 	}
