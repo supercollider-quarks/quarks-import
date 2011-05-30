@@ -1,0 +1,4 @@
+CLASS:: None
+summary:: Represents a non-existing value.
+categories:: Monad
+related:: Classes/Option
