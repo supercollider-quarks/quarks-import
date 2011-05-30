@@ -1,0 +1,4 @@
+CLASS:: Some
+summary:: Represents an existing value.
+categories:: Monad
+related:: Classes/Option
