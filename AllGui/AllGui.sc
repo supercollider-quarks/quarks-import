@@ -42,6 +42,7 @@ AllGui : JITGui {
 							{ |num| EnvirGui(currentEnvironment, num)
 								.moveTo(540, 400)
 								.parent.name_("currentEnvironment") } ],
+				[\servers, 	{ Server.all.size }, { Server.all.do(_.makeWindow) } ],
 				
 				[ \Tdef,		{ Tdef.all.size }, { |num| TdefAllGui.new(num) } ],
 				[ \Pdef, 		{ Pdef.all.size }, { |num|  PdefAllGui.new(num) } ],
@@ -75,7 +76,7 @@ AllGui : JITGui {
 	}
 
 	setDefaults { |options|
-		minSize = 170 @ 170;
+		minSize = 170 @ (skin.buttonHeight * (numItems + 1));
 								// at the top - works in osx
 		defPos = if (parent.isNil) { 250@5 } { skin.margin };
 	}
