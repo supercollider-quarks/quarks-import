@@ -126,7 +126,7 @@ ListeningClock : SoftClock {
 	
 	adjust {
 		var tempo = this.othersMeanTempo;
-		var beats = this.othersMeanBeats; // maxPhasShift !!
+		var beats = this.othersMeanBeats;
 		beats = beats - this.elapsedBeats;
 		if(maxShift.notNil) { beats = beats % maxShift };
 		if(tempo.notNil) {
