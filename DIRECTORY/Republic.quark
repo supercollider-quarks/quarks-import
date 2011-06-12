@@ -5,5 +5,6 @@
 	\author: 		"Alberto de Campo, Julian Rohrhuber",
 	\helpdoc:		"Republic.html",
 	\since: 		"2009",
+	\dependencies:	#["ListeningClocks"],
 	\version:		"0.1"
 )
