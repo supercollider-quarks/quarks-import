@@ -120,20 +120,23 @@ ListeningClock : SoftClock {
 	
 	var <listener;
 	var <>empathy = 0.5, <>confidence=0.5;
+	var <>maxShift;
 	var <>others, <>weights;
 	classvar <>all;
 	
 	adjust {
 		var tempo = this.othersMeanTempo;
-		var beats = this.othersMeanBeats;
+		var beats = this.othersMeanBeats; // maxPhasShift !!
+		beats = beats - this.elapsedBeats;
+		if(maxShift.notNil) { beats = beats % maxShift };
 		if(tempo.notNil) {
-			this.prAdjust(beats - this.elapsedBeats, tempo)
+			this.prAdjust(beats, tempo)
 		}
 	}
 	
 	startListen {
 		listener.stop;
-		listener = this.makeTask({ others !? { this.adjust } });
+		listener = this.makeTask({ others !? { this.adjust }; });
 		listener.play;
 	}
 	
@@ -145,7 +148,7 @@ ListeningClock : SoftClock {
 		^listener.isPlaying
 	}
 	
-	allPermanent { ^others.every(_.permanent) && this.permanent }
+	allPermanent { ^if(others.isNil) { true } { others.every(_.permanent) && this.permanent } }
 	
 	setClocks { arg clocks, argWeights, start=true;
 		var listening = start or: { this.isListening };
@@ -175,7 +178,7 @@ ListeningClock : SoftClock {
 		}
 	}
 	
-	othersMeanBeat {
+	othersMeanBeats {
 		if(others.isNil) { ^nil };
 		^if(weights.isNil) {
 			others.collect(_.elapsedBeats).mean
@@ -192,6 +195,10 @@ ListeningClock : SoftClock {
 PseudoClock {
 	var <tempo, lastBeats, <lastUpdate;
 	
+	*new { arg tempo, beats;
+		^super.new.update(tempo, beats)	
+	}
+	
 	update { arg argTempo, argBeats;
 		tempo = argTempo;
 		lastBeats = argBeats;
@@ -207,23 +214,26 @@ PseudoClock {
 
 
 PseudoNetClock : PseudoClock {
-	var <>id = 0, <channel;
+	var <>id = 0, <>channel;
 	var <responder;
 	var <>channel;
 	
 	classvar <cmd = \netClockSet;
 	
-	*new { arg id, channel = \telepathicClock;
-		^super.newCopyArgs(id, channel)	
+	*new { arg id, channel;
+		^super.new(1, 0).id_(id).channel_(channel ? \telepathicClock)
 	}
 	
 	startListen {
 		// cmd, channel, id, tempo, beats
 		responder = OSCresponderNode(nil, cmd, { |t, r, msg|
-			if(msg[1] == id) {
-				if(msg[2] == channel) {
-					this.update(msg[3], msg[4])
-				}
+			//		[msg, id, channel].postln;
+
+			if(msg[2] == id) {
+				//if(msg[1] == channel) {
+					this.update(msg[3], msg[4]);
+				//	[\update, msg].postln;
+				//}
 			}
 		});
 		responder.add;
@@ -243,16 +253,21 @@ TelepathicClock : ListeningClock {
 	
 	addParticipant { |id|
 		var clock;
-		if(others.any { |clock| try { clock.id == id } ? false }.not) { // allow other (local) clocks
-				clock = PseudoNetClock(id, channel).startListen;
+		[\channel, channel].postln;
+		if(others.isNil or: { others.any { |clock| try { clock.id == id } ? false }.not }) { // allow other (local) clocks
+				clock = PseudoNetClock(id, \telepathicClock).startListen; // todo channel
+				clock.dump;
 				this.addClock(clock);
+				"added participant.".postln;
+				others.postln;
 				weights = nil; // for now.
 		}
 	}
 	
 	removeParticipant { |id|
-		var index = others.detectIndex { |clock| try { clock.id == id } ? false };
-		var clock;
+		var index, clock;
+		if(others.isNil) { ^this };
+		index = others.detectIndex { |clock| try { clock.id == id } ? false };
 		if(index.notNil) {
 			clock = others.removeAt(index);
 			// todo: weights
@@ -261,6 +276,7 @@ TelepathicClock : ListeningClock {
 	}
 	
 	startListen {
+		super.startListen;
 		// cmd, channel, flag (1= add, 0 = remove), id
 		responder = OSCresponderNode(nil, addParticipantCmd, { |t, r, msg, replyAddr|
 			if(msg[1] == channel) {
@@ -276,6 +292,7 @@ TelepathicClock : ListeningClock {
 	}
 	
 	stopListen {
+		super.stopListen;
 		others.do { |clock| try { clock.stopListen } };
 		responder.remove;
 	}
@@ -305,11 +322,41 @@ TelepathicClock : ListeningClock {
 // usage:
 
 // local clock:
-t = TelepathicClock.new.startListen;
-n = NetAddr("255.255.255.255", 57120);
-t.initTeleport(n, 7);
-t.teleport(n, 7); // put in regular task or so...
-t.endTeleport(n, 7); // end
+(
+t = TelepathicClock.new.permanent_(true);
+t.maxShift = 1;
+t.startListen;
+n = NetAddr("127.0.0.1", 57120);
+TempoClock.default.initTeleport(n, 7);
+);
+
+
+(
+Tdef(\x, {
+	loop {
+		1.wait;
+		TempoClock.default.teleport(n, 7);
+	};
+}).play;
+
+Pbind(\degree, 15, \sustain, 0.01).trace.play(t);
+Pbind(\degree, 5, \sustain, 0.01).trace.play(TempoClock.default);
+
+);
+
+t.others;
+t.othersMeanTempo;
+t.othersMeanBeats;
+
+TempoClock.default.tempo = 0.125;
+TempoClock.default.tempo = 1;
+
+t.tempo
+t.othersMeanTempo;
+t.startListen;
+
+// end
+t.endTeleport(n, 7);
 t.stopListen;
 
 
