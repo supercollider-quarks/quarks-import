@@ -120,11 +120,15 @@ ListeningClock : SoftClock {
 	
 	var <listener;
 	var <>empathy = 0.5, <>confidence=0.5;
-	var <others, <>weights;
+	var <>others, <>weights;
 	classvar <>all;
 	
 	adjust {
-		this.prAdjust(this.othersMeanBeat - this.elapsedBeats, this.othersMeanTempo)
+		var tempo = this.othersMeanTempo;
+		var beats = this.othersMeanBeats;
+		if(tempo.notNil) {
+			this.prAdjust(beats - this.elapsedBeats, tempo)
+		}
 	}
 	
 	startListen {
@@ -132,9 +136,11 @@ ListeningClock : SoftClock {
 		listener = this.makeTask({ others !? { this.adjust } });
 		listener.play;
 	}
+	
 	stopListen {
 		listener.stop;
 	}
+	
 	isListening {
 		^listener.isPlaying
 	}
@@ -152,7 +158,16 @@ ListeningClock : SoftClock {
 		if(listening) { this.startListen };
 	}
 	
+	addClock { arg clock, weight;
+		others = others.add(clock);
+		if(weight.notNil) {
+			weights = weights.add(weight);
+			// todo: make weights un-normalized!
+		};
+	}
+	
 	othersMeanTempo {
+		if(others.isNil) { ^nil };
 		^if(weights.isNil) {
 			others.collect(_.tempo).mean
 		} {
@@ -161,6 +176,7 @@ ListeningClock : SoftClock {
 	}
 	
 	othersMeanBeat {
+		if(others.isNil) { ^nil };
 		^if(weights.isNil) {
 			others.collect(_.elapsedBeats).mean
 		} {
@@ -173,86 +189,130 @@ ListeningClock : SoftClock {
 }
 
 
-TelepathicClock : SoftClock {
+PseudoClock {
+	var <tempo, lastBeats, <lastUpdate;
 	
-	
-	var <>empathy = 0.5, <>confidence=0.5;
-	
-	var <othersMeanTempo, <othersMeanBeat;
-	var <othersTempo, <othersBeat;
-	
-	var <channel, <>addr, <responder;
-	var <listener, token;
-	var <manual = false;
-	
-	classvar <>all;
-	
-	*new { arg tempo, beats, seconds, queueSize=256, permanent=false, addr, channel, start=true;
-		^super.new.initNetwork(tempo, beats, seconds, queueSize, permanent, 
-			addr, channel, start)
+	update { arg argTempo, argBeats;
+		tempo = argTempo;
+		lastBeats = argBeats;
+		lastUpdate = Main.elapsedTime;
 	}
 	
-	adjust { |argBeats, argTempo|
-		this.prAdjust(argBeats - this.elapsedBeats, argTempo)
+	elapsedBeats {
+		^lastBeats + (tempo * 	(Main.elapsedTime - lastUpdate))
 	}
+	
+	permanent { ^true }
+}
 
+
+PseudoNetClock : PseudoClock {
+	var <>id = 0, <channel;
+	var <responder;
+	var <>channel;
 	
-	// listens initially by default
+	classvar <cmd = \netClockSet;
+	
+	*new { arg id, channel = \telepathicClock;
+		^super.newCopyArgs(id, channel)	
+	}
 	
 	startListen {
-		responder = OSCresponderNode(nil, channel, { |t, r, msg|
-			if(msg[3] != token and: { manual.not }) {
-				this.adjust(msg[1], msg[2])
+		// cmd, channel, id, tempo, beats
+		responder = OSCresponderNode(nil, cmd, { |t, r, msg|
+			if(msg[1] == id) {
+				if(msg[2] == channel) {
+					this.update(msg[3], msg[4])
+				}
 			}
 		});
 		responder.add;
-		listener = this.makeTask({ this.share });
-		listener.play;
 	}
 	
 	stopListen {
-		listener.stop;
 		responder.remove;
 	}
+}
+
+
+TelepathicClock : ListeningClock {
 	
-	getBroadcastAddr {
-		var ip;
-		try { ip = NetAddr.broadcastIP };
-		^if(ip.notNil) { NetAddr(ip, 57120) }
-	}
+	var <>channel = \telepathicClock, <responder;
+	classvar <addParticipantCmd = \addParticipant;
 	
-	initNetwork { arg tempo, beats, seconds, queueSize, argPermanent, 
-		argAddr, argChannel, start;
-		
-		permanent = argPermanent;
-		channel = argChannel ? '/teleclock';
-		this.init(tempo, beats, seconds, queueSize);
-		
-		if(NetAddr.broadcastFlag.not) { "broadcast was switched on.".postln };
-		NetAddr.broadcastFlag = true;
-		
-		addr = argAddr ?? { this.getBroadcastAddr };
-		token = Date.seed; // send a token: do not listen to myself
-		
-		othersTempo = IdentityDictionary.new;
-		othersBeat = IdentityDictionary.new;
-		
-		if(start) { this.startListen };
-	}
 	
-	share {
-		if(addr.isNil) { 
-			"TeleClock: No broadcast address found. Please contact your system".warn;
-			addr = this.getBroadcastAddr; // try again.
-		} {
-			addr.sendMsg(channel, this.beats, this.tempo, token) 
+	addParticipant { |id|
+		var clock;
+		if(others.any { |clock| try { clock.id == id } ? false }.not) { // allow other (local) clocks
+				clock = PseudoNetClock(id, channel).startListen;
+				this.addClock(clock);
+				weights = nil; // for now.
 		}
 	}
 	
-	fadeTempo { arg newTempo, dur = 1.0, warp = \cos, clock;
-		manual = true;
-		super.fadeTempo(newTempo, dur, warp, clock);
-		(clock ? SystemClock).sched(dur, { manual = false; nil; });
+	removeParticipant { |id|
+		var index = others.detectIndex { |clock| try { clock.id == id } ? false };
+		var clock;
+		if(index.notNil) {
+			clock = others.removeAt(index);
+			// todo: weights
+			clock.stopListen;
+		};
 	}
+	
+	startListen {
+		// cmd, channel, flag (1= add, 0 = remove), id
+		responder = OSCresponderNode(nil, addParticipantCmd, { |t, r, msg, replyAddr|
+			if(msg[1] == channel) {
+				if(msg[2] > 0) {
+					this.addParticipant(msg[3])
+				} {
+					this.removeParticipant(msg[3])
+				}
+			}
+		});
+		others.do { |clock| try { clock.startListen } };
+		responder.add;
+	}
+	
+	stopListen {
+		others.do { |clock| try { clock.stopListen } };
+		responder.remove;
+	}
+	
 		
 }
+
+
++ TempoClock {
+	
+	initTeleport { |addr, id, channel = \telepathicClock|
+		addr.sendMsg(TelepathicClock.addParticipantCmd, channel, 1, id);
+	}
+	
+	endTeleport { |addr, id, channel = \telepathicClock|
+		addr.sendMsg(TelepathicClock.addParticipantCmd, channel, 0, id);
+	}
+	
+	teleport { |addr, id, channel = \telepathicClock|
+		addr.sendMsg(PseudoNetClock.cmd, channel, id, this.tempo, this.elapsedBeats)
+	}
+}
+
+
+/*
+
+// usage:
+
+// local clock:
+t = TelepathicClock.new.startListen;
+n = NetAddr("255.255.255.255", 57120);
+t.initTeleport(n, 7);
+t.teleport(n, 7); // put in regular task or so...
+t.endTeleport(n, 7); // end
+t.stopListen;
+
+
+
+*/
+
