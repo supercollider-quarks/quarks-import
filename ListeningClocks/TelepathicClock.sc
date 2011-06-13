@@ -92,26 +92,33 @@ TelepathicClock : ListeningClock {
 		};
 	}
 	
+	allowOthersToAdd { |flag = true|
+		if(flag) {
+			responder = OSCresponderNode(nil, addClockSourceCmd, { |t, r, msg, replyAddr|
+				if(msg[1] == name) {
+					if(msg[2] > 0) {
+						this.addClockSource(msg[3])
+					} {
+						this.removeClockSource(msg[3])
+					}
+				}
+			});
+			responder.add;
+		} {
+			responder.remove;	
+		}
+	}
+	
 	startListen {
 		super.startListen;
 		// cmd, name, flag (1= add, 0 = remove)
-		responder = OSCresponderNode(nil, addClockSourceCmd, { |t, r, msg, replyAddr|
-			if(msg[1] == name) {
-				if(msg[2] > 0) {
-					this.addClockSource(msg[3])
-				} {
-					this.removeClockSource(msg[3])
-				}
-			}
-		});
 		others.do { |clock| try { clock.startListen } };
-		responder.add;
 	}
 	
 	stopListen {
 		super.stopListen;
 		others.do { |clock| try { clock.stopListen } };
-		responder.remove;
+		this.allowOthersToAdd(false);
 	}
 	
 	
