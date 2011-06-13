@@ -1,7 +1,8 @@
 MasterFX { 
 
-	classvar <all;
+	classvar <all, <maxNumChans = 8;
 	var <group, <numChannels, <busIndex, <server, <pxChain; 
+	var <checkingBadValues = true, <badSynth, badDefName;
 	
 	*initClass { 
 		all = IdentityDictionary.new;
@@ -26,12 +27,23 @@ MasterFX {
 		^super.new.init(server, numChannels, slotNames);
 	}
 	
+	add { |key, wet, func| 
+		pxChain.add(key, wet, func);
+	}
+	remove { |key| 
+		pxChain.remove(key);
+	}
+	
 	bus { 
 		^Bus.new(\audio, busIndex, numChannels, server);
 	}
 
-					// evil just to wait? hmmm. 
-	cmdPeriod { defer({ this.wakeUp }, 0.2) }
+					
+	cmdPeriod { 
+		group.freeAll; 	// for SharedServers
+						// evil just to wait? hmmm. 
+		defer({ this.wakeUp }, 0.2);
+	}
 	
 	init { |inServer, inNumChannels, inSlotNames, inBusIndex| 
 		var proxy;
@@ -39,7 +51,7 @@ MasterFX {
 		numChannels = inNumChannels ? server.options.numOutputBusChannels;
 		busIndex = inBusIndex ? 0; 
 
-		proxy = Ndef(\master -> server.name); 
+		proxy = Ndef(\zz_mastafx -> server.name); 
 		proxy.ar(numChannels); 
 		proxy.bus_(this.bus);
 		pxChain = ProxyChain.from(proxy, inSlotNames ? []);
@@ -48,18 +60,33 @@ MasterFX {
 		
 		this.makeGroup; 
 		CmdPeriod.add(this);
+		
+		badDefName = ("BadMasterFX_" ++ server.name).asSymbol;
+		SynthDef(badDefName, {
+			var snd = In.ar(busIndex, numChannels); 
+			var dt = 0.001;
+			var isOK = (CheckBadValues.ar(snd) < 0.001);
+			var gate = (isOK * DelayN.ar(isOK, dt * 2));
+			var outSnd = 	DelayL.ar(snd, dt) * gate;
+			ReplaceOut.ar(busIndex, outSnd)
+		}).add;
+		
+		fork { 
+			0.2.wait; 
+			this.checkBad(checkingBadValues);
+		};
 	}
 	
 	makeGroup { 
 		group = Group.new(1.asGroup, \addAfter).isPlaying_(true);
 		pxChain.proxy.parentGroup_(group);
-		
 	}
 	
 	wakeUp { 
 		"\nMasterFX for server % waking up.\n\n".postf(server.name); 
 			this.makeGroup; 
-			pxChain.proxy.wakeUp; 			
+			pxChain.proxy.wakeUp;
+			this.checkBad;		
 	}
 	
 	clear { 
@@ -86,6 +113,14 @@ MasterFX {
 		numItems = numItems ? 16; 
 		^MasterFXGui(pxChain, numItems, parent, bounds, makeSkip, buttonList)
 			.name_(name);
+	}
+	
+	checkBad { |flag = true| 
+		checkingBadValues = flag;
+		badSynth.free; 
+		if (checkingBadValues) { 
+			badSynth = Synth(badDefName, target: group, addAction: \addAfter);
+		};
 	}
 	
 	*default { ^all[Server.default.name] }
