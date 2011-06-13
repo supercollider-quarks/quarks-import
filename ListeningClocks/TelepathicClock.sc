@@ -38,25 +38,20 @@ ReferenceClock {
 
 TelepathicReferenceClock : ReferenceClock {
 
-	var <id = 0, <channel;
+	var <>name;
 	var responder;
 	
-	classvar <cmd = \netClockSet;
+	classvar <cmd = \refClockSet;
 	
-	*new { arg tempo, beats, id, channel;
-		^super.new(tempo, beats).initID(id, channel ? \telepathicClock)
-	}
-	
-	initID { arg argID, argChannel;
-		channel = argChannel.postln;
-		id = argID;	
+	*new { arg tempo, beats, name;
+		^super.new(tempo, beats).name_(name ? \telepathicClock)
 	}
 	
 	startListen {
-		// cmd, channel, id, tempo, beats, beatWrap
+		// cmd, name, tempo, beats, beatWrap
 		responder = OSCresponderNode(nil, cmd, { |t, r, msg|
-			if(msg[2] == id and: { msg[1] == channel }) {
-					this.update(msg[3], msg[4], msg[5]);
+			if(msg[1] == name) {
+					this.update(msg[2], msg[3], msg[4]);
 			}
 		});
 		responder.add;
@@ -70,26 +65,26 @@ TelepathicReferenceClock : ReferenceClock {
 
 TelepathicClock : ListeningClock {
 	
-	var <>channel = \telepathicClock, <responder;
+	var <>name = \telepathicClock, <responder;
 	
 	classvar <addClockSourceCmd = \addClockSource;
 
 	
-	addClockSource { |id|
+	addClockSource { |name|
 		var clock;
 		// allow other (local) clocks
-		if(others.isNil or: { others.any { |clock| try { clock.id == id } ? false }.not }) { 
-				clock = TelepathicReferenceClock(this.tempo, this.elapsedBeats, id, channel);
-				clock.startListen;
-				this.addClock(clock);
-				weights = nil; // for now.
+		if(others.isNil or: { others.any { |clock| try { clock.name == name } ? false }.not }) { 
+			clock = TelepathicReferenceClock(this.tempo, this.elapsedBeats, name);
+			clock.startListen;
+			this.addClock(clock);
+			weights = nil; // for now.
 		}
 	}
 	
-	removeClockSource { |id|
+	removeClockSource { |name|
 		var index, clock;
 		if(others.isNil) { ^this };
-		index = others.detectIndex { |clock| try { clock.id == id } ? false };
+		index = others.detectIndex { |clock| try { clock.name == name } ? false };
 		if(index.notNil) {
 			clock = others.removeAt(index);
 			// todo: weights
@@ -99,9 +94,9 @@ TelepathicClock : ListeningClock {
 	
 	startListen {
 		super.startListen;
-		// cmd, channel, flag (1= add, 0 = remove), id
+		// cmd, name, flag (1= add, 0 = remove)
 		responder = OSCresponderNode(nil, addClockSourceCmd, { |t, r, msg, replyAddr|
-			if(msg[1] == channel) {
+			if(msg[1] == name) {
 				if(msg[2] > 0) {
 					this.addClockSource(msg[3])
 				} {
@@ -127,16 +122,16 @@ TelepathicClock : ListeningClock {
 
 + TempoClock {
 	
-	initTeleport { |addr, id, channel = \telepathicClock|
-		addr.sendMsg(TelepathicClock.addClockSourceCmd, channel, 1, id);
+	initTeleport { |addr, name = \telepathicClock|
+		addr.sendMsg(TelepathicClock.addClockSourceCmd, name, 1);
 	}
 	
-	endTeleport { |addr, id, channel = \telepathicClock|
-		addr.sendMsg(TelepathicClock.addClockSourceCmd, channel, 0, id);
+	endTeleport { |addr, name = \telepathicClock|
+		addr.sendMsg(TelepathicClock.addClockSourceCmd, name, 0);
 	}
 	
-	teleport { |addr, id, channel = \telepathicClock, beatWrap|
-		addr.sendMsg(TelepathicReferenceClock.cmd, channel, id, this.tempo, this.elapsedBeats, beatWrap)
+	teleport { |addr, name = \telepathicClock, beatWrap|
+		addr.sendMsg(TelepathicReferenceClock.cmd, name, this.tempo, this.elapsedBeats, beatWrap)
 	}
 	
 	clearQueue {
@@ -155,16 +150,15 @@ t.stop; x.stop;
 t = TelepathicClock.new.permanent_(true);
 t.empathy = 0.9;
 t.confidence = 0.5;
-t.addClockSource(0);
+t.addClockSource(\test);
 
 x = TelepathicClock.new.permanent_(true);
-x.addClockSource(0);
+x.addClockSource(\test);
 x.startListen;
 
 t.verbose = true;
 t.startListen;
 n = NetAddr("127.0.0.1", 57120);
-// TempoClock.default.initTeleport(n, 7);
 );
 
 t.others.first.dump
@@ -181,31 +175,12 @@ Pbind(\freq, 2500, \sustain, 0.1, \dur, 1, \instrument, \x).play(TempoClock.defa
 
 (
 TempoClock.default.tempo = rrand(1.0, 3.0);
-TempoClock.default.teleport(n, 0, beatWrap: 4);
+TempoClock.default.teleport(n, \test, 4);
 )
 
 
-(
-Tdef(\x, {
-	loop {
-		1.wait;
-		TempoClock.default.teleport(n, 7);
-	};
-}).play;
-
-t.others;
-t.othersMeanTempo;
-t.othersMeanBeats;
-
-TempoClock.default.tempo = 0.125;
-TempoClock.default.tempo = 1.9;
-
-t.tempo
-t.othersMeanTempo;
-t.startListen;
-
 // end
-t.endTeleport(n, 7);
+t.endTeleport(n, 0);
 t.stopListen;
 
 t.stop;
