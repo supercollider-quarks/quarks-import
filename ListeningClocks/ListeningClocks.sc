@@ -166,7 +166,8 @@ ListeningClock : SoftClock {
 		wrapped = (beats + phaseOffset).wrap2(phaseWrap); // allow for both signs
 		phaseOffset = beats - wrapped; // keep previous offset
 		//if(verbose) { [\beats, beats, \wrapped, wrapped, \phaseOffset, phaseOffset].postln; };
-		^wrapped.postln
+		if(wrapped > -inf) { ^beats }; // throw out nans
+		^wrapped
 	}
 	
 	prAdjust { |deltaBeats, argTempo|
