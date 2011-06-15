@@ -6,18 +6,11 @@ ReferenceClock {
 		^super.new.update(tempo, beats)	
 	}
 	
-	update { arg tempo, beats, beatWrap = (0);
+	update { arg tempo, beats;
 		var clockBeats, beatDifference;
 		clock !? {
 			clockBeats = clock.elapsedBeats;
-			if(beatWrap > 0 and: beats.notNil) {
-				beatDifference =  beats - clockBeats;
-				beats = beatDifference % beatWrap + clockBeats;
-				// [\old, clockBeats, \new, beats, \diff, beatDifference].postln;
-			} {
-				beats = beats ? clockBeats;
-			};
-			
+			beats = beats ? clockBeats;
 			tempo = tempo ? clock.tempo;
 			clock.stop;
 		};
@@ -155,8 +148,9 @@ TelepathicClock : ListeningClock {
 (
 t.stop; x.stop;
 t = TelepathicClock.new.permanent_(true);
-t.empathy = 0.9;
+t.empathy = 0.5;
 t.confidence = 0.5;
+t.phaseWrap = 4;
 t.addClockSource(\test);
 
 x = TelepathicClock.new.permanent_(true);
@@ -181,7 +175,7 @@ Pbind(\freq, 2500, \sustain, 0.1, \dur, 1, \instrument, \x).play(TempoClock.defa
 );
 
 (
-TempoClock.default.tempo = rrand(1.0, 3.0);
+TempoClock.default.tempo = rrand(1.0, 2.0);
 TempoClock.default.teleport(n, \test, 4);
 )
 

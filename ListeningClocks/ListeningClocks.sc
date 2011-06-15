@@ -11,6 +11,7 @@ SoftClock : TempoClock {
 	var <>dt = 0.1, <>verbose = false;
 	var fadeTask, fading=false, isPlaying=true;
 	var <rateOfChange = 1.0;
+	var <>minTempo = 0.01, <>maxTempo = 100;
 	
 	classvar <>all;
 	
@@ -73,38 +74,8 @@ SoftClock : TempoClock {
 		this.fadeTempo(frac * this.tempo, beats, warp, this)
 	}
 	
-	
-	// subclass interface //
-		
-	allPermanent { ^permanent }
-	
-	stopListen { }
-	
-	makeTask { arg func;
-		^if(this.allPermanent) {
-			SkipJack({ if(isPlaying, func) }, { dt })
-		} {
-			Task { loop { dt.wait; if(isPlaying, func) } }
-		}
-	}
-	
-	prAdjust { |deltaBeats, argTempo|
-		var phaseDiff = deltaBeats;
-		var myTempo = this.tempo;
-		var timeComp = (phaseDiff * this.empathy); 
-		var newTempo = (blend(argTempo, myTempo, this.confidence) + timeComp).max(0.01);
-		
-		if (verbose 
-			and: { (phaseDiff.abs > 0.001)  
-			or: { (newTempo - myTempo).abs > 0.001 } }) 
-		{ 
-			"Clock - adjust - avgDeltaBeats: % 	avgTempo: % timeComp: % newTempo: %"
-			.format(*[deltaBeats, argTempo, timeComp, newTempo].round(0.0001)).postln;
-		};
-		this.tempo_(newTempo);
-	}
-
 }
+
 
 
 ListeningClock : SoftClock {
@@ -112,6 +83,7 @@ ListeningClock : SoftClock {
 	var <listener;
 	var <>empathy = 0.5, <>confidence=0.5;
 	var <>others, <>weights;
+	var <>phaseWrap, phaseOffset = 0.0;
 	
 	classvar <>all;
 	
@@ -138,7 +110,23 @@ ListeningClock : SoftClock {
 		^listener.isPlaying
 	}
 	
+	makeTask { arg func;
+		^if(this.allPermanent) {
+			SkipJack({ if(isPlaying, func) }, { dt })
+		} {
+			Task { loop { dt.wait; if(isPlaying, func) } }
+		}
+	}
+	
 	allPermanent { ^if(others.isNil) { true } { others.every(_.permanent) && this.permanent } }
+	
+	addClock { arg clock, weight;
+		others = others.add(clock);
+		if(weight.notNil) {
+			weights = weights.add(weight);
+			// todo: make weights un-normalized!
+		};
+	}
 	
 	setClocks { arg clocks, argWeights, start=true;
 		var listening = start or: { this.isListening };
@@ -151,13 +139,6 @@ ListeningClock : SoftClock {
 		if(listening) { this.startListen };
 	}
 	
-	addClock { arg clock, weight;
-		others = others.add(clock);
-		if(weight.notNil) {
-			weights = weights.add(weight);
-			// todo: make weights un-normalized!
-		};
-	}
 	
 	othersMeanTempo {
 		if(others.isNil) { ^nil };
@@ -177,7 +158,32 @@ ListeningClock : SoftClock {
 		}
 	}
 	
+	// private implementation
 	
+	prWrapPhase { |beats|
+		var wrapped;
+		if(phaseWrap.isNil) { ^beats };
+		wrapped = (beats + phaseOffset).wrap2(phaseWrap); // allow for both signs
+		phaseOffset = beats - wrapped; // keep previous offset
+		//if(verbose) { [\beats, beats, \wrapped, wrapped, \phaseOffset, phaseOffset].postln; };
+		^wrapped.postln
+	}
+	
+	prAdjust { |deltaBeats, argTempo|
+		var phaseDiff = this.prWrapPhase(deltaBeats);
+		var myTempo = this.tempo;
+		var timeComp = (phaseDiff * this.empathy); 
+		var newTempo = (blend(argTempo, myTempo, this.confidence) + timeComp)
+				.clip(minTempo, maxTempo);
+		if (verbose 
+			and: { (phaseDiff.abs > 0.001)  
+			or: { (newTempo - myTempo).abs > 0.001 } }) 
+		{ 
+			"Clock - adjust - avgDeltaBeats: % 	avgTempo: % timeComp: % newTempo: %"
+			.format(*[deltaBeats, argTempo, timeComp, newTempo].round(0.0001)).postln;
+		};
+		this.tempo_(newTempo);
+	}
 
 }
 
