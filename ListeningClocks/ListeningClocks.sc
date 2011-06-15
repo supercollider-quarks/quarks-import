@@ -90,7 +90,6 @@ ListeningClock : SoftClock {
 	adjust {
 		var tempo = this.othersMeanTempo;
 		var beats = this.othersMeanBeats;
-
 		if(tempo.notNil) {
 			this.prAdjust(beats - this.elapsedBeats, tempo)
 		}
@@ -141,7 +140,7 @@ ListeningClock : SoftClock {
 	
 	
 	othersMeanTempo {
-		if(others.isNil) { ^nil };
+		if(others.isNil or: { others.isEmpty }) { ^nil };
 		^if(weights.isNil) {
 			others.collect(_.tempo).mean
 		} {
@@ -150,7 +149,7 @@ ListeningClock : SoftClock {
 	}
 	
 	othersMeanBeats {
-		if(others.isNil) { ^nil };
+		if(others.isNil or: { others.isEmpty }) { ^nil };
 		^if(weights.isNil) {
 			others.collect(_.elapsedBeats).mean
 		} {
@@ -166,8 +165,7 @@ ListeningClock : SoftClock {
 		wrapped = (beats + phaseOffset).wrap2(phaseWrap); // allow for both signs
 		phaseOffset = beats - wrapped; // keep previous offset
 		//if(verbose) { [\beats, beats, \wrapped, wrapped, \phaseOffset, phaseOffset].postln; };
-		if(wrapped > -inf) { ^beats }; // throw out nans
-		^wrapped
+		^wrapped.postln
 	}
 	
 	prAdjust { |deltaBeats, argTempo|
