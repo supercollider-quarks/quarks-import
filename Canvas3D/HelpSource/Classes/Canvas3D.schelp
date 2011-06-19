@@ -1,0 +1,260 @@
+CLASS:: Canvas3D
+summary:: 3D vector graphics canvas
+categories:: Graphics>3D
+related:: Classes/Canvas3DItem
+
+DESCRIPTION::
+Canvas3D provides a simple wire-frame 3D vector graphics canvas. It displays a list of link::Classes/Canvas3DItem::s, and can be transformed and animated.
+
+CLASSMETHODS::
+
+METHOD:: new
+Create a new canvas view.
+
+argument:: parent
+Parent link::Classes/View::
+
+argument:: bounds
+A link::Classes/Rect:: describing the position and size of this view inside the parent.
+
+returns:: A new Canvas3D instance.
+
+subsection:: Matrix transforms
+The following methods are used to create and apply matrix transforms, for translating, scaling and rotating.
+
+METHOD:: mIdentity
+Create an identity matrix.
+
+METHOD:: mTranslate
+Create a matrix for translation.
+
+argument:: tx
+X translation
+
+argument:: ty
+Y translation
+
+argument:: tz
+Z translation
+
+METHOD:: mScale
+Create a matrix for scaling.
+
+argument:: sX
+X scaling
+
+argument:: sY
+Y scaling
+
+argument:: sZ
+Z scaling
+
+METHOD:: mRotateX
+Create a matrix for rotating around X axis.
+
+argument:: ax
+X rotation
+
+METHOD:: mRotateY
+Create a matrix for rotating around Y axis.
+
+argument:: ay
+Y rotation
+
+METHOD:: mRotateZ
+Create a matrix for rotating around Z axis.
+
+argument:: ay
+Z rotation
+
+METHOD:: matrixMatrixMul
+Multiply a matrix with another matrix.
+
+returns:: A matrix.
+
+METHOD:: vectorMatrixMul
+Multiply a vector with a matrix.
+
+argument:: vector
+A 3-element link::Classes/Array:: describing a 3D vector: code::[x,y,z]::
+
+argument:: matrix
+A matrix
+
+returns:: A vector.
+
+
+INSTANCEMETHODS::
+private:: init
+
+subsection:: Managing items
+
+METHOD:: items
+Get/set the array of items in this canvas. The items should be instances of link::Classes/Canvas3DItem::
+
+METHOD:: add
+Add an item to the canvas.
+
+argument:: item
+An instance of link::Classes/Canvas3DItem::
+
+METHOD:: remove
+Remove an item from the canvas.
+
+argument:: item
+An instance of link::Classes/Canvas3DItem::
+
+subsection:: Global settings and transforms
+
+METHOD:: background
+Set the background color.
+
+argument:: color
+A link::Classes/Color::
+
+METHOD:: scale
+Get/set the global pixel scale.
+
+METHOD:: perspective
+Get/set the perspective factor. Useful range is 0.0 (no perspective) to below 1.0.
+
+METHOD:: distance
+Get/set the view distance. Useful range is around 2.0.
+
+METHOD:: transforms
+Get/set an array of transformation matrices to be applied to the whole canvas.
+
+subsection:: Displaying
+
+METHOD:: refresh
+Update the canvas.
+
+METHOD:: animate
+Start animation.
+
+argument:: rate
+Animation rate in frames per second. If code::nil::, stop animation.
+
+argument:: func
+Animation callback. This function is called once for each frame, and is passed the frame count as argument.
+
+discussion::
+See link::#animated_canvas:: example below.
+
+EXAMPLES::
+subsection:: Hello cube
+First a very simple example. Set up a canvas and add a slightly rotated cube.
+code::
+(
+    var w, width = 500, height = 400, rate = 0.005;
+
+    w = Window("3d canvas demo", Rect(128, 64, width, height), false)
+        .front;
+
+    Canvas3D(w, Rect(0, 0, width, height))
+        .scale_(200)
+        .perspective_(0.3)
+        .distance_(2)
+        .add(
+            Canvas3DItem.cube
+            .transform(Canvas3D.mRotateY(pi/3))
+            .transform(Canvas3D.mRotateX(pi/8))
+        );
+)
+::
+
+subsection:: Rotate canvas with mouse
+In this example, we add a cube and a custom spiral-shape, and set up a mouseMoveAction to rotate the canvas.
+code::
+(
+    var width = 500, height = 400, rate = 0.005;
+    var w, u;
+
+    w = Window("3d canvas demo", Rect(128, 64, width, height), false)
+        .front;
+
+    u = Canvas3D(w, Rect(0, 0, width, height))
+        .background_(Color.black)
+        .scale_(200)
+        .perspective_(0.4)
+        .distance_(2);
+
+    // add triangular spiral
+    u.add(Canvas3DItem()
+        .color_(Color.green)
+        .width_(1.5)
+        .paths_([30.collect {|i|v = [sin(pi/1.5*i)*0.5,cos(pi/1.5*i)*0.5,i.linlin(0,30,-1,1)]}])
+    );
+
+    // add cube
+    u.add(Canvas3DItem.cube
+        .color_(Color.white)
+        .width_(2)
+    );
+
+    // spin canvas on mouse move
+    u.mouseMoveAction = {|v,x,y|
+        u.transforms = [
+            Canvas3D.mRotateY(x / -200 % 2pi),
+            Canvas3D.mRotateX(y / 200 % 2pi)
+        ];
+        u.refresh;
+    };
+
+    u.mouseMoveAction.value(nil, 50, 50); // initial rotation
+)
+::
+
+subsection:: Animated canvas
+A more advanced example, with three items and animation where we spin both the canvas and one of the items.
+code::
+(
+    var width = 500, height = 400, rate = 0.005;
+    var w, u, item;
+
+    w = Window("3d canvas demo", Rect(128, 64, width, height), false)
+        .front;
+
+    u = Canvas3D(w, Rect(0, 0, width, height))
+        .scale_(200)
+        .perspective_(0.5)
+        .distance_(2);
+
+    // add a spiral
+    u.add(Canvas3DItem()
+        .color_(Color.grey)
+        .width_(1.5)
+        .paths_([
+            50.collect {|i|
+                v = [sin(pi/3*i),cos(pi/3*i),i.linlin(0,50,-1,1)] * 0.5
+            },
+            [[0,0,-1],[0,0,1]]
+        ])
+    );
+
+    // add a red cube
+    u.add(item = Canvas3DItem.cube
+        .color_(Color.red)
+        .width_(2)
+        .transform(Canvas3D.mScale(0.65))
+    );
+
+    // add a custom shape
+    u.add(Canvas3DItem()
+        .color_(Color.black)
+        .width_(3)
+        .paths_([#[0,4,6,2,3,7,5,1,0].collect{|i|i.asBinaryDigits(3)*2-1}])
+    );
+
+    // animate
+    u.animate(40) {|t|
+        u.transforms = [ // spin the canvas
+            Canvas3D.mRotateY(t*rate*1.0 % 2pi),
+            Canvas3D.mRotateX(t*rate*1.5 % 2pi)
+        ];
+        item.transforms = [ // spin the red cube
+            Canvas3D.mRotateZ(t*rate*7 % 2pi)
+        ];
+    };
+)
+::
