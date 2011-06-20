@@ -1,7 +1,7 @@
 (
 	\name: "AllGui",
 	\path: "AllGui",
-	\summary: "Ambisonic enconder/decoder up to 3rd order and binaural. Also including a simple headtracker for webcams.",
+	\summary: "A configurable gui for an overview of different kinds of global variables.",
 	\helpdoc: "Help/AllGui.scd",
 	\author: "Alberto de Campo",
 	\version: 1.0,
