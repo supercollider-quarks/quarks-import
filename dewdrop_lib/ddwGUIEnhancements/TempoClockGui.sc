@@ -77,6 +77,7 @@ TempoClockGui : ObjectGui {
 			metroLevel = spec.map(1);
 			levelSlider = GUI.slider.new(tempoFlow, Rect(0, 0, 100, nameheight))
 				.value_(metroLevel)
+				.background_(tempoEditGui.background)
 				.action_({ |view|
 					metroLevel = spec.map(view.value);
 					if(metro.notNil) {
