@@ -125,6 +125,21 @@ float dummydata[] =  {0.1, 0.3, 0.4, 0.5, 0.6};
 	// send the data to the network:
 	node->send( true );
 
+/// mapping a datanode to a minibee
+		// create a node:
+  dn->createNode( 666, "sendTo8", 1, 0, true );
+  dn->mapBee( 666, 8 );
+    
+float dummydata8[] =  {1};
+
+	// get a reference to the node:
+   node = dn->getNode( 666 );
+	// set data to the node:
+   node->setData( 1, dummydata8 );
+	// send the data to the network:
+   node->send( true );
+/// end mapping datanode to minibee
+
 	sleep( 3 );
 float dummydata2[] =  {0.4, 0.34, 0.4, 0.2, 0.6};
    node->setData( 5, dummydata2);

@@ -77,6 +77,7 @@ public:
 	void removeNode( int id );
 	
 	void mapBee( int nid, int mid, int type );
+// 	void mapBeeCustom( int nid, int mid, int type );
 
 	void addExpected( int id );
 	void addExpectedPlus( int id, int size, const char *label, int type=0 );

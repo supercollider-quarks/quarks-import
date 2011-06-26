@@ -84,6 +84,7 @@ void DataNetworkOSC::handleError( int errorid, const char *errorMsg, const char 
 	switch ( errorid ){
 		case 1:
 			registerClient();
+// 			break; // needed here?
 		case 2:
 			// only unregister when I think I'm not registered
 			if ( !datanetwork->registered ){
