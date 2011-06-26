@@ -18,12 +18,11 @@
 + FlowView {
 	resizeToFitContents {
 			// need bounds relative to parent's bounds
-		var new, maxpt, comparept, mybounds, used;
+		var new, maxpt, mybounds, used;
 		mybounds = this.bounds;
 		maxpt = Point(0, 0);
 		this.children.do({ arg c;
-			comparept = c.findRightBottom;
-			maxpt = maxpt.max(comparept);
+			maxpt = maxpt.max(c.findRightBottom);
 		});
 		new = mybounds.resizeTo(maxpt.x + this.decorator.margin.x,
 			maxpt.y + this.decorator.margin.y);

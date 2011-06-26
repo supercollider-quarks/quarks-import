@@ -62,7 +62,7 @@ if(debug) { [result, check].debug("<< " ++ this.class.name ++ ":doesNotUnderstan
 	*viewClass { ^FlowView }
 	
 	asFlowView { ^view }
-	asView { ^view }
+	asView { ^view.asView }
 	
 	close {
 		onClose.value;
