@@ -1,23 +1,15 @@
 // #include <ADXL345.h>
 
-#ifndef MiniBee_h
-#define MiniBee_h
+#ifndef MiniBeeV2_h
+#define MiniBeeV2_h
 
-#define MINIBEE_REVISION 'D'
-#define MINIBEE_LIBVERSION 3
+#define MINIBEE_REVISION 'B'
+#define MINIBEE_LIBVERSION 2
 
 /// all together: 3644 bytes
 #define MINIBEE_ENABLE_TWI 1  /// TWI/I2C takes up 2064 bytes
 #define MINIBEE_ENABLE_SHT 1  /// SHT takes up 1140 bytes
 #define MINIBEE_ENABLE_PING 1 /// Ping takes up 440 bytes
-
-/// all in: 19138 bytes
-// specific TWI devices
-#define MINIBEE_ENABLE_TWI_ADXL 1 /// 962 bytes - without: 18176
-#define MINIBEE_ENABLE_TWI_LISDL 1 /// 614 bytes - without: 18524
-#define MINIBEE_ENABLE_TWI_HMC 1 /// 1644 bytes - without: 17494 
-#define MINIBEE_ENABLE_TWI_BMP 1 /// 4182 bytes - without: 14956
-#define MINIBEE_ENABLE_TWI_TMP 1 /// 250 bytes - without: 18888
 
 // #include <avr/interrupt.h>
 #include <avr/eeprom.h>
@@ -38,41 +30,12 @@
 #define MINIBEE_ENABLE_PING 1
 #endif
 
-#if MINIBEE_REVISION == 'D'
-#define NRPINS 17
-#endif
 #if MINIBEE_REVISION == 'B'
 #define NRPINS 17
 #endif
 #if MINIBEE_REVISION == 'A'
 #define NRPINS 19
 #endif
-
-#if MINIBEE_ENABLE_TWI == 1
-#include <Wire.h>
-
-#if MINIBEE_ENABLE_TWI_ADXL == 1
-#include <ADXL345.h>
-#endif
-
-#if MINIBEE_ENABLE_TWI_LISDL == 1
-#include <LIS302DL.h>
-#endif
-
-#if MINIBEE_ENABLE_TWI_TMP == 1
-#include <TMP102.h>
-#endif
-
-#if MINIBEE_ENABLE_TWI_BMP == 1
-#include <BMP085.h>
-#endif
-
-#if MINIBEE_ENABLE_TWI_HMC == 1
-#include <HMC5843.h>
-#endif
-
-#endif
-
 
 
 enum MiniBeePinConfig { 
@@ -83,16 +46,7 @@ enum MiniBeePinConfig {
   TWIClock, TWIData,
   Ping,
   Custom = 100,
-  MeID = 150,
-  UnConfigured = 200,
-};
-
-enum TWIDeviceConfig { 
-  TWI_ADXL345=10,
-  TWI_LIS302DL=11,
-  TWI_BMP085=20,
-  TWI_TMP102=30,
-  TWI_HMC58X3=40
+  UnConfigured = 200
 };
 
 // extern "C" {
@@ -100,9 +54,9 @@ enum TWIDeviceConfig {
 //  	void USART_RX_vect(void) __attribute__ ((signal));
 // }
 
-class MiniBee {
+class MiniBeeV2 {
 	public:
-		MiniBee();	//constructor
+		MiniBeeV2();	//constructor
 
 		void (*customMsgFunc)(char *);// = NULL;
 		void (*dataMsgFunc)(char *);// = NULL;
@@ -129,6 +83,7 @@ class MiniBee {
 		void openSerial(long);
 		void configXBee();
 
+		void readConfigMsg(char *); // assign config from msg
 		void setID( uint8_t id );
 		char * getData();
 		int dataSize();
@@ -162,21 +117,16 @@ class MiniBee {
 // 		void waitForConfig(void); // waits for the configuration message
 // 		void configure(void);	//configure from eeprom settings
 
-		void readConfigMsg(char *, uint8_t); // assign config from msg
-
 	//twi
-#if MINIBEE_ENABLE_TWI == 1
 		bool getFlagTWI();	//returns twi flag state
-		int readTWIdevices(int dboff);
-		void setupTWIdevices(void);
-
-// #if MINIBEE_REVISION == 'A'
-// 		void setupTWI(void);	//setup function for TWI
-// 		int readTWI(int, int);	//address, number of bytes;
-// 		int readTWI(int, int, int);	//address, register, number of bytes
-// #endif
-// 		void setupAccelleroTWI();
-// 		void readAccelleroTWI( int dboff );
+#if MINIBEE_ENABLE_TWI == 1
+#if MINIBEE_REVISION == 'A'
+		void setupTWI(void);	//setup function for TWI
+		int readTWI(int, int);	//address, number of bytes;
+		int readTWI(int, int, int);	//address, register, number of bytes
+#endif
+		void setupAccelleroTWI();
+		void readAccelleroTWI( int dboff );
 #endif
 
 #if MINIBEE_ENABLE_SHT == 1
@@ -215,10 +165,8 @@ class MiniBee {
 // 		void SerialEvent(void);
 
 	private:
-		#define PIN_CONFIG_BYTES 19 // 23 for base config. 4 for other stuff, so 19 for the pins
-		#define CONFIG_BYTES 64 // 23 for pin configs. then some for twi configuration (which is variable!)
-		
-		#define MAX_MESSAGE_SIZE 64
+		#define CONFIG_BYTES 23
+		#define MAX_MESSAGE_SIZE 26
 		#define XBEE_SLEEP_PIN 2
 		#define AT_OK 167
 		#define AT_ERROR 407
@@ -242,7 +190,6 @@ class MiniBee {
 		#define S_ANN 'A'
 		#define S_QUIT 'Q'
 		#define S_ID 'I'
-		#define S_ME 'M'
 		#define S_CONFIG 'C'
 		#define S_CUSTOM 'E'
 // 		#define S_FULL 'a'
@@ -286,10 +233,6 @@ class MiniBee {
 		int smpInterval;
 		char *outMessage;
 
-		void setMeLed( uint8_t );
-// 		void writeMePin( uint8_t );
-		void setupMePin();
-		
 	//AT private commands
 		int atGetStatus(void);
 		void atSend(char *);
@@ -306,13 +249,12 @@ class MiniBee {
 
 	//config 
 		char *config; //array of pointers for all the config bytes
-		void writeConfig(char *, uint8_t); // eeprom write
+		void writeConfig(char *); // eeprom write
 		void readConfig(void); // eeprom read
 		void parseConfig(void); // parse the config
 
 	// collecting sensor data:
-		void dataFromInt( unsigned int output, int offset );
-		void dataFromLong24( unsigned long output, int offset );
+		void dataFromInt( int output, int offset );
 		char *data;
 		int datacount;
 		int datasize;
@@ -330,8 +272,6 @@ class MiniBee {
 		uint8_t ping_pin;	//ping pins (these could be more, but not right now)
 #endif
 
-
-		uint8_t me_pin;
 		bool analog_in[8]; // sets whether analog in on 
 		bool analog_precision[8]; // sets whether analog 10 bit precision is on or not
 
@@ -342,12 +282,10 @@ class MiniBee {
 		bool digital_out[NRPINS]; // sets whether digital out on
 		char digital_values[NRPINS];
 		
-		uint8_t isIOPin( uint8_t id );
-		uint8_t isAnalogPin( uint8_t id );
-		static uint8_t pin_ids[]; 
-		static uint8_t anapin_ids[]; 
-		
-// 		#define ANAOFFSET 11
+		bool isValidPin( uint8_t id );
+		static uint8_t pin_ids[]; // = { 3,5,6, 8,9,10 };
+
+		#define ANAOFFSET 11
 
 		bool digital_in[NRPINS]; // sets whether digital in on
 
@@ -358,30 +296,12 @@ class MiniBee {
 		#define PINOFFSET 3
 
 #if MINIBEE_ENABLE_TWI == 1
-/*#if MINIBEE_REVISION == 'A'
+#if MINIBEE_REVISION == 'A'
 	// LIS302DL accelerometer addresses
 		#define accel1Address 0x1C
 		#define accelResultX 0x29
 		#define accelResultY 0x2B
 		#define accelResultZ 0x2D
-#endif*/
-		uint8_t * twi_devices;
-		uint8_t nr_twi_devices;
-
-#if MINIBEE_ENABLE_TWI_ADXL == 1
-		ADXL345 * accelADXL;
-#endif
-#if MINIBEE_ENABLE_TWI_LISDL == 1
-		LIS302DL * accelLIS;
-#endif
-#if MINIBEE_ENABLE_TWI_TMP == 1
-		TMP102 * temp102;
-#endif
-#if MINIBEE_ENABLE_TWI_BMP == 1
-		BMP085 * bmp085;
-#endif
-#if MINIBEE_ENABLE_TWI_HMC == 1
-		HMC5843 * hmc58x3;
 #endif
 #endif
 
