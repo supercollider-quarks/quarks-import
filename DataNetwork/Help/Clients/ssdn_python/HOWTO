@@ -1,0 +1,60 @@
+==========
+Installing
+==========
+
+INSTALLATION
+
+Dependencies are:
+* python (version 2.6 or higher) - e.g. http://www.python.org/download/releases/2.7.1/
+* pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
+* pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/ - download: http://sourceforge.net/projects/pyserial/files/pyserial/2.5/pyserial-2.5.tar.gz/download
+
+python :
+check which version you have:
+  $ python --version
+If it is lower than 2.6 you will need to get a version higher than 2.6.
+
+Install the dependencies:
+
+pyOSC :
+  $ cd pyosc
+  $ sudo ./setup.py install
+
+pyserial:
+Follow the instructions at:
+  http://pyserial.sourceforge.net/pyserial.html#installation
+
+
+(proper setup script for pydon itself to follow)
+
+==========
+
+go to the hive directory
+  $ cd hive
+  
+start:
+  $ python swpydonhive.py
+  
+this will print the help:
+
+Usage: swpydonhive.py [options]
+
+Create a datanetwork client to communicate with the minibee network.
+
+Options:
+  -h, --help            show this help message and exit
+  -p PORT, --port=PORT  the port on which the client will listen
+                        [default:57600]
+  -n NAME, --name=NAME  the name of the client in the datanetwork
+                        [default:pydonhive]
+  -c CONFIG, --config=CONFIG
+                        the name of the configuration file for the minibees
+                        [default:hiveconfig.xml]
+  -m MINIBEES, --nr_of_minibees=MINIBEES
+                        the number of minibees in the network [default:10]
+  -d HOST, --host_ip=HOST
+                        the ip address of the datanetwork host
+                        [default:127.0.0.1]
+  -s SERIAL, --serial=SERIAL
+                        the serial port [default:/dev/ttyUSB0]
+
