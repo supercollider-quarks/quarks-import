@@ -1,0 +1,95 @@
+MINIHIVE OSC documentation
+
+MiniHiveOSC is a simple program which just receives the serial data and sends it to another program via osc, and listens to osc to send data to minibees.
+It uses the same configuration file as swpydonhive.
+
+---------------------------------
+OSC messages it sends:
+
+/minibee/info   - siii   - serial number, id, number of inputs, number of outputs
+/minibee/data   - iff..f - id, and as many floats as inputs
+
+OSC messages it listens to:
+
+/minibee/output - iii..i - id, and as many 8bit integers as outputs (first PWM's then digital)
+/minibee/custom - iii..i - id, and as many 8bit integers as the custom message requires
+
+and see below for on the fly configuration.
+
+
+---------------------------------
+     COMMAND LINE OPTIONS
+---------------------------------
+
+Usage: minihiveosc.py [options]
+
+Create a program that speaks OSC to communicate with the minibee network.
+
+Options:
+  -h, --help            show this help message and exit
+  -p PORT, --port=PORT  the port on which the minihiveosc will listen
+                        [default:57600]
+  -c CONFIG, --config=CONFIG
+                        the name of the configuration file for the minibees
+                        [default:hiveconfig.xml]
+  -m MINIBEES, --nr_of_minibees=MINIBEES
+                        the number of minibees in the network [default:10]
+  -d HOST, --host_ip=HOST
+                        the ip address of the application that has to receive
+                        the OSC messages [default:127.0.0.1]
+  -t HPORT, --host_port=HPORT
+                        the port on which the application that has to receive
+                        the OSC messages will listen [default:57120]
+  -v VERBOSE, --verbose=VERBOSE
+                        verbose printing [default:0]
+  -s SERIAL, --serial=SERIAL
+                        the serial port [default:/dev/ttyUSB0]
+
+
+---------------------------------
+    ON THE FLY configuration
+---------------------------------
+
+--- assign a config id to a node id, and that to a serial number ---
+/minibee/configuration node id, config id, serial number (optional)
+
+possible return messages:
+/minibee/configuration/done node id, config id, serial number (optional)
+/minibee/configuration/error node id, config id, serial number (optional)
+
+--- load and save config ---
+/minihive/configuration/save filename
+/minihive/configuration/load filename
+
+--- set configuration ---
+/minihive/configuration
+
+Format:
+i config id
+s config name
+i samples per message
+i message interval
+i number of pins defined (N)
+i number of TWI devices defined (M)
+
+then N times:
+  s      - pin id (e.g. A0)
+  s or i - pin function (e.g. 3, or 'AnalogIn')
+  s      - pin label (e.g. light)
+
+then M times:
+  i      - twi id (e.g. 0)
+  s or i - twi function (e.g. 10, or 'ADXL345')
+  s      - twi label (e.g. accelero)
+
+/minihive/configuration/short (as above but without separate pin definitions; those are done separately by the message that follow)
+/minihive/configuration/pin config id, pinid, pinconfig
+/minihive/configuration/twi config id, twiid, twiconfig
+
+/minihive/configuration/delete config id
+
+-----------------------------
+     TESTING WITH SC
+-----------------------------
+An example of sending the right messages with SuperCollider is given in:
+testminihiveosc.scd

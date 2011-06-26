@@ -1,0 +1,111 @@
+Pydon hive
+
+Hive manager for the datanetwork in Python.
+
+INSTALLATION
+
+Dependencies are:
+* python (version 2.6 or higher) - e.g. http://www.python.org/download/releases/2.7.1/
+* pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
+* pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/
+
+The source can be found at:
+git@195.88.32.63:pydonhive.git 
+
+So:
+git clone git@195.88.32.63:pydonhive.git
+
+You then get a folder pydonhive:
+go into the folder hive:
+
+You have a number of files in there:
+
+Python files / classes:
+pydon.py         - python datanetwork client
+pydonhive.py     - python hive manager
+minibeexml.py    - python classes that read the config file
+swpydonhive.py   - python class that combines the hive manager and datanetwork client
+
+Python scripts:
+
+hivelogger.py    - writes incoming data to a log file
+plothivelog.py   - plots a graph from a log file
+
+Config files:
+hiveconfig.xml   - example config file
+myhiveconfig.xml   - example config file
+
+
+CREATING THE CONFIG FILE:
+
+The config file is an xml file.
+
+The top level structure is:
+<xml>
+<hive name="myprojectname">
+
+</hive>
+</xml>
+
+Then there are elements for each MiniBee you have:
+
+  <minibee id="1" revision="B" serial="13A200403BF27B" libversion="3" caps="7">
+    <config id="1" name="accelero" />
+  </minibee>
+
+So the ID, the revision of the board, the serial number of its XBee (see back side of XBee),
+the library version and the capabilities are defined. So the elements you want to change are
+the id, and the serial number.
+
+Then you define the config that is used by this minibee by a number, which refers to a configuration element:
+
+As an example:
+
+  <configuration id="2" name="accelero" message_interval="50" samples_per_message="1">
+    <pin config="AnalogIn" id="A0" />
+    <pin config="TWIData" id="A4" />
+    <pin config="TWIClock" id="A5" />
+    <twi id="1" device="ADXL345" />
+    <twi id="2" device="TMP102" />
+    <twi id="3" device="BMP085" />
+  </configuration>
+
+So top level:
+
+ID and label
+Message interval in milliseconds
+Samples per message (should be 1 for now)
+
+---------------
+NOT YET IMPLEMENTED:
+If this is higher than 1, the MiniBee will make measurements as often as you set the number to,
+and then send a package with all the data once every each message interval has passed. The time in between is divided up.
+(NOTE: I haven't built in the timed playback of these messages yet, in the python version).
+---------------
+
+Then for each pin:
+id and configuration. Pins that are not mentioned are not configured.
+
+Possible pin configurations:
+
+DigitalIn     -- digital input (any pin but A4, A5)
+DigitalOut    -- digital output on/off (any pin but A4, A5)
+AnalogIn      -- analog input (for pin A0, A1, A2, A3, A6, A7)
+AnalogIn10bit -- analog input with 10bit result (for pin A0, A1, A2, A3, A6, A7)
+AnalogOut     -- PWM or analog out (pins D3, D5, D6, D9, D10, D11)
+Ping          -- Ultrasonic sensor (any pin but A4, A5)
+SHTClock      -- Clock signal for SHT15 sensor (temperature/humidity) (any pin but A4, A5)
+SHTData       -- Data signal for SHT15 sensor (temperature/humidity) (any pin but A4, A5)
+TWIClock      -- Use a TWI/I2C sensor, clock signal (pin A5)
+TWIData       -- Use a TWI/I2C sensor, data signal (pin A4)
+
+And if TWI is used:
+the devices which are used.
+Currently supported are ADXL345, LIS302DL, TMP102, and BMP085.
+
+
+
+KNOWN ISSUES:
+
+When MiniBees are on and hive is started the auto-reconfiguration is not working properly yet...
+
