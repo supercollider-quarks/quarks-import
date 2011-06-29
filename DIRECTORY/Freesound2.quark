@@ -1,6 +1,6 @@
 (
 \name: "Freesound2",
-\path: "Freesound2AudioUnitBuilder",
+\path: "Freesound2",
 \summary: "Client or the Fresound 2 beta API",
 \author: "Gerard Roma",
 \organization:  "MTG, Universitat Pompeu Fabra",
