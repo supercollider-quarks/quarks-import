@@ -477,7 +477,7 @@ VoicerGCView {
 			editor = NumberEditor(model.value, model.spec);
 			midiDrag = GUI.dragBoth.new(voicerGUI.controlView, Rect(0, 0, 30, 20))
 				.align_(\center)
-				.font_(GUI.font.new("Helvetica", 10.0))
+				.font_(GUI.font.new("Helvetica", 10))
 				.action_({ |rec|
 					rec.object.tryPerform(\draggedIntoVoicerGCGUI, this);
 				})
@@ -546,9 +546,12 @@ VoicerGCView {
 			// nameView.notClosed is an indirect check
 			// if window has closed, nameView.notClosed will be false
 			// and there is no need to update the views
-		if(editor.notNil and: { nameView.notClosed }) {
-			{	editor.value_(model.value, false);
-				updateBus.if({ editor.changed }, { editorGUI.update }); 
+		if(editor.notNil) {
+			{	
+				if(nameView.notClosed) {
+					editor.value_(model.value, false);
+					updateBus.if({ editor.changed }, { editorGUI.update });
+				};
 				nil
 			}.defer;
 		};
