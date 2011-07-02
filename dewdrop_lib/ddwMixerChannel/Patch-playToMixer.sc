@@ -61,7 +61,7 @@
 	initTree {
 			// MixerChannelReconstructor requires NOT resetting NodeIDAllocator
 //		nodeAllocator = NodeIDAllocator(clientID);	
-		this.sendMsg("/g_new", 1);
+		this.sendMsg("/g_new", 1, 0, 0);
 		tree.value(this);
 	}
 }
