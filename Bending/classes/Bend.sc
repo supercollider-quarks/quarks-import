@@ -45,7 +45,7 @@ AbstractBend {
 		^LinXFade2.perform(
 			this.methodSelectorFor(original), 
 			original, 
-			replacement.poll, //(replacement * (max + min) - min) .poll, 
+			replacement * (max + min) - min, 
 			ratio.linlin(0, 1, -1, 1)
 		)
 	}
@@ -280,12 +280,12 @@ CircuitBend : AbstractBend {
 			var control, lagControl, mix, selector;
 			var controlName, lagControlName; 
 			if(defaultLag.notNil) {
-				lagControlName = "%_lag_%_%".format(controlPrefix, i, argName).asSymbol;
+				lagControlName = "%_lag_%_%".format(controlPrefix, i, j).asSymbol;
 				lagControl = 	NamedControl.kr(lagControlName, defaultLag ! others.size);
 				lagControl = lagControl.linexp(0, 1, 0.001, 10);
 				//Spec.add(lagControlName, [0.001, 10, \exp]);
 			};
-			controlName = "%_%_%".format(controlPrefix, i, argName).asSymbol;
+			controlName = "%_%_%".format(controlPrefix, i, j).asSymbol;
 			control = NamedControl.kr(controlName, default ! others.size, lagControl);
 			//Spec.add(controlName, [0, 1, \lin]);
 		
@@ -324,7 +324,6 @@ CircuitBend : AbstractBend {
 			//Spec.add(indexControlName, [0, others.size - 1, \lin, 1]);
 			
 			mix = Select.perform(this.methodSelectorFor(in), indexControl, others);
-			others.poll;
 			if(blend) {
 				this.makeCrossfade(in, mix, control)
 			} {
