@@ -25,3 +25,32 @@
 	})
 }.play)
 
+
+/*
+a = Bus.audio(s, 16);
+c = Bus.control(s, 16);
+
+(
+// circuit bent analog bubbles
+{
+	BendOut({
+		f = LFSaw.kr(0.4, 0, 24, LFSaw.kr([8,7.23], 0, 3, 80)).midicps; // glissando function
+		CombN.ar(SinOsc.ar(f, 0, 0.04), 0.2, 0.2, 0.4) // echoing sine wave
+	}, a, c);
+	Silent.ar;
+}.play
+)
+
+(
+// circuit bent analog bubbles
+{
+	BendIn({ |i, j, in, others|
+			others.scramble.keep(rrand(1, others.size)).mean * factor + in
+		}, {
+		f = LFSaw.kr(0.4, 0, 24, LFSaw.kr([8,7.23], 0, 3, 80)).midicps; // glissando function
+		CombN.ar(SinOsc.ar(f, 0, 0.04), 0.2, 0.2, 0.4) // echoing sine wave
+	}, a, c)
+}.play
+)
+
+*/
