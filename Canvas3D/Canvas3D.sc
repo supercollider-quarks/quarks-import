@@ -55,6 +55,8 @@ Canvas3D : SCViewHolder {
     var <>perspective = 0.5;
     var <>distance = 2;
     var <>transforms;
+    var <>preDrawFunc;
+    var <>postDrawFunc;
     var animator;
 
     *new { |parent, bounds|
@@ -67,6 +69,7 @@ Canvas3D : SCViewHolder {
         this.view = UserView(parent, bounds)
             .background_(Color.white)
             .drawFunc_({
+                preDrawFunc.value;
                 items.do {|item|
                     item.paths.do {|path|
                         path.do {|v,i|
@@ -87,7 +90,8 @@ Canvas3D : SCViewHolder {
                     Pen.width = item.width;
                     Pen.strokeColor = item.color;
                     Pen.stroke;
-                }
+                };
+                postDrawFunc.value;
             });
     }
 

@@ -129,6 +129,12 @@ subsection:: Displaying
 METHOD:: refresh
 Update the canvas.
 
+METHOD:: preDrawFunc
+Function to evaluate at the beginning of the draw function.
+
+METHOD:: postDrawFunc
+Function to evaluate at the end of the draw function.
+
 METHOD:: animate
 Start animation.
 
