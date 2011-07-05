@@ -11,11 +11,11 @@ s.options
 	.zeroConf_(false)			// don't wait for zeroconf when booting server
 	.memSize_(8192 * 32)		// memSize is in kB, so 8 * 32 = 256 MB for soundfiles, buffers
 
-		// keep several combinations of audio devices + numChannels
-	.device_("MicLineOut")
-	.hardwareBufferSize_(256)
-	.numInputBusChannels_(8)
-	.numOutputBusChannels_(8)
+//		// keep several combinations of audio devices + numChannels
+//	.device_("MicLineOut")		// an aggregate device
+//	.hardwareBufferSize_(512)	// 512 is default
+//	.numInputBusChannels_(8)	// 8 is default
+//	.numOutputBusChannels_(8)	// 8 is default
 	
 		// comment out unused devices.
 //	.device_("Fireface 400")
@@ -26,7 +26,9 @@ s.options
 
 	
 q = q ? (); 		// make a global dictionary for everything
-p = ProxySpace.push(s); // make a proxyspace and push it.
+
+p = Ndef.dictFor(s);	// make a proxyspace for Ndefs on the default server
+p.push(s); 			// and push it - so Ndef(\asd) === ~asd now.
 
 s.quit; 	// in case the server is still running, quit it.
 
@@ -35,14 +37,14 @@ s.doWhenBooted({
 	1.wait;
 	"server is booted - do further setup here...".postln;
 				// make some JIT guis: 
-	try { q.pxmix.win.close }; q.pxmix = ProxyMixer(p, 16, \p);
-	try { q.tdg.win.close }; q.tdg = TdefAllGui(16); q.tdg.win.bounds_(q.tdg.win.bounds.moveTo(210, 600));
-	try { q.pdg.win.close }; q.pdg = PdefAllGui(16); q.pdg.win.bounds_(q.pdg.win.bounds.moveTo(420, 600));
+	try { q.pxmix.win.close }; q.pxmix = ProxyMixer(p, 16);
+	try { q.tdg.win.close }; q.tdg = TdefAllGui(16); q.tdg.moveTo(210, 600);
+	try { q.pdg.win.close }; q.pdg = PdefAllGui(16); q.pdg.moveTo(420, 600);
 
 	1.wait; 
 	
 	Env.perc.test;	// and play a test sound if you like
-	"setup done.".postln;
+	"simple JIT setup done.".postln;
 });
 
 Task({ 
