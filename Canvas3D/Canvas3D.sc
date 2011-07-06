@@ -77,8 +77,8 @@ Canvas3D : SCViewHolder {
 			                item.transforms.do {|m| v = Canvas3D.vectorMatrixMul(v, m) };
 			                transforms.do {|m| v = Canvas3D.vectorMatrixMul(v, m) };
 			                z = v[2]*perspective+distance;
-			                x = scale*(v[0]/z)+(bounds.width/2);
-			                y = scale*(v[1]/z)+(bounds.height/2);
+			                x = scale*(v[0]/z)+(this.bounds.width/2);
+			                y = scale*(v[1]/z)+(this.bounds.height/2);
                             p = Point(x, y);
                             if(i==0) {
                                 Pen.moveTo(p);
@@ -94,10 +94,6 @@ Canvas3D : SCViewHolder {
                 postDrawFunc.value;
             });
     }
-
-/*    background_ {|color|
-        this.view.background = color;
-    }*/
 
     add {|item|
         items = items.add(item);
