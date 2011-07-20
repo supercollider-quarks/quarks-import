@@ -6,6 +6,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 		alsadef = ["system:","playback_","capture_"];
 		scdef = ["SuperCollider:","in_","out_"];
 		prepend = "";
+		"\nLinuxExternal quark is attempting to contact the Jack server\n".postln;
 		this.getallports;
 		this.getproperties;
 		this.getconnections;
