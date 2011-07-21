@@ -1,5 +1,5 @@
 
-AbstractBend {
+AbstractUGenBend {
 	classvar currentBuildSynthDef, ugens;
 	
 	*use { |func|
@@ -57,6 +57,11 @@ AbstractBend {
 		currentBuildSynthDef.addUGen(ugen);
 		ugens = ugens.add(ugen);		
 	}
+	
+	*replaceUGen { |a, b|
+		currentBuildSynthDef.replaceUGen(a, b);
+		ugens !? { ugens = ugens.replace(a, b) };		
+	}
 
 
 	*available {
@@ -81,7 +86,7 @@ AbstractBend {
 }
 
 
-Bend : AbstractBend {
+Bend : AbstractUGenBend {
 	
 	*new { |bendFunc, ugenFunc| // todo multichannel expand bendFunc
 		
@@ -106,16 +111,10 @@ Bend : AbstractBend {
 		}, ugenFunc)
 	}
 	
-	*rand { |coin, bendFunc, ugenFunc|
-		^this.new({ |original, argName, ugen|
-			if(coin.value.coin) {
-				bendFunc.value(original, argName, ugen)
-			} {
-				original
-			}
-		}, ugenFunc)
+	*controls {
+		
 	}
-	
+		
 	*bendAllUGens { |bendFunc|
 		
 		ugens.do { |ugen| 
@@ -148,7 +147,7 @@ Bend : AbstractBend {
 }
 
 
-CircuitBend : AbstractBend {
+CircuitBend : AbstractUGenBend {
 	
 	classvar <>excludedUGens = #[\CombN, \AllpassN, \Filter];  // exclude risky UGens
 	classvar arugens, krugens, arouts, krouts;
@@ -301,7 +300,7 @@ CircuitBend : AbstractBend {
 	}
 	
 	*controls1 { |ugenFunc, maxSize, blend = false, 
-					default = 0.001, defaultLag, controlPrefix = "bend"|
+					default = 0.05, defaultLag, controlPrefix = "bend"|
 					
 		^this.new({ |in, others, argName, i, j|
 			
