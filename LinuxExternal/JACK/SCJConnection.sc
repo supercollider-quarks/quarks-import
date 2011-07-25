@@ -6,10 +6,23 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 		alsadef = ["system:","playback_","capture_"];
 		scdef = ["SuperCollider:","in_","out_"];
 		prepend = "";
-		"\nLinuxExternal quark is attempting to contact the Jack server\n".postln;
-		this.getallports;
-		this.getproperties;
-		this.getconnections;
+		StartUp.add {
+			var pipe = Pipe("ps -e | grep jackd", "r"), line;
+			protect {
+				// line.isNil signals EOF
+				// also rule out lines with "grep" (just in case)
+				while { (line = pipe.getLine).notNil and: { line.contains("grep") } }
+			} { pipe.close };
+			// if jack server is not running, line will be nil
+			if(line.notNil) {
+				"JACK quark is attempting to contact the Jack server".postln;
+				this.getallports;
+				this.getproperties;
+				this.getconnections;
+			} {
+				"JACK quark cannot read Jack server connections, because Jack is not running.".postln;
+			}
+		};
 	}
 
 	*getconnections{
