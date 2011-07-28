@@ -1,0 +1,12 @@
+(
+	\name: 			"json",
+	\path: 			"json", // path relative to the root Quarks folder
+	\summary:		"a basic json parser and a proof of concept implementation for accessing gists",
+	\author: 		"Till Bovermann",
+	\organization: 	"Department of Media, School of art and design, Aalto University Helsinki",
+	\country: 		"Finland",
+	\since: 		"2011",
+	\url:           "http://tai-studio.org",
+	\version: 0.1,
+	\helpdoc: "help/json and gist.html"
+)
