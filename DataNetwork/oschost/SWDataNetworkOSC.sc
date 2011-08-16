@@ -9,7 +9,6 @@ SWDataNetworkOSC{
 
 	var <>maxMissedPongs = 10;
 
-
 	var <hiveDictionary;
 
 	var <clientDictionary;
@@ -30,6 +29,7 @@ SWDataNetworkOSC{
 	var myhost;
 
 	var <hiveBlockAllocator;
+	var <hiveNotifier;
 
 	*initClass{
 		Platform.case(
@@ -49,6 +49,7 @@ SWDataNetworkOSC{
 		network.osc = this;
 		clientDictionary = IdentityDictionary.new;
 		hiveDictionary = IdentityDictionary.new;
+		hiveNotifier = SWAsyncNotifier.new;
 		clients = Array.new;
 		clientPorts = List.new;
 		setters = IdentityDictionary.new;
@@ -291,6 +292,28 @@ SWDataNetworkOSC{
 				if ( msg.size > 1 ){
 					addr.port = msg[1]; this.unmapHiveCustom( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ verbose.value( 0, "missing port in message" ); };			}),
+
+			OSCresponderNode( nil, '/mapped/minibee/output', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mappedHiveOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/mapped/minibee/custom', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mappedHiveCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/unmapped/minibee/output', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmappedHiveOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/unmapped/minibee/custom', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmappedHiveCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+
 			OSCresponderNode( nil, '/map/minibee/pwm', { |t,r,msg,addr|
 				verbose.value( 1, msg );
 				if ( msg.size > 1 ){
@@ -319,11 +342,93 @@ SWDataNetworkOSC{
 			OSCresponderNode( nil, '/query/hives', { |t,r,msg,addr|
 				verbose.value( 1, msg );
 				if ( msg.size > 1 ){
-					addr.port = msg[1]; this.queryHives( addr, msg[2] );
+					addr.port = msg[1]; this.hiveQuery( addr, msg[2] );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/query/configurations', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.configQuery( addr, msg[2] );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/info/configuration', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.configInfo( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/configure/minibee', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.configMiniBee( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/configured/minibee', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.configuredMiniBee( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/create', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.createConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/created', { |t,r,msg,addr|
+				// from minihive
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.createdConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/delete', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.deleteConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/deleted', { |t,r,msg,addr|
+				// from minihive
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.deletedConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/save', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.saveConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/saved', { |t,r,msg,addr|
+				// from minihive
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.savedConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/load', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.loadConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/configuration/loaded', { |t,r,msg,addr|
+				// from minihive
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.loadedConfig( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+			OSCresponderNode( nil, '/minihive/error', { |t,r,msg,addr|
+				// from minihive
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.errorFromHive( addr, msg[2], msg.copyToEnd(3) );
 				}{ verbose.value( 0, "missing port in message" ); };
 			})
 		];
-
 		responders.do{ |it| it.add };
 	}
 
@@ -362,6 +467,7 @@ SWDataNetworkOSC{
 		myhost = NetAddr.atMyIP( NetAddr.langPort, prefix );
 
 		ports.do{ |it|
+			// LAN:
 			NetAddr.new( broadcastip, it ).sendMsg( 
 				"/datanetwork/announce", myhost.hostname, myhost.port.asInteger );
 		};
@@ -379,7 +485,7 @@ SWDataNetworkOSC{
 		// localhost
 		ports.do{ |it|
 			NetAddr.new( "127.0.0.1", it ).sendMsg( 
-				"/datanetwork/announce", myhost.hostname, myhost.port.asInteger );
+				"/datanetwork/announce", "127.0.0.1", myhost.port.asInteger );
 			};
 
 		this.logMsg( "network announced" );
@@ -862,6 +968,246 @@ SWDataNetworkOSC{
 		});
 	}
 
+	configInfo{ |addr,name,msg|
+		// receiving config info message from hive client, passing it on to clients that requested the information
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/info/configuration", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				client.sendConfigInfo( msg );
+			}{
+				this.errorMsg( addr, "/info/configuration", 18, [name,msg[0]] );
+			}
+		});
+	}
+
+	configMiniBee{ |addr,name,msg|
+		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/configure/minibee", 15, [name] );
+		},{
+			// find hive that has this minibee
+			hiveDictionary.do{ |it|
+				it.configureBee( msg[0], msg[1] );
+			};
+			hiveNotifier.add( '/configure/minibee', msg[0], client, '/configured/minibee' );
+		});
+	}
+
+	configuredMiniBee{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/configured/minibee", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/configure/minibee', msg[0], msg.copyToEnd( 1 ) );
+			}{
+				this.errorMsg( addr, "/configured/minibee", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	mappedHiveOutput{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/mapped/minibee/output", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/map/minibee/output', msg[1], msg[0] );
+			}{
+				this.errorMsg( addr, "/mapped/minibee/output", 16, [name,msg[1]] );
+			}
+		});
+	}
+
+	mappedHiveCustom{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/mapped/minibee/custom", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/map/minibee/custom', msg[1], msg[0] );
+			}{
+				this.errorMsg( addr, "/mapped/minibee/custom", 16, [name,msg[1]] );
+			}
+		});
+	}
+
+	unmappedHiveOutput{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/unmapped/minibee/output", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/unmap/minibee/output', msg[1], msg[0] );
+			}{
+				this.errorMsg( addr, "/unmapped/minibee/output", 16, [name,msg[1]] );
+			}
+		});
+	}
+
+	unmappedHiveCustom{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/unmapped/minibee/custom", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/unmap/minibee/custom', msg[1], msg[0] );
+			}{
+				this.errorMsg( addr, "/unmapped/minibee/custom", 16, [name,msg[1]] );
+			}
+		});
+	}
+
+	createConfig{ |addr,name,msg|
+		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/create", 15, [name] );
+		},{
+			// find hive that has this minibee
+			hiveDictionary.do{ |it|
+				it.createConfig( msg[0], msg.copyToEnd( 1 ) );
+			};
+			hiveNotifier.add( '/minihive/configuration/create', msg[0], client, '/minihive/configuration/created' );
+		});
+	}
+
+	createdConfig{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/created", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/minihive/configuration/create', msg[0], msg.copyToEnd( 1 ) );
+			}{
+				this.errorMsg( addr, "/minihive/configuration/created", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	deleteConfig{ |addr,name,msg|
+		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/delete", 15, [name] );
+		},{
+			// find hive that has this minibee
+			hiveDictionary.do{ |it|
+				it.deleteConfig( msg[0] );
+			};
+			hiveNotifier.add( '/minihive/configuration/delete', msg[0], client, '/minihive/configuration/deleted' );
+		});
+	}
+
+	deletedConfig{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/deleted", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/minihive/configuration/delete', msg[0] );
+			}{
+				this.errorMsg( addr, "/minihive/configuration/deleted", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	saveConfig{ |addr,name,msg|
+		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/save", 15, [name] );
+		},{
+			// find hive that has this minibee
+			hiveDictionary.do{ |it|
+				it.saveConfig( msg[0] );
+			};
+			hiveNotifier.add( '/minihive/configuration/save', msg[0], client, '/minihive/configuration/saved' );
+		});
+	}
+
+	savedConfig{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/saved", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/minihive/configuration/save', msg[0] );
+			}{
+				this.errorMsg( addr, "/minihive/configuration/saved", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	loadConfig{ |addr,name,msg|
+		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/load", 15, [name] );
+		},{
+			// find hive that has this minibee
+			hiveDictionary.do{ |it|
+				it.loadConfig( msg[0] );
+			};
+			hiveNotifier.add( '/minihive/configuration/load', msg[0], client, '/minihive/configuration/loaded' );
+		});
+	}
+
+	loadedConfig{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/configuration/loaded", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/minihive/configuration/load', msg[0] );
+			}{
+				this.errorMsg( addr, "/minihive/configuration/loaded", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	errorFromHive{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/minihive/error", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.errorResult( msg[0], msg.copyToEnd( 1 ) ); //TODO: this should be a nice string instead
+			}{
+				this.errorMsg( addr, "/minihive/error", 16, [name,msg[0]] );
+			}
+		});		
+	}
+
 
 	//------- Queries -------
 
@@ -875,6 +1221,7 @@ SWDataNetworkOSC{
 		this.setterQuery( addr, name );
 		this.minibeeQuery( addr, name );
 		this.hiveQuery( addr, name );
+		this.configQuery( addr, name );
 	}
 
 	expectedQuery{ |addr,name|
@@ -1107,9 +1454,27 @@ SWDataNetworkOSC{
 		this.logMsg( "/query/hives from client with IP"+addr.ip+"and port"+addr.port );
 	}
 
+	configQuery{ |addr,name|
+		var client;
+		client = this.findClient( addr, name );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/query/configurations", 15, [name] );
+		},{
+			this.getConfigInfo( addr, name );
+		});
+		this.logMsg( "/query/configurations from client with IP"+addr.ip+"and port"+addr.port );
+	}
+
 	getHiveInfo{ |addr|
 		hiveDictionary.do{ |it|
 			it.sendHiveInfo( addr );
+		}
+	}
+
+	getConfigInfo{ |addr,name|
+		hiveDictionary.do{ |it|
+			it.queryConfigInfo( addr );
+			//	it.sendConfigInfo( addr );
 		}
 	}
 
@@ -1121,6 +1486,8 @@ SWDataNetworkOSC{
 		verbose.value( 1, [addr, id, insize, outsize ].asCompileString );
 		addr.sendMsg( '/info/minibee', id, insize, outsize );
 	}
+
+	
 
 	mapHiveOutput{ |addr,name,msg|
 		var there,node;
@@ -1141,7 +1508,8 @@ SWDataNetworkOSC{
 						hiveDictionary.do{ |it|
 							it.mapHiveOutput( msg[0], msg[1] );
 						};
-						addr.sendMsg( '/mapped/minibee/output', msg[0], msg[1] );
+						hiveNotifier.add( '/map/minibee/output', msg[1], there, '/mapped/minibee/output' );
+						//		addr.sendMsg( '/mapped/minibee/output', msg[0], msg[1] );
 					},{
 						this.errorMsg( addr, "/map/minibee/output", 4, msg );
 					});
@@ -1171,7 +1539,8 @@ SWDataNetworkOSC{
 						hiveDictionary.do{ |it|
 							it.unmapHiveOutput( msg[0], msg[1] );
 						};
-						addr.sendMsg( '/unmapped/minibee/output', msg[0], msg[1] );
+						hiveNotifier.add( '/unmap/minibee/output', msg[1], there, '/unmapped/minibee/output' );
+						//	addr.sendMsg( '/unmapped/minibee/output', msg[0], msg[1] );
 					},{
 						this.errorMsg( addr, "/unmap/minibee/output", 4, msg );
 					});
@@ -1200,7 +1569,8 @@ SWDataNetworkOSC{
 						hiveDictionary.do{ |it|
 							it.mapHiveCustom( msg[0], msg[1] );
 						};
-						addr.sendMsg( '/mapped/minibee/custom', msg[0], msg[1] );
+						hiveNotifier.add( '/map/minibee/custom', msg[1], there, '/mapped/minibee/custom' );
+						//		addr.sendMsg( '/mapped/minibee/custom', msg[0], msg[1] );
 					},{
 						this.errorMsg( addr, "/map/minibee/custom", 4, msg );
 					});
@@ -1229,7 +1599,8 @@ SWDataNetworkOSC{
 						hiveDictionary.do{ |it|
 							it.unmapHiveCustom( msg[0], msg[1] );
 						};
-						addr.sendMsg( '/unmapped/minibee/custom', msg[0], msg[1] );
+						//	addr.sendMsg( '/unmapped/minibee/custom', msg[0], msg[1] );
+						hiveNotifier.add( '/unmap/minibee/custom', msg[1], there, '/unmapped/minibee/custom' );
 					},{
 						this.errorMsg( addr, "/unmap/minibee/custom", 4, msg );
 					});
@@ -1240,6 +1611,7 @@ SWDataNetworkOSC{
 		});
 	}
 
+	// is deprecated:
 	mapHivePWM{ |addr,name,msg|
 		var there,node;
 		there = this.findClient( addr, name.asSymbol );
@@ -1265,6 +1637,7 @@ SWDataNetworkOSC{
 		});
 	}
 
+	// is deprecated:
 	mapHiveDig{ |addr,name,msg|
 		var there,node;
 		there = this.findClient( addr, name.asSymbol );
@@ -1398,7 +1771,8 @@ SWDataNetworkOSC{
 			14, { string = "Client with IP"+addr.ip+"and port"+addr.port+"was not registered under name" + msg[0] },
 			15, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "is not registered. Please register first" },
 			16, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", but is not a hive client"},
-			17, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", which is out of range of the hive"}
+			17, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", which is out of range of the hive"},
+			18, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "sent a minibee configuration with id" + msg[1] + ", but is not a hive client"}
 		);	
 		^string;
 	}

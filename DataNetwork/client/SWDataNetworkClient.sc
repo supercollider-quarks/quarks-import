@@ -177,7 +177,34 @@ SWDataNetworkClient : SWDataNetwork{
 				if ( verbose > 0, { msg.postln; });
 				this.mappedNode( msg[1], msg[2], 'custom' );
 			}),
-
+			OSCresponderNode( host, '/unmapped/minibee/output', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.unmappedNode( msg[1], msg[2], 'output' );
+			}),
+			OSCresponderNode( host, '/unmapped/minibee/custom', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.unmappedNode( msg[1], msg[2], 'custom' );
+			}),
+			OSCresponderNode( host, '/configured/minibee', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.configuredBee( msg[1], msg[2] );
+			}),
+			OSCresponderNode( host, '/minihive/configuration/created', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.createdConfig( msg[1], msg.copyToEnd( 2 ) );
+			}),
+			OSCresponderNode( host, '/minihive/configuration/deleted', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.deletedConfig( msg[1], msg[2] );
+			}),
+			OSCresponderNode( host, '/minihive/configuration/saved', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.savedConfig( msg[1], msg[2] );
+			}),
+			OSCresponderNode( host, '/minihive/configuration/loaded', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.loadedConfig( msg[1], msg[2] );
+			}),
 		];
 
 		responders.do{ |it| it.add };
@@ -316,6 +343,30 @@ SWDataNetworkClient : SWDataNetwork{
 		("Mapped node"+id+"to minibee"+mid+type).postln;
 	}
 
+	unmappedNode{ |id,mid,type|
+		("Unmapped node"+id+"from minibee"+mid+type).postln;
+	}
+
+	configuredBee{ |id,mid|
+		("Configured minibee"+id+"with configuration"+mid).postln;
+	}
+
+	createdConfig{ |id,config|
+		("Created configuration"+id+"as"+config).postln;
+	}
+
+	deletedConfig{ |id|
+		("Deleted configuration"+id).postln;
+	}
+
+	savedConfig{ |id|
+		("Saved configuration"+id).postln;
+	}
+
+	loadedConfig{ |id|
+		("Loaded configuration"+id).postln;
+	}
+
 	/// OSC interface
 
 	sendSimpleMsg{ |msg|
@@ -382,6 +433,32 @@ SWDataNetworkClient : SWDataNetwork{
 
 	removeAll{ 
 		this.sendSimpleMsg( '/remove/all' );
+	}
+
+	configBee{ |miniBee,cid|
+		var mb;
+		if ( miniBee.isKindOf( SWMiniBee ) ){
+			mb = miniBee.id;
+		}{
+			mb = miniBee;
+		};
+		this.sendMsgWithArgs( '/configure/minibee', [mb,cid] )
+	}
+
+	createConfig{ |...config|
+		this.sendMsgWithArgs( '/minihive/configuration/create', config )
+	}
+
+	deleteConfig{ |cid|
+		this.sendMsgWithArgs( '/minihive/configuration/delete', [cid] )
+	}
+
+	saveConfig{ |name|
+		this.sendMsgWithArgs( '/minihive/configuration/save', [name] )
+	}
+
+	loadConfig{ |name|
+		this.sendMsgWithArgs( '/minihive/configuration/load', [name] )
 	}
 
 	mapBee{ |node,miniBee,type=\output|

@@ -161,10 +161,14 @@ A client can also provide a hive of MiniBees, by using the special hive register
 \verb|/unregistered/hive| & is & port no., name & reply to unregister to the network as a hive \\
 \hline
 \verb|/query/minibees| & is & port no., name& query which minibees are in the network (reply /info/minibee) \\
-\verb|/info/minibee| & isii & node ID, number of slots (inputs), number of outputs & info about a minibee - host -> client \\
-\verb|/info/minibee| & isisii & port no., name, node ID, number of slots (inputs), number of outputs & info about a minibee - hiveclient -> host \\
+\verb|/info/minibee| & isiiis & node ID, number of slots (inputs), number of outputs, config id, serial number & info about a minibee - host -> client \\
+\verb|/info/minibee| & isisiiis & port no., name, node ID, number of slots (inputs), number of outputs, config id, serial number & info about a minibee - hiveclient -> host \\
 \verb|/remove/minibee| & isi & port no., name, node ID & remove a minibee (only possible if client is setter) \\
 \verb|/removed/minibee| & i & node ID & reply to remove a node \\
+\verb|/query/configurations| & is & port no., name & query which configurations are in the network (reply /info/configuration) - client -> host \\
+\verb|/query/configurations| &  & & query which configurations are in the network (reply /info/configuration) - host -> hiveclient \\
+\verb|/info/configuration| & is & port no., name& query which configurations are in the network - hiveclient -> host \\
+\verb|/info/configuration| &  &  & query which configurations are in the network - host -> client \\
 \hline
 \verb|/map/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output) - client -> host\\
 \verb|/map/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /mapped/minibee/custom) - client -> host\\
@@ -188,6 +192,43 @@ A client can also provide a hive of MiniBees, by using the special hive register
 \verb|/unmapped/minibee/output| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/output messages - hiveclient -> host \\
 \verb|/unmapped/minibee/custom| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/custom messages - hiveclient -> host \\
 \hline
+
+\verb|/configure/minibee| & isii(s) & port no., name, minibee ID, config ID (, serial number) & configure minibee (reply /configured/minibee) - client -> host\\
+\verb|/configured/minibee| & ii(s) & minibee ID, config ID (, serial number)& reply to /configure/minibee - host -> client\\
+\verb|/configure/minibee| & ii(s) & minibee ID, config ID (, serial number)& configure minibee (reply /configured/minibee) - host -> hiveclient\\
+\verb|/configured/minibee| & is ii(s) & port no., name, minibee ID, config ID (, serial number) & reply to /configure/minibee - hiveclient -> host\\
+\hline
+
+\verb|/minihive/configuration/create| & is isii ii..i ii..i & port no., name, config id, configname, samples per message & create a configuration \\
+                                          &         or        & message interval, number of pins (N), number of twi devices (M)\\
+                                          & is isii ss..s ss..s & N times pin config, M times twi config & client -> host\\
+\verb|/minihive/configuration/created| & isii ii..i ii..i & config id, configname, samples per message & reply to /minihive/configuration/create \\
+                                          &         or        & message interval, number of pins (N), number of twi devices (M)\\
+                                          & isii ss..s ss..s & N times pin config, M times twi config & host -> client\\
+\verb|/minihive/configuration/create| & isii ii..i ii..i & config id, configname, samples per message\\
+                                          &         or        & message interval, number of pins (N), number of twi devices (M) & create a configuration \\
+                                          & isii ss..s ss..s & N times pin config, M times twi config &  - host -> hiveclient\\
+\verb|/minihive/configuration/created| & is isii ii..i ii..i & port no., name, config id, configname, samples per message & reply to /minihive/configuration \\
+                                          &         or        & message interval, number of pins (N), number of twi devices (M)\\
+                                          & is isii ss..s ss..s & N times pin config, M times twi config & - hiveclient -> host\\
+                                          
+\verb|/minihive/configuration/delete| & is i & port no., name, config id & delete a configuration - client -> host\\
+\verb|/minihive/configuration/deleted| & i & config id & reply to /minihive/configuration/delete -  host -> client\\
+\verb|/minihive/configuration/delete| & i & config id & delete a configuration  - host -> hiveclient\\
+\verb|/minihive/configuration/deleted| & is i & port no., name, config id & reply to /minihive/configuration/delete - hiveclient -> host\\
+\hline
+\verb|/minihive/configuration/save| & is s & port no., name, filename & save configuration file - client -> host\\
+\verb|/minihive/configuration/saved| & s & filename & reply to /minihive/configuration/save - host -> client\\
+\verb|/minihive/configuration/save| & s & filename &  save configuration file -  host -> hiveclient\\
+\verb|/minihive/configuration/saved| & is s & port no., name, filename & reply to /minihive/configuration/save - hiveclient -> host\\
+
+\verb|/minihive/configuration/load| & is s & port no., name, filename & load configuration file - client -> host\\
+\verb|/minihive/configuration/loaded| & s & filename & reply to /minihive/configuration/load - host -> client\\
+\verb|/minihive/configuration/load| & s & filename &  load configuration file -  host -> hiveclient\\
+\verb|/minihive/configuration/loaded| & is s & port no., name, filename & reply to /minihive/configuration/load - hiveclient -> host\\
+
+\hline
+
 \end{tabular}
 \end{center}
 \caption{OSC namespace for the Data Network - interaction with MiniBees. }
@@ -451,7 +492,7 @@ On OSX the default path for http files is: \verb|/Library/WebServer/Documents/|.
 \section*{Acknowledgments}\label{sec:acknowledgments}
 This software was created by
 
-\textbf{SuperCollider classes, C++ client:}
+\textbf{SuperCollider classes, C++ client, Python client \& hive client:}
 Marije Baalman (nescivi)  
 
 \textbf{Processing \& Java library:}
@@ -464,7 +505,7 @@ Joseph Malloch,
 Brett Bergmann
 
 \textbf{PureData objects:}
-Joseph Thibodeau
+Joseph Thibodeau, Marije Baalman
 
 Developed as part of the "Sense/Stage" project and the "Papyrus" project between\\
 Design and Computation Arts, Fine Arts, Concordia University\\
@@ -473,8 +514,10 @@ Input Devices and Music Interaction Lab, Music Technology, McGill University
 
 This work was support by grants from the Social Sciences and Humanities Research Council of Canada and the Hexagram Institute for Research/Creation in Media Arts and Sciences, Montr\'eal, QC, Canada.
 
+Development since 2010 by nescivi/sensestage in Amsterdam (http://www.sensestage.eu)
+
 \vspace*{0.5cm}
-(c) 2008-9 by the authors\\
+(c) 2008-11 by the authors\\
 Released under the GNU/GPL (see COPYING file)\\
 C++ library under GNU/LGPL
 

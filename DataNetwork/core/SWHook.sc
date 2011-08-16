@@ -44,7 +44,7 @@ SWHook {
 	}
 
 	perform{ |...args|
-		("performing hook action" + type + id).value;
+		("performing hook action" + type + id).postln;
 		this.action.value( *args );
 	}
 

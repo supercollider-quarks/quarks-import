@@ -13,6 +13,10 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 
 	var <>nodeRange;
 	var <activeBees;
+	var <configs;
+	var <configQueries;
+
+	//	var <hookSet;
 
 	*new{ |addr,name,minNode,maxNode|
 		^super.new( addr, name ).myInit( minNode, maxNode );
@@ -32,12 +36,15 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 		setters = client.setters;
 		nodeSubs = client.nodeSubs;
 		slotSubs = client.slotSubs;
-		slotNodesSubs = client.slotNodesSubs;
+		slotNodesSubs = client.slotNodesSubs;		
 	}
 
 	myInit{ |minNode,maxNode|
 		nodeRange = [minNode, maxNode];
 		activeBees = IdentityDictionary.new;
+		configs = IdentityDictionary.new;
+		configQueries = Set.new;
+		//		hookSet = SWHookSet.new;
 	}
 
 	sendRegistered{
@@ -46,6 +53,45 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 
 	sendHiveInfo{ |address|
 		address.sendMsg( '/info/hive', addr.ip, addr.port.asInteger, key.asString, nodeRange[0], nodeRange[1] );
+	}
+
+	queryConfigInfo{ |address|
+		("query config info" + address ).postln;
+		// add the address to interessees of config info
+		configQueries.add( address );
+		// send a query to the hive client for configurations
+		addr.sendMsg( '/query/configurations' );
+	}
+
+	sendConfigInfo{ |config|
+		configs.put( config[0], config );
+		configQueries.do{ |address|
+			address.sendMsg( *(['/info/configuration'] ++ config ++ [ addr.ip, addr.port.asInteger, key.asString] ) );			
+		}
+		// how do I keep track of which clients already received the configurations?
+	}
+
+	
+	configureBee{ |beeid,cid|
+		//		if ( activeBees.at( beeid ).notNil ){
+		addr.sendMsg( '/configure/minibee', beeid, cid );
+		//		};
+	}
+
+	createConfig{ |id,config|
+		addr.sendMsg( *( ['/minihive/configuration/create', id ] ++ config ) );
+	}
+
+	deleteConfig{ |id|
+		addr.sendMsg( '/minihive/configuration/delete', id );
+	}
+
+	saveConfig{ |filename|
+		addr.sendMsg( '/minihive/configuration/save', filename );
+	}
+
+	loadConfig{ |filename|
+		addr.sendMsg( '/minihive/configuration/load', filename );
 	}
 
 	addBee{ |id,inputs,outputs|
