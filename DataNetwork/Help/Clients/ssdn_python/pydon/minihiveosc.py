@@ -4,12 +4,12 @@
 import optparse
 # from Python v2.7 on should become argparse
 import sys
+import time
 
 import OSC
 import threading
 
-import pydonhive
-import time
+from pydon.pydonhive import pydonhive
 
 class MiniHiveOSC(object):
   #def __init__(self, port, dnosc ):
@@ -214,26 +214,29 @@ class MiniHiveOSC(object):
 
   def loadConfiguration( self, filename ):
     self.hive.hive.load_from_file( filename )
+    print( "loaded configuration from:", filename )
 
   def saveConfiguration( self, filename ):
     self.hive.hive.write_to_file( filename )
+    print( "saved configuration to:", filename )
 
 # end class DNOSCServer
 
 # begin class DataNetworkOSC
 #class DataNetworkOSC(object):
-  def __init__(self, hostip, hostport, myport, hive ):
+  def __init__(self, hostip, hostport, myip, myport, hive ):
     self.verbose = False
     self.hive = hive
     self.hostport = hostport
     self.hostip = hostip
     self.port = myport    
+    self.myip = myip
 
     self.host = OSC.OSCClient()
     send_address = ( self.hostip, self.hostport )
     self.host.connect( send_address )
 
-    receive_address = ( '127.0.0.1', self.port )
+    receive_address = ( self.myip, self.port )
     self.osc = OSC.OSCServer( receive_address )
     self.add_handlers()
     self.thread = threading.Thread( target = self.osc.serve_forever )
@@ -242,14 +245,14 @@ class MiniHiveOSC(object):
 
 
 class SWMiniHiveOSC( object ):
-  def __init__(self, hostip, hostport, myport, swarmSize, serialPort, serialRate, config, idrange, verbose ):
+  def __init__(self, hostip, hostport, myip, myport, swarmSize, serialPort, serialRate, config, idrange, verbose ):
     
     self.hive = pydonhive.MiniHive( serialPort, serialRate )
     self.hive.set_id_range( idrange[0], idrange[1] )
     self.hive.load_from_file( config )
     self.hive.set_verbose( verbose )
 
-    self.osc = MiniHiveOSC( hostip, hostport, myport, self )
+    self.osc = MiniHiveOSC( hostip, hostport, myip, myport, self )
     self.osc.setVerbose( verbose )
     
     self.verbose = verbose
@@ -302,8 +305,10 @@ if __name__ == "__main__":
   parser = optparse.OptionParser(description='Create a program that speaks OSC to communicate with the minibee network.')
   parser.add_option('-p','--port', type=int, action='store',dest="port",default=57600,
 		  help='the port on which the minihiveosc will listen [default:%i]'% 57600 )
-  parser.add_option('-c','--config', action='store', type="string", dest="config",default="hiveconfig.xml",
-		  help='the name of the configuration file for the minibees [default:%s]'% 'hiveconfig.xml')
+  parser.add_option('-i','--ip', type="string", action='store',dest="ip",default="0.0.0.0",
+		  help='the ip on which the client will listen [default:%s]'% "0.0.0.0" )
+  parser.add_option('-c','--config', action='store', type="string", dest="config",default="pydon/configs/hiveconfig.xml",
+		  help='the name of the configuration file for the minibees [default:%s]'% 'pydon/configs/hiveconfig.xml')
   parser.add_option('-m','--nr_of_minibees', type=int, action='store',dest="minibees",default=10,
 		  help='the number of minibees in the network [default:%i]'% 10)
   parser.add_option('-d','--host_ip', action='store',type="string", dest="host",default="127.0.0.1",
@@ -314,6 +319,8 @@ if __name__ == "__main__":
 		  help='verbose printing [default:%i]'% False)
   parser.add_option('-s','--serial', action='store',type="string",dest="serial",default="/dev/ttyUSB0",
 		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
+  parser.add_option('-b','--baudrate', action='store',type=int,dest="baudrate",default=57600,
+		  help='the serial port [default:%i]'% 57600)
 
   (options,args) = parser.parse_args()
   #print args.accumulate(args.integers)
@@ -322,6 +329,6 @@ if __name__ == "__main__":
   #print( options.host )
   
   print( "MiniHiveOSC - communicating via OSC with the MiniBee network" )
-  swhive = SWMiniHiveOSC( options.host, options.hport, options.port, options.minibees, options.serial, 57600, options.config, [1,options.minibees], options.verbose )
-  print( "Created OSC host at (%s,%i) and opened serial port at %s. Now waiting for messages."%(options.host, options.port, options.serial ) )
+  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose )
+  print( "Created OSC listener at (%s,%i) and OSC sender to (%s,%i) and opened serial port at %s. Now waiting for messages."%(options.ip, options.port, options.host, options.hport, options.serial ) )
   swhive.start()

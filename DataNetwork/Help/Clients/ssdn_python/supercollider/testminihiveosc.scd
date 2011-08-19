@@ -10,7 +10,7 @@ NetAddr.langPort;
 ~o2 = OSCresponderNode( nil, "/minibee/info", { |t,r,msg| msg.postln; } ).add;
 
 // in 3.5.~dev:
-OSCdef( \minibeedata, { |data,time,src| [data,time,src].postln; }, '/minibee/data' );
+OSCdef( \minibeedata, { |data,time,src|  data.postln; }, '/minibee/data' );
 OSCdef( \minibeeinfo, { |data,time,src| [data,time,src].postln; }, '/minibee/info' );
 
 
@@ -21,6 +21,10 @@ n.sendMsg( "/minibee/output", 1, 0 );
 
 // set configuration to a minibee:
 n.sendMsg( "/minibee/configuration", 1, 1 ); // minibee id, config id
+n.sendMsg( "/minibee/configuration", 2, 1 ); // minibee id, config id
+n.sendMsg( "/minibee/configuration", 3, 1 ); // minibee id, config id
+n.sendMsg( "/minibee/configuration", 4, 1 ); // minibee id, config id
+n.sendMsg( "/minibee/configuration", 5, 1 ); // minibee id, config id
 
 // define configuration:
 n.sendMsg( "/minihive/configuration", 10, "testconfig", 1, 25, 2, 1, 'A1', 'AnalogIn', 'licht', 'D11', 'DigitalIn', 'beweging', 1, 'ADXL345', 'versnelling' );
