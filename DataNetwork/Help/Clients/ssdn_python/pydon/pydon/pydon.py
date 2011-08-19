@@ -69,7 +69,22 @@ class DataNetworkOSC(object):
 
     self.osc.addMsgHandler( "/info/minibee", self.handler_info_minibee )
     self.osc.addMsgHandler( "/info/hive", self.handler_info_hive )
-    
+    self.osc.addMsgHandler( "/info/configuration", self.handler_info_config )
+
+    self.osc.addMsgHandler( "/query/configurations", self.handler_config_query )
+
+    self.osc.addMsgHandler( "/configure/minibee", self.handler_mbconfig )
+    self.osc.addMsgHandler( "/configured/minibee", self.handler_mbconfiged )
+    self.osc.addMsgHandler( "/minihive/configuration/create", self.handler_config )
+    self.osc.addMsgHandler( "/minihive/configuration/created", self.handler_configed )
+    self.osc.addMsgHandler( "/minihive/configuration/delete", self.handler_config_delete )
+    self.osc.addMsgHandler( "/minihive/configuration/deleted", self.handler_config_deleted )
+    self.osc.addMsgHandler( "/minihive/configuration/save", self.handler_cfsave )
+    self.osc.addMsgHandler( "/minihive/configuration/saved", self.handler_cfsaved )
+    self.osc.addMsgHandler( "/minihive/configuration/load", self.handler_cfload )
+    self.osc.addMsgHandler( "/minihive/configuration/loaded", self.handler_cfloaded )
+
+
     self.osc.addMsgHandler('default', self.osc.noCallback_handler)
 
   def call_callback( self, ctype, cid ):
@@ -277,6 +292,65 @@ class DataNetworkOSC(object):
     #self.dnosc.info_minibee( args[0] )
     print( "Info hive:", args )
 
+
+#### minibee configuration stuff ###
+
+  #@make_method('/info/hive', None )
+  def handler_info_config( self, path, types, args, source ):
+    #self.dnosc.info_minibee( args[0] )
+    print( "Info config:", args )
+
+  def handler_config_query( self, path, types, args, source ):    
+    self.queryConfiguration( args[0] )
+    if self.verbose:
+      print( "MiniHive configuration query:", args )
+
+  def handler_mbconfig( self, path, types, args, source ):    
+    self.setMiniBeeConfiguration( args )
+    if self.verbose:
+      print( "MiniBee configuration:", args )
+
+  def handler_mbconfiged( self, path, types, args, source ):    
+    print( "MiniBee configured:", args )
+
+  def handler_config( self, path, types, args, source ):    
+    self.setConfiguration( args[0], args[1:] )
+    if self.verbose:
+      print( "MiniHive configuration:", args )
+
+  def handler_configed( self, path, types, args, source ):    
+    print( "MiniHive configuration created:", args )
+
+  def handler_config_delete( self, path, types, args, source ):    
+    self.deleteConfiguration( args[0] )
+    if self.verbose:
+      print( "MiniHive delete configuration:", args )
+
+  def handler_config_deleted( self, path, types, args, source ):    
+    print( "MiniHive configuration deleted:", args )
+
+  def handler_config_query( self, path, types, args, source ):    
+    ## TODO: query all configs!
+    self.queryConfigurations()
+    if self.verbose:
+      print( "MiniHive configuration query" )
+      
+  def handler_cfsave( self, path, types, args, source ):    
+    self.saveConfiguration( args[0] )
+    if self.verbose:
+      print( "MiniBee save configuration:", args )
+
+  def handler_cfsaved( self, path, types, args, source ):    
+    print( "MiniHive configuration saved:", args )
+
+  def handler_cfload( self, path, types, args, source ):    
+    self.loadConfiguration( args[0] )
+    if self.verbose:
+      print( "MiniBee load configuration:", args )
+
+  def handler_cfloaded( self, path, types, args, source ):    
+    print( "MiniHive configuration loaded:", args )
+
 # end minibee management
 
   #@make_method(None, None)
@@ -289,21 +363,22 @@ class DataNetworkOSC(object):
 
 # begin class DataNetworkOSC
 #class DataNetworkOSC(object):
-  def __init__(self, hostip, myport, myname, network, cltype=0, nonodes=0 ):
+  def __init__(self, hostip, myport, myname, network, cltype=0, nonodes=0, myhost='0.0.0.0' ):
     self.registered = False
     self.auto_register = True
     self.network = network
     self.callbacks = {}
     self.verbose = False
-    self.createOSC( hostip, myport, myname, cltype, nonodes )
+    self.createOSC( hostip, myport, myname, cltype, nonodes, myhost )
     
   def add_hive( self, hive ):
     self.hive = hive
     
-  def createOSC( self, hostip, myport, myname, cltype, nonodes ):
+  def createOSC( self, hostip, myport, myname, cltype, nonodes, myhost ):
     self.name = myname
     self.hostIP = hostip
     self.port = myport
+    self.myIP = myhost
     self.findHost( hostip )
     print( "Found host at", self.hostIP, self.hostPort )
     self.resetHost()
@@ -321,7 +396,8 @@ class DataNetworkOSC(object):
     
   def createClient(self):
     #try:
-    receive_address = ( '127.0.0.1', self.port )
+    receive_address = ( self.myIP, self.port )
+    #receive_address = ( '127.0.0.1', self.port )
     self.osc = OSC.OSCServer( receive_address )
     self.add_handlers()
     self.thread = threading.Thread( target = self.osc.serve_forever )
@@ -552,6 +628,7 @@ class DataNetworkOSC(object):
 ## minibees and hives
 
   def registerHive( self, number ):
+    print( "register hive" )
     self.sendMessage( "/register/hive", [ number ] )
     #self.sendSimpleMessage( "/register/hive" )
     #msg = liblo.Message( "/register/hive", self.port, self.name, number )
@@ -671,6 +748,55 @@ class DataNetworkOSC(object):
     #self.sendMessage( msg )
     #del msg
 
+  def setMiniBeeConfiguration( self, config ):
+    if not self.network.hive == None:
+      if len( config ) == 3:
+	# set minibee with serial number to given id
+	if not self.network.hive.map_serial_to_bee( config[2], config[0] ):
+	  # send error message
+	  config.insert( 0, "/configure/minibee" )
+	  self.sendMessage( "/minihive/error", config )
+	  return
+      # continue with setting the configuration
+      self.network.hive.set_minibee_config( config[0], config[1] )
+      self.sendMessage( "/configured/minibee", config )
+
+  def queryConfigurations( self ):
+    if not self.network.hive == None:
+      self.network.hive.query_configurations( self )
+      #print( "Query configuration %i"%cid )
+      
+  def infoConfig( self, configinfo ):
+    self.sendMessage( "/info/configuration", configinfo )
+
+  def deleteConfiguration( self, cid ):
+    if not self.network.hive == None:
+      if not self.network.hive.delete_configuration( cid ):
+	self.sendMessage( "/minihive/error", ["/minihive/configuration/delete", cid] )
+      else:
+	self.sendMessage( "/minihive/configuration/deleted", [cid] )
+
+  def setConfiguration( self, cid, config ):
+    if not self.network.hive == None:
+      allconfig = [ cid ]
+      allconfig.extend( config )
+      if not self.network.hive.set_configuration( cid, config ):
+	allconfig.insert( 0, "/minihive/configuration/create" )
+	self.sendMessage( "/minihive/error",  allconfig )
+      else:
+	self.sendMessage( "/minihive/configuration/created", allconfig )
+
+  def loadConfiguration( self, filename ):
+    if not self.network.hive == None:
+      self.network.hive.load_from_file( filename )
+      self.sendMessage( "/minihive/configuration/loaded", [filename] )      
+      print( "loaded configuration from: ", filename )
+
+  def saveConfiguration( self, filename ):
+    if not self.network.hive == None:
+      self.network.hive.write_to_file( filename )
+      self.sendMessage( "/minihive/configuration/saved", [filename] )
+      print( "saved configuration to: ", filename )
 
 ## message sending
   def sendMessage( self, path, args ):
@@ -767,17 +893,22 @@ class DataNode(object):
 
 # begin class DataNetwork
 class DataNetwork(object):
-  def __init__(self, hostip, myport, myname, cltype=0, nonodes = 0 ):
-    self.osc = DataNetworkOSC( hostip, myport, myname, self, cltype, nonodes )
+  def __init__(self, hostip, myport, myname, cltype=0, nonodes = 0, myhost='0.0.0.0' ):
+    self.osc = DataNetworkOSC( hostip, myport, myname, self, cltype, nonodes, myhost )
     self.nodes = {} # contains the nodes we are subscribed to
     self.expectednodes = set([]) # contains node ids that are expected and could be subscribed to
     self.setters = set([]) # contains the nodes we are the setters of
+    
+    self.hive = None
    
     self.mapAction = None
     self.unmapAction = None
     self.mapCustomAction = None
     self.unmapCustomAction = None
-    
+  
+  def setHive( self, hive ):
+    self.hive = hive
+  
   def setVerbose( self, onoff ):
     self.osc.setVerbose( onoff )
     
@@ -854,6 +985,23 @@ class DataNetwork(object):
   #time.sleep( tim )
 
 if __name__ == "__main__":
+  
+  parser = optparse.OptionParser(description='Create a datanetwork client to communicate with the SenseWorld DataNetwork.')
+  parser.add_option('-p','--port', type=int, action='store',dest="port",default=57600,
+		  help='the port on which the client will listen [default:%i]'% 57600 )
+  parser.add_option('-n','--name', action='store', type="string", dest="name",default="pydonhive",
+		  help='the name of the client in the datanetwork [default:%s]'% "pydonhive" )
+  parser.add_option('-d','--host_ip', action='store',type="string", dest="host",default="127.0.0.1",
+		  help='the ip address of the datanetwork host [default:%s]'% "127.0.0.1")
+  parser.add_option('-v','--verbose', action='store',dest="verbose",default=False,
+		  help='verbose printing [default:%i]'% False)
+
+  (options,args) = parser.parse_args()
+  #print args.accumulate(args.integers)
+  #print options
+  #print args
+  #print( options.host )
+
   def dataAction( data ):
     print( "dataAction", data )
     
@@ -861,8 +1009,9 @@ if __name__ == "__main__":
     global datanetwork
     datanetwork.nodes[ nodeid ].setAction( dataAction )
 
-  datanetwork = DataNetwork( '127.0.0.1', 57000, "pydon", 0, 20 )
-  datanetwork.setVerbose( True )
+#  datanetwork = DataNetwork( '172.31.15.144', 6000, "pydond", 0, 20 )
+  datanetwork = DataNetwork( options.host, options.port, options.name, 0, 10 )
+  datanetwork.setVerbose( options.verbose )
   
   #wait( 2.0 )
   #time.sleep( 1.0 )

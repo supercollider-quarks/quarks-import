@@ -6,7 +6,7 @@ import os
 
 #print time
 
-import minibeexml
+from pydon.minibeexml import minibeexml
 
 ### convenience function
 def find_key(dic, val):
@@ -419,12 +419,17 @@ class MiniHive(object):
     config.setTwiLabel( twicfg[0], twicfg[2] )
     return True
 
-  def delete_configuration( self, cid, twicfg ):
+  def delete_configuration( self, cid ):
     if not cid in self.configs:
       print( "There is no configuration with ID %i"%(cid) )
       return False
     del self.configs[ cid ]
     return True
+    
+  def query_configurations( self, network ):
+    for cid, config in self.configs.items():
+      print( cid, config )
+      network.infoConfig( config.getConfigInfo() )
 
   def set_configuration( self, cid, config ):
     if cid in self.configs:
@@ -680,6 +685,26 @@ class MiniBeeConfig(object):
     if isinstance( twidev, int ):
       pinconfig = find_key( MiniBeeConfig.miniBeeTwiConfig, twidev )
     self.twis[ str(tid) ] = twidev
+
+  def getConfigInfo( self ):
+    #print "-----MAKING CONFIG MESSAGE------"
+    configInfo = []
+    configInfo.append( self.configid )
+    configInfo.append( self.name )
+    configInfo.append( self.samplesPerMessage )
+    configInfo.append( self.messageInterval )
+
+    configInfo.append( len( self.pins ) )
+    configInfo.append( len( self.twis ) )
+    
+    for pid, pincf in self.pins.items():
+      configInfo.append( pid )
+      configInfo.append( pincf )
+      
+    for twid, twidev in self.twis.items():
+      configInfo.append( "TWI%s"%twid )
+      configInfo.append( twidev )
+    return configInfo
 
   def getConfigMessage( self ):
     #print "-----MAKING CONFIG MESSAGE------"
@@ -992,14 +1017,25 @@ class MiniBee(object):
 
 
 if __name__ == "__main__":
+  parser = optparse.OptionParser(description='Create a pydonhive to get data from the minibee network.')
+  parser.add_option('-c','--config', action='store', type="string", dest="config",default="pydon/configs/hiveconfig.xml",
+		  help='the name of the configuration file for the minibees [default:%s]'% 'pydon/configs/hiveconfig.xml')
+  parser.add_option('-m','--nr_of_minibees', type=int, action='store',dest="minibees",default=20,
+		  help='the number of minibees in the network [default:%i]'% 20)
+  parser.add_option('-v','--verbose', action='store',dest="verbose",default=False,
+		  help='verbose printing [default:%i]'% False)
+  parser.add_option('-s','--serial', action='store',type="string",dest="serial",default="/dev/ttyUSB0",
+		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
+
+  (options,args) = parser.parse_args()
 
   def printDataAction( data, nodeid ):
     print( nodeid, data )
 
-  hive = MiniHive( "/dev/ttyUSB0", 57600 )
-  hive.set_id_range( 1, 11 )
+  hive = MiniHive( options.serial, 57600 )
+  hive.set_id_range( 1, options.minibees )
   
-  hive.load_from_file( "hiveconfig.xml" )
+  hive.load_from_file( options.config )
   hive.bees[ 1 ].set_action( printDataAction )
   hive.bees[ 2 ].set_action( printDataAction )
   hive.bees[ 3 ].set_action( printDataAction )
