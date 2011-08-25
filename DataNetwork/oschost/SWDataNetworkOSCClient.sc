@@ -20,7 +20,7 @@ SWDataNetworkOSCClient{
 
 	init{ |address,name|
 		addr = address;
-		key = name;
+		key = name.asSymbol;
 
 		subscriptions = Set.new;
 
