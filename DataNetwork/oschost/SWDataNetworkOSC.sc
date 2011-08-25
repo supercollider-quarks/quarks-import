@@ -734,21 +734,18 @@ SWDataNetworkOSC{
 				client.newNode( network.nodes[it] );
 			}
 		};
-		/*
 		client.setters.do{ |it|
-			// "it" is an instance of SWDataNode
 			//		("setter"+it.id + client.addr).postln;
 			setters.put( it.id, client.key );
 		};
-		*/
 	}
 
 	addClient{ |addr,name|
-		var there,newclient;
+		var there,newclient,there2;
 		there = this.findClient( addr );
 		//		there = clients.find( { |it| it.addr == addr } );
 		//	[addr,there,name].postln;
-
+		//		there.dump;
 		if ( there.isNil, { 
 			// no client had that IP and port before
 			// see if the client exists by name in the library
@@ -779,16 +776,18 @@ SWDataNetworkOSC{
 				};
 			};
 		},{
+			//	[ there.key, name.asSymbol ].postln;
 			//	"client had same ip and port, welcome back".postln;
-			there = clientDictionary.at( name.asSymbol );
-			//	there.postln;
-			if ( there.notNil ){
-				there.addr = addr;
-				this.welcomeClientBack( there );				
-				this.logMsg( "client reregistered:"+(addr.asString.replace( "a NetAddr",""))+name );				
-			}{
-				this.errorMsg( addr, "/register", 2);
+			if ( there.key != name.asSymbol ){
+				// name may have changed.
+				clientDictionary.removeAt( there.key );
+				there.key = name.asSymbol;
+				clientDictionary.put( name.asSymbol, there );
 			};
+			//	[ there.key, name.asSymbol ].postln;
+			//	there.addr = addr;
+			this.welcomeClientBack( there );				
+			this.logMsg( "client reregistered:"+(addr.asString.replace( "a NetAddr",""))+name );				
 		});
 	}
 
