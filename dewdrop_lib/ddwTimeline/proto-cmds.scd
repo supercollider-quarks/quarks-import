@@ -107,21 +107,39 @@ PR(\abstractTLCommand).clone({
 }) => PR(\funcCmd);
 
 PR(\abstractTLCommand).clone({
+	~iMadeSynthDef = false;
 	~fire = { |parms|
 //		~setParms.(parms);
-		var	schedTime;
+		var	msg, templib;
+		// you might provide a synthdef or func - needs to be sent
+		if(~newDef = [Symbol, String].includes(~name.class).not) {
+			~synthdef = ~name.asSynthDef;
+			~iMadeSynthDef = (~synthdef !== ~name);
+			// we need a temp SynthDesc, not to add to the main lib
+			// but SynthDesc.readFile must have a dictionary to add to
+			// so we give it a throwaway
+			// actually this is necessary because the synthdef file format
+			// can contain multiple defs, and readFile has to handle that
+			templib = SynthDesc.readFile(CollStream(~synthdef.asBytes),
+				dict: IdentityDictionary.new);
+			~synthDesc = templib[~synthdef.name.asSymbol];
+		};
 		~server ?? { ~server = Server.default };
-		~node = Synth.basicNew(~name, ~server, ~id);
-		~id = ~node.nodeID;		// nil is replaced in basicNew
+		~nodeID ?? { ~nodeID = ~server.nextNodeID };
+		~node = Synth.basicNew(~name, ~server, ~nodeID);
 		~latency ?? { ~latency = ~server.latency };
 		~args = ~getArgs.value(parms);
 		~quant ?? { ~quant = 0 };
 		~schedTime = ~quant.nextTimeOnGrid(thisThread.clock);
+		msg = ~node.newMsg(~target, ~args, ~addAction ? \addToHead);
+		if(~newDef) {
+			msg = [\d_recv, ~synthdef.asBytes, msg];
+		};
 		thisThread.clock.schedAbs(~schedTime, e {
 			if(~latency == 0) {
-				s.sendBundle(nil, ~node.newMsg(~target, ~args, ~addAction ? \addToHead)/*.debug("synth message")*/)
+				~server.sendBundle(nil, msg)
 			} {
-				s.sendBundle(~latency, ~node.newMsg(~target, ~args, ~addAction ? \addToHead)/*.debug("synth message")*/)
+				~server.sendBundle(~latency, msg)
 			};
 		});
 		NodeWatcher.register(~node, true);  // true == assumePlaying
@@ -135,11 +153,14 @@ PR(\abstractTLCommand).clone({
 		~synthDesc.notNil.if({
 			currentEnvironment.env.use({ ~synthDesc.msgFunc.valueEnvir });
 		}, {
-			parms.tryPerform(\keysValuesDo, { |key, value|
-				if(value.isValidUGenInput) {
-					result = result.add(key).add(value);
-				};
-			});
+			// this is pretty much disastrous but we need *some* fallback
+			[currentEnvironment.env, parms].do { |dict|
+				dict.tryPerform(\keysValuesDo, { |key, value|
+					if(value.isValidSynthArg) {
+						result = result.add(key).add(value);
+					};
+				});
+			};
 			result
 		});
 	};
@@ -160,11 +181,12 @@ PR(\abstractTLCommand).clone({
 				msg = ~node.freeMsg;
 			};
 			if(~latency != 0) {
-				s.sendBundle(~latency, msg);
+				~server.sendBundle(~latency, msg);
 			} {
-				s.sendBundle(nil, msg);
+				~server.sendBundle(nil, msg);
 			};
 		};
+		if(~iMadeSynthDef) { ~server.sendMsg(\d_free, ~synthdef.name) };
 		~stopAction.value(parms);
 //"<< synthCmd:done".debug;
 	};
