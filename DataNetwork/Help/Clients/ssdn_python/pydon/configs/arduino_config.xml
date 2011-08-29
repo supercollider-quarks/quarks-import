@@ -1,0 +1,57 @@
+<xml><hive name="myprojectname">
+
+<minibee caps="7" id="1" libversion="3" revision="Z" serial="00000000000000">
+<config id="3" /></minibee>
+
+<configuration id="1" message_interval="50" name="basicanalog" samples_per_message="1">
+  <pin config="AnalogIn10bit" id="A0" />
+  <pin config="AnalogIn10bit" id="A1" />
+  <pin config="AnalogIn10bit" id="A2" />
+  <pin config="AnalogIn10bit" id="A3" />
+  <pin config="AnalogIn10bit" id="A4" />
+  <pin config="AnalogIn10bit" id="A5" />
+</configuration>
+
+<configuration id="2" message_interval="50" name="basic" samples_per_message="1">
+  <pin config="AnalogIn10bit" id="A0" />
+  <pin config="AnalogIn10bit" id="A1" />
+  <pin config="AnalogIn10bit" id="A2" />
+  <pin config="AnalogIn10bit" id="A3" />
+  <pin config="AnalogIn10bit" id="A4" />
+  <pin config="AnalogIn10bit" id="A5" />
+
+  <pin config="AnalogOut" id="D3" name="red" />
+  <pin config="AnalogOut" id="D5" name="blue" />
+  <pin config="AnalogOut" id="D6" name="green" />
+  <pin config="AnalogOut" id="D9" name="red" />
+  <pin config="AnalogOut" id="D10" name="blue" />
+  <pin config="AnalogOut" id="D11" name="green" />
+
+  <pin config="DigitalOut" id="D2" name="" />
+  <pin config="DigitalOut" id="D4" name="" />
+  <pin config="DigitalOut" id="D7" name="" />
+  <pin config="DigitalOut" id="D8" name="" />
+  <pin config="DigitalOut" id="D12" name="" />
+  <pin config="DigitalOut" id="D13" name="" />
+
+</configuration>
+
+<configuration id="3" message_interval="50" name="basicout" samples_per_message="1">
+
+  <pin config="AnalogOut" id="D3" name="red" />
+  <pin config="AnalogOut" id="D5" name="blue" />
+  <pin config="AnalogOut" id="D6" name="green" />
+  <pin config="AnalogOut" id="D9" name="red" />
+  <pin config="AnalogOut" id="D10" name="blue" />
+  <pin config="AnalogOut" id="D11" name="green" />
+
+  <pin config="DigitalOut" id="D2" name="" />
+  <pin config="DigitalOut" id="D4" name="" />
+  <pin config="DigitalOut" id="D7" name="" />
+  <pin config="DigitalOut" id="D8" name="" />
+  <pin config="DigitalOut" id="D12" name="" />
+  <pin config="DigitalOut" id="D13" name="" />
+
+</configuration>
+
+</hive></xml>

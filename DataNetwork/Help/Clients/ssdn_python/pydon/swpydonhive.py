@@ -42,8 +42,7 @@ class SWPydonHive( object ):
       print( "now running hive" )
       #try :
       self.hive.run()
-      print( "hello" )
-    except (SystemExit, RuntimeError,KeyboardInterrupt) :
+    except (SystemExit, RuntimeError, KeyboardInterrupt, IOError ) :
       self.datanetwork.osc.unregister()
       print( "\nClosing OSCServer." )
       self.datanetwork.osc.osc.close()
@@ -79,10 +78,14 @@ class SWPydonHive( object ):
 
 # bee to datanode
   def hookBeeToDatanetwork( self, minibee ):
-    print( minibee,  minibee.getInputSize(),  minibee.getOutputSize() )
+    #print( minibee,  minibee.getInputSize(),  minibee.getOutputSize() )
     self.datanetwork.osc.infoMinibee( minibee.nodeid, minibee.getInputSize(), minibee.getOutputSize() )
     minibee.set_first_action( self.addAndSubscribe )
     minibee.set_action( self.minibeeDataToDataNode )
+    minibee.set_status_action( self.sendStatusInfo )
+    
+  def sendStatusInfo( self, nid, status ):
+    self.datanetwork.osc.statusMinibee( nid, status )
 
   def addAndSubscribe( self, nid, data ):
     name = (self.labelbase + str(nid) )
@@ -129,7 +132,7 @@ if __name__ == "__main__":
   #print args.accumulate(args.integers)
   #print options
   #print args
-  print( options.host )
+  print( options )
   
   swhive = SWPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose )
   

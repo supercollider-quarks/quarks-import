@@ -23,6 +23,24 @@ class MiniHiveOSC(object):
   def add_handlers( self ):
     #self.osc.addMsgHandler( "/minibee", self.handler_output )
     self.osc.addMsgHandler( "/minibee/output", self.handler_output )
+
+    self.osc.addMsgHandler( "/jXcontrol/0", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/1", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/2", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/3", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/4", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/5", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/6", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/7", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/8", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/9", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/10", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/11", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/12", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/13", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/14", self.handler_junxion )
+    self.osc.addMsgHandler( "/jXcontrol/15", self.handler_junxion )
+    
     self.osc.addMsgHandler( "/minibee/custom", self.handler_custom )
     
     self.osc.addMsgHandler( "/minibee/configuration", self.handler_mbconfig )
@@ -53,10 +71,21 @@ class MiniHiveOSC(object):
 
   #@make_method('/datanetwork/announce', 'si')
   #def announced( self, path, args, types ):
-  def handler_output( self, path, types, args, source ):    
+  def handler_output( self, path, types, args, source ):
     self.setOutput( args[0], args[1:] )
     if self.verbose:
       print( "MiniBee Output:", args )
+
+  def handler_junxion( self, path, types, args, source ):
+    #print( path, path.split( "/" ) )
+    splitpath = path.split( "/" );
+    #print( int( splitpath[2] ) )
+    # for now assuming that we are just sending data to the first device...
+    # junXion should be more sophisticated to map this!
+    # or build in some configuration in the xml file to map this
+    self.setOutputChan( 1, int( splitpath[2] ), args[0] )
+    if self.verbose:
+      print( "Junxion Output:", path, args )
 
   def handler_custom( self, path, types, args, source ):    
     self.setCustom( args[0], args[1:] )
@@ -144,18 +173,28 @@ class MiniHiveOSC(object):
 	print( "error sending message", msg )
 
   def infoMiniBee( self, serial, mid, insize, outsize ):
+    self.alldata = list( 0 for i in range( outsize ) )
     self.sendMessage( "/minibee/info", [ serial, mid, insize, outsize ] )
 
   def dataMiniBee( self, mid, data ):
-    alldata = [ mid ]
-    alldata.extend( data )
-    self.sendMessage( "/minibee/data", alldata )
+ #   for i in range( len(data) ):
+  #  	osctag = "/minibee/data/%i/%i"%(mid,i)
+  #  	print osctag, data[i]
+  #     	self.sendMessage( osctag, [ data[i] ] )
+    osctag = "/minibee/data/%i"%mid
+    self.sendMessage( osctag, data )
     if self.verbose:
       print( "sending osc message with data", mid, data )
 
   def setOutput( self, mid, data ):
     #print( self.hive, mid, data )
     self.hive.oscToMiniBee( mid, data )
+
+  def setOutputChan( self, mid, chanid, data ):
+    #print( self.hive, mid, data )
+    if chanid < len( self.alldata ):
+      self.alldata[ chanid ] = data
+      self.hive.oscToMiniBee( mid, self.alldata )
 
   def setCustom( self, mid, data ):
     self.hive.oscToMiniBee( mid, data )
@@ -328,7 +367,7 @@ if __name__ == "__main__":
   #print args
   #print( options.host )
   
-  print( "MiniHiveOSC - communicating via OSC with the MiniBee network" )
-  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose )
+  print( "MiniHive-JunXion - communicating via OSC with Junxion and the MiniBee network" )
+  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, 57600, options.config, [1,options.minibees], options.verbose )
   print( "Created OSC listener at (%s,%i) and OSC sender to (%s,%i) and opened serial port at %s. Now waiting for messages."%(options.ip, options.port, options.host, options.hport, options.serial ) )
   swhive.start()
