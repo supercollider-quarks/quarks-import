@@ -628,7 +628,8 @@ class DataNetworkOSC(object):
 ## minibees and hives
 
   def registerHive( self, number ):
-    print( "register hive" )
+    if self.verbose:
+      print( "sending a register hive message" )
     self.sendMessage( "/register/hive", [ number ] )
     #self.sendSimpleMessage( "/register/hive" )
     #msg = liblo.Message( "/register/hive", self.port, self.name, number )
@@ -707,6 +708,10 @@ class DataNetworkOSC(object):
     #msg = liblo.Message( "/info/minibee", self.port, self.name, mid, nin, nout )
     #self.sendMessage( msg )
     #del msg
+
+  # sending status message about a minibee
+  def statusMinibee( self, mid, status ):
+    self.sendMessage( "/status/minibee", [ mid, status ] )
 
   # receiving map request output
   def map_minibee( self, nodeid, mid ):

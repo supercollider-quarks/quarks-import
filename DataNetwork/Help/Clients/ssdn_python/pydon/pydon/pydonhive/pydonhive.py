@@ -8,6 +8,8 @@ import os
 
 from pydon.minibeexml import minibeexml
 
+from collections import deque
+
 ### convenience function
 def find_key(dic, val):
   #
@@ -16,6 +18,17 @@ def find_key(dic, val):
   return [k for k, v in dic.iteritems() if v == val][0]
 
 ### end convenience function
+
+# beginning of message queue
+
+#class HiveBeeQueue(object):
+  #def __init__(self):
+    #queue = deque()
+
+  #def addBee( self, bee ):
+    
+## beginning of message queue
+
 
 # beginning of serial interface:
 
@@ -239,6 +252,24 @@ class HiveSerial(object):
     if self.verbose:
       print( "receiving data from minibee", self.incMsg[1], self.incMsg[2], self.incMsg[3:] )
 
+  def active( self ):
+    #print "receiving data"
+    #print self.incMsg
+    if len(self.incMsg) == 2:
+      self.hive.bee_active( self.incMsg[1], self.incMsg[2] )
+    #print "end receiving data"
+    if self.verbose:
+      print( "active minibee", self.incMsg[1], self.incMsg[2] )
+
+  def pausing( self ):
+    #print "receiving data"
+    #print self.incMsg
+    if len(self.incMsg) == 2:
+      self.hive.bee_pausing( self.incMsg[1], self.incMsg[2] )
+    #print "end receiving data"
+    if self.verbose:
+      print( "pausing minibee", self.incMsg[1], self.incMsg[2] )
+
 
   def display_data( self ):
     #print "receiving data"
@@ -275,6 +306,10 @@ class HiveSerial(object):
       self.confirm_config()
     elif incTypeChr == 'd' : # minibee sending data
       self.recv_data()
+    elif incTypeChr == 'a' : # minibee confirming it's active
+      self.active()
+    elif incTypeChr == 'p' : # minibee confirming it's pausing
+      self.pausing()
     elif incTypeChr == 'i' : # minibee sending info (debugging mostly)
       self.display_data()
     elif incTypeChr == 'x' : # minibee sending info (debugging mostly)
@@ -320,7 +355,7 @@ class HiveSerial(object):
 # beginning of MiniHive:
 
 class MiniHive(object):
-  def __init__(self, serial_port, baudrate = 19200 ):
+  def __init__(self, serial_port, baudrate = 57600 ):
     #self.minibeeCount = 0
     self.name = ""
     self.bees = {}
@@ -332,6 +367,7 @@ class MiniHive(object):
     self.running = True
     self.newBeeAction = None
     self.verbose = False
+    self.redundancy = 5
     
   def set_verbose( self, onoff ):
     self.verbose = onoff
@@ -368,11 +404,13 @@ class MiniHive(object):
 	  if bee.waiting > 1000:
 	    self.wait_config( beeid, bee.cid )
 	    self.serial.send_me( bee.serial, 1 )
-	elif bee.status == 'receiving':
-	  bee.count = bee.count + 1
-	  if bee.count > 5000:
-	    bee.count = 0
-	    self.serial.send_me( bee.serial, 0 )
+	else:
+	  bee.repeat_output( self.serial, self.redundancy )
+	  if bee.status == 'receiving':
+	    bee.count = bee.count + 1
+	    if bee.count > 5000:
+	      bee.count = 0
+	      self.serial.send_me( bee.serial, 0 )
       time.sleep(0.02)
 
   def exit( self ):
@@ -460,7 +498,7 @@ class MiniHive(object):
       if bee.cid == cid and bee.has_new_config_id():
 	bee.set_config( cid, newconfig )
 	self.serial.send_id( bee.serial, bee.nodeid, bee.cid )
-	bee.status = 'waiting'
+	bee.set_status( 'waiting' )
 	bee.waiting = 0
     return True
     
@@ -473,7 +511,7 @@ class MiniHive(object):
       else:
 	minibee.set_config_id( cid )
       self.serial.send_id( minibee.serial, minibee.nodeid, minibee.cid )
-      minibee.status = 'waiting'
+      minibee.set_status( 'waiting' )
       minibee.waiting = 0
       if self.newBeeAction:
 	self.newBeeAction( minibee )
@@ -495,7 +533,7 @@ class MiniHive(object):
     #print minibee
     if minibee.cid > 0:
       self.serial.send_id( serial, minibee.nodeid, minibee.cid )
-      minibee.status = 'waiting'
+      minibee.set_status( 'waiting' )
       minibee.waiting = 0
     else: # this could be different behaviour! e.g. wait for a new configuration to come in
       print( "no configuration defined for minibee", serial, minibee.nodeid )
@@ -520,6 +558,24 @@ class MiniHive(object):
       print( "received new data", beeid, msgid, data )
     # find minibee, set data to it
 
+  def bee_active( self, beeid, msgid ):
+    if beeid in self.bees:
+      self.bees[beeid].set_status( 'active', msgid )
+    else:
+      print( "received active message from unknown minibee", beeid, msgid )
+    if self.verbose:
+      print( "received active message", beeid, msgid )
+    # find minibee, set data to it
+
+  def bee_paused( self, beeid, msgid ):
+    if beeid in self.bees:
+      self.bees[beeid].set_status( 'pausing', msgid )
+    else:
+      print( "received paused message from unknown minibee", beeid, msgid )
+    if self.verbose:
+      print( "received paused message", beeid, msgid )
+    # find minibee, set data to it
+
   def wait_config( self, beeid, configid ):
     #print "sending configuration"
     if beeid in self.bees:
@@ -527,8 +583,8 @@ class MiniHive(object):
       if configid == self.bees[ beeid ].cid:
 	self.serial.send_me( self.bees[ beeid ].serial, 1 )
 	configuration = self.configs[ configid ]
-	configMsg = configuration.getConfigMessage()
-	self.bees[ beeid ].status = 'waiting'
+	configMsg = configuration.getConfigMessage( self.bees[ beeid ].revision )
+	self.bees[ beeid ].set_status( 'waiting' )
 	self.bees[ beeid ].waiting = 0
 	if self.verbose:
 	  print( "sent configmessage to minibee", configMsg )
@@ -605,7 +661,7 @@ class MiniHive(object):
 class MiniBeeConfig(object):
 
   analogPins = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7']
-  digitalPins = [ 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13' ]
+  digitalPins = [ 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13' ]
   #pinNames =  
   miniBeePinConfig = { 'NotUsed': 0, 'DigitalIn': 1, 'DigitalOut': 2, 'AnalogIn': 3, 'AnalogOut': 4, 'AnalogIn10bit': 5, 'SHTClock': 6, 'SHTData': 7, 'TWIClock': 8, 'TWIData': 9, 'Ping': 10, 'Custom': 100, 'Me': 150, 'UnConfigured': 200 };
 
@@ -706,20 +762,27 @@ class MiniBeeConfig(object):
       configInfo.append( twidev )
     return configInfo
 
-  def getConfigMessage( self ):
+  def getConfigMessage( self, revision ):
     #print "-----MAKING CONFIG MESSAGE------"
     configMessage = []
     configMessage.append( self.configid )
     configMessage.append( self.messageInterval / 256 )
     configMessage.append( self.messageInterval % 256 )
     configMessage.append( self.samplesPerMessage )
-    for pinname in MiniBeeConfig.digitalPins:
+    if revision == 'Z':
+      digpins = MiniBeeConfig.digitalPins
+      anapins = MiniBeeConfig.analogPins[:6]
+    else :
+      digpins = MiniBeeConfig.digitalPins[1:]
+      anapins = MiniBeeConfig.analogPins
+    print( digpins, anapins )
+    for pinname in digpins:
       if pinname in self.pins:
 	configMessage.append( MiniBeeConfig.miniBeePinConfig[ self.pins[ pinname ] ] )
       else:
 	configMessage.append( MiniBeeConfig.miniBeePinConfig[ 'UnConfigured' ] )
 
-    for pinname in MiniBeeConfig.analogPins:
+    for pinname in anapins:
       if pinname in self.pins:
 	configMessage.append( MiniBeeConfig.miniBeePinConfig[ self.pins[ pinname ] ] )
       else:
@@ -743,7 +806,15 @@ class MiniBeeConfig(object):
     self.logDataFormat = []
     self.logDataLabels = []
 
-    for pinname in MiniBeeConfig.analogPins: # iterate over analog pins
+    if rev == 'Z':
+      digpins = MiniBeeConfig.digitalPins
+      anapins = MiniBeeConfig.analogPins[:6]
+    else :
+      digpins = MiniBeeConfig.digitalPins[1:]
+      anapins = MiniBeeConfig.analogPins
+    print( digpins, anapins )
+
+    for pinname in anapins: # iterate over analog pins
       if pinname in self.pins:
 	if self.pins[ pinname ] == 'AnalogIn':
 	  self.dataInSizes.append( 1 )
@@ -759,12 +830,12 @@ class MiniBeeConfig(object):
 	  self.logDataFormat.append( 1 )
 	  self.logDataLabels.append( self.pinlabels[ pinname ] )
 
-    for pinname in MiniBeeConfig.digitalPins: # iterate over digital pins
+    for pinname in digpins: # iterate over digital pins
       if pinname in self.pins:
 	if self.pins[ pinname ] == 'AnalogOut':
 	  self.dataOutSizes.append( 1 )
 
-    for pinname in MiniBeeConfig.digitalPins + MiniBeeConfig.analogPins: # iterate over all pins
+    for pinname in digpins + anapins: # iterate over all pins
       if pinname in self.pins:
 	if self.pins[ pinname ] == 'DigitalIn':
 	  self.dataInSizes.append( 1 )
@@ -775,7 +846,7 @@ class MiniBeeConfig(object):
 	elif self.pins[ pinname ] == 'DigitalOut':
 	  self.dataOutSizes.append( 1 )
 
-    for pinname in MiniBeeConfig.analogPins: # iterate over analog pins
+    for pinname in anapins: # iterate over analog pins
       if pinname in self.pins:
 	if self.pins[ pinname ] == 'TWIData':
 	  #print "library version" , libv
@@ -806,7 +877,7 @@ class MiniBeeConfig(object):
 	      self.logDataLabels.extend( MiniBeeConfig.miniBeeTwiDataLabels[ twidev ] )
 	      #print self.dataInSizes
 
-    for pinname in MiniBeeConfig.digitalPins + MiniBeeConfig.analogPins: # iterate over all pins
+    for pinname in digpins + anapins: # iterate over all pins
       if pinname in self.pins:
 	if self.pins[ pinname ] == 'SHTData':
 	  self.dataInSizes.extend( [2,2] )
@@ -815,7 +886,7 @@ class MiniBeeConfig(object):
 	  self.logDataFormat.extend( [1,1] )
 	  self.logDataLabels.extend( ['temperature','humidity'] )
 
-    for pinname in MiniBeeConfig.digitalPins + MiniBeeConfig.analogPins: # iterate over all pins
+    for pinname in digpins + anapins: # iterate over all pins
       if pinname in self.pins:
 	if self.pins[ pinname ] == 'Ping':
 	  self.dataInSizes.append( 2 )
@@ -859,11 +930,14 @@ class MiniBee(object):
     self.cid = -1
     self.status = 'init'
     self.logAction = None
+    self.statusAction = None
     self.dataAction = None
     self.firstDataAction = None
     #self.configid = -1
     self.waiting = 0
     self.count = 0
+    self.outrepeated = 0
+    self.outdata = None
     
   def set_nodeid( self, mid ):
     self.nodeid = mid
@@ -897,11 +971,22 @@ class MiniBee(object):
   def set_action( self, action ):
     self.dataAction = action
 
+  def set_status_action( self, action ):
+    self.statusAction = action
+
   def set_first_action( self, action ):
     self.firstDataAction = action
+    
+  def repeat_output( self, serPort, redundancy ):
+    if self.outdata != None:
+      if self.outrepeated < redundancy :
+	self.outrepeated = self.outrepeated + 1
+	serPort.send_data( self.nodeid, self.outdata )
 
   def send_output( self, serPort, data ):
     if len( data ) == sum( self.config.dataOutSizes ) :
+      self.outdata = data
+      self.outrepeated = 0
       serPort.send_data( self.nodeid, data )
 
   def send_custom( self, serPort, data ):
@@ -913,6 +998,13 @@ class MiniBee(object):
   
   def set_loopback( self, serPort, status ):
     serPort.send_loop( self.nodeid, status )
+    
+  def set_status( self, status, msgid = 0, verbose = False ):
+    self.status = status
+    if self.statusAction != None :
+      self.statusAction( self.nodeid, self.status )
+    if verbose:
+      print( "minibee status changed: ", self.nodeid, self.status ) 
 
   def parse_data( self, msgid, data, verbose = False ):
     # to do: add msgid check
@@ -933,7 +1025,7 @@ class MiniBee(object):
     if self.status != 'receiving':
       if self.firstDataAction != None:
 	self.firstDataAction( self.nodeid, self.data )
-    self.status = 'receiving'
+    self.set_status( 'receiving' )
     if len(self.data) == len( self.config.dataInSizes ):
       if self.dataAction != None :
 	self.dataAction( self.data, self.nodeid )
@@ -978,30 +1070,30 @@ class MiniBee(object):
       #print confirmconfig
       if confirmconfig[0] == self.config.samplesPerMessage:
 	if verbose:
-	  print( "samples per message correct" )
+	  print( "samples per message correct", confirmconfig[0], self.config.samplesPerMessage )
       else:
 	configres = False
-	print( "ERROR: samples per message NOT correct" )
+	print( "ERROR: samples per message NOT correct", confirmconfig[0], self.config.samplesPerMessage )
       if (confirmconfig[1]*256 + confirmconfig[2]) == self.config.messageInterval :
 	if verbose:
-	  print( "message interval correct" )
+	  print( "message interval correct", confirmconfig[1:2], self.config.messageInterval )
       else:
 	configres = False
-	print( "ERROR: message interval NOT correct" )
+	print( "ERROR: message interval NOT correct", confirmconfig[1:2], self.config.messageInterval )
       if confirmconfig[3] == sum( self.config.dataInSizes ):
 	if verbose:
-	  print( "data input size correct" )
+	  print( "data input size correct", confirmconfig[3], self.config.dataInSizes )
       else:
 	configres = False
-	print( "ERROR: data input size NOT correct" )
+	print( "ERROR: data input size NOT correct", confirmconfig[3], self.config.dataInSizes )
       if confirmconfig[4] == sum( self.config.dataOutSizes ):
 	if verbose:
-	  print( "data output size correct" )
+	  print( "data output size correct", confirmconfig[4], self.config.dataOutSizes )
       else:
 	configres = False
-	print( "ERROR: data output size NOT correct" )
+	print( "ERROR: data output size NOT correct", confirmconfig[4], self.config.dataOutSizes )
       # to add custom in and out
-      self.status = 'configured'
+      self.set_status( 'configured' )
     else:
       configres = False
       print( "ERROR: wrong config number", configid, self.cid )
