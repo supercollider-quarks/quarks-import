@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-setup(name='Pydon',
+setup(name='pydon',
       version='0.6',
       description='Python packages for the Sense/Stage DataNetwork',
       long_description="""The Sense/Stage DataNetwork can be used to communicate between programs,
@@ -15,6 +15,7 @@ setup(name='Pydon',
       license='GNU Lesser General Public License',
       keywords=['XBee', 'OpenSoundControl', 'OSC', 'SenseStage', 'DataNetwork', 'MiniBee'],
       packages=find_packages(),
+      py_modules=['pydon'],
       install_requires=[
          'pyOSC>=0.3',
          'pyserial>=2.5'
