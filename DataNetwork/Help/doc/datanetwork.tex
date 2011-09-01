@@ -4,7 +4,7 @@
 \usepackage{url}
 
 %opening
-\title{Sense World Data Network\\ \url{http://sensestage.hexagram.ca} }
+\title{Sense World Data Network\\ \url{http://sensestage.hexagram.ca} \\ \url{http://www.sensestage.eu}  }
 \author{Marije Baalman}
 
 \begin{document}
@@ -170,6 +170,9 @@ A client can also provide a hive of MiniBees, by using the special hive register
 \verb|/info/configuration| & is & port no., name& query which configurations are in the network - hiveclient -> host \\
 \verb|/info/configuration| &  &  & query which configurations are in the network - host -> client \\
 \hline
+\verb|/status/minibee| & isiiis & node ID, status & status info about a minibee - host -> client \\
+\verb|/status/minibee| & isisiiis & port no., name, node ID, status & status info about a minibee - hiveclient -> host \\
+\hline
 \verb|/map/minibee/output| & isii & port no., name, node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output) - client -> host\\
 \verb|/map/minibee/custom| & isii & port no., name, node ID, minibee ID & map node output to MiniBee custom output (reply /mapped/minibee/custom) - client -> host\\
 \verb|/map/minibee/output| & ii & node ID, minibee ID & map node output to MiniBee output (reply /mapped/minibee/output) - host -> hiveclient\\
@@ -191,6 +194,20 @@ A client can also provide a hive of MiniBees, by using the special hive register
 \verb|/unmapped/minibee/custom| & ii & node ID, minibee ID & reply to /unmap/minibee/custom messages - host -> client \\
 \verb|/unmapped/minibee/output| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/output messages - hiveclient -> host \\
 \verb|/unmapped/minibee/custom| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/custom messages - hiveclient -> host \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{OSC namespace for the Data Network - interaction with MiniBees. }
+\label{oscinterfaceMB}
+% \end{table}
+ \end{sidewaystable}
+
+ \begin{sidewaystable}[!tbp]
+\small
+\begin{center}
+% use packages: array
+\begin{tabular}{|llll|}
 \hline
 
 \verb|/configure/minibee| & isii(s) & port no., name, minibee ID, config ID (, serial number) & configure minibee (reply /configured/minibee) - client -> host\\
@@ -231,8 +248,8 @@ A client can also provide a hive of MiniBees, by using the special hive register
 
 \end{tabular}
 \end{center}
-\caption{OSC namespace for the Data Network - interaction with MiniBees. }
-\label{oscinterfaceMB}
+\caption{OSC namespace for the Data Network - interaction with MiniBee Configurations }
+\label{oscinterfaceMBC}
 % \end{table}
  \end{sidewaystable}
 
@@ -257,6 +274,10 @@ A client can also provide a hive of MiniBees, by using the special hive register
  13 & "Node with id"+...+"has wrong type"+... \\
  14 & "Client with IP"+addr.ip+"and port"+addr.port+"was not registered under name"+name \\
  15 & "Client with IP"+addr.ip+"and port"+addr.port+"and name" + name + "is not registered. Please register first" \\
+ \hline
+ 16 & "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", but is not a hive client"\\
+ 17 & "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", which is out of range of the hive"\\
+ 18 & "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "sent a minibee configuration with id" + msg[1] + ", but is not a hive client"\\
  \hline
  \end{tabular}
 \end{center}
