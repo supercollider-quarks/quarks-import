@@ -44,29 +44,26 @@ PeakMonitorGui : ObjectGui {
 	
 	update {
 		var newpeaks, str;
-		multiSl.notClosed.if({	// if you close the window at the wrong time, this prevents a choke
-			newpeaks = model.peaks.collect({ arg p, i; 
-				(p > maxClip[i]).if({ maxClip[i] = p });
-				((p = p.abs) > 1).if({
-					{ clipButtons.at(i).value_(1) }.defer;
-				});
-				p.clip(0,1)
+		newpeaks = model.peaks.collect({ arg p, i; 
+			(p > maxClip[i]).if({ maxClip[i] = p });
+			((p = p.abs) > 1).if({
+				{ if(multiSl.notClosed) { clipButtons.at(i).value_(1) } }.defer;
 			});
-				// update "recent peak" display
-			(maxRecent.size >= recentSize).if({ maxRecent.removeAt(0) });
-			maxRecent.add(model.peaks);
-			str = "Channel peaks:\n\n";
-			maxRecent.flop.do({ |chan, i|
-				str = str ++ format("%: % dB\n", i+1, chan.maxItem.ampdb.round(0.01));
-			});
-				// must repeat test: window might close between above test
-				// and the deferred func waking up
-			{	if(multiSl.notClosed) {
-					multiSl.value_(newpeaks.sqrt);
-					maxRecentView.setString(str, 0, maxRecentView.string.size);
-				};
-			}.defer;
+			p.clip(0,1)
 		});
+		// update "recent peak" display
+		(maxRecent.size >= recentSize).if({ maxRecent.removeAt(0) });
+		maxRecent.add(model.peaks);
+		str = "Channel peaks:\n\n";
+		maxRecent.flop.do({ |chan, i|
+			str = str ++ format("%: % dB\n", i+1, chan.maxItem.ampdb.round(0.01));
+		});
+		{
+			if(multiSl.notClosed) {
+				multiSl.value_(newpeaks.sqrt);
+				maxRecentView.setString(str, 0, maxRecentView.string.size);
+			};
+		}.defer;
 	}
 	
 	remove {
