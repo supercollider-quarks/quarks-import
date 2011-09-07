@@ -1,4 +1,4 @@
-// Discs (c) 2008-2009 Tom Hall. 
+// Discs (c) 2008-2011 Tom Hall. 
 // "DIatonic Set ClasseS
 // reg /*at*/ ludions /*dot*/ com 
 // GNU licence, http://gnu.org/copyleft/
@@ -38,7 +38,8 @@ Discs {
 	intsC7 {|tonic=0, card=7|
 		^c7Arr.rotate(13-this.indexOfC7(tonic)).keep(card)
 	}
-
+	
+	// stepwise
 	intsSw {|tonic=0, card=7|
 		var ints, index;
 		ints = this.intsC7(tonic, card).sort;
@@ -61,7 +62,7 @@ Discs {
 	}
 	
 	noteNames { |tonic=0, card=7|
-		var	notes = if(this.nameNonClem(tonic), {sharpsArr}, {flatsArr});
+		var	 notes = if(this.nameNonClem(tonic), {sharpsArr}, {flatsArr});
 		if(tonic==6, {notes.put(11, "Cb")}); // hack to have correct note names
 		^notes
 	}

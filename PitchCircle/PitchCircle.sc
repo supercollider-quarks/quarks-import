@@ -1,8 +1,8 @@
-// PitchCircle 2008-2009 Tom Hall. 
+// PitchCircle 2008-2011 Tom Hall. 
 // GNU licence, http://gnu.org/copyleft/
 // reg /*at*/ ludions /*dot*/ com 
 // Latest version available at www.ludions.com/sc/
-// version 2009-04-15 
+// version 2011-09-07 
 
 PitchCircle {
 
@@ -61,12 +61,15 @@ PitchCircle {
 		usrView.refresh;
 	}
 	
+	refresh { usrView.refresh }
+	
+	
 	makeNotes { |aTonic, aMod, anOffset, aSteps|
 		tonic = aTonic ? tonic;
 		mod = aMod ? mod;
 		offset = anOffset ? offset;
 		steps = aSteps ? steps;
-		
+//		"making notes".inform; // postln
 		case {mod==1} 
 				{ integers = scs.intsSw(tonic, steps);
 				  notes = scs.namesSw(tonic, steps) }
@@ -89,8 +92,8 @@ PitchCircle {
 		});
 		
 		if(offset !=0, {
-			integers = integers.rotate(offset);
-			notes = notes.rotate(offset);
+			integers = integers.rotate(offset.neg);
+			notes = notes.rotate(offset.neg);
 		});
 	}
 	
@@ -98,37 +101,67 @@ PitchCircle {
 		if(dots.isArray.not, {
 			dots = dots.bubble;
 		});
-		^aHLDots = dots;
+		aHLDots = dots;
+		this.refresh;
+		^dots
 	}
 	
 	hlDots {
 		^aHLDots
 	}
-	
+		
+	spell {|pc, noteStr|
+		var index = integers.indexOf(pc);
+		notes.put(index, noteStr);
+		this.refresh;
+		notes; 
+	}
+
+	spellAll {|arr|
+		arr.pairsDo({ arg a, b; this.spell(a, b)});
+	}
+
 	
 	mod_ {|mod|
 		this.makeNotes(aMod: mod);
+		this.refresh;	
 	}
 	
 	tonic_ {|tonic|
 		this.makeNotes(aTonic: tonic);
+		this.refresh;	
 	}
 	
-	offset_ {|offset|
-		this.makeNotes(anOffset: offset);
+	offset_ {|anOffset|
+//		this.makeNotes(anOffset: offset);
+		var tmpOffset = (offset * 1.neg) + anOffset;
+		integers = integers.rotate(tmpOffset.neg);
+		notes = notes.rotate(tmpOffset.neg);
+		offset = anOffset;
+		this.refresh;		
 	}
 	
 	steps_ {|steps|
 		this.makeNotes(aSteps: steps);
+		this.refresh;	
 	}
 	
 	setAll { |mod=1, tonic=0, offset=0, steps=12|
-		this.makeNotes(tonic, mod, offset, steps)
+		this.makeNotes(tonic, mod, offset, steps);
+		this.drawLabel(set);
+		this.refresh;	
 	}
 	
 	set_ {|aSet|
 		scs.checkSubset(aSet, integers); // warns if needed
 		set = aSet
+	}
+
+	note_ {|note|
+		note = note.bubble;
+		scs.checkSubset(note, integers); // warns if needed
+		set = note;
+		this.drawSet;
 	}
 	
 	complement {
@@ -181,7 +214,7 @@ PitchCircle {
 	addSet { |aSet, aLabel, aDotsCol|
 		var set2, dotsCol2;
 		set2 = aSet;
-		dotsCol2 = aDotsCol ? Color.green;
+		dotsCol2 = aDotsCol ? Color.red;
 		aLabel = aLabel ? format("%  %", set, set2);
 		usrView.drawFunc = {
 			this.makeCircle;
@@ -227,8 +260,14 @@ PitchCircle {
 		text.font_(Font("Helvetica",  labelSize));
 	}
 	
+	linesToggle {
+		lines = if(lines, {false}, {true});
+		this.refresh;
+	}
+	
 	makeCircle {
-		var noteLabel, adjustedOffset, centre;
+		var noteLabel, centre;
+//		"drawing circle".inform; // postln
 		centre = size/2;
 		// Draw the circle
 		Pen.color = Color.black; 
