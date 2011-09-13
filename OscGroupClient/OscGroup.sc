@@ -21,17 +21,12 @@ OscGroupClient {
 		}
 		
 	join { 
-		(program + serveraddress + serverport + localtoremoteport + localtxport + localrxport +
-			username + password + groupname + grouppassword).unixCmdInferPID({arg id;
-				pid = id;
-				pid.notNil.if({
-					("OscGroupClient successfully started, attempting to connect to " + serveraddress).postln;
-					netAddr = NetAddr("localhost", localtxport);
-					UI.registerForShutdown({("kill" + pid).systemCmd});
-					}, {
-					"Check connections... the client could not be started".warn
-					});
-				})
+		pid = (program + serveraddress + serverport + localtoremoteport + localtxport + localrxport +
+			username + password + groupname + grouppassword).unixCmd({
+				("OscGroupClient successfully started, attempting to connect to " + serveraddress).postln;
+				});
+		netAddr = NetAddr("localhost", localtxport);
+		UI.registerForShutdown({("kill" + pid).systemCmd});
 		}
 		
 	close {
