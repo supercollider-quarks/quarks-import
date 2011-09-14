@@ -1,12 +1,12 @@
 //--
 work in progress.  happy for any comments or contributions.
 
-note! this quark make one serious change by overriding Collection:species {^this.class}.  other things in your sc system may break.
 
 note! some of the examples require additional classes like RedGA etc.  these are available online at my homepage http://www.fredrikolofsson.com under code->sc
 
 
 //--
+110914 - added 191-kmeans2 example
 110323 - moved RedWindow cocoa into scide_scapp folder
 101214 - support for discrete worlds with surroundings and neighbours
 	one new discrete world example added
