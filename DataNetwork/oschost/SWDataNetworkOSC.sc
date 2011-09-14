@@ -12,7 +12,7 @@ SWDataNetworkOSC{
 	var <hiveDictionary;
 
 	var <clientDictionary;
-	var <clients;
+	//	var <clients;
 	var <setters;
 	var <network;
 	var <watcher;
@@ -50,7 +50,7 @@ SWDataNetworkOSC{
 		clientDictionary = IdentityDictionary.new;
 		hiveDictionary = IdentityDictionary.new;
 		hiveNotifier = SWAsyncNotifier.new;
-		clients = Array.new;
+		//	clients = Array.new;
 		clientPorts = List.new;
 		setters = IdentityDictionary.new;
 
@@ -72,17 +72,22 @@ SWDataNetworkOSC{
 	}
 
 	stop{
-		clients.do{ |it| 
-			it.addr.sendMsg( '/unregistered', it.addr.port.asInteger, it.key.asString );
-			it.addr.sendMsg( '/datanetwork/quit', myhost.hostname, myhost.port.asInteger );
-		};
+		this.activeClientsDo( 'hostQuit', [ myhost ] );
+	//	clientDictionary.do{ |it| it.hostQuit( myhost ); };
 		this.logMsg("datanetwork stopped" );
 		this.removeResponders;
 	}
 
 	sendPings{
-		clients.do{ |it| it.ping };
-		clients.do{ |it| if ( it.missedPongs > maxMissedPongs ){ this.removeClient( it.addr, it.key ) } };
+		clientDictionary.do{ |it| 
+			it.ping;
+			if ( it.active ){
+				if ( it.missedPongs > maxMissedPongs )
+				{ 
+					this.removeClient( it.addr, it.key );
+				} 
+			};
+		};
 	}
 
 	removeResponders{
@@ -251,7 +256,7 @@ SWDataNetworkOSC{
 					addr.port = msg[1]; this.removeNode( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ verbose.value( 0, "missing port in message" ); };			}),
 			OSCresponderNode( nil, '/remove/all', { |t,r,msg,addr|
-				verbose.value( 1, msg.postln; );
+				verbose.value( 1, { msg.postln;} );
 				if ( msg.size > 1 ){
 					addr.port = msg[1]; this.removeAll( addr, msg[2] );
 				}{ verbose.value( 0, "missing port in message" ); };			}),
@@ -262,6 +267,13 @@ SWDataNetworkOSC{
 				verbose.value( 1, msg );
 				if ( msg.size > 1 ){
 					addr.port = msg[1]; this.minibeeInfo( addr, msg[2], msg.copyToEnd(3) );
+				}{ verbose.value( 0, "missing port in message" ); };
+			}),
+
+			OSCresponderNode( nil, '/status/minibee', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.minibeeStatus( addr, msg[2], msg.copyToEnd(3) );
 				}{ verbose.value( 0, "missing port in message" ); };
 			}),
 
@@ -432,6 +444,23 @@ SWDataNetworkOSC{
 		responders.do{ |it| it.add };
 	}
 
+	activeClientsDo{ |method,args|
+		clientDictionary.do{ |it|
+			if ( it.active ){
+				it.performList( method, args );
+			}
+		}
+	}
+
+	activeClientsDoThis{ |method,args|
+		clientDictionary.do{ |it|
+			if ( it.active ){
+				this.performList( method, [it] ++ args );
+			}
+		}
+	}
+
+	
 
 	// ---------- autoconnection and recovery support -------
 
@@ -499,7 +528,7 @@ SWDataNetworkOSC{
 			name = (name++"IPS");
 		};
 		file = File.open( Platform.userAppSupportDir +/+ name, "w" );
-		file.write( clients.collect{ |it| it.addr.addr.asIPString }.asCompileString );
+		file.write( clientDictionary.collect{ |it| it.addr.addr.asIPString }.asArray.asCompileString );
 		file.close;
 	}
 
@@ -520,10 +549,10 @@ SWDataNetworkOSC{
 	backupClients{ |name|
 		name = name ? "SWDataNetworOSC_clients";
 		this.backupClientsIPs( name );
-		clients.collect{ |it| 
+		clientDictionary.collect{ |it| 
 			[ it.addr, it.subscriptions.asArray,
 				it.setters.collect{ |it| [it.id,it.data.size] }.asArray
-			] }.writeArchive( Platform.userAppSupportDir +/+ name  );
+			] }.asArray.writeArchive( Platform.userAppSupportDir +/+ name  );
 	}
 
 	restoreClients{ |name|
@@ -562,45 +591,40 @@ SWDataNetworkOSC{
 	//------- Methods called by the network
 
 	newExpected{ |id,label|
-		clients.do{ |it|
-			it.newExpected( id, label );
-		}
-	}
-	newNode{ |node|
-		//	node.postcs;
-		clients.do{ |it|
-			it.newNode( node );
-		}
+		this.activeClientsDo( 'newExpected', [id,label] );
+		//		clientDictionary.do{ |it| it.newExpected( id, label );	}
 	}
 
-	newSlot{ |slot|
-		clients.do{ |it|
-			it.newSlot( slot );
-		}
+	newNode{ | node |
+		this.activeClientsDo( 'newNode', [ node ] );
+		//		clientDictionary.do{ |it| it.newNode( node ); }
+	}
+
+	newSlot{ | slot |
+		this.activeClientsDo( 'newSlot', [ slot ] );
+		//	clientDictionary.do{ |it| it.newSlot( slot ); }
 	}
 
 	newBee{ |bee|
-		clients.do{ |it|
-			it.newBee( bee );
-		}
+		this.activeClientsDo( 'newBee', [ bee ] );
+		//		clientDictionary.do{ |it| it.newBee( bee );	}
 	}
 
 	sendData{ |id,data|
-		verbose.value( 2, ["sendData", id,data] );
-		clients.do{ |it|
-			it.sendData( id, data );
-		};
+		verbose.value( 2, ["sendData", id, data] );
+		this.activeClientsDo( 'sendData', [id, data] );
+		//	clientDictionary.do{ |it| it.sendData( id, data ); };
 	}
 
 	sendDataNode{ |node|
 		verbose.value( 2, ["sendDataNode", node.id, node.data] );
-		clients.do{ |it|
-			it.sendDataNode( node );
-		};
+		this.activeClientsDo( 'sendDataNode', [ node ] );
+		//		clientDictionary.do{ |it| it.sendDataNode( node );	};
 	}
 
 	nodeRemoved{ |id|
-		clients.do{ |it| it.nodeRemoved( id ) };
+		this.activeClientsDo( 'nodeRemoved', [ id ] );
+		//		clientDictionary.do{ |it| it.nodeRemoved( id ) };
 	}
 
 	///--------- subscriptions and data retrieval
@@ -720,9 +744,9 @@ SWDataNetworkOSC{
 
 	findClient{ |addr,name|
 		if ( name.notNil ){
-			^clients.select( { |it| (it.addr == addr) and: (it.key == name.asSymbol) } ).first;
+			^clientDictionary.select( { |it| (it.addr == addr) and: (it.key == name.asSymbol) } ).asArray.first;
 		}{ // don't check for name
-			^clients.select( { |it| it.addr == addr } ).first;
+			^clientDictionary.select( { |it| it.addr == addr } ).asArray.first;
 		}
 	}
 
@@ -743,9 +767,6 @@ SWDataNetworkOSC{
 	addClient{ |addr,name|
 		var there,newclient,there2;
 		there = this.findClient( addr );
-		//		there = clients.find( { |it| it.addr == addr } );
-		//	[addr,there,name].postln;
-		//		there.dump;
 		if ( there.isNil, { 
 			// no client had that IP and port before
 			// see if the client exists by name in the library
@@ -753,7 +774,6 @@ SWDataNetworkOSC{
 			if ( there.notNil){
 				// address may have changed, so we reset it:
 				there.addr = addr;
-				clients = clients.add( there );
 				this.welcomeClientBack( there );
 				if ( gui.notNil ){ 
 					gui.addClient( there );
@@ -766,7 +786,7 @@ SWDataNetworkOSC{
 					clientPorts.add( addr.port );
 					newclient = SWDataNetworkOSCClient.new( addr, name.asSymbol );
 					newclient.sendRegistered;
-					clients = clients.add( newclient );
+					//	clients = clients.add( newclient );
 					//	watcher.start;
 					clientDictionary.put( name.asSymbol, newclient );
 					if ( gui.notNil ){ 
@@ -792,16 +812,17 @@ SWDataNetworkOSC{
 	}
 
 	removeClient{ |addr,name|
-		var there,there2;
+		var there;
 		there = this.findClient( addr );
+
 		//		[addr,there].postln;
+		//		thisProcess.dumpBackTrace;
 
 		if ( there.notNil, { 
 			if ( there.key == name.asSymbol ){
 				/// removed, as we keep the client in the dictionary
-				//	there.setters.do{ |node| setters.removeAt( node.id ) };
 				there.active = false;
-				clients.remove( there );
+				//	clientDictionary.removeAt( there );
 				addr.sendMsg( '/unregistered', addr.port.asInteger, there.key );
 				if ( gui.notNil ){
 					gui.removeClient( there );
@@ -835,9 +856,6 @@ SWDataNetworkOSC{
 	addHiveClient{ |addr,name,nonodes|
 		var there,newclient,hiveBlock;
 		there = this.findClient( addr );
-		//		there = clients.find( { |it| it.addr == addr } );
-		//	[addr,there,name].postln;
-
 		if ( there.isNil, { 
 			// no client had that IP and port before
 			// see if the client exists by name in the library
@@ -849,7 +867,6 @@ SWDataNetworkOSC{
 				// TODO: check if range is the same
 				//	hiveBlock = this.allocHiveNodes( nonodes );
 				//	there.setRange( hiveBlock, hiveBlock + nonodes );
-				clients = clients.add( there );
 				this.welcomeClientBack( there );
 				if ( gui.notNil ){ 
 					gui.addClient( there );
@@ -864,7 +881,7 @@ SWDataNetworkOSC{
 					there.addr = addr;
 					hiveBlock = this.allocHiveNodes( nonodes );
 					there = SWDataNetworkOSCHiveClient.newFrom( there, hiveBlock, hiveBlock + nonodes );
-					clients = clients.add( there );
+					//	clients = clients.add( there );
 					hiveDictionary.put( name.asSymbol, there );
 					this.welcomeClientBack( there );
 					if ( gui.notNil ){ 
@@ -879,7 +896,7 @@ SWDataNetworkOSC{
 						hiveBlock = this.allocHiveNodes( nonodes );
 						newclient = SWDataNetworkOSCHiveClient.new( addr, name.asSymbol, hiveBlock, hiveBlock + nonodes );
 						newclient.sendRegistered;
-						clients = clients.add( newclient );
+						//	clients = clients.add( newclient );
 						//	watcher.start;
 						clientDictionary.put( name.asSymbol, newclient );
 						hiveDictionary.put( name.asSymbol, newclient );
@@ -899,7 +916,10 @@ SWDataNetworkOSC{
 				// TODO: should actually check if the requested range is the same
 				//	hiveBlock = this.allocHiveNodes( nonodes );
 				//	there.setRange( hiveBlock, hiveBlock + nonodes );
-				this.welcomeClientBack( there );				
+				this.welcomeClientBack( there );
+				if ( gui.notNil ){ 
+					gui.addClient( there );
+				};				
 				this.logMsg( "hiveclient reregistered:"+(addr.asString.replace( "a NetAddr",""))+name );				
 			}{
 				there = clientDictionary.at( name.asSymbol );
@@ -908,7 +928,10 @@ SWDataNetworkOSC{
 					there.addr = addr;
 					hiveBlock = this.allocHiveNodes( nonodes );
 					there = SWDataNetworkOSCHiveClient.newFrom( there, hiveBlock, hiveBlock + nonodes );
-					this.welcomeClientBack( there );				
+					this.welcomeClientBack( there );
+					if ( gui.notNil ){ 
+						gui.addClient( there );
+					};	
 					this.logMsg( "client reregistered as hive client:"+(addr.asString.replace( "a NetAddr",""))+name );				
 				}{
 					this.errorMsg( addr, "/register/hive", 2);
@@ -928,7 +951,7 @@ SWDataNetworkOSC{
 				/// removed, as we keep the client in the dictionary
 				//	there.setters.do{ |node| setters.removeAt( node.id ) };
 				there.active = false;
-				clients.remove( there );
+				//	clients.remove( there );
 				this.freeHiveNodes( there.nodeRange[0] );
 				addr.sendMsg( '/unregistered/hive', addr.port.asInteger, there.key );
 				if ( gui.notNil ){
@@ -956,13 +979,33 @@ SWDataNetworkOSC{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				res = client.addBee( msg[0].asInteger, msg[1].asInteger, msg[2].asInteger );
 				if ( res ){
-					//	this.getNode( addr, client.key,  msg );
+					this.sendAllClientsBeeInfo( msg[0], msg[1] );
 					this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"added minibee:"+msg[0] );
 					}{
 						this.errorMsg( addr, "/info/minibee", 17, [name, msg[0]] ++ client.nodeRange );
 					};
 			}{
 				this.errorMsg( addr, "/info/minibee", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	minibeeStatus{ |addr,name,msg|
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/status/minibee", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				res = client.statusBee( msg[0].asInteger, msg[1] );
+				if ( res ){
+					this.sendAllClientsBeeStatus( msg[0], msg[1] );
+					this.logMsg( "client:"+(client.addr.asString.replace( "a NetAddr",""))+"minibee status:"+msg[0]+msg[1] );
+				}{
+					this.errorMsg( addr, "/status/minibee", 19, [name, msg[0]] ++ client.nodeRange );
+				};				
+			}{
+				this.errorMsg( addr, "/status/minibee", 16, [name,msg[0]] );
 			}
 		});
 	}
@@ -982,6 +1025,13 @@ SWDataNetworkOSC{
 		});
 	}
 
+	configMiniBeeLocal{ | beeid, configid |
+		// find hive that has this minibee
+		hiveDictionary.do{ |it|
+			it.configureBee( beeid, configid );
+		};
+	}
+
 	configMiniBee{ |addr,name,msg|
 		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
 		var client,res;
@@ -989,10 +1039,7 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			this.errorMsg( addr, "/configure/minibee", 15, [name] );
 		},{
-			// find hive that has this minibee
-			hiveDictionary.do{ |it|
-				it.configureBee( msg[0], msg[1] );
-			};
+			this.configMiniBeeLocal( msg[0], msg[1] );
 			hiveNotifier.add( '/configure/minibee', msg[0], client, '/configured/minibee' );
 		});
 	}
@@ -1072,6 +1119,13 @@ SWDataNetworkOSC{
 		});
 	}
 
+	createConfigLocal{ |cid,config|
+		// find hive that has this minibee
+		hiveDictionary.do{ |it|
+			it.createConfig( cid, config );
+		};
+	}
+
 	createConfig{ |addr,name,msg|
 		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
 		var client,res;
@@ -1079,10 +1133,7 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			this.errorMsg( addr, "/minihive/configuration/create", 15, [name] );
 		},{
-			// find hive that has this minibee
-			hiveDictionary.do{ |it|
-				it.createConfig( msg[0], msg.copyToEnd( 1 ) );
-			};
+			this.createConfigLocal( msg[0], msg.copyToEnd( 1 ) );
 			hiveNotifier.add( '/minihive/configuration/create', msg[0], client, '/minihive/configuration/created' );
 		});
 	}
@@ -1102,6 +1153,13 @@ SWDataNetworkOSC{
 		});
 	}
 
+	deleteConfigLocal{ |cid|
+		// delete config for all hives
+		hiveDictionary.do{ |it|
+			it.deleteConfig( cid );
+		};
+	}
+
 	deleteConfig{ |addr,name,msg|
 		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
 		var client,res;
@@ -1109,10 +1167,7 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			this.errorMsg( addr, "/minihive/configuration/delete", 15, [name] );
 		},{
-			// find hive that has this minibee
-			hiveDictionary.do{ |it|
-				it.deleteConfig( msg[0] );
-			};
+			this.deleteConfigLocal( msg[0] );
 			hiveNotifier.add( '/minihive/configuration/delete', msg[0], client, '/minihive/configuration/deleted' );
 		});
 	}
@@ -1132,6 +1187,18 @@ SWDataNetworkOSC{
 		});
 	}
 
+	saveConfigLocal{ |filename|
+		hiveDictionary.do{ |it|
+			it.saveConfig( filename );
+		};
+	}
+
+	loadConfigLocal{ |filename|
+		hiveDictionary.do{ |it|
+			it.loadConfig( filename );
+		};
+	}
+
 	saveConfig{ |addr,name,msg|
 		// message from an arbitrary client, should be passed onto the correct minihive client to set the configuration for the minibee.
 		var client,res;
@@ -1139,10 +1206,7 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			this.errorMsg( addr, "/minihive/configuration/save", 15, [name] );
 		},{
-			// find hive that has this minibee
-			hiveDictionary.do{ |it|
-				it.saveConfig( msg[0] );
-			};
+			this.saveConfigLocal( msg[0] );
 			hiveNotifier.add( '/minihive/configuration/save', msg[0], client, '/minihive/configuration/saved' );
 		});
 	}
@@ -1169,10 +1233,7 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			this.errorMsg( addr, "/minihive/configuration/load", 15, [name] );
 		},{
-			// find hive that has this minibee
-			hiveDictionary.do{ |it|
-				it.loadConfig( msg[0] );
-			};
+			this.loadConfigLocal( msg[0] );
 			hiveNotifier.add( '/minihive/configuration/load', msg[0], client, '/minihive/configuration/loaded' );
 		});
 	}
@@ -1279,12 +1340,11 @@ SWDataNetworkOSC{
 		if ( client.isNil, {
 			this.errorMsg( addr, "/query/clients", 15, [name] );
 		},{
-			if ( clients.size == 0, {
+			if ( clientDictionary.size == 0, {
 				this.warnMsg( addr, "/query/clients", 9 );
 			});
-			clients.do{ |it|
-				it.sendClientInfo( addr );
-			};
+			this.activeClientsDo( 'sendClientInfo', [addr] );
+			//	clientDictionary.do{ |it| it.sendClientInfo( addr );};
 		});
 		this.logMsg( "/query/clients from client with IP"+addr.ip+"and port"+addr.port );
 	}
@@ -1434,8 +1494,8 @@ SWDataNetworkOSC{
 			network.getBeeInfo( addr );
 			// look for hive clients with bees
 			hiveDictionary.do{ |it|
-				it.activeBees.do{ |it|
-					this.sendBeeInfo( addr, it.id, it.inputs, it.outputs );
+				it.activeBees.do{ |jt|
+					this.sendBeeInfo( it, jt.id, jt.inputs, jt.outputs );
 				}
 			};
 		});
@@ -1481,12 +1541,25 @@ SWDataNetworkOSC{
 		this.warnMsg( addr, "/query/minibees", 8 );
 	}
 
-	sendBeeInfo{ |addr, id,insize,outsize|
-		verbose.value( 1, [addr, id, insize, outsize ].asCompileString );
-		addr.sendMsg( '/info/minibee', id, insize, outsize );
+	sendAllClientsBeeInfo{ |id,insize,outsize|
+		this.activeClientsDoThis( 'sendBeeInfo', [ id, insize, outsize ] );
+		//	clientDictionary.do{ |it| this.sendBeeInfo( it.addr, id, insize,outsize ); }
 	}
 
-	
+	sendAllClientsBeeStatus{ |id,status|
+		this.activeClientsDoThis( 'sendBeeStatus', [ id, status ] );
+		//	clientDictionary.do{ |it| this.sendBeeStatus( it.addr, id, status ); }
+	}
+
+	sendBeeInfo{ |client, id,insize,outsize|
+		verbose.value( 1, [client.addr, id, insize, outsize ].asCompileString );
+		client.addr.sendMsg( '/info/minibee', id, insize, outsize );
+	}
+
+	sendBeeStatus{ |client, id, status|
+		verbose.value( 1, [client.addr, id, status ].asCompileString );
+		client.addr.sendMsg( '/status/minibee', id, status );
+	}
 
 	mapHiveOutput{ |addr,name,msg|
 		var there,node;
@@ -1701,7 +1774,7 @@ SWDataNetworkOSC{
 				{
 					setters.put( msg[0], name.asSymbol );
 				});
-			if ( network.isExpected( msg[0] ), {
+			if ( network.isExpected( msg[0] ).not, {
 				this.errorMsg( addr, "/label/slot", 6, msg );
 			}, {
 				if ( setters.at( msg[0] ) == name.asSymbol, {
@@ -1771,7 +1844,8 @@ SWDataNetworkOSC{
 			15, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "is not registered. Please register first" },
 			16, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", but is not a hive client"},
 			17, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "tried to add a minibee with id" + msg[1] + ", which is out of range of the hive"},
-			18, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "sent a minibee configuration with id" + msg[1] + ", but is not a hive client"}
+			18, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "sent a minibee configuration with id" + msg[1] + ", but is not a hive client"},
+			19, { string = "Client with IP"+addr.ip+"and port"+addr.port+"and name" + msg[0] + "sent a minibee status update with id" + msg[1] + ", but the minibee is not part of the hive"}
 		);	
 		^string;
 	}

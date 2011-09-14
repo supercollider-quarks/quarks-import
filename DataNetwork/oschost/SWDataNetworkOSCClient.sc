@@ -3,7 +3,7 @@ SWDataNetworkOSCClient{
 	var <>key;
 	var <addr;
 
-	var <>active = false;
+	var <active = false;
 
 	var <missedPongs = 0;
 	var <subscriptions;
@@ -51,9 +51,14 @@ SWDataNetworkOSCClient{
 	}
 
 	pong{
-		active = true;
+		this.active = true;
 		missedPongs = 0;
 		//		missedPongs = missedPongs - 1;
+	}
+
+	active_{ |a|
+		active = a;
+		//	thisProcess.dumpBackTrace;
 	}
 
 
@@ -93,6 +98,10 @@ SWDataNetworkOSCClient{
 		};
 	}
 
+	hostQuit{ |myhost|
+		addr.sendMsg( '/unregistered', addr.port.asInteger, key.asString );
+		addr.sendMsg( '/datanetwork/quit', myhost.hostname, myhost.port.asInteger );
+	}
 
 	checkForSetter{ |node|
 		^setters.at(node.id).notNil;

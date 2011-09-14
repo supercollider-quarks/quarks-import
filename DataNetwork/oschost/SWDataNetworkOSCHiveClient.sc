@@ -1,7 +1,7 @@
 
 // minimal class holding info on a minibee
 SWMiniBeeOSC{
-	var <>id, <>inputs, <>outputs;
+	var <>id, <>inputs, <>outputs, <>configID, <>serialNumber, <>status;
 
 	*new{ arg ...args;
 		^super.newCopyArgs( *args );
@@ -94,14 +94,22 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 		addr.sendMsg( '/minihive/configuration/load', filename );
 	}
 
-	addBee{ |id,inputs,outputs|
+	addBee{ |id,inputs,outputs,config,serial|
 		if ( nodeRange[0] <= id and: ( nodeRange[1] >= id ) ){
-			activeBees.put( id, SWMiniBeeOSC.new( id, inputs, outputs ) );
+			activeBees.put( id, SWMiniBeeOSC.new( id, inputs, outputs, config, serial ) );
 			^true;
 		}{
 			"Bee ID not within range of HiveClient".warn;
 			^false;
 		}
+	}
+
+	statusBee{ |id, status|
+		if ( activeBees.at( id ).isNil ){
+			^false;
+		};
+		activeBees.at( id ).status_( status );
+		^true;
 	}
 
 	// currently we have no message to remove a bee from the network; maybe needed?

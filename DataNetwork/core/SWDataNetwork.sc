@@ -169,6 +169,42 @@ SWDataNetwork{
 		}
 	}
 
+	configBee{ |miniBee,cid|
+		var mb;
+		if ( osc.notNil ){
+			if ( miniBee.isKindOf( SWMiniBee ) ){
+				mb = miniBee.id;
+			}{
+				mb = miniBee;
+			};
+			osc.configMiniBeeLocal( mb, cid );
+		};
+	}
+
+	createConfig{ |...config|
+		if ( osc.notNil ){
+			osc.createConfigLocal( config[0], config.copyToEnd( 1 ) );
+		}
+	}
+
+	deleteConfig{ |cid|
+		if ( osc.notNil ){
+			osc.deleteConfigLocal( cid );
+		}
+	}
+
+	saveConfig{ |filename|
+		if ( osc.notNil ){
+			osc.saveConfigLocal( filename );
+		}
+	}
+
+	loadConfig{ |filename|
+		if ( osc.notNil ){
+			osc.loadConfigLocal( filename );
+		}
+	}
+
 	mapBee{ |node,miniBee,type=\output|
 		var id,mb;
 		if ( node.isKindOf( SWDataNode ) ){
