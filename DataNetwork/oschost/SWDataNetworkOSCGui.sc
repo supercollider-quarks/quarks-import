@@ -8,6 +8,7 @@ SWDataNetworkOSCClientGui{
 	var <>cw;
 
 	var <key,<mpongs,<nsub,<nset,<addrIP,<addrPort;
+	var <type;
 	var <expandBut;
 	var <subs,<sets;
 
@@ -49,8 +50,7 @@ SWDataNetworkOSCClientGui{
 			try { decorator = w.decorator };
 		});
 
-		cw = GUI.compositeView.new( w, Rect( xpos, ypos, xsize, ysize ) );
-		// .resize_( 5 );
+		cw = GUI.compositeView.new( w, Rect( xpos, ypos, xsize, ysize ) ).resize_( 2 );
 		cw.decorator = FlowLayout(Rect( xpos, ypos, xsize, ysize), 2@2, 2@2);
 		cw.background = Color.white;
 		decorator = cw.decorator;
@@ -69,17 +69,24 @@ SWDataNetworkOSCClientGui{
 
 		nset = GUI.textField.new( cw, Rect( 0, 0, 20, 16 )).string_( client.setters.size.asString ).font_( font );
 
+		type = GUI.staticText.new( cw, Rect( 0, 0, 60, 16 )).string_( 
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				"hive"
+			}{ "" };
+			//	client.key.asString
+		).font_( font );
+
 		decorator.nextLine;
 
 		GUI.staticText.new( cw, Rect( 0, 0, 65, 16 )).string_( "subscriptions" ).font_( font ).align_( \left );
 
-		subs = GUI.textField.new( cw, Rect( 0, 0, xsize - 75, 16 )).string_( client.subscriptions.asArray.asString ).font_( font ).align_( \left ).resize_(5);
+		subs = GUI.textField.new( cw, Rect( 0, 0, xsize - 75, 16 )).string_( client.subscriptions.asArray.sort.asString ).font_( font ).align_( \left ).resize_(2);
 
 		decorator.nextLine;
 
 		GUI.staticText.new( cw, Rect( 0, 0, 65, 16 )).string_( "setters" ).font_( font ).align_( \left );
 		
-		sets = GUI.textField.new( cw, Rect( 0, 0, xsize - 75, 16 )).string_( client.setters.collect{ |it| it.id }.asArray.asString ).font_( font ).align_( \left ).resize_(5);
+		sets = GUI.textField.new( cw, Rect( 0, 0, xsize - 75, 16 )).string_( client.setters.collect{ |it| it.id }.asArray.sort.asString ).font_( font ).align_( \left ).resize_(2);
 		
 		watcher = SkipJack.new({ { this.updateVals }.defer }, 1.0, { w.isClosed }, (\dataoscclientgui ++ client.addr).asSymbol, autostart: false );
 
@@ -116,7 +123,7 @@ SWDataNetworkOSCClientGui{
 			nsub.string_( client.subscriptions.size.asString );
 			nset.string_( client.setters.size.asString );
 
-			subs.string_( client.subscriptions.asArray.asString );
+			subs.string_( client.subscriptions.asArray.sort.asString );
 
 			sets.string_( client.setters.collect{ |it| it.id }.asArray.sort.asString );
 
@@ -156,7 +163,7 @@ SWDataNetworkOSCGui{
 
 	var <key,<verb,<debug,<nodes,<bigNodes;
 	var <restore,<backup,<announce,<log;
-	var <nodeview,<nv2;
+	var <clientview,<nv2;
 	var <logview;
 	var <watch,<worry;
 	var <info;
@@ -178,7 +185,7 @@ SWDataNetworkOSCGui{
 		var xsize, ysize;
 		var nvsize,svsize;
 		xsize = 500;
-		ysize = 400;
+		ysize = 460;
 
 		w = w ?? { 
 			w = GUI.window.new("DataNetwork client connections", Rect(xposScreen, yposScreen, xsize, ysize )).front; 
@@ -206,14 +213,14 @@ SWDataNetworkOSCGui{
 		w.view.decorator.nextLine;
 
 		nvsize = 500;
-		nodeview = GUI.scrollView.new( w, Rect( 0,0, nvsize, ysize - 30 - 60 - 2 ) ).resize_( 5 );
+		clientview = GUI.scrollView.new( w, Rect( 0,0, nvsize, ysize - 30 - 120 - 2 ) ).resize_( 5 );
 
-		logview = GUI.textView.new( w, Rect( 0, 0, nvsize, 60) ).editable_( false ).resize_(8).hasVerticalScroller_( true );
+		logview = GUI.textView.new( w, Rect( 0, 0, nvsize, 120) ).editable_( false ).resize_(8).hasVerticalScroller_( true );
 
-		// nodeview:
-		ysize = (SWDataNetworkOSCClientGui.ysize + 2) * network.clients.size + 2;
-		xsize =  1000;
-		nv2 = GUI.compositeView.new( nodeview, Rect( 0,0, xsize, ysize ) );
+		// clientview:
+		ysize = (SWDataNetworkOSCClientGui.ysize + 2) * network.clientDictionary.size + 2;
+		//	xsize =  1000;
+		nv2 = GUI.compositeView.new( clientview, Rect( 0,0, xsize, ysize ) ).resize_(5);
 
 		ypos = -1 * SWDataNetworkOSCClientGui.ysize - 2;
 
@@ -221,12 +228,11 @@ SWDataNetworkOSCGui{
 
 		nodes = [];
 
-		if ( network.clients.size > 0 ) {
-			nodes = network.clients.collect{ |it,key|
-				//				it.postln;
+		if ( network.clientDictionary.size > 0 ) {
+			nodes = network.clientDictionary.collect{ |it,key|
 				ypos = ypos + 2 + SWDataNetworkOSCClientGui.ysize;
 				SWDataNetworkOSCClientGui.new( it, nv2, 2, ypos ).parent_( this );
-			};
+			}.asArray;
 		};
  						
 		watcher = SkipJack.new({ {this.updateVals}.defer }, 1.0, { w.isClosed }, (\datanetworkoscgui).asSymbol, autostart: false );
@@ -254,23 +260,19 @@ SWDataNetworkOSCGui{
 	addClient{ |client|
 		var ysize;
 		defer{
-			ysize = SWDataNetworkOSCClientGui.ysize + 2 * network.clients.size + 2;
-
+			ysize = SWDataNetworkOSCClientGui.ysize + 2 * network.clientDictionary.size + 2;
 			ypos = ypos + 2 + SWDataNetworkOSCClientGui.ysize;
 
 			nv2.bounds_( Rect( 0, 0, SWDataNetworkOSCClientGui.xsize, ysize ) );
 
 			nodes = nodes.add( SWDataNetworkOSCClientGui.new( client, nv2, 2, ypos ).parent_( this ); );
+			nv2.refresh;			
 		}
 	}
 
 	
 	removeClient{ |client|
-		//		client.dump;
-		//		nodes.do{ |it| it.client.dump; (it.client == client).postln; };
-		nodes.removeAllSuchThat( { |it| it.client == client } ); //.postln;
-		//		nodes.postln;
-
+		nodes.removeAllSuchThat( { |it| it.client == client } );
 		this.refreshClients;
 	}
 
@@ -281,7 +283,7 @@ SWDataNetworkOSCGui{
 		defer{
 			nv2.removeAll;
 
-			nv2.children.postln;
+			//	nv2.children.postln;
 
 			ypos = -1 * SWDataNetworkOSCClientGui.ysize - 2;
 
