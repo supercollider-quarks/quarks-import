@@ -68,6 +68,7 @@ class DataNetworkOSC(object):
     self.osc.addMsgHandler( "/unmapped/minibee/custom", self.handler_unmapped_minibee_custom )    
 
     self.osc.addMsgHandler( "/info/minibee", self.handler_info_minibee )
+    self.osc.addMsgHandler( "/status/minibee", self.handler_status_minibee )
     self.osc.addMsgHandler( "/info/hive", self.handler_info_hive )
     self.osc.addMsgHandler( "/info/configuration", self.handler_info_config )
 
@@ -285,7 +286,13 @@ class DataNetworkOSC(object):
   #@make_method('/info/minibee', None )
   def handler_info_minibee( self, path, types, args, source ):
     self.info_minibee( args[0], args[1], args[2] )
-    print( "Info minibee:", args )
+    if self.verbose:
+      print( "Info minibee:", args )
+
+  def handler_status_minibee( self, path, types, args, source ):
+    self.status_minibee( args[0], args[1] )
+    if self.verbose:
+      print( "Status minibee:", args )
 
   #@make_method('/info/hive', None )
   def handler_info_hive( self, path, types, args, source ):
@@ -482,6 +489,9 @@ class DataNetworkOSC(object):
 
   def set_registered( self, state ):
     if state:
+      if not self.registered:
+	self.queryAll()
+	self.network.resend_state()
       if 'register' in self.callbacks:
 	self.callbacks['register']( state )
     else:
@@ -490,9 +500,8 @@ class DataNetworkOSC(object):
       self.doRegister()
 
     self.registered = state;
-    if self.registered:
-      self.queryAll()
-      self.network.resend_state()
+    #if self.registered:
+      #print( "query and resend state" )
     if self.verbose:
       print( "registered", self.registered )
 
@@ -640,9 +649,9 @@ class DataNetworkOSC(object):
     self.sendSimpleMessage( "/unregister/hive" )
     
   def set_registered_hive( self, state, minid, maxid ):
-    self.registered = state
-    if self.registered:
-      self.queryAll()
+    self.set_registered( state )
+    #if self.registered:
+      #FIXME: should be doing this actually!
       #self.hive.setNodeRange( minid, maxid )
     if self.verbose:
       print( "registered", self.registered )
@@ -700,7 +709,12 @@ class DataNetworkOSC(object):
 
   # receiving minibee information
   def info_minibee( self, mid, nin, nout ):
-    print( "minibee info:", mid, nin, nout )
+    if self.verbose:
+      print( "minibee info:", mid, nin, nout )
+
+  def status_minibee( self, mid, status ):
+    if self.verbose:
+      print( "minibee status:", mid, status )
 
   # sending info about a minibee created
   def infoMinibee( self, mid, nin, nout ):
@@ -735,23 +749,15 @@ class DataNetworkOSC(object):
 
   # receiving unmap request output
   def unmap_minibee( self, nodeid, mid ):
-    #self.unsubscribeNode( nodeid )
     # unmap data from subscribed node to minibee's data output
     self.network.unmapAction( nodeid, mid )
     self.sendMessage( "/unmapped/minibee/output", [ nodeid, mid ] )
-    #msg = liblo.Message( "/unmapped/minibee/output", self.port, self.name, nodeid, mid )
-    #self.sendMessage( msg )
-    #del msg
 
   # receiving map request custom
   def unmap_minibee_custom( self, nodeid, mid ):
-    #self.unsubscribeNode( nodeid )
     # unmap data from subscribed node to minibee's custom output
     self.network.unmapCustomAction( nodeid, mid )
     self.sendMessage( "/unmapped/minibee/custom", [ nodeid, mid ] )    
-    #msg = liblo.Message( "/unmapped/minibee/custom", self.port, self.name, nodeid, mid )
-    #self.sendMessage( msg )
-    #del msg
 
   def setMiniBeeConfiguration( self, config ):
     if not self.network.hive == None:
@@ -848,7 +854,6 @@ class DataNetworkOSC(object):
 # begin class DataNode
 class DataNode(object):
   def __init__(self, network, nid, insize, label, dtype ):
-    #print "new datanode", network, nid, insize, label, dtype
     self.network = network
     self.nodeid = nid
     self.size = insize
@@ -858,7 +863,6 @@ class DataNode(object):
     #print insize
     self.data = list( 0 for i in range( 1, insize+1 ) )    
     self.slotlabels = list( "slot_{0!s}_{1!s}".format( nid, i ) for i in range(1,insize+1) )
-    #print "DataNode creation", self.data, self.slotlabels
 
     
   def setAction( self, action ):
@@ -937,20 +941,21 @@ class DataNetwork(object):
     #print "Expected nodes:", self.expectednodes
     
   def resend_state( self ):
-    for nodeid.node in self.nodes.items():
+    #print( "resend state", self.nodes, self.setters )
+    for nodeid,node in self.nodes.items():
+      if self.osc.verbose:
+	print( "subscription", nodeid, node )
       self.osc.subscribeNode( nodeid )
     for sid in self.setters:
+      if self.osc.verbose:
+	print( "setter", sid )
       self.osc.addExpected( nodeid, [ self.nodes[ nodeid ].label, self.nodes[ nodeid ].size ] )
       self.nodes[nodeid].sendData()
 
   def infoNode( self, nodeid, label, size, dntype ):
-    #print "Info Node", nodeid, self.nodes, label, size, dntype
     if nodeid not in self.nodes:
       self.nodes[ nodeid ] = DataNode( self, nodeid, size, label, dntype )
-      #print self.nodes[ nodeid ]
-      #print self.nodes
     else:
-      #print self.nodes[ nodeid ]
       #try:
       self.nodes[ nodeid ].setLabel( label )
       self.nodes[ nodeid ].setSize( size )

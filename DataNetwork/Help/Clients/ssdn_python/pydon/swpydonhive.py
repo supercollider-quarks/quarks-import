@@ -7,8 +7,8 @@ import sys
 
 import time
 
-from pydon.pydon import pydon
-from pydon.pydonhive import pydonhive
+from pydon import pydon
+from pydon import pydonhive
 
 class SWPydonHive( object ):
   def __init__(self, hostip, myport, myip, myname, swarmSize, serialPort, serialRate, config, idrange, verbose ):
@@ -78,7 +78,6 @@ class SWPydonHive( object ):
 
 # bee to datanode
   def hookBeeToDatanetwork( self, minibee ):
-    #print( minibee,  minibee.getInputSize(),  minibee.getOutputSize() )
     self.datanetwork.osc.infoMinibee( minibee.nodeid, minibee.getInputSize(), minibee.getOutputSize() )
     minibee.set_first_action( self.addAndSubscribe )
     minibee.set_action( self.minibeeDataToDataNode )
@@ -88,10 +87,18 @@ class SWPydonHive( object ):
     self.datanetwork.osc.statusMinibee( nid, status )
 
   def addAndSubscribe( self, nid, data ):
-    name = (self.labelbase + str(nid) )
     mybee = self.hive.bees[ nid ]
-    self.datanetwork.osc.addExpected( nid, [ mybee.getInputSize(), name ] )
+    if mybee.name == "":
+      mybee.name = (self.labelbase + str(nid) )
+    self.datanetwork.osc.addExpected( nid, [ mybee.getInputSize(), mybee.name ] )
     self.datanetwork.osc.subscribeNode( nid )
+    self.sendBeeLabels( mybee )
+    
+  def sendBeeLabels( self, mybee ):
+    if mybee.cid > 0:
+      count = 0
+      mylabels = mybee.getLabels()
+      [ self.datanetwork.osc.labelSlot( mybee.nodeid, index, mybee.name + "_" + str( item )) for index, item in enumerate(mylabels)]
 
   def minibeeDataToDataNode( self, data, nid ):
     self.datanetwork.sendData( nid, data )
@@ -132,7 +139,12 @@ if __name__ == "__main__":
   #print args.accumulate(args.integers)
   #print options
   #print args
+  print( "--------------------------------------------------------------------------------------" )
+  print( "SWPydonHive - a SenseWorld DataNetwork client to communicate with the minibee network." )
+  print( " --- to find out more about the startup options start with \'swpydonhive.py -h\'" )
+  print( " --- The client has been started with these options:" )
   print( options )
+  print( "--------------------------------------------------------------------------------------" )
   
   swhive = SWPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose )
   
