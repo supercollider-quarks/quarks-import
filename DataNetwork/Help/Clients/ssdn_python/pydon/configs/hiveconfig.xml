@@ -1,76 +1,57 @@
 <xml><hive name="myprojectname">
-  <minibee id="1" revision="B" serial="13A200404BF48E" libversion="3" caps="7">
-    <config id="2" />
+  <minibee id="1" revision="B" serial="13A200404BF48E" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>
-  <minibee id="2" revision="B" serial="13A2004032C5CB" libversion="3" caps="7">
-    <config id="2" />
+  <minibee id="2" revision="B" serial="13A2004032C5CB" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>
-  <minibee id="3" revision="B" serial="13A200403BF27B" libversion="3" caps="7">
+  <minibee id="3" revision="B" serial="13A200403BF27B" libversion="3" caps="7" configuration="2">
 <!--     <config id="1" name="accelero" /> -->
-    <config id="3" />
 <!--     <custom /> -->
   </minibee>
-  <minibee id="4" revision="B" serial="13A200402D0BD7" libversion="3" caps="7">
-    <config id="4" />
+  <minibee id="4" revision="B" serial="13A200402D0BD7" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="5" revision="B" serial="13A200403BF275" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="5" revision="B" serial="13A200403BF275" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="6" revision="B" serial="13A200402D0C12" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="6" revision="B" serial="13A200402D0C12" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="6" revision="B" serial="13A200402D0C12" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="6" revision="B" serial="13A200402D0C12" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="7" revision="B" serial="13A20040557F83" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="7" revision="B" serial="13A20040557F83" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="8" revision="B" serial="13A200403AF4AB" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="8" revision="B" serial="13A200403AF4AB" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="9" revision="B" serial="13A2004049889C" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="9" revision="B" serial="13A2004049889C" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="10" revision="B" serial="13A200403B3FB3" libversion="3" caps="7">
-    <config id="5" />
+  <minibee id="10" revision="B" serial="13A200403B3FB3" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="11" revision="B" serial="13A20040497F77" libversion="3" caps="7">
-    <config id="6" />
+  <minibee id="11" revision="B" serial="13A20040497F77" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="12" revision="B" serial="13A200403B3FB4" libversion="3" caps="7">
-    <config id="7" />
+  <minibee id="12" revision="B" serial="13A200403B3FB4" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="20" revision="B" serial="13A200403B3F96" libversion="3" caps="7">
-    <config id="8" />
+  <minibee id="20" revision="B" serial="13A200403B3F96" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="14" revision="B" serial="13A200403B3F73" libversion="3" caps="7">
-    <config id="8" />
+  <minibee id="14" revision="B" serial="13A200403B3F73" libversion="3" caps="7" configuration="2">
 <!--     <custom /> -->
   </minibee>  
-  <minibee id="15" revision="B" serial="13A200403B3F85" libversion="3" caps="7">
-    <config id="12" />
+  <minibee id="15" revision="B" serial="13A200403B3F85" libversion="3" caps="7" configuration="2">
   </minibee>  
-  <minibee id="16" revision="B" serial="13A200404988D6" libversion="3" caps="7">
-    <config id="9" />
+  <minibee id="16" revision="B" serial="13A200404988D6" libversion="3" caps="7" configuration="2">
   </minibee>  
-  <minibee id="17" revision="B" serial="13A2004049875B" libversion="3" caps="7">
-    <config id="9" />
+  <minibee id="17" revision="B" serial="13A2004049875B" libversion="3" caps="7" configuration="2">
   </minibee>  
-  <minibee id="18" revision="B" serial="13A200404988F6" libversion="3" caps="7">
-    <config id="9" />
+  <minibee id="18" revision="B" serial="13A200404988F6" libversion="3" caps="7" configuration="2">
   </minibee>
 <!--  <minibee id="19" revision="B" serial="13A200402D0C30" libversion="3" caps="7">
     <config id="7" />
@@ -80,6 +61,9 @@
     <pin config="TWIData" id="A4" />
     <pin config="TWIClock" id="A5" />
     <twi id="1" device="ADXL345" name="accelero" />
+      <twislot id="0" name="x" />
+      <twislot id="1" name="y" />
+      <twislot id="2" name="z" />
   </configuration>
   
   <configuration id="2" name="acc_pir_th_light" message_interval="50" samples_per_message="1">
@@ -102,7 +86,13 @@
     <pin config="TWIClock" id="A5" />
     <pin config="Me" id="D4" />
     <twi id="1" device="ADXL345" name="accelero" />
+      <twislot id="0" name="x" />
+      <twislot id="1" name="y" />
+      <twislot id="2" name="z" />
     <twi id="2" device="HMC58X3" name="magneto" />
+      <twislot id="0" name="x" />
+      <twislot id="1" name="y" />
+      <twislot id="2" name="z" />
   </configuration>
 
   <configuration id="4" name="acc_pir_light" message_interval="50" samples_per_message="1">

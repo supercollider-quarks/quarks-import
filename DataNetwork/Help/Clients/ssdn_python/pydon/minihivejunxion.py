@@ -9,7 +9,7 @@ import time
 import OSC
 import threading
 
-from pydon.pydonhive import pydonhive
+from pydon import pydonhive
 
 class MiniHiveOSC(object):
   #def __init__(self, port, dnosc ):
@@ -368,6 +368,6 @@ if __name__ == "__main__":
   #print( options.host )
   
   print( "MiniHive-JunXion - communicating via OSC with Junxion and the MiniBee network" )
-  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, 57600, options.config, [1,options.minibees], options.verbose )
+  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose )
   print( "Created OSC listener at (%s,%i) and OSC sender to (%s,%i) and opened serial port at %s. Now waiting for messages."%(options.ip, options.port, options.host, options.hport, options.serial ) )
   swhive.start()
