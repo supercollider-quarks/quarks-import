@@ -121,7 +121,13 @@ RedToolsMenu {
 					RedToolsMenu.openCodeFile
 				},
 				['extras', 'open startup'], {
-					Document.open(PathName(Platform.userExtensionDir).pathOnly++"startup.rtf");
+					var extensions= #[".scd", ".rtf"];
+					extensions.do{|x|
+						var path= PathName(Platform.userExtensionDir).pathOnly++"startup"++x;
+						if(File.exists(path), {
+							Document.open(path);
+						});
+					};
 				}
 			];
 			
