@@ -1,15 +1,15 @@
 Freesound2{
 
-	classvar <base_uri 		  		  = "http://tabasco.upf.edu/api";
-	classvar <uri_sounds              = "/sounds";
+	classvar <base_uri 		  		  = "http://www.freesound.org/api";
+	classvar <uri_sounds              = "/sounds/";
 	classvar <uri_sounds_search       = "/sounds/search/";
-	classvar <uri_sound               = "/sounds/%/";
+	classvar <uri_sound               = "/sounds/%";
 	classvar <uri_users               = "/people/";
-	classvar <uri_user                = "/people/%/";
+	classvar <uri_user                = "/people/%";
 	classvar <uri_user_sounds         = "/people/%/sounds/";
 	classvar <uri_user_packs          = "/people/%/packs/";
 	classvar <uri_packs               = "/packs/";
-	classvar <uri_pack                = "/packs/%";
+	classvar <uri_pack                = "/packs/%/";
 	classvar <uri_pack_sounds         = "/packs/%/sounds/";
 	classvar <>api_key;
 
@@ -59,8 +59,8 @@ FS2Req{
 		var paramsArray,paramsString,cmd, result,response;		
 		if (params.isNil,{params = IdentityDictionary.new});
 		params.put(\api_key,Freesound2.api_key);
-		paramsArray=params.keys(Array).collect({|k|k.asString++"="++params[k].asString});
-		paramsString=paramsArray.join("&");
+		paramsArray=params.keys(Array).collect({|k|k.asString++"="++params[k].asString.urlEncode});
+		paramsString=paramsArray.join("&");		
 		cmd = "curl '"++uri++"?"++paramsString+"'";
 		result = cmd.unixCmdGetStdOut.replace("\n","");
 		response = Freesound2.parseJSON(result);
@@ -81,5 +81,11 @@ FS2Sound : FS2Obj{
 	*search{|... params| ^FS2Req.get(Freesound2.uri(Freesound2.uri_sounds_search),*params)}
 	retrieve{|path, doneAction|
 		FS2Req.retrieve(this[\serve],path++"/"++this[\original_filename],doneAction);
+	}
+}
+
++String{
+	urlEncode{
+		^this.collect({|c| if(c.isAlphaNum){c}{"%"++c.ascii.asHexString(2)}})
 	}
 }
