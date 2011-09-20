@@ -59,7 +59,7 @@ RedKnob {
 RedLevelIndicator {
 	*new {|parent, bounds|
 		bounds= bounds ?? {100@14};
-		^SCLevelIndicator(parent, bounds)
+		^LevelIndicator(parent, bounds)
 			.style_(1)
 	}
 }
@@ -126,4 +126,8 @@ RedTextView {
 			.stringColor_(GUI.skins.redFrik.foreground)
 			.font_(RedFont.new);
 	}
+}
+
++QLevelIndicator {	//temp fix until conductor quark is fixed
+	action_ {}
 }
