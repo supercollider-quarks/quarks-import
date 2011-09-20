@@ -89,7 +89,7 @@ RedToolsMenu {
 				['template', 'post all incoming osc'], {
 					Document(
 						"listen to all incoming osc",
-						"//start\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0].asString.contains(\"status.reply\").not, {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;"
+						"//start (sc3.4)\nthisProcess.recvOSCfunc= {|time, addr, msg| if(msg[0].asString.contains(\"status.reply\").not, {(\"time:\"+time+\"sender:\"+addr+\"\\nmessage:\"+msg).postln})};\n//stop\nthisProcess.recvOSCfunc= nil;\n\n//for sc3.5\nOSCFunc.trace(true);\nOSCFunc.trace(false);"
 					).syntaxColorize;
 				},
 				['template', 'normalize soundfile'], {
@@ -108,8 +108,12 @@ RedToolsMenu {
 					Document.open(PathName("Help").deepFiles.reject{|x| #[\jpg, \png, \qtz].includes(x.extension.asSymbol)}.choose.fullPath);
 				},
 				['extras', 'swing boot'], {
-					SwingOSC.default.boot;
-					GUI.swing;
+					if('SwingOSC'.asClass.notNil, {
+						SwingOSC.default.boot;
+						GUI.swing;
+					}, {
+						"swingosc not installed".warn;
+					});
 				},
 				['extras', 'Quarks.gui'], {
 					Quarks.gui;
@@ -156,11 +160,32 @@ RedToolsMenu {
 	
 	//--create separate window with listview
 	*makeWindow {|position|
-		var w, names= [], fnt= RedFont.new;
+		var w, names= [], fnt= RedFont.new, width= 0, height;
 		position= position ?? {6@50};
-		list.pairsDo{|x, y| names= names.add(x[1])};
-		w= Window("_redTools", Rect(position.x, position.y, 175, "".bounds(fnt).height+3*names.size), false)
-			.alpha_(GUI.skins[\redFrik].unfocus).front;
+		list.pairsDo{|x, y|
+			var tempWidth= x[1].asString.bounds(fnt).width;
+			names= names.add(x[1]);
+			if(width<tempWidth, {
+				width= tempWidth;
+			});
+		};
+		switch(GUI.id,
+			\cocoa, {
+				width= width+"aaa".bounds(fnt).width;
+				height= "".bounds(fnt).height+3*names.size;
+			},
+			\swing, {
+				width= width+"aaaa".bounds(fnt).width;
+				height= "".bounds(fnt).height+3*names.size;
+			},
+			\qt, {
+				width= width+"aaa".bounds(fnt).width;
+				height= " ".bounds(fnt).height+2.14*names.size;
+			}
+		);
+		w= Window("_redTools", Rect(position.x, position.y, width, height).postln, false)
+			/*.alpha_(GUI.skins[\redFrik].unfocus)*/	//temp remove until 3.5 bug fixed
+			.front;
 		ListView(w, w.view.bounds.width@w.view.bounds.height)
 			.font_(RedFont.new)
 			.focus

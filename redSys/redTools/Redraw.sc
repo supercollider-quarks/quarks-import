@@ -8,7 +8,7 @@ Redraw {
 	initRedraw {|bounds|
 		bounds= bounds ?? {Rect(300, 300, 500, 500)};
 		win= Window("redraw", bounds, false);
-		userView= SCUserView(win, Rect(0, 0, bounds.width, bounds.height));
+		userView= UserView(win, Rect(0, 0, bounds.width, bounds.height));
 		userView.clearOnRefresh= false;
 		userView.mouseDownAction= {|v, x, y, m|
 			mod= m;

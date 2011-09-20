@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.54">
+<meta name="CocoaVersion" content="1038.36">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
@@ -13,8 +13,10 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #544234; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #737373}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d5100d}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 9.0px Monaco}
 span.s3 {text-decoration: underline}
@@ -23,7 +25,10 @@ span.s5 {color: #606060}
 span.s6 {color: #344b90}
 span.s7 {color: #000000}
 span.s8 {color: #0000bf}
-span.s9 {color: #bf0000}
+span.s9 {color: #132bc3}
+span.s10 {color: #bf0000}
+span.s11 {color: #d5100d}
+span.s12 {color: #737373}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -70,11 +75,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;numImportantColors</b></p>
 <p class="p2"><b><span class="Apple-tab-span">	</span></b></p>
 <p class="p1"><b><span class="Apple-tab-span">	</span>&lt;&gt;palette</b></p>
-<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>colour table as a 1-dimensional array of <a href="SC://Color"><span class="s6">Color</span></a> objects.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>colour table as a 1-dimensional array of <a href="sc://Color"><span class="s6">Color</span></a> objects.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>size 256 for 8bit images, size 16 for 4bit images and size 2 for 1bit images.</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>&lt;&gt;data</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the pixel data as a 1-dimensional array of <a href="SC://Color"><span class="s6">Color</span></a> objects.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>the pixel data as a 1-dimensional array of <a href="sc://Color"><span class="s6">Color</span></a> objects.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reading from left to right, top to bottom.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>if you create your own make the size width*height.</p>
 <p class="p3"><br></p>
@@ -83,21 +88,21 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="s7">a= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"/Developer/Examples/OpenGL/Cocoa/GLSLShowpiece/Textures/Granite.bmp"<span class="s7">);</span></p>
 <p class="p7">a.dump;</p>
 <p class="p7">a.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p6"><span class="s7">a= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"/Developer/Examples/Java/JavaAdvancedImaging/JAIDemo/images/pond.bmp"<span class="s7">);</span></p>
-<p class="p7">a.dump;</p>
-<p class="p7">a.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s7">a= </span><span class="s9">RedBMP</span><span class="s7">.read(</span>"/Developer/Extras/Java/JavaAdvancedImaging/JAIDemo/images/pond.bmp"<span class="s7">);</span></p>
+<p class="p9">a.dump;</p>
+<p class="p9">a.makeWindow;</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--create an 32bit image from scratch</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(320, 240, 32);</p>
 <p class="p7">b.dump;</p>
-<p class="p7">b.data= {<span class="s8">Color</span>.rand}.dup(b.width*b.height);<span class="Apple-tab-span">	</span><span class="s9">//creating our own noise pixel data</span></p>
+<p class="p7">b.data= {<span class="s8">Color</span>.rand}.dup(b.width*b.height);<span class="Apple-tab-span">	</span><span class="s10">//creating our own noise pixel data</span></p>
 <p class="p7">b.makeWindow;</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp32a.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp32a.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--another 32bit image from scratch notice the alpha channel</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 32);</p>
@@ -107,8 +112,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--creating a 1bit image from scratch</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 1);</p>
@@ -120,12 +125,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp1.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp1.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s9">//read it back</span></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp1.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp1.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s10">//read it back</span></p>
 <p class="p7">b.dump</p>
 <p class="p7">b.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--creating a 4bit image from scratch</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 4);</p>
@@ -137,12 +142,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp4.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp4.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s9">//read it back</span></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp4.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp4.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s10">//read it back</span></p>
 <p class="p7">b.dump</p>
 <p class="p7">b.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--creating an 8bit image from scratch</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 8);</p>
@@ -154,12 +159,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp8.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp8.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s9">//read it back</span></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp8.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp8.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s10">//read it back</span></p>
 <p class="p7">b.dump</p>
 <p class="p7">b.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--creating a 16bit image from scratch</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 16);</p>
@@ -170,12 +175,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp16.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp16.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s9">//read it back</span></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp16.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp16.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s10">//read it back</span></p>
 <p class="p7">b.dump</p>
 <p class="p7">b.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--creating a 24bit image from scratch</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 24);</p>
@@ -186,12 +191,12 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp24.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp24.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s9">//read it back</span></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp24.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp24.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s10">//read it back</span></p>
 <p class="p7">b.dump</p>
 <p class="p7">b.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--another 32bit image from scratch</p>
 <p class="p7">(</p>
 <p class="p7">b= <span class="s8">RedBMP</span>(640, 480, 32);</p>
@@ -202,27 +207,27 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">}.dup(b.width*b.height);</p>
 <p class="p7">b.makeWindow;</p>
 <p class="p7">)</p>
-<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp32.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s9">//save it to desktop</span></p>
-<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp32.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s9">//read it back</span></p>
+<p class="p6"><span class="s7">b.write(</span>"~/Desktop/testredbmp32.bmp"<span class="s7">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span><span class="s10">//save it to desktop</span></p>
+<p class="p6"><span class="s7">b= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"~/Desktop/testredbmp32.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s10">//read it back</span></p>
 <p class="p7">b.dump</p>
 <p class="p7">b.makeWindow;</p>
-<p class="p8"><br></p>
-<p class="p8"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
 <p class="p5">//--template for custom code to read, manipulate and display</p>
 <p class="p7">(</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s8">var</span> scale= 6;</p>
-<p class="p6"><span class="s7"><span class="Apple-tab-span">	</span></span><span class="s8">var</span><span class="s7"> a= </span><span class="s8">RedBMP</span><span class="s7">.read(</span>"/Developer/Examples/OpenGL/Cocoa/GLSLShowpiece/Textures/Granite.bmp"<span class="s7">);</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s8">var</span> win= <span class="s8">Window</span>(<span class="s5">"bmp"</span>, <span class="s8">Rect</span>(300, 300, a.width*scale, a.height*scale), <span class="s8">false</span>);</p>
-<p class="p7"><span class="Apple-tab-span">	</span>win.view.background= <span class="s8">Color</span>.red;</p>
-<p class="p5"><span class="s7"><span class="Apple-tab-span">	</span>a.data= a.data.reverse;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mess with the image pixel data</p>
-<p class="p7"><span class="Apple-tab-span">	</span>win.drawHook= {</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">Pen</span>.smoothing= <span class="s8">true</span>;</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.data.do{<span class="s8">|c, i|</span></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">Pen</span>.fillColor= <span class="s8">Color</span>(c.blue, c.green, c.red, c.alpha);</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s8">Pen</span>.fillOval(<span class="s8">Rect</span>(i%a.width*scale, i.div(a.width)*scale, scale, scale));</p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
-<p class="p7"><span class="Apple-tab-span">	</span>};</p>
-<p class="p7"><span class="Apple-tab-span">	</span>win.front;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s9">var</span> scale= 3;</p>
+<p class="p8"><span class="s7"><span class="Apple-tab-span">	</span></span><span class="s9">var</span><span class="s7"> a= </span><span class="s9">RedBMP</span><span class="s7">.read(</span>"/Developer/Extras/Java/JavaAdvancedImaging/JAIDemo/images/pond.bmp"<span class="s7">);<span class="Apple-tab-span">	</span></span><span class="s11">//edit to point at a bmp file</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="s9">var</span> win= <span class="s9">Window</span>(<span class="s12">"bmp"</span>, <span class="s9">Rect</span>(300, 300, a.width*scale, a.height*scale), <span class="s9">false</span>);</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.view.background= <span class="s9">Color</span>.red;</p>
+<p class="p10"><span class="s7"><span class="Apple-tab-span">	</span>a.data= a.data.reverse;<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mess with the image pixel data</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.drawHook= {</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.smoothing= <span class="s9">true</span>;</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>a.data.do{<span class="s9">|c, i|</span></p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.fillColor= <span class="s9">Color</span>(c.blue, c.green, c.red, c.alpha);</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s9">Pen</span>.fillOval(<span class="s9">Rect</span>(i%a.width*scale, i.div(a.width)*scale, scale, scale));</p>
+<p class="p9"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span>};</p>
+<p class="p9"><span class="Apple-tab-span">	</span>win.front;</p>
 <p class="p7">)</p>
 </body>
 </html>

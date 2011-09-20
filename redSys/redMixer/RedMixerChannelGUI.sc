@@ -17,12 +17,24 @@ RedMixerChannelGUI {
 	*initClass {
 		Class.initClassTree(CV);
 		StartUp.add({
-			CV.viewDictionary.put(SCButton, CVSyncValue);
-			CV.viewDictionary.put(SCLevelIndicator, CVSyncValue);
+			if('SCButton'.asClass.notNil, {
+				CV.viewDictionary.put(SCButton, CVSyncValue);
+			});
 			if('JSCButton'.asClass.notNil, {
 				CV.viewDictionary.put(JSCButton, CVSyncValue);
 			});
-			//CV.viewDictionary.put(JLevelIndicator, CVSyncValue);//for swing todo!!!
+			if('QButton'.asClass.notNil, {
+				CV.viewDictionary.put(QButton, CVSyncValue);
+			});
+			if('SCLevelIndicator'.asClass.notNil, {
+				CV.viewDictionary.put(SCLevelIndicator, CVSyncValue);
+			});
+			//if('JLevelIndicator'.asClass.notNil, {	//for swing todo!!!
+			//	CV.viewDictionary.put(JLevelIndicator, CVSyncValue);
+			//});
+			if('QLevelIndicator'.asClass.notNil, {
+				CV.viewDictionary.put(QLevelIndicator, CVSyncValue);
+			});
 		});
 	}
 	initRedMixerChannelGUI {|argMirror, name|
