@@ -1,4 +1,4 @@
-#N canvas 0 0 830 673 12;
+#N canvas 943 158 830 673 12;
 #X text 25 80 This abstraction learns the host IP address using the
 "pv dn-host" object - this MUST be included in the parent patcher.
 ;
@@ -51,8 +51,8 @@ unique ID.;
 #X obj 118 324 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 538 137 pv dn-clientName PdClient;
-#X obj 539 107 pv dn-host 192.168.0.197;
 #X text 523 546 See also dn.node and dn.mapnode!;
+#X obj 539 107 pv dn-host 127.0.0.1;
 #X connect 1 0 2 0;
 #X connect 5 0 10 0;
 #X connect 6 0 10 1;
