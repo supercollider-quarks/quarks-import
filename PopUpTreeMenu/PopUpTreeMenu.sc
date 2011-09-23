@@ -1,5 +1,7 @@
 //redFrik
 
+//--changes110923
+//bugfix for osx 10.6: make sure no windows hidden behind another
 //--changes100727
 //minor fix to initClass so that new gui schemes (e.g. qt) won't break compilation
 //--changes090619
@@ -139,6 +141,7 @@ PopUpTreeMenu : SCViewHolder {
 				if(lst.size-1>xIndex, {				//close a submenu if open
 					lst.last[1].close;
 					lst.pop;
+					lst.do{|x| x[1].front};			//make sure visibility in order
 				});
 				lst[xIndex][2].value_(yIndex);
 				this.prSubmenu(*lst[xIndex]);
@@ -174,7 +177,7 @@ PopUpTreeMenu : SCViewHolder {
 		yIndexLast= nil;
 		closeAction.value(this, x, y);
 	}
-	prSubmenu {|bounds, window, listView, keys|
+	prSubmenu {|bounds, window, listView, keys|		//here window argument is ignored
 		var addy, subdict, items, newWidth, screenBounds;
 		addy= lst.collect{|z| z[3][z[2].value]};		//collect keys
 		if(addy.size==0, {							//check if at root level
