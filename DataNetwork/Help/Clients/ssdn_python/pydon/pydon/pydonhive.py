@@ -386,6 +386,7 @@ class MiniHive(object):
     self.idrange.reverse()
     
   def get_new_minibee_id( self, rid = None ):
+    #print self.idrange
     if len( self.idrange ) == 0:
       print( "no more minibee ids available; increase the available number in the startup options!", self.idrange )
       return None
@@ -530,6 +531,7 @@ class MiniHive(object):
 	self.newBeeAction( minibee )
 
   def new_bee( self, serial, libv, rev, caps ):
+    firsttimenewbee = False
     # see if we already have this serial number in our config or minibee set, if so use that minibee
     #self.minibeeCount += 1
     if serial in self.mapBeeToSerial:
@@ -542,21 +544,22 @@ class MiniHive(object):
       minibee.set_lib_revision( libv, rev, caps )
       self.bees[ mid ] = minibee
       self.mapBeeToSerial[ serial ] = mid
+      firsttimenewbee = True
      
     #print minibee
     if minibee.cid > 0:
       self.serial.send_id( serial, minibee.nodeid, minibee.cid )
       minibee.set_status( 'waiting' )
       minibee.waiting = 0
-    else: # this could be different behaviour! e.g. wait for a new configuration to come in
+    elif firsttimenewbee: # this could be different behaviour! e.g. wait for a new configuration to come in
       print( "no configuration defined for minibee", serial, minibee.nodeid, minibee.name )
       filename ="newconfig_" + time.strftime("%Y_%b_%d_%H-%M-%S", time.localtime()) + ".xml"
       self.write_to_file( filename )
-      print( "configuration saved to" + filename + ". Please adapt (at least define a config id other than -1 for the node), save to a new name," )
+      print( "configuration saved to " + filename + ". Please adapt (at least define a config id other than -1 for the node), save to a new name," )
       print( "and restart the program with that configuration file. Alternatively send a message with a new configuration (via osc, or via the datanetwork)." )
       print( "Check documentation for details." )
       #sys.exit()
-    if self.newBeeAction:
+    if self.newBeeAction: # and firsttimenewbee:
       self.newBeeAction( minibee )
     
   def set_newBeeAction( self, action ):
@@ -644,9 +647,13 @@ class MiniHive(object):
 	#print self.configs[ int( cid ) ]
       for ser, bee in hiveconf[ 'bees' ].items():
 	#print bee
-	self.mapBeeToSerial[ ser ] = bee[ 'mid' ]
-	self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ] )
-	self.bees[ bee[ 'mid' ] ].set_lib_revision( bee[ 'libversion' ], bee[ 'revision' ], bee[ 'caps' ] )
+	mid = self.get_new_minibee_id( bee[ 'mid' ] )
+	if mid == bee[ 'mid' ]:
+	  self.mapBeeToSerial[ ser ] = bee[ 'mid' ]
+	  self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ] )
+	  self.bees[ bee[ 'mid' ] ].set_lib_revision( bee[ 'libversion' ], bee[ 'revision' ], bee[ 'caps' ] )
+	else:
+	  print "warning trying to assign duplicate minibee id %i"%bee[ 'mid' ]
 	#print bee[ 'configid' ]
 	#thisconf = self.configs[ bee[ 'configid' ] ]
 	if bee[ 'configid' ] > 0:
@@ -967,8 +974,8 @@ class MiniBee(object):
     
   
   def incMsgID( self ):
-    self.msgId = self.msgId + 1
-    self.msgId = self.msgId%255
+    self.msgID = self.msgID + 1
+    self.msgID = self.msgID%255
   
   def set_lib_revision( self, libv, revision, caps ):
     self.libversion = libv
@@ -1062,14 +1069,14 @@ class MiniBee(object):
   def set_first_action( self, action ):
     self.firstDataAction = action
 
-  def create_msg( self, data ):
+  def create_msg( self, data, serPort ):
     self.incMsgID()
     msg = bytearray(b" O")
     msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, self.nodeid )
-    msg = self.appendToMsg( msg, self.msgID )
+    msg = serPort.appendToMsg( msg, self.nodeid )
+    msg = serPort.appendToMsg( msg, self.msgID )
     for dat in data:
-      msg = self.appendToMsg( msg, dat )
+      msg = serPort.appendToMsg( msg, dat )
     msg += b"\n"
     return msg
 
@@ -1084,7 +1091,7 @@ class MiniBee(object):
     if len( data ) == sum( self.config.dataOutSizes ) :
       self.outdata = data
       self.outrepeated = 0
-      self.outMessage = self.create_msg( self.outdata )
+      self.outMessage = self.create_msg( self.outdata, serPort )
       serPort.send_msg( self.outMessage )
       #serPort.send_data_inclid( self.nodeid, self.msgID, data )
 
@@ -1098,7 +1105,7 @@ class MiniBee(object):
   def send_custom( self, serPort, data ):
     self.customdata = data
     self.customrepeated = 0
-    self.customMessage = self.create_msg( self.customdata )
+    self.customMessage = self.create_msg( self.customdata, serPort )
     serPort.send_msg( self.customMessage )
     #if len( data ) == sum( self.config.customOutSizes ) :
     #serPort.send_custom( self.nodeid, data )
