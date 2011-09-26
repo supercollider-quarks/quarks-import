@@ -127,7 +127,3 @@ RedTextView {
 			.font_(RedFont.new);
 	}
 }
-
-+QLevelIndicator {	//temp fix until conductor quark is fixed
-	action_ {}
-}
