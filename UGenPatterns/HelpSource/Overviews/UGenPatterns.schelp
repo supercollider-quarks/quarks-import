@@ -1,0 +1,55 @@
+TITLE:: UGenPatterns
+SUMMARY:: a library of patterns acting as ugens
+CATEGORIES:: Streams-Patterns-Events>UGenPatterns
+
+SECTION:: Generators
+
+LIST::
+## link::Classes/PClipNoise::
+## link::Classes/PFSinOsc::
+## link::Classes/PImpulse::
+## link::Classes/PLFPulse::
+## link::Classes/PLFSaw::
+## link::Classes/PLFTri::
+## link::Classes/PLine::
+## link::Classes/PPulse::
+## link::Classes/PSaw::
+## link::Classes/PSinOsc::
+## link::Classes/PWhiteNoise::
+## link::Classes/PXLine::
+::
+
+SECTION:: Modifiers
+
+LIST::
+## link::Classes/PBPZ2::
+## link::Classes/PBRZ2::
+## link::Classes/PClip::
+## link::Classes/PCombN::
+## link::Classes/PDelay1::
+## link::Classes/PDelay2::
+## link::Classes/PDelayN::
+## link::Classes/PFold::
+## link::Classes/PGate::
+## link::Classes/PHPZ1::
+## link::Classes/PHPZ2::
+## link::Classes/PInRange::
+## link::Classes/PIntegrator::
+## link::Classes/PLastValue::
+## link::Classes/PLatch::
+## link::Classes/PLinExp::
+## link::Classes/PLinLin::
+## link::Classes/PLPZ1::
+## link::Classes/PLPZ2::
+## link::Classes/POnePole::
+## link::Classes/POneZero::
+## link::Classes/PPeak::
+## link::Classes/PPulseCount::
+## link::Classes/PRunningMax::
+## link::Classes/PRunningMin::
+## link::Classes/PTDelay::
+## link::Classes/PToggleFF::
+## link::Classes/PTrig::
+## link::Classes/PTrig1::
+## link::Classes/PWrap::
+::
