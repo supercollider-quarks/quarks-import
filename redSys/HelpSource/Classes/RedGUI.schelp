@@ -1,6 +1,6 @@
 CLASS:: RedGUI
 SUMMARY:: base class of gui wrappers
-CATEGORIES:: Red
+CATEGORIES:: Red>redGUI
 RELATED:: Classes/RedGUI2
 
 DESCRIPTION::

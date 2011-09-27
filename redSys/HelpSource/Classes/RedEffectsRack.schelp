@@ -1,6 +1,6 @@
 CLASS:: RedEffectsRack
 SUMMARY:: allround effects rack for RedEffectModule
-CATEGORIES:: Red
+CATEGORIES:: Red>redEffectsRack
 RELATED:: Classes/RedEffectsRackGUI, Classes/RedMatrixMixer, Classes/RedMixer
 
 DESCRIPTION::

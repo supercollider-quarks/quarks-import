@@ -1,6 +1,6 @@
 CLASS:: RedMst
 SUMMARY:: a sort of timeline - master controller
-CATEGORIES:: Red
+CATEGORIES:: Red>redMst
 RELATED:: Classes/RedTrk, Classes/RedTrk2, Classes/RedSeq, Classes/RedGrandMst, Classes/RedMstGUI, Classes/RedMstGUI2, Classes/RedMstGUI3
 
 DESCRIPTION::

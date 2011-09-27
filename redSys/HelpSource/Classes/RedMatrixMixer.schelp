@@ -1,6 +1,6 @@
 CLASS:: RedMatrixMixer
 SUMMARY:: mix any number of input and output channels
-CATEGORIES:: Red
+CATEGORIES:: Red>redMatrixMixer
 RELATED:: Classes/RedMatrixMixerGUI, Classes/RedEffectsRack, Classes/RedMixer
 
 DESCRIPTION::

@@ -1,6 +1,6 @@
 CLASS:: RedAbstractMix
 SUMMARY:: abstract class
-CATEGORIES:: Red
+CATEGORIES:: Red>redMix
 RELATED:: Classes/redMixOverview, Classes/RedMixGUI, Classes/RedMixMono, Classes/RedMixStereo, Classes/RedMixStereoMono, Classes/RedMatrixMixer, Classes/RedMixer
 
 DESCRIPTION::

@@ -1,6 +1,6 @@
 CLASS:: RedEffectsRackGUI
 SUMMARY:: gui for RedEffectsRack
-CATEGORIES:: Red
+CATEGORIES:: Red>redEffectsRack
 RELATED:: Classes/RedEffectsRack, Classes/RedMatrixMixerGUI, Classes/RedMixerGUI
 
 DESCRIPTION::

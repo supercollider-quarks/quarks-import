@@ -1,6 +1,6 @@
 CLASS:: RedVector2D
 SUMMARY:: a vector with two dimensions
-CATEGORIES:: Red
+CATEGORIES:: Red>redUniverse
 RELATED:: Overviews/redUniverseExamplesOverview, Classes/RedVector, Classes/RedVector3D
 
 DESCRIPTION::

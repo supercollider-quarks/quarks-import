@@ -1,6 +1,6 @@
 CLASS:: RedGrandMst
 SUMMARY:: switch between different RedMst settings
-CATEGORIES:: Red
+CATEGORIES:: Red>redMst
 RELATED:: Classes/RedMst, Classes/RedSeq, Classes/RedTrk, Classes/RedTrk2
 
 DESCRIPTION::

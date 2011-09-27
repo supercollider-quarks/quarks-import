@@ -1,6 +1,6 @@
 CLASS:: RedMstGUI3
 SUMMARY:: gui window for RedMst - with metro and transport view
-CATEGORIES:: Red
+CATEGORIES:: Red>redMst
 RELATED:: Classes/RedMst, Classes/RedMstGUI, Classes/RedMstGUI2
 
 DESCRIPTION::
