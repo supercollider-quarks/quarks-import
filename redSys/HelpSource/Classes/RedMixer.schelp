@@ -1,0 +1,155 @@
+CLASS:: RedMixer
+SUMMARY:: create and hold multiple RedMixerChannel
+CATEGORIES:: Red>redMixer
+RELATED:: Classes/RedMixerChannel, Classes/RedMixerGUI, Classes/RedEffectsRack, Classes/RedMatrixMixer
+
+DESCRIPTION::
+A mixer that can mix any number of channels into one or more subgroups.
+
+NOTE::
+Requires link::Classes/Conductor:: quark.
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+
+ARGUMENT:: inputChannels
+Array of input channels. A matching array of link::Classes/RedMixerChannel:: emphasis::channels:: will be created.
+
+ARGUMENT:: outputChannels
+Array of output channels. A matching array of link::Classes/RedMixerChannel:: emphasis::mixers:: will be created (think subgroups).
+
+ARGUMENT:: group
+code::nil:: boots the default server and creates a group after the code::defaultGroup::.
+
+NOTE::
+Passed in groups are not freed when this RedMixer instance is freed.
+::
+
+ARGUMENT:: lag
+For eq settings, balance and volume. In seconds.
+
+INSTANCEMETHODS::
+
+PRIVATE:: initRedMixer
+
+METHOD:: mixer
+Shortcut for mixers[0] as in the normal case only this one mixer is used (no subgroups). See link::#-mixers::.
+
+METHOD:: free
+Free synths and, if created, the internal group.
+
+METHOD:: defaults
+Revert all channels, mixers and this class's link::Classes/CV::s to their defaults.
+
+METHOD:: gui
+Create a link::Classes/RedMixerGUI::.
+
+ARGUMENT:: position
+A link::Classes/Point::.
+
+METHOD:: inputChannels
+Get or set the array of current inputChannels.
+
+METHOD:: outputChannels
+Get or set the array of current outputChannels.
+
+METHOD:: mute
+
+ARGUMENT:: channel
+Index or array of indices to mute.
+
+METHOD:: solo
+
+ARGUMENT:: channel
+Index to solo.
+
+METHOD:: def
+Should probably be private.
+
+METHOD:: group
+The link::Classes/Group:: in use.
+
+METHOD:: cvs
+Dictionary of link::Classes/CV::s:
+
+TABLE::
+## lag || lag time in seconds (linear)
+::
+
+METHOD:: channels
+An array of link::Classes/RedMixerChannel:: objects matching *new's inputChannels argument.
+
+METHOD:: mixers
+An array of link::Classes/RedMixerChannel:: objects matching *new's outputChannels argument.
+
+EXAMPLES::
+
+CODE::
+a= RedMixer(#[[10, 11], [14, 15]], #[[0, 1]]);
+a.channels
+a.mixers
+a.cvs
+b= Pbind(\out, 0, \pan, Pseq([-1, 1], inf)).play
+a.mixer.cvs
+a.mixer.cvs.bal.value= -0.9
+a.cvs.lag.value= 2
+a.mixer.cvs.bal.value= 0.9
+a.mixer.cvs.vol.value= -6		//db
+b.stop
+a.free
+
+//--
+//b= {var x= SinOsc.kr(1); Pan2.ar(SinOsc.ar(x*40+400, 0, 0.5), x)}.play
+a= RedMixer();
+b= Pbind(\out, Pseq([0, 2, 4, 6, 8, 10], inf), \degree, Pkey(\out).trace).play;
+a.channels[1].cvs.vol.input= 0.6
+s.queryAllNodes
+a.mixer.cvs.vol.input= 0.7
+a.channels[1].cvs.vol.input= 0.95
+a.channels[0].cvs.bal.value= 1
+a.channels[0].cvs.bal.value= -1
+b.stop
+a.free
+
+//--
+s.boot;
+a= RedMixer(group: Group.new);		//must boot server before creating and passing in group
+s.queryAllNodes
+b= Pbind(\out, 8, \pan, Pseq([-1, 1], inf)).play
+a.mixers[0].cvs.eqMi.value= 1
+a.mixers[0].cvs.eqMi.value= 0
+a.channels[3].cvs.eqMi.value= 1
+a.channels[3].cvs.eqMi.value= 0
+a.free
+b.stop
+
+//--
+a= RedMixer(#[[2, 3], [4, 5], [6, 7], [8, 9]], [[0, 1], [12, 13]]);
+b= Pbind(\out, Pseq([0, 2, 4, 6, 8, 10], inf), \degree, Pkey(\out)).play;
+a.channels[1].cvs.vol.input= 0.6
+a.inputChannels= [[2, 3], [4, 5], [10, 11], [8, 9]]
+a.inputChannels= [[2, 3], [4, 5], [6, 7], [10, 11]]
+a.inputChannels
+a.outputChannels= [[1, 2], [14, 15]]
+a.outputChannels= [[0, 1], [6, 7]]
+a.outputChannels
+a.defaults
+a.free
+b.stop
+
+//--
+a= RedMixer(#[[2, 3], [4, 5], [6, 7], [8, 9]], [[0, 1], [12, 13]]);
+b= Pbind(\out, Pseq([2, 4, 6, 8], inf), \degree, Pkey(\out)).play;
+a.solo(0)
+a.solo(1)
+a.solo(false)
+a.mute(0)
+a.mute(1)
+a.mute(false)
+a.mute(true)
+a.solo(3)
+a.free
+b.stop
+::

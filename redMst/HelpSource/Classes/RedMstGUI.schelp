@@ -1,6 +1,6 @@
 CLASS:: RedMstGUI
 SUMMARY:: gui window for RedMst
-CATEGORIES:: Red
+CATEGORIES:: Red>redMst
 RELATED:: Classes/RedMst, Classes/RedMstGUI2, Classes/RedMstGUI3
 
 DESCRIPTION::

@@ -1,6 +1,6 @@
 CLASS:: RedSeq
 SUMMARY:: a sort of timeline - master sequencer
-CATEGORIES:: Red
+CATEGORIES:: Red>redMst
 RELATED:: Classes/RedMst, Classes/RedTrk, Classes/RedTrk2
 
 DESCRIPTION::

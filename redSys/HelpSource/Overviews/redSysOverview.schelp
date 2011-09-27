@@ -155,6 +155,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 110927:
+//all helpfiles converted to scdoc format
 //--changes 110920:
 //some first fixes to sc3.5 qt gui
 //--changes 110216:

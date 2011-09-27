@@ -1,6 +1,6 @@
 CLASS:: RedMixStereo
 SUMMARY:: mix 2 stereo channels in stereo
-CATEGORIES:: Red
+CATEGORIES:: Red>redMix
 RELATED:: Classes/redMixOverview, Classes/RedMixMono, Classes/RedMixStereoMono, Classes/RedMatrixMixer, Classes/RedMixer
 
 DESCRIPTION::

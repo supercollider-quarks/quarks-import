@@ -1,6 +1,6 @@
 CLASS:: RedPerlin
 SUMMARY:: a perlin noise generator
-CATEGORIES:: Red
+CATEGORIES:: Red>redUniverse>additional
 
 DESCRIPTION::
 A class that generates 1, 2 or 3 dimensional perlin noise. See http://freespace.virgin.net/hugo.elias/models/m_perlin.htm

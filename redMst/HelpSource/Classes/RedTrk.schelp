@@ -1,6 +1,6 @@
 CLASS:: RedTrk
 SUMMARY:: a sort of timeline - slave track
-CATEGORIES:: Red
+CATEGORIES:: Red>redMst
 RELATED:: Classes/RedMst, Classes/RedSeq, Classes/RedTrk2
 
 DESCRIPTION::

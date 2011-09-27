@@ -1,6 +1,6 @@
 CLASS:: RedMatrixMixerGUI
 SUMMARY:: gui for RedMatrixMixer
-CATEGORIES:: Red
+CATEGORIES:: Red>redMatrixMixer
 RELATED:: Classes/RedMatrixMixer, Classes/RedEffectsRackGUI, Classes/RedMixerGUI
 
 CLASSMETHODS::

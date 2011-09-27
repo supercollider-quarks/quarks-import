@@ -1,6 +1,6 @@
 CLASS:: RedDefault
 SUMMARY:: a hacked default synth
-CATEGORIES:: Red
+CATEGORIES:: Red>redDefault
 
 DESCRIPTION::
 The point of this class is that any event you try to play with the default synth will sound a lot better ;-) e.g. try the code in link::Tutorials/Streams-Patterns-Events5:: or link::Tutorials/Streams-Patterns-Events6:: before and after installing.

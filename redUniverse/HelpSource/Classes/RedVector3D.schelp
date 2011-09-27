@@ -1,6 +1,6 @@
 CLASS:: RedVector3D
 SUMMARY:: a vector with three dimensions
-CATEGORIES:: Red
+CATEGORIES:: Red>redUniverse
 RELATED:: Overviews/redUniverseExamplesOverview, Classes/RedVector, Classes/RedVector2D
 
 DESCRIPTION::

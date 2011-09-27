@@ -1,6 +1,6 @@
 CLASS:: RedWindow
 SUMMARY:: wrapper for SCWindow
-CATEGORIES:: Red
+CATEGORIES:: Red>redUniverse
 RELATED:: Overviews/redUniverseExamplesOverview, Classes/RedJWindow, Classes/SCWindow
 
 DESCRIPTION::
