@@ -1,7 +1,7 @@
 CLASS:: RedTrk
-summary:: a sort of timeline - slave track
-categories:: Red
-related:: Classes/RedMst, Classes/RedSeq, Classes/RedTrk2
+SUMMARY:: a sort of timeline - slave track
+CATEGORIES:: Red
+RELATED:: Classes/RedMst, Classes/RedSeq, Classes/RedTrk2
 
 DESCRIPTION::
 RedTrk is controlled by the master ( link::Classes/RedMst:: ). Each track must have a name, an item to play and an array specifying when to play (sections when active).

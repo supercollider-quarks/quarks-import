@@ -1,0 +1,43 @@
+CLASS:: RedDefault
+SUMMARY:: a hacked default synth
+CATEGORIES:: Red
+
+DESCRIPTION::
+The point of this class is that any event you try to play with the default synth will sound a lot better ;-) e.g. try the code in link::Tutorials/Streams-Patterns-Events5:: or link::Tutorials/Streams-Patterns-Events6:: before and after installing.
+
+NOTE::
+This class will overwrite your default synth at recompile. Though it is easy to undo and get back to normal.
+::
+
+definitionList::
+## install ||
+list::
+## if you haven't already, install redDefault as normal via code::Quarks.gui::. Or run the following... code::Quarks.install("redDefault")::
+## recompile supercollider and redDefault will overwrite the default synthdef.
+::
+## uninstall ||
+list::
+## manually delete the file default.scsyndef in your synthdefs directory. Or run the following... code::("rm"+(SynthDef.synthDefDir++"default.scsyndef").quote).unixCmd::
+## uninstall redDefault via the quarks gui. Or run the following… code::Quarks.uninstall("redDefault")::
+## last recompile supercollider and a brand new default.scsynth will be created for you.
+::
+::
+
+CLASSMETHODS::
+
+PRIVATE:: initClass
+
+EXAMPLES::
+
+CODE::
+s.boot;
+Pbind.new.play
+
+Pbind(\dur, 3, \amp, 0.3).play
+
+Pbind(\dur, Prand([0.15, 0.1, 0.05], inf), \freq, Pseq([250, 500, 1000, 500], inf)).play
+
+Pbind(\dur, 0.15, \freq, Pseq([[400, 900], 400, [400, 900], Prand([20, 200], 1)], inf)*Pseq([Pn(1, 16), Pn(0.5, 16), Pn(1, 16), Pn(0.9, 16)], inf), \legato, 1.5).play
+
+Pbind(\dur, 0.1, \degree, Pn(Pseries(-6, 4, 8), inf), \lag, Pseq([0, 0.1, 0.2], inf)).play
+::

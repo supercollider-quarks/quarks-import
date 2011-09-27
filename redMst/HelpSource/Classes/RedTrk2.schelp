@@ -1,7 +1,7 @@
 CLASS:: RedTrk2
-summary:: a sort of timeline - slave track
-categories:: Red
-related:: Classes/RedMst, Classes/RedSeq, Classes/RedTrk
+SUMMARY:: a sort of timeline - slave track
+CATEGORIES:: Red
+RELATED:: Classes/RedMst, Classes/RedSeq, Classes/RedTrk
 
 DESCRIPTION::
 Very similar to link::Classes/RedTrk:: but can do abrupt swaps between sections. It cuts off events with long durations. Also does cross-fade on demand. Please ignore the code::"FAILURE n_set Node not found":: that gets posted.

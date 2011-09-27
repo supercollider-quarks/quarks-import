@@ -1,7 +1,7 @@
 CLASS:: RedMst
-summary:: a sort of timeline - master controller
-categories:: Red
-related:: Classes/RedTrk, Classes/RedTrk2, Classes/RedSeq, Classes/RedGrandMst, Classes/RedMstGUI, Classes/RedMstGUI2, Classes/RedMstGUI3
+SUMMARY:: a sort of timeline - master controller
+CATEGORIES:: Red
+RELATED:: Classes/RedTrk, Classes/RedTrk2, Classes/RedSeq, Classes/RedGrandMst, Classes/RedMstGUI, Classes/RedMstGUI2, Classes/RedMstGUI3
 
 DESCRIPTION::
 RedMst controls track objects (i.e. link::Classes/RedTrk::). It does so by sending play and stop messages to them synced to a clock. RedMst also has a global counter for sections. If a track is not already playing and is activated to play for a certain section, it gets sent a play message when RedMst reaches that section, else the track is stopped.

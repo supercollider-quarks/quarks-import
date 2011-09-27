@@ -1,7 +1,7 @@
 CLASS:: RedMstGUI
-summary:: gui window for RedMst
-categories:: Red
-related:: Classes/RedMst, Classes/RedMstGUI2, Classes/RedMstGUI3
+SUMMARY:: gui window for RedMst
+CATEGORIES:: Red
+RELATED:: Classes/RedMst, Classes/RedMstGUI2, Classes/RedMstGUI3
 
 DESCRIPTION::
 Use this class for lowest CPU usage. link::Classes/RedMstGUI2:: and link::Classes/RedMstGUI3:: adds metronome and transport view but takes a little bit more to update.
