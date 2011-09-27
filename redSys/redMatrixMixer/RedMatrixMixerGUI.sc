@@ -216,6 +216,6 @@ RedMatrixMixerGUI {
 		}).play(AppClock);
 	}
 	close {
-		win.close;
+		if(win.isClosed.not, {win.close});
 	}
 }
