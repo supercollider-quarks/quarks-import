@@ -1,7 +1,7 @@
 CLASS:: RedSeq
-summary:: a sort of timeline - master sequencer
-categories:: Red
-related:: Classes/RedMst, Classes/RedTrk, Classes/RedTrk2
+SUMMARY:: a sort of timeline - master sequencer
+CATEGORIES:: Red
+RELATED:: Classes/RedMst, Classes/RedTrk, Classes/RedTrk2
 
 DESCRIPTION::
 A simple way to control link::Classes/RedMst::.

@@ -1,7 +1,7 @@
 CLASS:: RedMstGUI3
-summary:: gui window for RedMst - with metro and transport view
-categories:: Red
-related:: Classes/RedMst, Classes/RedMstGUI, Classes/RedMstGUI2
+SUMMARY:: gui window for RedMst - with metro and transport view
+CATEGORIES:: Red
+RELATED:: Classes/RedMst, Classes/RedMstGUI, Classes/RedMstGUI2
 
 DESCRIPTION::
 Same as its superclass but adds a transport view. This class takes a bit more CPU to update.

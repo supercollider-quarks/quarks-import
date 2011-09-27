@@ -1,7 +1,7 @@
 CLASS:: RedMstGUI2
-summary:: gui window for RedMst - with metro
-categories:: Red
-related:: Classes/RedMst, Classes/RedMstGUI, Classes/RedMstGUI3
+SUMMARY:: gui window for RedMst - with metro
+CATEGORIES:: Red
+RELATED:: Classes/RedMst, Classes/RedMstGUI, Classes/RedMstGUI3
 
 DESCRIPTION::
 Same as its superclass but adds a visual metronome. This class takes a little bit more CPU to update.
