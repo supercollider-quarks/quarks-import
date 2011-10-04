@@ -50,7 +50,9 @@
 			Pen.addRect(Rect.aboutRedObject2D(o));
 		};
 		Pen.stroke;
-	}.play(25);
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isOpen, {w.close})});
 )
 
 ~initSize= {5};		//varying object sizes
