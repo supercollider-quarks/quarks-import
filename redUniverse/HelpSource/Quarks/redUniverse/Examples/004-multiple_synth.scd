@@ -11,7 +11,7 @@ s.waitForBoot{
 		freqs= Array.geom(4, freq, Rand(1.5, 2.5));
 		amps= Array.geom(4, 0.5, Rand(0, 1));
 		rings= Array.geom(4, maxDur, Rand(0, 1))*maxDur;
-		e= EnvGen.kr(Env.perc(0.01, maxDur), 1, amp, doneAction:2);
+		e= EnvGen.ar(Env.perc(0.01, maxDur), 1, amp, doneAction:2);
 		z= Klank.ar(`[freqs, amps, rings], Impulse.ar(0));
 		Out.ar(out, Pan2.ar(z*e, pan));
 	}).send(s);
