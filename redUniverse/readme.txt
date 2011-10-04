@@ -6,6 +6,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+111004 - added examples 013, 017, 161, changed envelope in ex 004 from kr to ar
 110927 - all helpfiles converted to scdoc format
 110914 - added 191-kmeans2 example
 110323 - moved RedWindow cocoa into scide_scapp folder
