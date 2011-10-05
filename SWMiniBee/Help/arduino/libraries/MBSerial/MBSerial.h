@@ -1,9 +1,9 @@
 // #include <ADXL345.h>
 
-#ifndef MiniBee_h
-#define MiniBee_h
+#ifndef MBSerial_h
+#define MBSerial_h
 
-#define MINIBEE_REVISION 'D'
+#define MINIBEE_REVISION 'Z'
 #define MINIBEE_LIBVERSION 3
 
 /// all together: 3644 bytes
@@ -38,6 +38,9 @@
 #define MINIBEE_ENABLE_PING 1
 #endif
 
+#if MINIBEE_REVISION == 'Z'
+#define NRPINS 20
+#endif
 #if MINIBEE_REVISION == 'D'
 #define NRPINS 17
 #endif
@@ -100,9 +103,9 @@ enum TWIDeviceConfig {
 //  	void USART_RX_vect(void) __attribute__ ((signal));
 // }
 
-class MiniBee {
+class MBSerial {
 	public:
-		MiniBee();	//constructor
+		MBSerial();	//constructor
 
 		void (*customMsgFunc)(char *);// = NULL;
 		void (*dataMsgFunc)(char *);// = NULL;
@@ -123,21 +126,13 @@ class MiniBee {
 		void setCustomCall( void (*customFunc)(char * ) );
 
 		void setDataCall( void (*dataFunc)(char * ) );
-
-		void readXBeeSerial(void);
 		
 		void openSerial(long);
-		void configXBee();
 
 		void setID( uint8_t id );
 		char * getData();
 		int dataSize();
 
-	//AT CMD (communicate with XBee)
-		int atEnter(void);
-		int atExit(void);
-		int atSet(char *, uint8_t);
-		char* atGet(char *);
 
 	// serial communication with network
 		void send(char, char *, int);
@@ -146,8 +141,6 @@ class MiniBee {
 	// set output pins
 		void setRunning( uint8_t ); 
 		void setLoopback( uint8_t ); 
-//		void setPWM();
-//		void setDigital();
 		void setOutput();
 		void setOutputValues( char * msg, uint8_t offset );
 	
@@ -156,8 +149,6 @@ class MiniBee {
 	
 	// send data
 		void sendData( void );
-		void sendActive( void );
-		void sendPaused( void );
 
 		uint8_t getId(void);
 		void sendSerialNumber(void);
@@ -217,18 +208,12 @@ class MiniBee {
 // 		void SerialEvent(void);
 
 	private:
-		#define PIN_CONFIG_BYTES 19 // 23 for base config. 4 for other stuff, so 19 for the pins
+		#define PIN_CONFIG_BYTES 18 // 23 for base config. 4 for other stuff, so 19 for the pins
 		#define CONFIG_BYTES 64 // 23 for pin configs. then some for twi configuration (which is variable!)
 		
 		#define MAX_MESSAGE_SIZE 64
-		#define XBEE_SLEEP_PIN 2
 		#define AT_OK 167
 		#define AT_ERROR 407
-//  		#define AT_AT "AT"
-// 		char * at_AT[3] = "AT";
-// 		#define AT_ENTER "+++"
-// 		#define AT_EXIT "CN"
-		#define XBEE_SER 8
 		#define DEST_ADDR "1"
 		#define ESC_CHAR '\\' 
 		#define DEL_CHAR '\n'
@@ -236,8 +221,6 @@ class MiniBee {
 		
 		#define S_NO_MSG '0'
 		//server message types
-//		#define S_PWM 'P'
-//		#define S_DIGI 'D'
 		#define S_OUT 'O'
 		#define S_RUN 'R'
 		#define S_LOOP 'L'
@@ -248,8 +231,6 @@ class MiniBee {
 		#define S_CONFIG 'C'
 		#define S_SETTING 'S'
 		#define S_CUSTOM 'E'
-// 		#define S_FULL 'a'
-// 		#define S_LIGHT 'l'
 		
 		//node message types
 		#define N_DATA 'd'
@@ -257,11 +238,6 @@ class MiniBee {
 		#define N_INFO 'i'
 		#define N_WAIT 'w'
 		#define N_CONF 'c'
-		#define N_ACTIVE 'a'
-		#define N_PAUSED 'p'
-		
-		uint8_t actcount;
-		char configInfo[2];
 		
 		uint8_t i;
 		uint8_t byte_index;
@@ -280,8 +256,6 @@ class MiniBee {
 		bool remoteConfig;
 
 		char *serial;
-// 		char *dest_addr;
-// 		char *my_addr;
 
 		// incoming message
 		char *message;
@@ -356,7 +330,6 @@ class MiniBee {
 		uint8_t isAnalogPin( uint8_t id );
 		static uint8_t pin_ids[]; 
 		static uint8_t anapin_ids[]; 
-		static uint8_t anapin_read_ids[]; 
 		
 // 		#define ANAOFFSET 11
 
@@ -366,7 +339,7 @@ class MiniBee {
 		uint8_t custom_size[NRPINS]; // sets size of custom pin data
 		uint8_t customDataSize;
 
-		#define PINOFFSET 3
+		#define PINOFFSET 2
 
 #if MINIBEE_ENABLE_TWI == 1
 /*#if MINIBEE_REVISION == 'A'
