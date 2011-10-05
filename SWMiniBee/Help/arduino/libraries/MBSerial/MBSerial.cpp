@@ -1,34 +1,20 @@
-#include "MiniBee.h"
+#include "MBSerial.h"
 
 // #include <NewSoftSerial.h>
 
-uint8_t MiniBee::pwm_pins[] = { 3,5,6, 9,10,11 };
+uint8_t MBSerial::pwm_pins[] = { 3,5,6, 9,10,11 };
 
-#if MINIBEE_REVISION == 'D'
-	uint8_t MiniBee::pin_ids[] = {3, 4, 5,6, 7,8, 9,10,11, 14,15,16,17 ,18,19, 20,21 }; // ids of I/O pins
+// arduino directly connected
+	uint8_t MBSerial::pin_ids[] = {2,3, 4,5, 6,7, 8,9, 10,11, 12,13, 14,15, 16,17 ,18,19 }; // ids of I/O pins
 	// pin 4 is not actually used anymore - it is now the ME led
 	// 18,19 are TWI
 	// 3,5,6,7,8,9,10,11 are digital pins
 	// 14,15,16,17,20,21 are analog pins
-	uint8_t MiniBee::anapin_ids[] = {14,15,16,17 ,20,21 }; // ids of I/O pins	
-	uint8_t MiniBee::anapin_read_ids[] = {0,1,2,3, 6,7 }; // ids of I/O pins	
+	uint8_t MBSerial::anapin_ids[] = {14,15,16,17 ,18,19 }; // ids of I/O pins	
 //		#define ANAOFFSET 9
-	#define ANAPINS 6
-#endif
-#if MINIBEE_REVISION == 'B'
-	uint8_t MiniBee::pin_ids[] = {3,4,5,6,7,8,9,10,11, 14,15,16,17 ,18,19,20,21 }; // ids of I/O pins
-//		#define ANAOFFSET 9
-	uint8_t MiniBee::anapin_ids[] = {14,15,16,17 ,20,21 }; // ids of I/O pins	
-	uint8_t MiniBee::anapin_read_ids[] = {0,1,2,3, 6,7 }; // ids of I/O pins	
-#endif
-#if MINIBEE_REVISION == 'A'
-	uint8_t MiniBee::pin_ids[] = {3,4,5,6,7,8,9,10,11, 12,13, 14,15,16,17 ,18,19,20,21 }; // ids of I/O pins
-	uint8_t MiniBee::anapin_ids[] = {14,15,16,17, 18,19,20,21 }; // ids of I/O pins	
-	uint8_t MiniBee::anapin_read_ids[] = {0,1,2,3, 4,5,6,7 }; // ids of I/O pins	
-#endif
 
 
-MiniBee::MiniBee() {
+MBSerial::MBSerial() {
 // 	pwm_pins = { 3,5,6, 8,9,10 };
 	
 #if MINIBEE_ENABLE_SHT == 1
@@ -64,8 +50,8 @@ MiniBee::MiniBee() {
 	    pwm_values[i] = 0;
 	}
 
-	smpInterval = 50; // default value
-	msgInterval = 50;
+	smpInterval = 5; // default value
+	msgInterval = 5;
 	samplesPerMsg = 1;
 	
 	customDataSize = 0;
@@ -85,91 +71,44 @@ MiniBee::MiniBee() {
 	hasInput = false;
 	hasOutput = false;
 	hasCustom = false;
-
+	serial = "00000000000000\0";
 #if MINIBEE_ENABLE_TWI_ADXL == 1
 	accelADXL = NULL;
 #endif
-#if MINIBEE_ENABLE_TWI_LISDL == 1
-	accelLIS = NULL;
-#endif
-#if MINIBEE_ENABLE_TWI_BMP == 1
-	bmp085 = NULL;
-#endif
-#if MINIBEE_ENABLE_TWI_TMP == 1
-	temp102 = NULL;
-#endif
-#if MINIBEE_ENABLE_TWI_HMC == 1
-	hmc58x3 = NULL;
-#endif
 }
 
-// MiniBee Bee = MiniBee();
+// MBSerial Bee = MBSerial();
 
-void MiniBee::openSerial(long baud_rate) {
+void MBSerial::openSerial(long baud_rate) {
 	Serial.begin(baud_rate);
-	setupMePin();
+// 	setupMePin();
 }
 
-void MiniBee::configXBee(){
-	pinMode(XBEE_SLEEP_PIN, OUTPUT);
-	digitalWrite(XBEE_SLEEP_PIN, 0);  
-}
-
-void MiniBee::setID( uint8_t id ){
+void MBSerial::setID( uint8_t id ){
     node_id = id;
 }
 
-char * MiniBee::getData(){
+char * MBSerial::getData(){
     return data;
 }
 
-int MiniBee::dataSize(){
+int MBSerial::dataSize(){
     return datasize;
 }
 
-void MiniBee::begin(long baud_rate) {
-	configXBee();
-	delay(1000);
-
+void MBSerial::begin(long baud_rate) {
 	openSerial(baud_rate);
-// 	delay(500);
-
-// 	send( N_INFO, "set baudrate", 13 );
-
-	delay( 1000 );
-
- 	readXBeeSerial();
-	// allow some delay before sending data
-// 	delay(500);
-
-// 	send( N_INFO, "read serial", 12 );
-
- 	sendSerialNumber();
-	actcount = 0;
-
-	status = WAITFORHOST;
+	delay( 100 );
+	status = STARTING;
+	sendSerialNumber();
 }
 
-// void MiniBee::setSoftSerial(bool onoff, int baud_rate){
-//     useSoftSerial = onoff;
-//     if ( onoff )
-//       initSoftSerial( baud_rate );
-// }
-// 
-// void MiniBee::initSoftSerial(int baud_rate){
-//   // define pin modes for tx, rx, led pins:
-//   softSerial =  NewSoftSerial(SoftRX, SoftTX);
-//   pinMode(SoftRX, INPUT);
-//   pinMode(SoftTX, OUTPUT);
-//   // set the data rate for the SoftwareSerial port
-//   softSerial.begin(baud_rate);
-// }
-
-void MiniBee::doLoopStep(void){
+void MBSerial::doLoopStep(void){
   int bytestoread;
   // do something based on current status:
   switch( status ){
       case SENSING:
+	  //send( N_INFO, "sensing" );
 	  // read sensors:
 	  datacount = readSensors( datacount );
 	  if ( curSample >= samplesPerMsg ){
@@ -180,43 +119,24 @@ void MiniBee::doLoopStep(void){
 	  delay( smpInterval );
 	  break;
       case STARTING:
+	  sendSerialNumber();
 //          send( N_INFO, "starting", 8 );
-	  delay( 100 );
+	  delay( 1000 );
 	  break;
       case WAITFORCONFIG:
 //          send( N_INFO, "waitforconfig" );
-	if ( actcount == 0 ){ // send the wait message every 10 seconds
-	  send( N_WAIT, configInfo, 2 );
-	}
-	actcount++;
-	actcount = actcount%100;
-	delay( 100 );
-	break;
+	  delay( 100 );
+	  break;
       case WAITFORHOST:
 //       send( N_INFO, "waitforhost" );
-	if ( actcount == 0 ){ // send the serial number every 10 seconds
-	  sendSerialNumber();
-	}
-	actcount++;
-	actcount = actcount%100;
-	delay( 100 );
-	break;
+	  delay( 100 );
+	  break;
       case ACTING:
-	if ( actcount == 0 ){ // send an I'm active message every 100 smpIntervals
-	  sendActive();
-	}
-	actcount++;
-	actcount = actcount%100;
-	delay( smpInterval );
-	break;
+	  delay( smpInterval );
+	  break;
       case PAUSING:
-	if ( actcount == 0 ){ // send an I'm active message every 100 smpIntervals
-	  sendPaused();
-	}
-	actcount++;
-	actcount = actcount%100;
-	delay( 500 );
-	break;
+	  delay( 500 );
+	  break;
     }
   
     // read any new data from XBee:
@@ -232,13 +152,13 @@ void MiniBee::doLoopStep(void){
     }
 }
 
-void MiniBee::setCustomPins( uint8_t * ids, uint8_t * sizes, uint8_t n  ){
+void MBSerial::setCustomPins( uint8_t * ids, uint8_t * sizes, uint8_t n  ){
     for ( i=0; i<n; i++ ){
 	setCustomPin( ids[i], sizes[i] );
     }
 }
 
-void MiniBee::setCustomInput( uint8_t noInputs, uint8_t size ){
+void MBSerial::setCustomInput( uint8_t noInputs, uint8_t size ){
     customInputs = noInputs;
     customDataSize += noInputs * size;
 
@@ -246,7 +166,7 @@ void MiniBee::setCustomInput( uint8_t noInputs, uint8_t size ){
     if ( size > 0 ){ hasInput = true; }
 }
 
-void MiniBee::setCustomPin( uint8_t id, uint8_t size ){
+void MBSerial::setCustomPin( uint8_t id, uint8_t size ){
     if ( id >= PINOFFSET ){
 	custom_pin[ pin_ids[id-PINOFFSET] ] = true;
 	custom_size[ pin_ids[id-PINOFFSET] ] = size;
@@ -262,7 +182,7 @@ void MiniBee::setCustomPin( uint8_t id, uint8_t size ){
 //     send( N_INFO, info, 2 );
 }
 
-void MiniBee::addCustomData( uint8_t * cdata, uint8_t n ){
+void MBSerial::addCustomData( uint8_t * cdata, uint8_t n ){
     if ( status == SENSING ){
 	for ( i=0; i<n; i++){
 	    data[datacount] = (char) cdata[i];
@@ -271,7 +191,7 @@ void MiniBee::addCustomData( uint8_t * cdata, uint8_t n ){
     }
 }
 
-void MiniBee::addCustomData( char * cdata, uint8_t n ){
+void MBSerial::addCustomData( char * cdata, uint8_t n ){
     if ( status == SENSING ){
 	for ( i=0; i<n; i++){
 	    data[datacount] = cdata[i];
@@ -280,7 +200,7 @@ void MiniBee::addCustomData( char * cdata, uint8_t n ){
     }
 }
 
-void MiniBee::addCustomData( int * cdata, uint8_t n ){
+void MBSerial::addCustomData( int * cdata, uint8_t n ){
     if ( status == SENSING ){
 	for ( i=0; i<n; i++){
 	dataFromInt( cdata[i], datacount );
@@ -289,150 +209,35 @@ void MiniBee::addCustomData( int * cdata, uint8_t n ){
     }
 }
 
-void MiniBee::setCustomCall( void (*customFunc)(char * ) ){
+void MBSerial::setCustomCall( void (*customFunc)(char * ) ){
 //    customMsgFunc = customFunc;
     customMsgFunc = customFunc;
     hasOutput = true;
 }
 
-void MiniBee::setDataCall( void (*dataFunc)(char * ) ){
+void MBSerial::setDataCall( void (*dataFunc)(char * ) ){
     dataMsgFunc = dataFunc;  
 }
 
-// void MiniBee::customMsgFuncWrapper( void* mb, char* msg ){
-//   MiniBee * me = (MiniBee*) mb;
+// void MBSerial::customMsgFuncWrapper( void* mb, char* msg ){
+//   MBSerial * me = (MBSerial*) mb;
 //   me->parseCustomMsg( msg );
 // }
 
-/// read the serial number of the XBee
-void MiniBee::readXBeeSerial(void){
-  
-    char *response;// = (char *)malloc(sizeof(char)*6);
-    char *response2;// = (char *)malloc(sizeof(char)*8);
-    
-    //populate whatever xBee properties we'll need.
-    atEnter();
-
-//     my_addr = atGet( "MY" );
-
-    response = atGet( "SH" );
-    response2 = atGet( "SL" );
-
-    free(serial);
-    serial = (char *)malloc(sizeof(char)* (
-      // length of both strings plus null-termination
-      strlen(response) + strlen(response2) + 1 )
-      ) ;
-
-    serial = strcpy( serial, response );
-    serial = strcat( serial, response2 );
-
-    free( response );
-    free( response2 );
-
-//      response = atGet( "DH" );
-//      response2 = atGet( "DL" );
-//  
-//      dest_addr = (char *)malloc(sizeof(char)* (
-//        // length of both strings plus null-termination
-//        strlen(response) + strlen(response2) + 1 )
-//      ) ;
-//  
-//      dest_addr = strcpy( dest_addr, response );
-//      dest_addr = strcat( dest_addr, response2 );
-//  
-// //     if(strcmp(dest_addr, DEST_ADDR) != 0) {
-// //     //make sure we're on the default destination address
-// //       atSet("DH", 0);
-// //       atSet("DL", 1);
-// //     }
-//  
-//      free( response );
-//      free( response2 );
-    
-    atExit();  
-}
-
-//**** Xbee AT Commands ****//
-int MiniBee::atGetStatus() {
-	incoming = 0;
-	int status = 0;
-	
-	while(incoming != CR ) {
-		if(Serial.available()) {
-			incoming = Serial.read();
-			status += incoming;
-		}
-	}
-	
-	return status;
-}
-
-void MiniBee::atSend(char *c) {
-	Serial.print("AT");
-	Serial.print(c);
-	Serial.print('\r');
-}
-
-void MiniBee::atSend(char *c, uint8_t v) {
-	Serial.print("AT");
-	Serial.print(c);
-	Serial.print(v);
-	Serial.print('\r');
-}
-
-int MiniBee::atEnter() {
-	delay( 1000 );
-	Serial.print("+++");
-	delay( 500 );
-	return atGetStatus();
-}
-
-int MiniBee::atExit() {
-	atSend("CN");
-	return atGetStatus();
-}
-
-int MiniBee::atSet(char *c, uint8_t val) {
-	atSend(c, val);
-	return atGetStatus();
-}
-
-char* MiniBee::atGet(char *c) {
-	char *response = (char *)malloc(sizeof(char)*16);
-	incoming = 0;
-	i = 0;
-	
-	atSend( c );
-	
-	while(incoming != CR ) {
-		if(Serial.available()) {
-		  incoming = Serial.read();
-		  response[i] = incoming;
-		  i++;
-		}
-	}
-	response[i-1] = '\0';
-// 	realloc(response, sizeof(char)*(i+1));
-	return response;
-}
-
-//**** END AT COMMAND STUFF ****//
-
-void MiniBee::send(char type, char *p, int size) {
+void MBSerial::send(char type, char *p, int size) {
 	Serial.print(ESC_CHAR, BYTE);
 	Serial.print(type, BYTE);
 	for(i = 0;i < size;i++) slip(p[i]);
 	Serial.print(DEL_CHAR, BYTE);
 }
 
-void MiniBee::slip(char c) {
+void MBSerial::slip(char c) {
 	if((c == ESC_CHAR) || (c == DEL_CHAR) || (c == CR))
 	    Serial.print(ESC_CHAR, BYTE);
 	Serial.print(c, BYTE);
 }
 
-void MiniBee::read() {
+void MBSerial::read() {
 	incoming = Serial.read();
 	if(escaping) {	//escape set
 		if((incoming == ESC_CHAR)  || (incoming == DEL_CHAR) || (incoming == CR)) {	//escape to integer
@@ -461,30 +266,30 @@ void MiniBee::read() {
 	}
 }
 
-bool MiniBee::checkNodeMsg( uint8_t nid, uint8_t mid ){
+bool MBSerial::checkNodeMsg( uint8_t nid, uint8_t mid ){
 	bool res = ( (nid == node_id)  && ( mid != prev_msg) );
 	prev_msg = mid;
 	return res;
 }
 
-bool MiniBee::checkNotNodeMsg( uint8_t nid ){
+bool MBSerial::checkNotNodeMsg( uint8_t nid ){
 	bool res = ( (nid != node_id) );
 	return res;
 }
 
-bool MiniBee::checkConfMsg( uint8_t mid ){
+bool MBSerial::checkConfMsg( uint8_t mid ){
 	bool res = ( mid != prev_conf_msg);
 	prev_conf_msg = mid;
 	return res;
 }
 
-bool MiniBee::checkIDMsg( uint8_t mid ){
+bool MBSerial::checkIDMsg( uint8_t mid ){
 	bool res = ( mid != prev_id_msg);
 	prev_id_msg = mid;
 	return res;
 }
 
-void MiniBee::routeMsg(char type, char *msg, uint8_t size) {
+void MBSerial::routeMsg(char type, char *msg, uint8_t size) {
 	uint8_t len;
 	char * ser;
 
@@ -527,7 +332,7 @@ void MiniBee::routeMsg(char type, char *msg, uint8_t size) {
 				    if ( size == (len+3) ){
 					config_id = msg[len+2];
 					status = WAITFORCONFIG;
-// 					char configInfo[2];
+					char configInfo[2];
 					configInfo[0] = node_id;
 					configInfo[1] = config_id;
 					send( N_WAIT, configInfo, 2 );
@@ -571,7 +376,6 @@ void MiniBee::routeMsg(char type, char *msg, uint8_t size) {
 				    if ( hasInput ){
 				      status = SENSING;
 				    } else if ( hasOutput ){
-				      actcount = 0;
 				      status = ACTING;
 				    }
 	      //                send( N_INFO, "sensing", 7 );
@@ -632,11 +436,11 @@ void MiniBee::routeMsg(char type, char *msg, uint8_t size) {
 		}
 }
 
-void MiniBee::setMeLed( uint8_t onoff ){
+void MBSerial::setMeLed( uint8_t onoff ){
     digitalWrite( me_pin, onoff );
 }
 
-void MiniBee::setSetting( char * msg, uint8_t offset ){
+void MBSerial::setSetting( char * msg, uint8_t offset ){
   i = offset;
   switch ( msg[i] ){
     case 'a': // set range setting for ADXL345
@@ -645,7 +449,7 @@ void MiniBee::setSetting( char * msg, uint8_t offset ){
   }
 }
 
-void MiniBee::setADXL_range( char newrange ){
+void MBSerial::setADXL_range( char newrange ){
 #if MINIBEE_ENABLE_TWI_ADXL == 1
   if ( accelADXL != NULL ){
     accelADXL->setRangeSetting( newrange );
@@ -653,24 +457,19 @@ void MiniBee::setADXL_range( char newrange ){
 #endif
 }
 
-void MiniBee::setRemoteConfig( bool onoff ){
+void MBSerial::setRemoteConfig( bool onoff ){
     remoteConfig = onoff;
 }
 
-void MiniBee::setRunning( uint8_t onoff ){
+void MBSerial::setRunning( uint8_t onoff ){
     if ( onoff == 1 ){
-      	if ( hasInput ){
-	    status = SENSING;
-	} else if ( hasOutput ){
-	    status = ACTING;
-	}
+	status = SENSING;
     } else if ( onoff == 0 ){
 	status = PAUSING;
     }
-    actcount = 0;
 }
 
-void MiniBee::setLoopback( uint8_t onoff ){
+void MBSerial::setLoopback( uint8_t onoff ){
     if ( onoff == 1 ){
 	loopback = true;
     } else if ( onoff == 0 ){
@@ -678,7 +477,7 @@ void MiniBee::setLoopback( uint8_t onoff ){
     }
 }
 
-void MiniBee::setOutputValues( char * msg, uint8_t offset ){
+void MBSerial::setOutputValues( char * msg, uint8_t offset ){
     i = offset;
     for ( uint8_t j=0; j < 6; j++ ){
 	if ( pwm_on[j] ){
@@ -694,7 +493,7 @@ void MiniBee::setOutputValues( char * msg, uint8_t offset ){
     }
 }
 
-void MiniBee::setOutput(){
+void MBSerial::setOutput(){
 	for( i=0; i<6; i++){
 	if ( pwm_on[i] ){
 	    analogWrite( pwm_pins[i], pwm_values[i] );
@@ -707,12 +506,12 @@ void MiniBee::setOutput(){
 	} 
 }
 
-void MiniBee::dataFromInt( unsigned int output, int offset ){
+void MBSerial::dataFromInt( unsigned int output, int offset ){
     data[offset]   = byte(output/256);
     data[offset+1] = byte(output%256);
 }
 
-void MiniBee::dataFromLong24( unsigned long output, int offset ){
+void MBSerial::dataFromLong24( unsigned long output, int offset ){
     output = output % 16777216; // 24 bits
     data[offset]   = byte( output / 65536 );
     output = output % 65536; // 16 bits
@@ -720,23 +519,21 @@ void MiniBee::dataFromLong24( unsigned long output, int offset ){
     data[offset+2] = byte(output % 256);
 }
 
-uint8_t MiniBee::readSensors( uint8_t db ){
+uint8_t MBSerial::readSensors( uint8_t db ){
     unsigned int value;
     // read analog sensors
-    for ( i = 0; i < ANAPINS; i++ ){
+    for ( i = 0; i < 8; i++ ){
 	if ( analog_in[i] ){
 	    if ( analog_precision[i] ){
-		value = analogRead( anapin_read_ids[i] );
+		value = analogRead(i);
 		dataFromInt( value, db );
 		db += 2;
 	    } else {
-		data[db] = analogRead( anapin_read_ids[i] )/4;
+		data[db] = analogRead(i)/4;
 		db++;      
 	    }
 	}
     }
-    
-//     char diginfo[NRPINS];
     
     // read digital sensors
     for ( i = 0; i < NRPINS; i++ ){
@@ -747,8 +544,6 @@ uint8_t MiniBee::readSensors( uint8_t db ){
 	    db++;
 	}
     }
-
-//     send( N_INFO, diginfo, NRPINS );
 
 #if MINIBEE_ENABLE_TWI == 1
     // read I2C/two wire interface for all devices
@@ -784,7 +579,7 @@ uint8_t MiniBee::readSensors( uint8_t db ){
     return db;
 }
 
-void MiniBee::sendData(void){
+void MBSerial::sendData(void){
     msg_id_send++;
     msg_id_send = msg_id_send%256;
     outMessage[0] = node_id;
@@ -795,33 +590,11 @@ void MiniBee::sendData(void){
     send( N_DATA, outMessage, datacount+2 );
 }
 
-void MiniBee::sendActive(void){
-    msg_id_send++;
-    msg_id_send = msg_id_send%256;
-    outMessage[0] = node_id;
-    outMessage[1] = msg_id_send;
-//     for ( i=0; i < datacount; i++ ){
-// 	outMessage[i+2] = data[i];
-//     }
-    send( N_ACTIVE, outMessage, 2 );
-}
-
-void MiniBee::sendPaused(void){
-    msg_id_send++;
-    msg_id_send = msg_id_send%256;
-    outMessage[0] = node_id;
-    outMessage[1] = msg_id_send;
-//     for ( i=0; i < datacount; i++ ){
-// 	outMessage[i+2] = data[i];
-//     }
-    send( N_PAUSED, outMessage, 2 );
-}
-
-uint8_t MiniBee::getId(void) { 
+uint8_t MBSerial::getId(void) { 
 	return node_id;
 }
 
-void MiniBee::sendSerialNumber(void){
+void MBSerial::sendSerialNumber(void){
 	int size = strlen(serial);
 	char * serdata = (char*)malloc(sizeof(char) * (size + 3) );
 	serdata = strcpy( serdata, serial );
@@ -835,7 +608,7 @@ void MiniBee::sendSerialNumber(void){
 //	send(N_SER, serial, strlen(serial) );
 }
 
-// void MiniBee::writeMePin( uint8_t mepin ){
+// void MBSerial::writeMePin( uint8_t mepin ){
 //   eeprom_write_byte( (uint8_t *) CONFIG_BYTES + 1, mepin );
 //   char info [2];
 //   info[0] = (char) mepin;
@@ -843,12 +616,12 @@ void MiniBee::sendSerialNumber(void){
 //   send( N_INFO, info, 2 );
 // }
 
-void MiniBee::setupMePin(){
+void MBSerial::setupMePin(){
   me_pin = 4;
   pinMode( me_pin, OUTPUT );
 }
 
-void MiniBee::writeConfig(char *msg, uint8_t size) {
+void MBSerial::writeConfig(char *msg, uint8_t size) {
 // 	eeprom_write_byte((uint8_t *) i, id ); // writing id
 	for(i = 0;i < (size-2);i++){
 	    eeprom_write_byte((uint8_t *) i, msg[i+2]);
@@ -857,7 +630,7 @@ void MiniBee::writeConfig(char *msg, uint8_t size) {
 // 	send( N_INFO, msg, size );
 }
 
-void MiniBee::readConfigMsg(char *msg, uint8_t size){
+void MBSerial::readConfigMsg(char *msg, uint8_t size){
 	config = (char*)malloc(sizeof(char) * size);
 	for(i = 0;i < (size-1);i++){
 	  config[i] = msg[i+1];
@@ -871,7 +644,7 @@ void MiniBee::readConfigMsg(char *msg, uint8_t size){
 	}
 }
 
-void MiniBee::readConfig(void) {
+void MBSerial::readConfig(void) {
 	config = (char*)malloc(sizeof(char) * CONFIG_BYTES);
 	for(i = 0;i < CONFIG_BYTES;i++) config[i] = eeprom_read_byte((uint8_t *) i);
 // 	send( N_INFO, config, CONFIG_BYTES );
@@ -879,8 +652,8 @@ void MiniBee::readConfig(void) {
 	free(config);
 }
 
-uint8_t MiniBee::isIOPin( uint8_t id ){
-  uint8_t isvalid = 20;
+uint8_t MBSerial::isIOPin( uint8_t id ){
+  uint8_t isvalid = 21;
   for ( uint8_t j = 0; j<NRPINS; j++ ){
       if ( pin_ids[j] == id ){
 	  isvalid = j;
@@ -889,7 +662,7 @@ uint8_t MiniBee::isIOPin( uint8_t id ){
   return isvalid;
 }
 
-uint8_t MiniBee::isAnalogPin( uint8_t id ){
+uint8_t MBSerial::isAnalogPin( uint8_t id ){
   uint8_t isvalid = 7;
   for ( uint8_t j = 0; j<6; j++ ){
       if ( anapin_ids[j] == id ){
@@ -899,7 +672,7 @@ uint8_t MiniBee::isAnalogPin( uint8_t id ){
   return isvalid;
 }
 
-void MiniBee::parseConfig(void){
+void MBSerial::parseConfig(void){
   char info [3];
   
 	uint8_t anapin;
@@ -1101,25 +874,25 @@ void MiniBee::parseConfig(void){
 // 	}
 	
 	uint8_t confSize = 9;
-	char * configInfoN = (char*)malloc( sizeof(char) * (19*2 + confSize) );
-	configInfoN[0] = node_id;
-	configInfoN[1] = config_id;
-	configInfoN[2] = samplesPerMsg;
-	configInfoN[3] = (uint8_t) (smpInterval/256);
-	configInfoN[4] = (uint8_t) (smpInterval%256);
-	configInfoN[5] = datasize;
-	configInfoN[6] = datasizeout;
-	configInfoN[7] = customInputs;
-	configInfoN[8] = customDataSize;
+	char * configInfo = (char*)malloc( sizeof(char) * (19*2 + confSize) );
+	configInfo[0] = node_id;
+	configInfo[1] = config_id;
+	configInfo[2] = samplesPerMsg;
+	configInfo[3] = (uint8_t) (smpInterval/256);
+	configInfo[4] = (uint8_t) (smpInterval%256);
+	configInfo[5] = datasize;
+	configInfo[6] = datasizeout;
+	configInfo[7] = customInputs;
+	configInfo[8] = customDataSize;
 	for ( i=0; i<NRPINS; i++){
 	  if ( custom_pin[i] ){
-	    configInfoN[confSize] = i;
-	    configInfoN[confSize+1] = custom_size[i];
+	    configInfo[confSize] = i;
+	    configInfo[confSize+1] = custom_size[i];
 	    confSize += 2;
 	  }
 	}
-	send( N_CONF, configInfoN, confSize );
-	free( configInfoN );
+	send( N_CONF, configInfo, confSize );
+	free( configInfo );
 
 	outMessage = (char*)malloc( sizeof(char) * (datasize + 2 ) );
 	data = outMessage + 2*sizeof(char); // not sure if this is correct... test!!
@@ -1127,41 +900,11 @@ void MiniBee::parseConfig(void){
 }
 
 #if MINIBEE_ENABLE_TWI == 1
-bool MiniBee::getFlagTWI(void) { 
+bool MBSerial::getFlagTWI(void) { 
 	return twiOn;
 }
 
-void MiniBee::setupTWIdevices(void){
-#if MINIBEE_ENABLE_TWI_ADXL == 1
-  if ( accelADXL != NULL ){
-      free( accelADXL );
-      accelADXL = NULL;
-  }
-#endif
-#if MINIBEE_ENABLE_TWI_LISDL == 1
-  if ( accelLIS != NULL ){
-      free( accelLIS );
-      accelLIS = NULL;
-  }
-#endif
-#if MINIBEE_ENABLE_TWI_BMP == 1
-  if ( bmp085 != NULL ){
-      free( bmp085 );
-      bmp085 = NULL;
-  }
-#endif
-#if MINIBEE_ENABLE_TWI_TMP == 1
-  if ( temp102 != NULL ){
-      free( temp102 );
-      temp102 = NULL;
-  }
-#endif
-#if MINIBEE_ENABLE_TWI_HMC == 1
-  if ( hmc58x3 != NULL ){
-      free( hmc58x3 );
-      hmc58x3 = NULL;
-  }
-#endif
+void MBSerial::setupTWIdevices(void){
 	for(i = 0;i < nr_twi_devices; i++ ){
 	  switch( twi_devices[i] ){
 #if MINIBEE_ENABLE_TWI_ADXL == 1
@@ -1172,7 +915,7 @@ void MiniBee::setupTWIdevices(void){
 		accelADXL->powerOn();
 		accelADXL->setJustifyBit( false );
 		accelADXL->setFullResBit( true );
-		accelADXL->setRangeSetting( 16 ); // 2: 2g, 4: 4g, 8: 8g, 16: 16g
+		accelADXL->setRangeSetting( 2 ); // 2: 2g, 4: 4g, 8: 8g, 16: 16g
 		break;
 #endif
 #if MINIBEE_ENABLE_TWI_LISDL == 1
@@ -1218,7 +961,7 @@ void MiniBee::setupTWIdevices(void){
 	}
 }
 
-int MiniBee::readTWIdevices( int dboff ){
+int MBSerial::readTWIdevices( int dboff ){
 	int dbplus = 0;
 	
 	int accx, accy, accz;
@@ -1301,136 +1044,26 @@ int MiniBee::readTWIdevices( int dboff ){
 	return dbplus;
 }
 
-
-// void MiniBee::setupAccelleroTWI(void) {
-// #if MINIBEE_REVISION == 'B'
-//   //setup for ADXL345 Accelerometer
-//     accel.powerOn();
-//     accel.setJustifyBit( false );
-//     accel.setFullResBit( true );
-//     accel.setRangeSetting( 16 ); // 2: 2g, 4: 4g, 8: 8g, 16: 16g
-// #endif
-//     //set rate etc
-// 
-// #if MINIBEE_REVISION == 'A'
-//     setupTWI();
-// 
-//       //------- LIS302DL setup --------------
-//       Wire.beginTransmission(accel1Address);
-//       Wire.send(0x21); // CTRL_REG2 (21h)
-//       Wire.send(B01000000);
-//       Wire.endTransmission();
-//       
-// 	//SPI 4/3 wire
-// 	//1=ReBoot - reset chip defaults
-// 	//n/a
-// 	//filter off/on
-// 	//filter for freefall 2
-// 	//filter for freefall 1
-// 	//filter freq MSB
-// 	//filter freq LSB - Hipass filter (at 400hz) 00=8hz, 01=4hz, 10=2hz, 11=1hz (lower by 4x if sample rate is 100hz)   
-// 
-//       Wire.beginTransmission(accel1Address);
-//       Wire.send(0x20); // CTRL_REG1 (20h)
-//       Wire.send(B01000111);
-//       Wire.endTransmission();
-//       
-// 	//sample rate 100/400hz
-// 	//power off/on
-// 	//2g/8g
-// 	//self test
-// 	//self test
-// 	//z enable
-// 	//y enable
-// 	//x enable 
-// 
-//       //-------end LIS302DL setup --------------
-// #endif
-// }
-
-/*
-/// reading LIS302DL
-void MiniBee::readAccelleroTWI( int dboff ){
-
-  int accx, accy, accz;
-  unsigned int accx2, accy2, accz2;
-#if MINIBEE_REVISION == 'A'
-    /// reading LIS302DL
-    data[dboff]   = readTWI( accel1Address, accelResultX, 1 ) + 128 % 256;
-    data[dboff+1] = readTWI( accel1Address, accelResultY, 1 ) + 128 % 256;
-    data[dboff+2] = readTWI( accel1Address, accelResultZ, 1 ) + 128 % 256;
-#endif
-
-    /// reading ADXL345 Accelerometer
-#if MINIBEE_REVISION == 'B'
-    accel.readAccel( &accx, &accy, &accz );
-    accx2 = (unsigned int) (accx + 4096); // from twos complement signed int to unsigned int
-    accy2 = (unsigned int) (accy + 4096); // from twos complement signed int to unsigned int
-    accz2 = (unsigned int) (accz + 4096); // from twos complement signed int to unsigned int
-    dataFromInt( accx2, dboff );
-    dataFromInt( accy2, dboff+2 );
-    dataFromInt( accz2, dboff+4 );
-#endif
-}
-
-#if MINIBEE_REVISION == 'A'
-void MiniBee::setupTWI(void) {
-	//start I2C bus
-	Wire.begin();
-}
-*/
-/*
-int MiniBee::readTWI(int address, int bytes) {
-	i = 0;
-	int twi_reading[bytes];
-	Wire.requestFrom(address, bytes);
-	while(Wire.available()) {   
-		twi_reading[i] = Wire.receive();
-		i++;
-	}
-	return *twi_reading;
-}
-
-///read a specific register on a particular device.
-int MiniBee::readTWI(int address, int reg, int bytes) {
-	i = 0;
-	int twi_reading[bytes];
-	Wire.beginTransmission(address);
-	Wire.send(reg);                   //set x register
-	Wire.endTransmission();
-	Wire.requestFrom(address, bytes);            //retrieve x value
-	while(Wire.available()) {   
-		twi_reading[i] = Wire.receive();
-		i++;
-	}
-	return *twi_reading;
-}
-#endif
-*/
-
 #endif
 
 #if MINIBEE_ENABLE_SHT == 1
 //SHT
-bool MiniBee::getFlagSHT(void) { 
+bool MBSerial::getFlagSHT(void) { 
     return shtOn;
 }
 
-uint8_t* MiniBee::getPinSHT(void) {
+uint8_t* MBSerial::getPinSHT(void) {
 	return sht_pins; 
 }
 
-void MiniBee::setupSHT() {
-// void MiniBee::setupSHT(int* pins) {
-	//pins[0] is scl pins[1] is sda
-// 	*sht_pins = *pins;
+void MBSerial::setupSHT() {
 	pinMode(sht_pins[0], OUTPUT);
 	digitalWrite(sht_pins[0], HIGH);     
 	pinMode(sht_pins[1], OUTPUT);   
 	startSHT();
 }
 
-void MiniBee::startSHT(void) {
+void MBSerial::startSHT(void) {
 	pinMode(sht_pins[1], OUTPUT);
 	digitalWrite(sht_pins[1], HIGH);
 	digitalWrite(sht_pins[0], HIGH);    
@@ -1441,13 +1074,13 @@ void MiniBee::startSHT(void) {
 	digitalWrite(sht_pins[0], LOW);
 }
 
-void MiniBee::resetSHT(void) {
+void MBSerial::resetSHT(void) {
 	shiftOut(sht_pins[1], sht_pins[0], LSBFIRST, 0xff);
 	shiftOut(sht_pins[1], sht_pins[0], LSBFIRST, 0xff);
 	startSHT();
 }
 
-void MiniBee::softResetSHT(void) {
+void MBSerial::softResetSHT(void) {
 	resetSHT();
 	ioSHT = SHT_RST_CMD;
 	ackSHT = 1;
@@ -1455,7 +1088,7 @@ void MiniBee::softResetSHT(void) {
 	delay(15);
 }
 
-void MiniBee::waitSHT(void) {
+void MBSerial::waitSHT(void) {
 	delay(5);
 	int j = 0;
 	while(j < 600) {
@@ -1465,7 +1098,7 @@ void MiniBee::waitSHT(void) {
 	}
 }
 
-void MiniBee::measureSHT(int cmd) {
+void MBSerial::measureSHT(int cmd) {
 	softResetSHT();
 	startSHT();
 	ioSHT = cmd;
@@ -1486,7 +1119,7 @@ void MiniBee::measureSHT(int cmd) {
 	if(valSHT <= 0) valSHT = 1;
 }
 
-void MiniBee::readByteSHT(void) {
+void MBSerial::readByteSHT(void) {
 	ioSHT = shiftInSHT();
 	digitalWrite(sht_pins[1], ackSHT);
 	pinMode(sht_pins[1], OUTPUT);
@@ -1496,7 +1129,7 @@ void MiniBee::readByteSHT(void) {
 	digitalWrite(sht_pins[1], LOW);
 }
 
-void MiniBee::writeByteSHT(void) {
+void MBSerial::writeByteSHT(void) {
 	pinMode(sht_pins[1], OUTPUT);
 	shiftOut(sht_pins[1], sht_pins[0], MSBFIRST, ioSHT);
 	pinMode(sht_pins[1], INPUT);
@@ -1507,7 +1140,7 @@ void MiniBee::writeByteSHT(void) {
 	digitalWrite(sht_pins[0], LOW);
 }
 
-int MiniBee::getStatusSHT(void) {
+int MBSerial::getStatusSHT(void) {
 	softResetSHT();
 	startSHT();
 	ioSHT = SHT_R_STAT;	//R_STATUS
@@ -1520,7 +1153,7 @@ int MiniBee::getStatusSHT(void) {
 	return ioSHT;
 }
 
-int MiniBee::shiftInSHT(void) {
+int MBSerial::shiftInSHT(void) {
 	int cwt = 0;
 	for(mask = 128;mask >= 1;mask >>= 1) {
 		digitalWrite(sht_pins[0], HIGH);
@@ -1533,20 +1166,15 @@ int MiniBee::shiftInSHT(void) {
 
 #if MINIBEE_ENABLE_PING == 1
 //PING
-bool MiniBee::getFlagPing(void) { 
+bool MBSerial::getFlagPing(void) { 
   return pingOn;
 } 
 
-uint8_t MiniBee::getPinPing(void) { 
+uint8_t MBSerial::getPinPing(void) { 
 	return ping_pin; 
 }
 
-// void MiniBee::setupPing(int *pins) {
-// 	*ping_pins = *pins;	//ping pins = ping pins
-// 	//no Ping setup
-// }	
-
-int MiniBee::readPing(void) {
+int MBSerial::readPing(void) {
 	long ping;
 
 	// The Devantech US device is triggered by a HIGH pulse of 10 or more microseconds.
@@ -1570,7 +1198,7 @@ int MiniBee::readPing(void) {
 #endif
 
 // //**** EVENTS ****//
-// void MiniBee::setupDigitalEvent(void (*event)(int, int)) {
+// void MBSerial::setupDigitalEvent(void (*event)(int, int)) {
 // 	dEvent = event;
 // 	
 // 	//set up digital interrupts 
@@ -1579,7 +1207,7 @@ int MiniBee::readPing(void) {
 // 	PCMSK0 = (1 << PCINT0);
 // }
 // 
-// void MiniBee::digitalUpdate(int pin, int status) {
+// void MBSerial::digitalUpdate(int pin, int status) {
 // 	(*dEvent)(pin, status);
 // }
 // 
@@ -1588,7 +1216,7 @@ int MiniBee::readPing(void) {
 // }
 
 //serial rx event
-/*void MiniBee::attachSerialEvent(void (*event)(void)) {
+/*void MBSerial::attachSerialEvent(void (*event)(void)) {
 	//usart registers
 	UCSR0B |= (1 << RXCIE0) | (1 << TXCIE0) | (1 << RXEN0) | (1 << TXEN0); //turn on rx + tx and enable interrupts
 	UCSR0C |= (1 << UCSZ01) | (1 << UCSZ00);	//set frame format (81NN)
