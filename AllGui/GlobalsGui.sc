@@ -1,12 +1,12 @@
 GlobalsGui : JITGui { 
-	var <textViews, <cmdLineView;
+	var <textViews, <cmdLineView, <codeDumpView;
 	var <scroller, <editKeys = #[], keysRotation = 0;
 	
 	classvar <names = #[
 		\a, \b, \c, \d, \e, \f, \g, 
 		\h, \i, \j, \k, \l, \m, \n,
 		\o, \p, \q, \r, \s, \t, \u, 
-		\v, \w, \x, \y, \z, \cmdLine ]; 
+		\v, \w, \x, \y, \z, \cmdLine, \codeDump ]; 
 	
 	*new { |numItems = 12, parent, bounds| 
 			// numItems not supported yet, should do scrolling
@@ -21,14 +21,16 @@ GlobalsGui : JITGui {
 		} {
 			defPos = skin.margin;
 		};
-		minSize = 200 @ (numItems + 1 * skin.buttonHeight + 4);
+		minSize = 200 @ (numItems + 2 * skin.buttonHeight + 4);
 	}
 	
 	makeViews { 
 		var textwidth = zone.bounds.width - 20;
 		var textheight = skin.buttonHeight;
 		
-		cmdLineView = EZText(zone, textwidth + 16 @ textheight, 'cmdLine', labelWidth: 60)
+		cmdLineView = EZText(zone, textwidth + 16 @ textheight, 'cmdLine', labelWidth: 64)
+			.enabled_(false);
+		codeDumpView = EZText(zone, textwidth + 16 @ textheight, 'codeDump', labelWidth: 64)
 			.enabled_(false);
 		
 		cmdLineView.labelView.align_(\center);
@@ -37,7 +39,7 @@ GlobalsGui : JITGui {
 		textViews = numItems.collect { |i| 
 			var text, labelWidth = 15, canEval = true; 
 			
-			text = EZText(zone, 188@ skin.buttonHeight, "", 
+			text = EZText(zone, textwidth @ textheight, "", 
 				{ |tx| 
 					object.perform(
 						text.labelView.string.asSymbol.asSetter, 
@@ -54,7 +56,7 @@ GlobalsGui : JITGui {
 		textViews = textViews;
 
 		/// make a scroller
-		zone.decorator.reset.shift(zone.bounds.width - 16, textheight);
+		zone.decorator.reset.shift(zone.bounds.width - 16, textheight * 2);
 		scroller = EZScroller(zone,
 			Rect(0, 0, 12, numItems * textheight),
 			numItems, numItems,
@@ -89,6 +91,9 @@ GlobalsGui : JITGui {
 		
 		if (prevState[\cmdLine] != newState[\cmdLine]) { 
 			cmdLineView.value_(newState[\cmdLine]);
+		};
+		if (prevState[\codeDump] != newState[\codeDump]) { 
+			cmdLineView.value_(newState[\codeDump]);
 		};
 		
 		scroller
