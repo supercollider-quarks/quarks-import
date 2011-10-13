@@ -142,32 +142,32 @@ MixingBoard {
 
 			// make window first		
 		{ // for defer
-		
-		w.isNil.if({		// only build it if no window exists yet
-			w = GUI.window.new(name);
-			w.asView.background_(MixerChannelGUI.defaultDef.clearColor);
-			w.onClose_({ this.free });	// if user closes window, clean up after yourself
-			newWindow = true;
-		});
+			
+			w.isNil.if({		// only build it if no window exists yet
+				w = GUI.window.new(name);
+				w.asView.background_(MixerChannelGUI.defaultDef.clearColor);
+				w.onClose_({ this.free });	// if user closes window, clean up after yourself
+				newWindow = true;
+			});
 
 			// mixer array pre-processing: collections (not just arrays) need to be flattened
-		mx = mx.asFlatArray;
+			mx = mx.asFlatArray;
 
-		mx.do({ arg mx, i;
-			mixers = mixers.add(mx.asMixerChannelGUI(this));
-		});
-		
-		this.sizeWindow(newWindow);
+			mx.do({ arg mx, i;
+				mixers = mixers.add(mx.asMixerChannelGUI(this));
+			});
 
-			// must defer refresh of controls
-			// because it takes time for w.bounds to
-			// catch up with w.bounds_
-		{ 	this.refresh; 
-			newWindow.if({ w.front });
-			nil
-		}.defer(0.25);
-		
-		nil }.defer;
+			{
+				// hack: window resizing needs a little delay beforehand? ok.......
+				0.25.wait;
+				this.sizeWindow(newWindow);
+				0.25.wait;
+				this.refresh; 
+				newWindow.if({ w.front });
+			}.fork(AppClock);
+			
+			nil 
+		}.defer;
 	}
 	
 	sizeWindow {
@@ -205,7 +205,6 @@ MixingBoard {
 			});
 			nil }.defer;
 		};
-		
 		^this
 	}		
 	
