@@ -73,10 +73,13 @@ GlobalControlBase : AbstractFunction {
 	free { arg updateGUI = true;
 		var	oldAutoNode = autoSynth, updater,
 			freeBusFunc = {
-				if(BusDict.at(\control, server, bus.index).notNil) {
-					BusDict.free(bus);		// free the bus
-				} {
-					bus.free
+				// problem: global control could be freed before receiving n_end for autosynth
+				if(server.notNil) {
+					if(BusDict.at(\control, server, bus.index).notNil) {
+						BusDict.free(bus);		// free the bus
+					} {
+						bus.free
+					};
 				};
 				bus = nil;
 			};
