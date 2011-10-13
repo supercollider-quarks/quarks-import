@@ -102,7 +102,7 @@ PR(\abstractTLCommand).clone({
 PR(\abstractTLCommand).clone({
 	~fire = { |parms|
 //		~setParms.(parms);
-		~func.valueEnvir;
+		~func.value;
 	};
 }) => PR(\funcCmd);
 
@@ -831,6 +831,11 @@ Proto({
 
 	~sections = [];	// supply array of sections
 	~status = \idle;
+	~recordingOn = false;
+	~recordingOn_ = { |bool(false)|
+		~recordingOn = bool;
+		currentEnvironment.changed(\recording, bool);
+	};
 	
 	~currentSection = 0;
 	
@@ -887,17 +892,45 @@ Proto({
 			currentEnvironment.changed(\stop);
 			currentEnvironment.changed(\section, ~currentSection);
 			~savedCmds = nil;
+			~nextSectionToPlay = nil;
+			// (~currentSection+1).debug("stop is calling loadResources for");
+			~loadResources.(~currentSection+1);
 			~sectionRoutine.stop;
 			~sectionRoutine = nil;
+			~clock.value.sched(5.0, e {
+				// if I'm playing, then the recorder doesn't belong to me anymore
+				if(~isRunning.().not) {
+					try { topEnvironment[\master].stopRecord };
+				};
+				nil
+			});
 		};
 //"<< sectionSequencer:stop".debug;
 	};
 	
+	~startLoadingAt = 0;
+	~gotoSection = { |section|
+		var	toStop = ~sections[~currentSection];
+// [~currentSection, section].debug(">> gotoSection (current, next)");
+		if(~isRunning.()) {
+			// "loading resources (playing)".debug;
+			~loadResources.(section, ~currentSection);
+			~nextSectionToPlay = section;
+			toStop.stop(nil, false);  // will advance by ~update
+		} {
+			// "loading resources (not playing)".debug;
+			~currentSection = section;
+			~loadResources.(section/*, ~currentSection*/);
+		};
+		currentEnvironment.changed(\section, section);
+// [~currentSection, section].debug("<< gotoSection (current, next)");
+	};
+
 	~loadResources = { |section|
 //section.debug(">> loadResources");
 			// must add 1 because do runs from 0 to n-1
 		(section+1).do({ |sect|
-			if(~sections[sect].isLoaded.not/*.debug("section % needs to load".format(sect))*/) {
+			if((~sections[sect].tryPerform(\isLoaded) ? true).not) {
 				~sections[sect].prInitProc;
 			};
 		});
@@ -905,36 +938,46 @@ Proto({
 	};
 	
 	~countOffAndGo = {
-		var	clock = ~clock.value,
+		var	clock = ~clock.value, master = topEnvironment[\master],
 			goTime = ~quant.nextTimeOnGrid(clock) + ~countOffBeats - ~sectionLeadTime,
 			started = false;
 
-//[clock.baseBarBeat, clock.beats, ~quant.nextTimeOnGrid(clock), goTime].debug("starting countoff - base beat, now, quant time, go time");
+		~sections.last.isLastSection = true;
 
 		~status = \countingOff;
 		clock.schedAbs(~quant.nextTimeOnGrid(clock), ~countOffRoutine = Routine({
 			currentEnvironment.changed(\countoff, \init);
-				// count off first
+			// count off first
 			~countOffBeats.do({ |count|
 				currentEnvironment.changed(\countoff, count + 1);
 				if(started.not and: { goTime - thisThread.clock.beats < ~sectionLeadTime }) {
 					started = true;
 
-//[clock.beats, goTime].debug("starting section player - now, go time");
+					//[clock.beats, goTime].debug("starting section player - now, go time");
 
-					thisThread.clock.schedAbs(goTime, ~sectionRoutine = Routine({
+					thisThread.clock.sched(0, ~sectionRoutine = Routine({
+						if(~recordingOn) {
+							if(master.recProxy.notNil) {
+								master.stopRecord;
+								0.2.wait;
+							};
+							master.startRecord;
+							0.2.wait;
+						};
 						~status = \playing;
 						while { ~isRunning.() and: { ~currentSection < ~sections.size } } {
-//~savedCmds.debug("playing section % with saved cmds".format(~sections[~currentSection].name));
+							/*~savedCmds.*/debug("playing section %".format(~sections[~currentSection].name));
+							Library.at(\remoteAddr).tryPerform(\sendMsg, \nowPlaying,
+								~sections[~currentSection].segID);
 							~sections[~currentSection].play(~savedCmds);
-//"section sequencer: set savedCmds to nil".debug;
+							//"section sequencer: set savedCmds to nil".debug;
 							~savedCmds = nil;
-								// ~update method below will catch notifications
+							// ~update method below will catch notifications
 							~sections[~currentSection].addDependant(currentEnvironment);
-								// note, this doesn't force-stop the routine
-								// just pauses it
+							~loadResources.(~currentSection + 1);
+							// note, this doesn't force-stop the routine
+							// just pauses it
 							nil.yield;
-//							~condition.hang;
 						};
 						~stop.(true);	// stop last section
 					}));
@@ -943,14 +986,6 @@ Proto({
 			});
 			~countOffRoutine = nil;
 			currentEnvironment.changed(\countoff, nil);
-				// removing initial meter
-				// section should run its own conductor slightly in advance of the true barline
-			
-//				// in theory nothing should be playing now
-//				// so it should be OK to set this even off the barline
-//			thisThread.clock.setMeterAtBeat(~sections[~currentSection].startBeatsPerBar,
-//				thisThread.clock.beats);
-//[clock.beatsPerBar, clock.baseBar, clock.baseBarBeat].debug("after setting initial meter");
 		}));
 	};
 	
@@ -992,6 +1027,7 @@ Proto({
 					if(~isRunning.()) {
 						~currentSection = ~currentSection + 1;
 //~currentSection.debug("section done, moving to");
+						~nextSectionToPlay = nil;
 						currentEnvironment.changed(\section, ~currentSection);
 						~clock.value.sched(0, ~sectionRoutine);
 //						~condition.unhang;
@@ -1003,11 +1039,8 @@ Proto({
 					}
 				}
 				{ \unload } {
-//[obj, what, args].debug("got unload message");
 					args.tryPerform(\at, \name).asArray.do { |sectName|
-//sectName.debug("checking");
 						if((section = ~sections.detect { |sct| sct.name == sectName }).notNil) {
-//sectName.debug("unloading one");
 							section.prUnload;
 						}
 					};
