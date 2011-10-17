@@ -163,6 +163,8 @@ MixerChannel {
 		MixerChannelReconstructor.add(this);
 		servers.at(server).put(inbus.index, this);	// save for repatching purposes
 		this.makeServerObjects(bus, completionFunc);
+
+		MixingBoard.refresh;  // list of available in/out buses has changed
 		
 		^this
 	}
@@ -269,6 +271,7 @@ MixerChannel {
 					// if you're using my MIDI hierarchy, check for midi controls
 					// that are connected to this mixer
 			'MIDIPort'.asClass.update;
+			MixingBoard.refresh;  // update list of in/out buses
 		});
 	}
 	
