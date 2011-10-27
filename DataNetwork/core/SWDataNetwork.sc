@@ -247,6 +247,9 @@ SWDataNetwork{
 			hive.mapBee( miniBee, this.nodes[ nodeID ], \output );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
+		if ( osc.notNil ){
+			osc.mapHiveOutputLocal( nodeID, miniBee );
+		}
 	}
 
 	unmapHiveOutput{ |nodeID, miniBee|
@@ -255,6 +258,9 @@ SWDataNetwork{
 			hive.unmapBee( miniBee, this.nodes[ nodeID ], \output );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
+		if ( osc.notNil ){
+			osc.unmapHiveOutputLocal( nodeID, miniBee );
+		}
 	}
 
 	mapHiveCustom{ |nodeID, miniBee|
@@ -262,6 +268,9 @@ SWDataNetwork{
 			hive.mapBee( miniBee, this.nodes[ nodeID ], \custom );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
+		if ( osc.notNil ){
+			osc.mapHiveCustomLocal( nodeID, miniBee );
+		}
 	}
 
 	unmapHiveCustom{ |nodeID, miniBee|
@@ -269,6 +278,9 @@ SWDataNetwork{
 			hive.unmapBee( miniBee, this.nodes[ nodeID ], \custom );
 			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
 		};
+		if ( osc.notNil ){
+			osc.unmapHiveCustomLocal( nodeID, miniBee );
+		}
 	}
 
 	mapHivePWM{ |nodeID, miniBee|
