@@ -1561,6 +1561,38 @@ SWDataNetworkOSC{
 		client.addr.sendMsg( '/status/minibee', id, status );
 	}
 
+	mapHiveOutputLocal{ |nodeid, beeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.mapHiveOutput( nodeid, beeid );
+		};
+	}
+
+	unmapHiveOutputLocal{ |nodeid, beeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.unmapHiveOutput( nodeid, beeid );
+		};
+	}
+
+	mapHiveCustomLocal{ |nodeid, beeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.mapHiveCustom( nodeid, beeid );
+		};
+	}
+
+	unmapHiveCustomLocal{ |nodeid, beeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.unmapHiveCustom( nodeid, beeid );
+		};
+	}
+
 	mapHiveOutput{ |addr,name,msg|
 		var there,node;
 		there = this.findClient( addr, name.asSymbol );
@@ -1572,14 +1604,7 @@ SWDataNetworkOSC{
 			if ( node.notNil,
 				{
 					if ( there.checkForSetter(node), {
-						// old version:
-						//	if ( setters.at( msg[0] ) == addr, {
-						//		("mapping hive output" + msg).postln;
-						network.mapHiveOutput( msg[0], msg[1] );
-						// look for hive clients with bees
-						hiveDictionary.do{ |it|
-							it.mapHiveOutput( msg[0], msg[1] );
-						};
+						this.mapHiveOutputLocal( msg[0], msg[1] );
 						hiveNotifier.add( '/map/minibee/output', msg[1], there, '/mapped/minibee/output' );
 						//		addr.sendMsg( '/mapped/minibee/output', msg[0], msg[1] );
 					},{
@@ -1603,14 +1628,12 @@ SWDataNetworkOSC{
 			if ( node.notNil,
 				{
 					if ( there.checkForSetter(node), {
-						// old version:
-						//	if ( setters.at( msg[0] ) == addr, {
-						//		("mapping hive output" + msg).postln;
-						network.unmapHiveOutput( msg[0], msg[1] );
+						//	network.unmapHiveOutput( msg[0], msg[1] );
 						// look for hive clients with bees
-						hiveDictionary.do{ |it|
-							it.unmapHiveOutput( msg[0], msg[1] );
-						};
+						//	hiveDictionary.do{ |it|
+						//	it.unmapHiveOutput( msg[0], msg[1] );
+						//};
+						this.unmapHiveOutputLocal( msg[0], msg[1] );
 						hiveNotifier.add( '/unmap/minibee/output', msg[1], there, '/unmapped/minibee/output' );
 						//	addr.sendMsg( '/unmapped/minibee/output', msg[0], msg[1] );
 					},{
@@ -1634,13 +1657,11 @@ SWDataNetworkOSC{
 			if ( node.notNil,
 				{
 					if ( there.checkForSetter(node), {
-						// old version:
-						//	if ( setters.at( msg[0] ) == addr, {
-						network.mapHiveCustom( msg[0], msg[1] );
-						// look for hive clients with bees
-						hiveDictionary.do{ |it|
-							it.mapHiveCustom( msg[0], msg[1] );
-						};
+						//network.mapHiveCustom( msg[0], msg[1] );
+						//hiveDictionary.do{ |it|
+						//	it.mapHiveCustom( msg[0], msg[1] );
+						//};
+						this.mapHiveCustomLocal( msg[0], msg[1] );
 						hiveNotifier.add( '/map/minibee/custom', msg[1], there, '/mapped/minibee/custom' );
 						//		addr.sendMsg( '/mapped/minibee/custom', msg[0], msg[1] );
 					},{
@@ -1664,13 +1685,11 @@ SWDataNetworkOSC{
 			if ( node.notNil,
 				{
 					if ( there.checkForSetter(node), {
-						// old version:
-						//	if ( setters.at( msg[0] ) == addr, {
-						network.unmapHiveCustom( msg[0], msg[1] );
-						// look for hive clients with bees
-						hiveDictionary.do{ |it|
-							it.unmapHiveCustom( msg[0], msg[1] );
-						};
+						//network.unmapHiveCustom( msg[0], msg[1] );
+						//	hiveDictionary.do{ |it|
+							//	it.unmapHiveCustom( msg[0], msg[1] );
+							//};
+						this.unmapHiveCustomLocal( msg[0], msg[1] );
 						//	addr.sendMsg( '/unmapped/minibee/custom', msg[0], msg[1] );
 						hiveNotifier.add( '/unmap/minibee/custom', msg[1], there, '/unmapped/minibee/custom' );
 					},{
