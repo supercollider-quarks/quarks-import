@@ -98,7 +98,6 @@ Grid {
 					});
 			})
 			.mouseMoveAction_({|me, x, y, mod|
-				[\x, x, \y, y].postln;
 				chosennode = this.findNode(x, y);
 				if(chosennode !=nil, {  
 					if(tracknode.point != chosennode.point, {
