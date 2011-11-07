@@ -36,16 +36,16 @@ MIDIKeyboard {
 		
 		octaves.do({arg j;
 			12.do({arg i;
-				if((i == 1) || (i == 3) || (i == 6) || (i == 8) || (i == 10), {
+				if((i == 1) || (i == 3) || (i == 6) || (i == 8) || (i == 10), { // black keys
 					r = Rect(	( (pix[i]*((bounds.width/octaves) -
-								(bounds.width/octaves/7))).round(1) + ((bounds.width/octaves)*j)).round(1)+0.5,
+								(bounds.width/octaves/7))).round(1) + ((bounds.width/octaves)*j)).round(1)+1,
 							0, 
 							bounds.width/octaves/10, 
 							bounds.height/1.7);
 					keys.add(MIDIKey.new(startnote+i+(j*12), r, Color.black));
-				}, {
+				}, { // white keys
 					r = Rect(((pix[i]*((bounds.width/octaves) -
-								(bounds.width/octaves/7))).round(1) + ((bounds.width/octaves)*j)).round(1)+0.5,
+								(bounds.width/octaves/7))).round(1) + ((bounds.width/octaves)*j)).round(1),
 							0, 
 							bounds.width/octaves/7, 
 							bounds.height);
@@ -99,8 +99,10 @@ MIDIKeyboard {
 						var key;
 						key = keys[i+(j*12)];
 						if(key.type == Color.black, {
+							pen.color = Color.black;
+							pen.strokeRect(Rect(key.rect.left+0.5, key.rect.top+0.5, key.rect.width, key.rect.height));
 							pen.color = key.color;
-							pen.fillRect(Rect(key.rect.left+0.5, key.rect.top+0.5, key.rect.width+0.5, key.rect.height+0.5));
+							pen.fillRect(Rect(key.rect.left+0.5, key.rect.top+0.5, key.rect.width, key.rect.height));
 						});
 					})
 				})
