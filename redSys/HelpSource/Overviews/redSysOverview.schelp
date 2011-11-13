@@ -13,16 +13,21 @@ Not all guis are guarantied to work with SwingOSC, but non-gui classes should ru
 
 SECTION:: redEffects (sound modulators)
 TABLE::
+## link::Classes/RedEfxAuto:: || auto tuner
 ## link::Classes/RedEfxBit8:: || bitcrusher with ringmodulation
 ## link::Classes/RedEfxBitc:: || bitcrusher
 ## link::Classes/RedEfxBitx:: || bitcrusher
+## link::Classes/RedEfxBoom:: || boomeranging effect
 ## link::Classes/RedEfxComb:: || comb delay
 ## link::Classes/RedEfxComp:: || compressor
 ## link::Classes/RedEfxDelp:: || delay with pitchshift
 ## link::Classes/RedEfxDely:: || delay
 ## link::Classes/RedEfxDist:: || distortion
 ## link::Classes/RedEfxGuit:: || guitar amp
+## link::Classes/RedEfxFFTA:: || spectral gate
 ## link::Classes/RedEfxOcta:: || octavider
+## link::Classes/RedEfxPch2:: || pitch shifter
+## link::Classes/RedEfxPchN:: || pitch shifter
 ## link::Classes/RedEfxRing:: || ring modulator
 ## link::Classes/RedEfxRoom:: || reverb
 ## link::Classes/RedEfxTanh:: || distortion
@@ -30,6 +35,7 @@ TABLE::
 ## link::Classes/RedEfxTape:: || tape echo
 ## link::Classes/RedEfxWave:: || waveshaping
 ## link::Classes/RedEfxVerb:: || reverb
+## link::Classes/RedEfxVoco:: || vocoder
 ## link::Classes/RedEfxZzzz:: || limiter and check bad values
 ::
 
@@ -155,6 +161,9 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 111113:
+//added RedEfxAuto, RedEfxBoom, RedEfxFFTA, RedEfxKomp, RedEfxPch2, RedEfxPchN, RedEfxVoco
+//minor fix to RedAbstractModule - avoid multiple synthdef builds with a pdDef variable
 //--changes 110927:
 //all helpfiles converted to scdoc format
 //--changes 110920:
