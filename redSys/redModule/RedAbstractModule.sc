@@ -6,6 +6,7 @@
 RedAbstractModule {								//abstract class
 	classvar <all;
 	var <>group, <cvs, <args, <defaultAddAction;
+	var prDef;
 	*new {|out= 0, group, defaultAddAction= \addToHead|
 		^super.new.initRedAbstract(out, group, defaultAddAction);
 	}
@@ -50,7 +51,7 @@ RedAbstractModule {								//abstract class
 	out {^this.cvFromControlName(\out).value}
 	out_ {|index| this.cvFromControlName(\out).value= index}
 	cvFromControlName {|name| ^cvs[this.def.metadata[\order].detect{|x| x.key==name}.value]}
-	def {^this.class.def}
+	def {^prDef ?? {prDef= this.class.def}}
 	
 	//--for subclasses
 	*def {^this.subclassResponsibility(thisMethod)}
