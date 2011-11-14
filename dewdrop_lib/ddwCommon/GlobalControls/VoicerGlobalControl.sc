@@ -121,18 +121,8 @@ GlobalControlBase : AbstractFunction {
 		if(targetServer !== server) {
 			MethodError("Target is not on the same server as the GlobalControl.", this).throw;
 		};
-		if(autoSynth.notNil) { this.stopAuto };
-		autoSynth = this.play(thing, args, target, addAction).register;
-		if(server.notified and: { autoSynth.respondsTo(\asNodeID) }) {
-			updater = Updater(autoSynth, { |node, what|
-				if(what == \n_end) {
-					updater.remove;
-					if(node === autoSynth) {
-						autoSynth = nil;
-					};
-				}
-			});
-		};
+		// autoSynth_ takes care of important bookkeeping
+		this.autoSynth = this.play(thing, args, target, addAction);
 		^autoSynth
 	}
 	stopAuto {
@@ -146,9 +136,22 @@ GlobalControlBase : AbstractFunction {
 		};
 	}
 	autoSynth_ { |node|
-		node !? {
-			this.stopAuto;
-			autoSynth = node;
+		var updater;
+		autoSynth !? { this.stopAuto };
+		autoSynth = node;
+		// I would like to use respondsTo instead of tryPerform,
+		// but 'nil' responds to asNodeID!
+		// So I have to check the result :-|
+		if(server.notified and: { autoSynth.tryPerform(\asNodeID).notNil }) {
+			autoSynth.register;
+			updater = Updater(autoSynth, { |node, what|
+				if(what == \n_end) {
+					updater.remove;
+					if(node === autoSynth) {
+						autoSynth = nil;
+					};
+				};
+			});
 		};
 	}
 	
