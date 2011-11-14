@@ -122,11 +122,7 @@ GlobalControlBase : AbstractFunction {
 			MethodError("Target is not on the same server as the GlobalControl.", this).throw;
 		};
 		if(autoSynth.notNil) { this.stopAuto };
-if(this.index == 0) {
-	this.dumpBackTrace;
-	"^^^ DON'T PANIC, DEBUG TRACE -- automating kr bus 0".debug;
-};
-		autoSynth = this.play(thing, args, target, addAction);
+		autoSynth = this.play(thing, args, target, addAction).register;
 		if(server.notified and: { autoSynth.respondsTo(\asNodeID) }) {
 			updater = Updater(autoSynth, { |node, what|
 				if(what == \n_end) {
@@ -136,16 +132,6 @@ if(this.index == 0) {
 					};
 				}
 			});
-			// OSCpathResponder(server.addr, ['/n_end', autoSynth.asNodeID],
-			// 	{ |time, resp, msg|
-			// 			// when replacing the synth, this action could fire for the old synth
-			// 			// after the autoSynth variable changed
-			// 			// so doublecheck if the n_end node ID matches the current autoSynth
-			// 		if(autoSynth.asNodeID == msg[1]) {
-			// 			autoSynth = nil;
-			// 		};
-			// 		resp.remove;
-			// 	}).add;
 		};
 		^autoSynth
 	}
