@@ -25,11 +25,13 @@ TABLE::
 ## link::Classes/RedEfxDist:: || distortion
 ## link::Classes/RedEfxGuit:: || guitar amp
 ## link::Classes/RedEfxFFTA:: || spectral gate
+## link::Classes/RedEfxFreq:: || frequency shifter
 ## link::Classes/RedEfxOcta:: || octavider
 ## link::Classes/RedEfxPch2:: || pitch shifter
 ## link::Classes/RedEfxPchN:: || pitch shifter
 ## link::Classes/RedEfxRing:: || ring modulator
 ## link::Classes/RedEfxRoom:: || reverb
+## link::Classes/RedEfxRvrs:: || reverses sound
 ## link::Classes/RedEfxTanh:: || distortion
 ## link::Classes/RedEfxTank:: || tank reverb
 ## link::Classes/RedEfxTape:: || tape echo
@@ -151,6 +153,7 @@ TABLE::
 ## link::Classes/RedFrik:: || noise socks!
 ## link::Classes/RedDirection:: || detects inc/dec of a signal
 ## link::Classes/RedLive:: || sample and repeat
+## link::Classes/RedOverdub:: || overdub recording
 ## link::Classes/RedSequencer:: || simple sequencer
 ## link::Classes/RedSequencer2:: || simple sequencer
 ## link::Classes/RedStereo:: || panning effect
@@ -161,6 +164,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 111115:
+//added RedEfxFreq, RedEfxRvrs, RedOverdub
 //--changes 111113:
 //added RedEfxAuto, RedEfxBoom, RedEfxFFTA, RedEfxKomp, RedEfxPch2, RedEfxPchN, RedEfxVoco
 //minor fix to RedAbstractModule - avoid multiple synthdef builds with a pdDef variable

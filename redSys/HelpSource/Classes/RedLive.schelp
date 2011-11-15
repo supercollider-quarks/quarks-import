@@ -1,7 +1,7 @@
 CLASS:: RedLive
 SUMMARY:: sample and repeat
 CATEGORIES:: Red>redUGens
-RELATED:: Classes/RedTapeRecorder
+RELATED:: Classes/RedTapeRecorder, Classes/RedOverdub
 
 DESCRIPTION::
 Trigger increases counter. If counter%repeats= 0 then record, else playback

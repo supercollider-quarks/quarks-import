@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.36">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ee}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d5100d}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {text-decoration: underline ; color: #083aec}
+span.s4 {text-decoration: underline}
+span.s5 {color: #132bc3}
+span.s6 {color: #008326}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>RedOverdub</b></span><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>overdub recording</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2">see also: <a href="RedLive.html"><span class="s3">RedLive</span></a> <a href="RedTapeRecorder.html"><span class="s4">RedTapeRecorder</span></a></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*ar(buffer, in, gate, fb, atk, rel, rate)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>*kr(buffer, in, gate, fb, atk, rel, rate)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>buffer</b> - which buffer to use.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>in</b> - sound to record.<span class="Apple-converted-space">  </span>note that the number of channels must match the buffer's number of channels.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>gate</b> - 1 starts recording sound into the buffer.<span class="Apple-converted-space">  </span>0 stops.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fb</b> - scales the previous sound in the buffer.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fb= 1 will just add the new sound to what is previously there.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fb= 0.5 will scale the previous sound down 50%.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>fb= 0 will completely erase any sound previously recorded.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>atk</b> and <b>rel</b> sets the envelope of the recording.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>rate</b> controls the playbackrate.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4">//--</p>
+<p class="p5">s.boot;</p>
+<p class="p5">b= <span class="s5">Buffer</span>.alloc(s, 44100*3, 2);</p>
+<p class="p4">//click button to overdub sound</p>
+<p class="p5">a= {<span class="s5">RedOverdub</span>.ar(b, <span class="s5">SoundIn</span>.ar([0, 1]), <span class="s5">MouseButton</span>.kr)}.play;</p>
+<p class="p5">a.free;</p>
+<p class="p6"><br></p>
+<p class="p4">//setting feedback and rate - click mouse to overdub</p>
+<p class="p5">a= {<span class="s5">|fb= 1, rate= 1|</span> <span class="s5">RedOverdub</span>.ar(b, <span class="s5">SoundIn</span>.ar([0, 1]), <span class="s5">MouseButton</span>.kr, fb, rate:rate)}.play;</p>
+<p class="p4"><span class="s2">a.set(</span><span class="s6">\fb</span><span class="s2">, 0.7)<span class="Apple-tab-span">	</span></span>//leave 70% of the sound in the buffer</p>
+<p class="p4"><span class="s2">a.set(</span><span class="s6">\fb</span><span class="s2">, 0)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//completely erase what is in the buffer</p>
+<p class="p5">a.set(<span class="s6">\rate</span>, 0.9)</p>
+<p class="p5">a.set(<span class="s6">\rate</span>, -0.8)</p>
+<p class="p5">a.free</p>
+<p class="p5">b.free</p>
+<p class="p6"><br></p>
+<p class="p4">//also works in control rate</p>
+<p class="p5">b= <span class="s5">Buffer</span>.alloc(s, 1000, 1);</p>
+<p class="p5">a= {<span class="s5">|fb= 1, rate= 1|</span> <span class="s5">SinOsc</span>.ar(<span class="s5">RedOverdub</span>.kr(b, <span class="s5">SinOsc</span>.kr(0.1).exprange(100, 1000), <span class="s5">MouseButton</span>.kr, fb, rate:rate), 0, 0.2)!2}.play;</p>
+<p class="p5">a.set(<span class="s6">\fb</span>, 0.8)</p>
+<p class="p5">a.free</p>
+<p class="p5">b.free</p>
+</body>
+</html>
