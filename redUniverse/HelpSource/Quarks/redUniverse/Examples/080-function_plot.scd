@@ -35,5 +35,7 @@
 			};
 			x= x+dx;
 		}
-	}.play;
+	};
+	w.animate= true;
+	CmdPeriod.doOnce({if(w.isClosed.not, {w.close})});
 )
