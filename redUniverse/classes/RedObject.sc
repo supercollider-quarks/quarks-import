@@ -185,7 +185,7 @@ RedAgent : RedBoid {
 //--an obstacle with infinite mass
 RedRock : RedObject {
 	initRedObject {
-		mass= inf;
+		mass= 2147483647;		//was inf; but then acting as a black hole
 		super.initRedObject
 	}
 	mass_ {}
