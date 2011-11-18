@@ -190,14 +190,31 @@ MixerChannel {
 		(bundled == 0).if({	// only do this if it hasn't been done before
 				// if these groups already exist, they might be targets
 				// for other objects; therefore they must keep the same nodeID
-			fadergroup.isNil.if({
-				fadergroup = fadergroup ?? { Group.basicNew(server,
-					server.nodeAllocator.allocPerm).isRunning_(true) };
-				synthgroup = synthgroup ?? { Group.basicNew(server,
-					server.nodeAllocator.allocPerm) };
-				effectgroup = effectgroup ?? { Group.basicNew(server,
-					server.nodeAllocator.allocPerm) };
-			});
+			// either the groups already exist, in which case they might be targets
+			// so don't create new objects
+			// BUT... this is probably b/c of cmd-.
+			// in which case the server's node allocator has been killed
+			// so we need to reserve node IDs for them
+			// does that seem roundabout? perhaps so, but "in object style,
+			// the objects abstract away the IDs so they can change at any time"
+			if(fadergroup.isNil) {
+				fadergroup = Group.basicNew(server,
+					server.nodeAllocator.allocPerm).isRunning_(true);
+			} {
+				fadergroup.nodeID = server.nodeAllocator.allocPerm;
+			};
+			if(synthgroup.isNil) {
+				synthgroup = Group.basicNew(server,
+					server.nodeAllocator.allocPerm).isRunning_(true);
+			} {
+				synthgroup.nodeID = server.nodeAllocator.allocPerm;
+			};
+			if(effectgroup.isNil) {
+				effectgroup = Group.basicNew(server,
+					server.nodeAllocator.allocPerm).isRunning_(true);
+			} {
+				effectgroup.nodeID = server.nodeAllocator.allocPerm;
+			};
 			bundle.add(fadergroup.addToTailMsg(server.asTarget));
 			bundle.add(synthgroup.addToTailMsg(fadergroup));
 			bundle.add(effectgroup.addToTailMsg(fadergroup));
