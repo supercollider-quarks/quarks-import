@@ -1,11 +1,12 @@
 Freesound2{
 
-	classvar <base_uri 		  		  = "http://www.freesound.org/api";
+	classvar <base_uri 		           = "http://www.freesound.org/api";
 	classvar <uri_sounds              = "/sounds/";
 	classvar <uri_sounds_search       = "/sounds/search/";
-	classvar <uri_sound               = "/sounds/%";
-	classvar <uri_users               = "/people/";
-	classvar <uri_user                = "/people/%";
+	classvar <uri_sound               = "/sounds/%/";
+	classvar <uri_sound_analysis      = "/sounds/%/analysis/";
+	classvar <uri_sound_siilar        = "/sounds/%/similar/";	classvar <uri_users               = "/people/";
+	classvar <uri_user                = "/people/%/";
 	classvar <uri_user_sounds         = "/people/%/sounds/";
 	classvar <uri_user_packs          = "/people/%/packs/";
 	classvar <uri_packs               = "/packs/";
@@ -60,8 +61,9 @@ FS2Req{
 		if (params.isNil,{params = IdentityDictionary.new});
 		params.put(\api_key,Freesound2.api_key);
 		paramsArray=params.keys(Array).collect({|k|k.asString++"="++params[k].asString.urlEncode});
-		paramsString=paramsArray.join("&");		
-		cmd = "curl '"++uri++"?"++paramsString+"'";
+		paramsString=paramsArray.join("&");		paramsString.postln;
+		cmd = "curl '"++uri++"?"++paramsString++"'";
+		cmd.postln;
 		result = cmd.unixCmdGetStdOut.replace("\n","");
 		response = Freesound2.parseJSON(result);
 		^response;		
@@ -82,7 +84,30 @@ FS2Sound : FS2Obj{
 	retrieve{|path, doneAction|
 		FS2Req.retrieve(this[\serve],path++"/"++this[\original_filename],doneAction);
 	}
+	retrieve_preview{|path, doneAction, quality="hq", format="mp3"|
+		var key = "%-%-%".format("preview",quality,format).asSymbol;
+		var fname = this[\original_filename].splitext[0]++"."++format;
+		FS2Req.retrieve(this[key],path++"/"++fname,doneAction);
+	}
+	get_analysis{|filter, showAll=false|
+		var url = Freesound2.uri(Freesound2.uri_sound_analysis,this[\id]);
+		var params = nil;
+		if(filter.notNil){url = url ++filter++"/"};
+		if(showAll){params = ('all':1)};
+		url.postln;
+		^FS2Req.get(url,params);
+	}
+	retrieve_analysis_frames{|path, doneAction|
+		var fname = this[\original_filename].splitext[0]++".json";
+		FS2Req.retrieve(this[\analysis_frames],path++"/"++fname,doneAction);
+	}
+	get_similar{|preset="lowlevel", num_results=15|
+		var params = ('preset':preset,'num_results':num_results);
+		var url = Freesound2.uri(Freesound2.uri_sound_siilar,this[\id]);
+		^FS2Req.get(url,params);
+	}
 }
+
 
 +String{
 	urlEncode{
