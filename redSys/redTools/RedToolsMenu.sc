@@ -183,7 +183,7 @@ RedToolsMenu {
 				height= " ".bounds(fnt).height+2.14*names.size;
 			}
 		);
-		w= Window("_redTools", Rect(position.x, position.y, width, height).postln, false)
+		w= Window("_redTools", Rect(position.x, position.y, width, height), false)
 			/*.alpha_(GUI.skins[\redFrik].unfocus)*/	//temp remove until 3.5 bug fixed
 			.front;
 		ListView(w, w.view.bounds.width@w.view.bounds.height)
