@@ -11,7 +11,7 @@ RedEfxFFTA : RedEffectModule {
 			chain= PV_MagAbove(chain, min);
 			chain= PV_MagBelow(chain, max);
 			chain= PV_MagSmooth(chain, smooth);
-			dry= IFFT(chain);
+			wet= IFFT(chain);
 			ReplaceOut.ar(out, XFade2.ar(dry, wet, mix, gain));
 		}, metadata: (
 			specs: (
