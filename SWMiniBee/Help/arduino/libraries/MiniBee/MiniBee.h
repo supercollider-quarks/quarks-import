@@ -1,3 +1,22 @@
+/**
+ * Copyright (c) 2009-11 Marije Baalman, Vincent de Belleval. All rights reserved
+ *
+ * This file is part of the MiniBee library.
+ *
+ * MiniBee is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MiniBee is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MiniBee.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 // #include <ADXL345.h>
 
 #ifndef MiniBee_h
@@ -110,18 +129,20 @@ class MiniBee {
 // 		void ParseCustom( char * msg ){ Serial.println( msg ); };
 		
 		void begin(long); //init function
-		void doLoopStep(void); // loop function
+		void doLoopStep(bool usedelay = true ); // loop function
 		
 		void setRemoteConfig( bool onoff );
+		void setRemoteConfig( uint8_t level );
 
 		void setCustomPins( uint8_t * ids, uint8_t * sizes, uint8_t n ); // sets pins to custom configuration
 		void setCustomPin( uint8_t id, uint8_t size ); // sets a pin to custom configuration
 		void setCustomInput( uint8_t noInputs, uint8_t size );
+
 		void addCustomData( uint8_t * cdata, uint8_t n );
 		void addCustomData( char * cdata, uint8_t n );
 		void addCustomData( int * cdata, uint8_t n );
-		void setCustomCall( void (*customFunc)(char * ) );
 
+		void setCustomCall( void (*customFunc)(char * ) );
 		void setDataCall( void (*dataFunc)(char * ) );
 
 		void readXBeeSerial(void);
@@ -277,7 +298,7 @@ class MiniBee {
 		uint8_t status;
 		
 		bool loopback;
-		bool remoteConfig;
+		uint8_t remoteConfig;
 
 		char *serial;
 // 		char *dest_addr;
