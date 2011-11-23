@@ -5,10 +5,13 @@ import sys
 import os
 import datetime
 
+import optparse
 #print time
 
 #from pydon 
 import minibeexml
+from hiveserial import HiveSerial # AT based communication
+from hiveserialapi import HiveSerialAPI # API based communication (in development)
 
 from collections import deque
 
@@ -34,348 +37,27 @@ def find_key(dic, val):
 
 # beginning of serial interface:
 
-class HiveSerial(object):
-  def __init__(self, serial_port, baudrate = 19200 ):
-    #self.init_with_serial( mid, serial, libv, revision, caps)
-    try:
-      self.serial = serial.Serial( serial_port, baudrate, timeout=0, rtscts=1)  # open first serial port
-      self.serialOpened = True
-    except:
-      self.serialOpened = False
-      print( "could not open serial port", serial_port )
-      print( "Please make sure your coordinator node is connected to the computer and pass in the right serial port location upon startup, e.g. \'python swpydonhive.py -s /dev/ttyUSB1\'" )
-      os._exit(1)
-      #raise SystemExit
-      #sys.exit()
-      #raise KeyboardInterrupt
-    #self.hive = hive
-    self.escape = False
-    self.incType = 0
-    self.incMsg = []
-    self.hiveMsgId = 0
-    self.logAction = None
-    self.verbose = False
-    
-  def set_verbose( self, onoff ):
-    self.verbose = onoff
-    if onoff:
-      print( self.serial )
-      print( self.serial.portstr )       # check which port was really used
-
-    
-  def set_hive( self, hive ):
-    self.hive = hive
-    
-  def announce( self ):
-    msg = bytearray(b" A\n")
-    msg[0] = chr( 92 )
-    #print msg
-    self.serial.write( msg )
-
-  def quit( self ):
-    msg = bytearray(b" Q\n")
-    msg[0] = chr( 92 )
-    #self.serial.write( msg )
-    self.serial.close()
-    
-  def incMsgID( self ):
-    self.hiveMsgId = self.hiveMsgId + 1
-    if self.hiveMsgId > 255:
-      self.hiveMsgId = 0
-
-  def appendToMsg( self, msg, dat ):
-    dat = int( dat )
-    if dat == 10:
-      msg += chr( 92 )
-    if dat == 13:
-      msg += chr( 92 )
-    if dat == 92:
-      msg += chr( 92 )
-    msg += chr( dat )
-    return msg
-
-  def send_me( self, ser, onoff ):
-    if self.verbose:
-      print( "sending bee me", ser, onoff )
-    self.incMsgID()
-    msg = bytearray(b" M")
-    msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    msg += msg.join( ser.split() )
-    msg = self.appendToMsg( msg, onoff )
-    msg += b"\n"
-    self.serial.write( msg )
-
-  def send_id( self, ser, nodeid, configid ):
-    if self.verbose:
-      print( "sending bee id", ser, nodeid, configid )
-    self.incMsgID()
-    msg = bytearray(b" I")
-    msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    msg += msg.join( ser.split() )
-    msg = self.appendToMsg( msg, nodeid )
-    if configid > 0 :
-      msg = self.appendToMsg( msg, configid )
-    msg += b"\n"
-    self.serial.write( msg )
-
-  def send_config( self, nodeid, configuration ):
-    if self.verbose:
-      print( "sending configuration", configuration )
-    self.incMsgID()
-    msg = bytearray(b" C")
-    msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    msg = self.appendToMsg( msg, nodeid )
-    for conf in configuration:
-      msg = self.appendToMsg( msg, conf )
-    msg += b"\n"
-    #print msg
-    self.serial.write( msg )
-
-  #def send_data( self, mid, data ):
-    #self.incMsgID()
-    ##self.hiveMsgId = self.hiveMsgId + 1
-    #msg = bytearray(b" O")
-    #msg[0] = chr( 92 )
-    #msg = self.appendToMsg( msg, mid )
-    #msg = self.appendToMsg( msg, self.hiveMsgId )
-    ##msg += chr(configid)
-    #for dat in data:
-      #msg = self.appendToMsg( msg, dat )
-    #msg += b"\n"
-    #self.serial.write( msg )
-    #if self.verbose:
-      #print( "sending data to minibee", mid, data, msg )
-
-  def send_msg( self, msg ):
-    self.serial.write( msg )
-    if self.verbose:
-      print( "sending message", msg )
-
-  def send_custom( self, mid, data ):
-    self.incMsgID()
-    #self.hiveMsgId = self.hiveMsgId + 1
-    msg = bytearray(b" E")
-    msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, mid )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    #msg += chr(configid)
-    for dat in data:
-      msg = self.appendToMsg( msg, dat )
-    msg += b"\n"
-    self.serial.write( msg )
-    if self.verbose:
-      print( "sending custom data to minibee", mid, data, msg )
-    
-  def send_xmsg( self, mid, data ):
-    #self.hiveMsgId = self.hiveMsgId + 1
-    self.incMsgID()
-    msg = bytearray(b" X")
-    msg[0] = chr( 92 )
-    #msg[1] = mtype
-    msg = self.appendToMsg( msg, mid )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    #msg += chr(configid)
-    for dat in data:
-      msg = self.appendToMsg( msg, dat )
-    msg += b"\n"
-    self.serial.write( msg )
-
-  def send_run( self, mid, run ):
-    #self.hiveMsgId = self.hiveMsgId + 1
-    self.incMsgID()
-    msg = bytearray(b" O")
-    msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, mid )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    if run:
-      msg += chr( 1 )
-    else:
-      msg += chr( 0 )
-    msg += b"\n"
-    self.serial.write( msg )
-
-  def send_loop( self, mid, loop ):
-    #self.hiveMsgId = self.hiveMsgId + 1
-    self.incMsgID()
-    msg = bytearray(b" L")
-    msg[0] = chr( 92 )
-    msg = self.appendToMsg( msg, mid )
-    msg = self.appendToMsg( msg, self.hiveMsgId )
-    if loop:
-      msg += chr( 1 )
-    else:
-      msg += chr( 0 )
-    msg += b"\n"
-    self.serial.write( msg )
-
-  #def parse_string( string ):
-    #length = len( string )
-    #esc = string.find( '\\' )
-    ##msgtype = string[1]  
-    #print length, esc #, msgtype
-
-  def parse_serial( self ):
-    length = len( self.incMsg )
-    if self.verbose:
-      print( "parsing serial", length )
-    if length == 18:
-      ser = "".join( map(chr, self.incMsg[1:length-3] ) )
-      libv = self.incMsg[length-3]
-      rev = self.incMsg[length-2]
-      caps = self.incMsg[length-1]
-      if self.verbose:
-	print( ser )
-      self.hive.new_bee( ser, libv, rev, caps )
-    else:
-      ser = "".join( map(chr, self.incMsg[1:length-3] ) )
-      libv = self.incMsg[length-3]
-      rev = self.incMsg[length-2]
-      caps = self.incMsg[length-1]
-      print( "received malformatted serial number", ser, self.incMsg )
-    #print "end parsing serial"
-
-  def wait_config( self ):
-    if self.verbose:
-      print( "waiting configuration" )
-      print( self.incMsg )
-    self.hive.wait_config( self.incMsg[1], self.incMsg[2] ) # minibee id, config id
-    #print "end waiting configuration"
-
-  def confirm_config( self ):
-    if self.verbose:
-      print( "confirming configuration" )
-      print( self.incMsg )
-    self.hive.check_config( self.incMsg[1], self.incMsg[2], self.incMsg[3:] )
-    #print "end confirming configuration"
-
-  def recv_data( self ):
-    #print "receiving data"
-    #print self.incMsg
-    if len(self.incMsg) > 3:
-      self.hive.new_data( self.incMsg[1], self.incMsg[2], self.incMsg[3:] )
-    #print "end receiving data"
-    if self.verbose:
-      print( "receiving data from minibee", self.incMsg[1], self.incMsg[2], self.incMsg[3:] )
-
-  def active( self ):
-    #print "receiving data"
-    #print self.incMsg
-    if len(self.incMsg) == 2:
-      self.hive.bee_active( self.incMsg[1], self.incMsg[2] )
-    #print "end receiving data"
-    if self.verbose:
-      print( "active minibee", self.incMsg[1], self.incMsg[2] )
-
-  def pausing( self ):
-    #print "receiving data"
-    #print self.incMsg
-    if len(self.incMsg) == 2:
-      self.hive.bee_pausing( self.incMsg[1], self.incMsg[2] )
-    #print "end receiving data"
-    if self.verbose:
-      print( "pausing minibee", self.incMsg[1], self.incMsg[2] )
-
-
-  def display_data( self ):
-    #print "receiving data"
-    if self.verbose:
-      print( chr(self.incMsg[0]), self.incMsg )
-    #self.hive.new_data( self.incMsg[1], self.incMsg[2], self.incMsg[3:] )
-    #print "end receiving data"
-
-  def set_log_action( self, action ):
-    self.logAction = action
-
-  def log_data( self ):
-    #print "receiving data"
-    if self.logAction != None :
-      self.logAction( self.incMsg )
-    #else:
-      #print self.incMsg
-    #self.hive.new_data( self.incMsg[1], self.incMsg[2], self.incMsg[3:] )
-    #print "end receiving data"
-
-  def parse_message( self ):
-    #print self.incType
-    #print self.incType, chr( self.incType ), self.incMsg
-    if type( self.incType ) == int:
-      incTypeChr = chr( self.incType )
-    else:
-      incTypeChr = 'u' # unknown message
-    #incTypeChr = self.incType
-    if incTypeChr == 's' : # serial from minibee device
-      self.parse_serial()
-    elif incTypeChr == 'w' : # minibee waiting for configuration
-      self.wait_config()
-    elif incTypeChr == 'c' : # minibee confirming configuration
-      self.confirm_config()
-    elif incTypeChr == 'd' : # minibee sending data
-      self.recv_data()
-    elif incTypeChr == 'a' : # minibee confirming it's active
-      self.active()
-    elif incTypeChr == 'p' : # minibee confirming it's pausing
-      self.pausing()
-    elif incTypeChr == 'i' : # minibee sending info (debugging mostly)
-      self.display_data()
-    elif incTypeChr == 'x' : # minibee sending info (debugging mostly)
-      self.display_data()
-    else:
-      print( incTypeChr, self.incMsg )
-    self.log_data()
-    # add loopback
-    #res = messageTypes.get( chr(incType) )()
-    
-  def read_byte( self, nrbytes ):
-    #global escape, incMsg, incType
-    b = self.serial.read( nrbytes )
-    if len( b ) > 0 :
-      for byt in b:
-	newbyte = ord( byt )
-	#print len(b), byt, newbyte
-	if self.escape:
-	  if newbyte in [ 10, 13, 92 ] :
-	    self.incMsg.append( newbyte )
-	  else :
-	    self.incMsg.append( newbyte )
-	    self.incType = newbyte
-	  self.escape = False
-	else :
-	  if newbyte == 92:
-	    self.escape = True
-	  elif newbyte == 10:
-	    #end of line
-	    self.parse_message()
-	    self.incMsg = []
-	    self.incType = 'n'
-	  else :
-	    self.incMsg.append( newbyte )
-
-  def read_data( self ):
-    bytes_toread = self.serial.inWaiting()  
-    self.read_byte( bytes_toread )
-
-# end of HiveSerial
-
 
 # beginning of MiniHive:
 
 class MiniHive(object):
-  def __init__(self, serial_port, baudrate = 57600 ):
+  def __init__(self, serial_port, baudrate = 57600, apiMode = False ):
     #self.minibeeCount = 0
     self.name = ""
     self.bees = {}
     self.mapBeeToSerial = {}
     self.configs = {}
-    self.serial = HiveSerial( serial_port, baudrate )
+    self.apiMode = apiMode
+    if self.apiMode:
+      self.serial = HiveSerialAPI( serial_port, baudrate )
+    else:
+      self.serial = HiveSerial( serial_port, baudrate )
     self.serial.set_hive( self )
     self.serial.announce()
     self.running = True
     self.newBeeAction = None
     self.verbose = False
-    self.redundancy = 5
+    self.redundancy = 1
     
   def set_verbose( self, onoff ):
     self.verbose = onoff
@@ -405,7 +87,8 @@ class MiniHive(object):
 
   def run( self ):
     while self.running:
-      self.serial.read_data()
+      if not self.apiMode:
+	self.serial.read_data()
       for beeid, bee in self.bees.items():
 	#print beeid, bee
 	bee.countsincestatus = bee.countsincestatus + 1
@@ -530,7 +213,27 @@ class MiniHive(object):
       if self.newBeeAction:
 	self.newBeeAction( minibee )
 
-  def new_bee( self, serial, libv, rev, caps ):
+  def new_bee_no_config( self, serial ):
+    firsttimenewbee = False
+    # see if we already have this serial number in our config or minibee set, if so use that minibee
+    #self.minibeeCount += 1
+    if serial in self.mapBeeToSerial:
+      # we already know the minibee, so send it its id and configid
+      minibee = self.bees[ self.mapBeeToSerial[ serial ] ]
+    else:
+      # new minibee, so generate a new id
+      mid = self.get_new_minibee_id()
+      minibee = MiniBee( mid, serial )
+      minibee.set_lib_revision( 4, 'D', 0 )
+      self.bees[ mid ] = minibee
+      self.mapBeeToSerial[ serial ] = mid
+      firsttimenewbee = True
+      
+    self.serial.send_id( serial, minibee.nodeid )
+    if self.newBeeAction: # and firsttimenewbee:  
+      self.newBeeAction( minibee )
+
+  def new_bee( self, serial, libv, rev, caps, remConf = True ):
     firsttimenewbee = False
     # see if we already have this serial number in our config or minibee set, if so use that minibee
     #self.minibeeCount += 1
@@ -547,26 +250,30 @@ class MiniHive(object):
       firsttimenewbee = True
      
     #print minibee
-    if minibee.cid > 0:
-      self.serial.send_id( serial, minibee.nodeid, minibee.cid )
-      minibee.set_status( 'waiting' )
-      minibee.waiting = 0
-    elif firsttimenewbee: # this could be different behaviour! e.g. wait for a new configuration to come in
-      print( "no configuration defined for minibee", serial, minibee.nodeid, minibee.name )
-      filename ="newconfig_" + time.strftime("%Y_%b_%d_%H-%M-%S", time.localtime()) + ".xml"
-      self.write_to_file( filename )
-      print( "configuration saved to " + filename + ". Please adapt (at least define a config id other than -1 for the node), save to a new name," )
-      print( "and restart the program with that configuration file. Alternatively send a message with a new configuration (via osc, or via the datanetwork)." )
-      print( "Check documentation for details." )
+    if remConf == 1:
+      if minibee.cid > 0:
+	self.serial.send_id( serial, minibee.nodeid, minibee.cid )
+	#minibee.set_status( 'waiting' )
+	minibee.waiting = 0
+      elif firsttimenewbee: # this could be different behaviour! e.g. wait for a new configuration to come in
+	print( "no configuration defined for minibee", serial, minibee.nodeid, minibee.name )
+	filename ="newconfig_" + time.strftime("%Y_%b_%d_%H-%M-%S", time.localtime()) + ".xml"
+	self.write_to_file( filename )
+	print( "configuration saved to " + filename + ". Please adapt (at least define a config id other than -1 for the node), save to a new name," )
+	print( "and restart the program with that configuration file. Alternatively send a message with a new configuration (via osc, or via the datanetwork)." )
+	print( "Check documentation for details." )
       #sys.exit()
+    else:
+      self.serial.send_id( serial, minibee.nodeid )
+      if firsttimenewbee: # this could be different behaviour! e.g. wait for a new configuration to come in
+	print( "no configuration defined for minibee", serial, minibee.nodeid, minibee.name )
     if self.newBeeAction: # and firsttimenewbee:
       self.newBeeAction( minibee )
     
   def set_newBeeAction( self, action ):
     self.newBeeAction = action
   
-  
-  def new_data( self, beeid, msgid, data ):
+  def new_data( self, beeid, msgid, data, rssi = 0 ):
     if beeid in self.bees:
       self.bees[beeid].parse_data( msgid, data, self.verbose )
     else:
@@ -713,6 +420,7 @@ class MiniBeeConfig(object):
     self.dataOutSizes = []
     self.logDataFormat = []
     self.logDataLabels = []
+    self.digitalIns = 0
 
   #def getConfigForFile( self ):
     #fileconf = {}
@@ -834,6 +542,7 @@ class MiniBeeConfig(object):
 #MiniBeeConfig
   def check_config( self, libv, rev ):
     #print "-----CHECKING CONFIG------"
+    self.digitalIns = 0
     self.dataInSizes = []
     self.dataScales = []
     self.dataOffsets = []
@@ -848,6 +557,19 @@ class MiniBeeConfig(object):
       digpins = MiniBeeConfig.digitalPins[1:]
       anapins = MiniBeeConfig.analogPins
     #print( digpins, anapins )
+
+    if libv >= 4:
+      for pinname in digpins + anapins: # iterate over all pins
+	if pinname in self.pins:
+	  if self.pins[ pinname ] == 'DigitalIn':
+	    self.digitalIns = self.digitalIns + 1
+	    #self.dataInSizes.append( 1 )
+	    self.dataScales.append( 1 )
+	    self.dataOffsets.append( 0 )
+	    self.logDataFormat.append( 1 )
+	    self.logDataLabels.append( self.pinlabels[ pinname ] )
+	  elif self.pins[ pinname ] == 'DigitalOut':
+	    self.dataOutSizes.append( 1 )
 
     for pinname in anapins: # iterate over analog pins
       if pinname in self.pins:
@@ -870,16 +592,17 @@ class MiniBeeConfig(object):
 	if self.pins[ pinname ] == 'AnalogOut':
 	  self.dataOutSizes.append( 1 )
 
-    for pinname in digpins + anapins: # iterate over all pins
-      if pinname in self.pins:
-	if self.pins[ pinname ] == 'DigitalIn':
-	  self.dataInSizes.append( 1 )
-	  self.dataScales.append( 1 )
-	  self.dataOffsets.append( 0 )
-	  self.logDataFormat.append( 1 )
-	  self.logDataLabels.append( self.pinlabels[ pinname ] )
-	elif self.pins[ pinname ] == 'DigitalOut':
-	  self.dataOutSizes.append( 1 )
+    if libv <= 3:
+      for pinname in digpins + anapins: # iterate over all pins
+	if pinname in self.pins:
+	  if self.pins[ pinname ] == 'DigitalIn':
+	    self.dataInSizes.append( 1 )
+	    self.dataScales.append( 1 )
+	    self.dataOffsets.append( 0 )
+	    self.logDataFormat.append( 1 )
+	    self.logDataLabels.append( self.pinlabels[ pinname ] )
+	  elif self.pins[ pinname ] == 'DigitalOut':
+	    self.dataOutSizes.append( 1 )
 
     for pinname in anapins: # iterate over analog pins
       if pinname in self.pins:
@@ -971,8 +694,7 @@ class MiniBee(object):
     self.customLabels = []
     self.customDataScales = []
     self.customDataOffsets = []
-    
-  
+      
   def incMsgID( self ):
     self.msgID = self.msgID + 1
     self.msgID = self.msgID%255
@@ -1069,44 +791,38 @@ class MiniBee(object):
   def set_first_action( self, action ):
     self.firstDataAction = action
 
-  def create_msg( self, data, serPort ):
+  def create_msg( self, msgtype, data, serPort ):
     self.incMsgID()
-    msg = bytearray(b" O")
-    msg[0] = chr( 92 )
-    msg = serPort.appendToMsg( msg, self.nodeid )
-    msg = serPort.appendToMsg( msg, self.msgID )
-    for dat in data:
-      msg = serPort.appendToMsg( msg, dat )
-    msg += b"\n"
-    return msg
+    msgdata = serPort.create_beemsg( msgtype, self.msgID, data, self.nodeid )
+    return msgdata
 
   def repeat_output( self, serPort, redundancy ):
     if self.outMessage != None:
       if self.outrepeated < redundancy :
 	self.outrepeated = self.outrepeated + 1
-	serPort.send_msg( self.outMessage )
+	serPort.send_msg( self.outMessage, self.nodeid )
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
 
   def send_output( self, serPort, data ):
     if len( data ) == sum( self.config.dataOutSizes ) :
       self.outdata = data
       self.outrepeated = 0
-      self.outMessage = self.create_msg( self.outdata, serPort )
-      serPort.send_msg( self.outMessage )
+      self.outMessage = self.create_msg( 'O', self.outdata, serPort )
+      serPort.send_msg( self.outMessage, self.nodeid )
       #serPort.send_data_inclid( self.nodeid, self.msgID, data )
 
   def repeat_custom( self, serPort, redundancy ):
     if self.customMessage != None:
       if self.customrepeated < redundancy :
 	self.customrepeated = self.customrepeated + 1
-	serPort.send_msg( self.customMessage )
+	serPort.send_msg( self.customMessage, self.nodeid )
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
 
   def send_custom( self, serPort, data ):
     self.customdata = data
     self.customrepeated = 0
-    self.customMessage = self.create_msg( self.customdata, serPort )
-    serPort.send_msg( self.customMessage )
+    self.customMessage = self.create_msg( 'E', self.customdata, serPort )
+    serPort.send_msg( self.customMessage, self.nodeid )
     #if len( data ) == sum( self.config.customOutSizes ) :
     #serPort.send_custom( self.nodeid, data )
 
@@ -1133,9 +849,26 @@ class MiniBee(object):
     for sz in self.customDataInSizes:
       parsedData.append( data[ idx : idx + sz ] )
       idx += sz
+
+    if self.config.digitalIns > 0:
+      # digital data as bits
+      nodigbytes = self.config.digitalIns / 8 + 1
+      digstoparse = self.config.digitalIns
+      digitalData = data[idx : idx + nodigbytes]
+      idx += nodigbytes
+      for byt in digitalData:
+	for j in range(0, min(digstoparse,8) ):
+	  parsedData.append( [ min( (byt & ( 1 << j )), 1 ) ] )
+	digstoparse -= 8
+    #else: 
+      # digital data as bytes
+
     for sz in self.config.dataInSizes:
       parsedData.append( data[ idx : idx + sz ] )
       idx += sz
+
+    #print parsedData
+
     for index, dat in enumerate( parsedData ):
       if len( dat ) == 3 :
 	scaledData.append(  float( dat[0] * 65536 + dat[1]*256 + dat[2] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
@@ -1148,16 +881,16 @@ class MiniBee(object):
       if self.firstDataAction != None:
 	self.firstDataAction( self.nodeid, self.data )
     self.set_status( 'receiving' )
-    if len(self.data) == ( len( self.config.dataInSizes ) + len( self.customDataInSizes ) ):
+    if len(self.data) == ( len( self.config.dataScales ) + len( self.customDataInSizes ) ):
       if self.dataAction != None :
 	self.dataAction( self.data, self.nodeid )
       if self.logAction != None :
 	self.logAction( self.nodeid, self.getLabels(), self.getLogData() )
       if verbose:
-	print( "data length ok", len(self.data), len( self.config.dataInSizes ), len( self.customDataInSizes ) )
+	print( "data length ok", len(self.data), len( self.config.dataScales ), len( self.customDataInSizes ) )
     #print self.nodeid, data, parsedData, scaledData
     else:
-      print( "data length not ok", len(self.data), len( self.config.dataInSizes ), len( self.customDataInSizes ) )
+      print( "data length not ok", len(self.data), len( self.config.dataScales ), len( self.customDataInSizes ) )
     if verbose:
       print( "data parsed and scaled", self.nodeid, self.data ) 
     
@@ -1179,7 +912,7 @@ class MiniBee(object):
 
   def getInputSize( self ):
     if self.cid > 0:
-      return len( self.config.dataInSizes )
+      return len( self.config.dataScales )
     return 0
 
   def getOutputSize( self ):
@@ -1193,6 +926,7 @@ class MiniBee(object):
       self.config.check_config( self.libversion, self.revision )
       #print confirmconfig
     #print( "CONFIG INFO", configid, confirmconfig, verbose, len( confirmconfig ) )
+      self.digitalIns = 0
       self.dataScales = []
       self.dataOffsets = []
       if len( confirmconfig ) > 4:
@@ -1275,6 +1009,8 @@ if __name__ == "__main__":
   parser = optparse.OptionParser(description='Create a pydonhive to get data from the minibee network.')
   parser.add_option('-c','--config', action='store', type="string", dest="config",default="pydon/configs/hiveconfig.xml",
 		  help='the name of the configuration file for the minibees [default:%s]'% 'pydon/configs/hiveconfig.xml')
+  parser.add_option('-a','--apimode', action='store', type="string", dest="apimode",default=False,
+		  help='use API mode for communication with the minibees [default:%s]'% False)
   parser.add_option('-m','--nr_of_minibees', type=int, action='store',dest="minibees",default=20,
 		  help='the number of minibees in the network [default:%i]'% 20)
   parser.add_option('-v','--verbose', action='store',dest="verbose",default=False,
@@ -1287,23 +1023,22 @@ if __name__ == "__main__":
   def printDataAction( data, nodeid ):
     print( nodeid, data )
 
-  hive = MiniHive( options.serial, 57600 )
-  hive.set_id_range( 1, options.minibees )
+  hive = MiniHive( options.serial, 57600, options.apimode )
+  hive.set_id_range( 2, options.minibees + 1 )
+  hive.set_verbose( options.verbose )
   
   hive.load_from_file( options.config )
-  hive.bees[ 1 ].set_action( printDataAction )
+  #hive.bees[ 1 ].set_action( printDataAction )
   hive.bees[ 2 ].set_action( printDataAction )
-  hive.bees[ 3 ].set_action( printDataAction )
-  hive.bees[ 4 ].set_action( printDataAction )
+  #hive.bees[ 3 ].set_action( printDataAction )
+  #hive.bees[ 4 ].set_action( printDataAction )
   #print hive
     
   #hive.write_to_file( "hiveconfig2.xml" )
-  
-  hive.run()
+  try:
+    hive.run()
+  except (SystemExit, RuntimeError, KeyboardInterrupt, IOError ) :
+    hive.exit()
+    print( "Done; goodbye" )    
+    sys.exit()
 
-    #x = ser.readline()
-    #if len( x ) > 0:
-      #print x
-      #hive_parsestring( x )
-
-  hive.exit()

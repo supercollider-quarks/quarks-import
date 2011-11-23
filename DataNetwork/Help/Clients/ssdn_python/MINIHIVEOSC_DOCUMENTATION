@@ -20,7 +20,6 @@ and see below for on the fly configuration.
 ---------------------------------
      COMMAND LINE OPTIONS
 ---------------------------------
-
 Usage: minihiveosc.py [options]
 
 Create a program that speaks OSC to communicate with the minibee network.
@@ -29,9 +28,11 @@ Options:
   -h, --help            show this help message and exit
   -p PORT, --port=PORT  the port on which the minihiveosc will listen
                         [default:57600]
+  -i IP, --ip=IP        the ip on which the client will listen
+                        [default:0.0.0.0]
   -c CONFIG, --config=CONFIG
                         the name of the configuration file for the minibees
-                        [default:hiveconfig.xml]
+                        [default:pydon/configs/hiveconfig.xml]
   -m MINIBEES, --nr_of_minibees=MINIBEES
                         the number of minibees in the network [default:10]
   -d HOST, --host_ip=HOST
@@ -44,7 +45,11 @@ Options:
                         verbose printing [default:0]
   -s SERIAL, --serial=SERIAL
                         the serial port [default:/dev/ttyUSB0]
-
+  -b BAUDRATE, --baudrate=BAUDRATE
+                        the serial port [default:57600]
+  -a APIMODE, --apimode=APIMODE
+                        use API mode for communication with the minibees
+                        [default:False]
 
 ---------------------------------
     ON THE FLY configuration

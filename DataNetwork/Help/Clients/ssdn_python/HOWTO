@@ -8,6 +8,7 @@ Dependencies are:
 * python (version 2.6 or higher) - e.g. http://www.python.org/download/releases/2.7.1/
 * pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
 * pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/ - download: http://sourceforge.net/projects/pyserial/files/pyserial/2.5/pyserial-2.5.tar.gz/download
+* python-xbee-api (version 2.0.0 or higher) - (included in the packaged version)
 
 python :
 check which version you have:
@@ -20,17 +21,21 @@ pyOSC :
   $ cd pyosc
   $ sudo ./setup.py install
 
-pyserial:
-Follow the instructions at:
-  http://pyserial.sourceforge.net/pyserial.html#installation
+XBee-2.0.0 :
+  $ cd XBee-2.0.0
+  $ sudo ./setup.py install
 
+pydon:
+ $ cd pydon
+ $ sudo python setup.py install
 
-(proper setup script for pydon itself to follow)
+pyserial will be installed automatically if it is not yet installed.
+
 
 ==========
 
-go to the hive directory
-  $ cd hive
+go to the pydon directory
+  $ cd pydon
   
 start:
   $ python swpydonhive.py
@@ -45,16 +50,28 @@ Options:
   -h, --help            show this help message and exit
   -p PORT, --port=PORT  the port on which the client will listen
                         [default:57600]
+  -i IP, --ip=IP        the ip on which the client will listen
+                        [default:0.0.0.0]
   -n NAME, --name=NAME  the name of the client in the datanetwork
                         [default:pydonhive]
   -c CONFIG, --config=CONFIG
                         the name of the configuration file for the minibees
-                        [default:hiveconfig.xml]
+                        [default:pydon/configs/hiveconfig.xml]
   -m MINIBEES, --nr_of_minibees=MINIBEES
-                        the number of minibees in the network [default:10]
+                        the number of minibees in the network [default:20]
+  -o MBOFFSET, --minibee_offset=MBOFFSET
+                        the offset of the number range for the minibees in the
+                        network [default:1]
   -d HOST, --host_ip=HOST
                         the ip address of the datanetwork host
                         [default:127.0.0.1]
+  -v VERBOSE, --verbose=VERBOSE
+                        verbose printing [default:0]
   -s SERIAL, --serial=SERIAL
                         the serial port [default:/dev/ttyUSB0]
+  -b BAUDRATE, --baudrate=BAUDRATE
+                        the serial port [default:57600]
+  -a APIMODE, --apimode=APIMODE
+                        use API mode for communication with the minibees
+                        [default:False]
 

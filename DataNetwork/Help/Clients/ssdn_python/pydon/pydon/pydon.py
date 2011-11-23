@@ -462,6 +462,8 @@ class DataNetworkOSC(object):
   def info_node( self, nodeid, label, size, dntype ):
     #print "info_node", nodeid, label, size, dntype
     self.network.infoNode( nodeid, label, size, dntype )
+    self.call_callback( 'info', nodeid )
+
 
   def info_slot( self, nodeid, slotid, label, dntype ):
     self.network.infoSlot( nodeid, slotid, label, dntype )

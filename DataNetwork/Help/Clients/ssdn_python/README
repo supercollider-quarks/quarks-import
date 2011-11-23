@@ -8,32 +8,7 @@ Dependencies are:
 * python (version 2.6 or higher) - e.g. http://www.python.org/download/releases/2.7.1/
 * pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
 * pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/
-
-The source can be found at:
-git@195.88.32.63:pydonhive.git 
-
-So:
-git clone git@195.88.32.63:pydonhive.git
-
-You then get a folder pydonhive:
-go into the folder hive:
-
-You have a number of files in there:
-
-Python files / classes:
-pydon.py         - python datanetwork client
-pydonhive.py     - python hive manager
-minibeexml.py    - python classes that read the config file
-swpydonhive.py   - python class that combines the hive manager and datanetwork client
-
-Python scripts:
-
-hivelogger.py    - writes incoming data to a log file
-plothivelog.py   - plots a graph from a log file
-
-Config files:
-hiveconfig.xml   - example config file
-myhiveconfig.xml   - example config file
+* python-xbee-api (version 2.0.0 or higher) - (included in the packaged version)
 
 
 CREATING THE CONFIG FILE:
@@ -49,9 +24,7 @@ The top level structure is:
 
 Then there are elements for each MiniBee you have:
 
-  <minibee id="1" revision="B" serial="13A200403BF27B" libversion="3" caps="7">
-    <config id="1" name="accelero" />
-  </minibee>
+  <minibee id="1" revision="B" serial="13A200403BF27B" libversion="3" caps="7" configuration="1" />
 
 So the ID, the revision of the board, the serial number of its XBee (see back side of XBee),
 the library version and the capabilities are defined. So the elements you want to change are
