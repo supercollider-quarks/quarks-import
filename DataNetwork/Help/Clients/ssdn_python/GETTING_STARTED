@@ -36,6 +36,9 @@ $ python swpydonhive.py -c nameofconfigfile.xml -s /dev/ttyUSB0
 
 /dev/ttyUSB0 is the address of your serial port, it will be different on a mac (something like: /dev/tty-ASSFADF0002332).
 
+If you are using the API mode on the XBees then you start with:
+$ python swpydonhive.py -c nameofconfigfile.xml -s /dev/ttyUSB0 -a True
+
 If the DataNetwork host is running on another machine:
 $ python swpydonhive.py -c nameofconfigfile.xml -d 192.168.0.7
 where 192.168.0.7 is the IP address of the DataNetwork.

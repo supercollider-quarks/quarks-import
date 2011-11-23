@@ -51,3 +51,15 @@ n.sendMsg( "/minihive/configuration/twi", 1, 2, 'ADXL345', 'Versnelling');
 
 n.sendMsg( "/minihive/configuration/pin", 1, 'A1', 1, 'Light');
 n.sendMsg( "/minihive/configuration/twi", 1, 2, 1, 'Versnelling');
+
+
+
+// mini hive junxion:
+
+~o3 = OSCresponderNode( nil, "/minibee/data/1", { |t,r,msg| msg.postln; } ).add;
+
+Tdef( \x,{ loop{
+	n.sendMsg( "/jXcontrol/1", 0.54);
+	0.1.wait;
+}});
+Tdef( \x ).stop

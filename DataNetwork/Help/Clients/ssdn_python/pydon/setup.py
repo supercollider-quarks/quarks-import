@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pydon',
-      version='0.9',
+      version='0.11',
       description='Python packages for the Sense/Stage DataNetwork',
       long_description="""The Sense/Stage DataNetwork can be used to communicate between programs,
       such as SuperCollider, Max/MSP, PureData, Processing, C++ and Python, as well as to communicate
@@ -18,6 +18,7 @@ setup(name='pydon',
       packages=find_packages(),
       install_requires=[
          'pyOSC>=0.3',
-         'pyserial>=2.5'
+         'pyserial>=2.5',
+         'xbee>=2.0.0'
     ]
 )

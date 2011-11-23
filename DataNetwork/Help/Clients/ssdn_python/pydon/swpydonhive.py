@@ -11,11 +11,11 @@ from pydon import pydon
 from pydon import pydonhive
 
 class SWPydonHive( object ):
-  def __init__(self, hostip, myport, myip, myname, swarmSize, serialPort, serialRate, config, idrange, verbose ):
+  def __init__(self, hostip, myport, myip, myname, swarmSize, serialPort, serialRate, config, idrange, verbose, apiMode ):
     self.datanetwork = pydon.DataNetwork( hostip, myport, myname, 1, swarmSize, myip )
     self.datanetwork.setVerbose( verbose )
     
-    self.hive = pydonhive.MiniHive( serialPort, serialRate )
+    self.hive = pydonhive.MiniHive( serialPort, serialRate, apiMode )
     self.hive.set_id_range( idrange[0], idrange[1] )
     self.hive.load_from_file( config )
     self.hive.set_verbose( verbose )
@@ -49,14 +49,18 @@ class SWPydonHive( object ):
       print( "Waiting for Server-thread to finish" )
       self.datanetwork.osc.thread.join() ##!!!
       print( "Done; goodbye" )
+      self.hive.exit()
       sys.exit()
 
 # mapping support
   def mapMiniBee( self, nodeid, mid ):
-    self.datanetwork.osc.subscribeNode( nodeid, lambda nid: self.setMapAction( nodeid, mid ) )
+    self.datanetwork.osc.subscribeNode( nodeid, lambda nid: self.setMapAction( nid, mid ) )
   
   def setMapAction( self, nodeid, mid ):
-    self.datanetwork.nodes[ nodeid ].setAction( lambda data: self.dataNodeDataToMiniBee( data, mid ) )
+    if nodeid not in self.datanetwork.nodes:
+      self.datanetwork.osc.add_callback( 'info', nodeid, lambda nid: self.setMapAction( nid, mid ) )
+    else:
+      self.datanetwork.nodes[ nodeid ].setAction( lambda data: self.dataNodeDataToMiniBee( data, mid ) )
 
   def unmapMiniBee( self, nodeid, mid ):
     self.datanetwork.osc.unsubscribeNode( nodeid )
@@ -137,6 +141,8 @@ if __name__ == "__main__":
 		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
   parser.add_option('-b','--baudrate', action='store',type=int,dest="baudrate",default=57600,
 		  help='the serial port [default:%i]'% 57600)
+  parser.add_option('-a','--apimode', action='store', type="string", dest="apimode",default=False,
+		  help='use API mode for communication with the minibees [default:%s]'% False)
 
   (options,args) = parser.parse_args()
   #print args.accumulate(args.integers)
@@ -149,6 +155,6 @@ if __name__ == "__main__":
   print( options )
   print( "--------------------------------------------------------------------------------------" )
   
-  swhive = SWPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [options.mboffset,options.minibees], options.verbose )
+  swhive = SWPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [options.mboffset,options.minibees], options.verbose, options.apimode )
   
   swhive.start()

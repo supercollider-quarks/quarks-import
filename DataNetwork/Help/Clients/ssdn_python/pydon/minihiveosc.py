@@ -245,9 +245,9 @@ class MiniHiveOSC(object):
 
 
 class SWMiniHiveOSC( object ):
-  def __init__(self, hostip, hostport, myip, myport, swarmSize, serialPort, serialRate, config, idrange, verbose ):
+  def __init__(self, hostip, hostport, myip, myport, swarmSize, serialPort, serialRate, config, idrange, verbose, apiMode ):
     
-    self.hive = pydonhive.MiniHive( serialPort, serialRate )
+    self.hive = pydonhive.MiniHive( serialPort, serialRate, apiMode )
     self.hive.set_id_range( idrange[0], idrange[1] )
     self.hive.load_from_file( config )
     self.hive.set_verbose( verbose )
@@ -267,6 +267,7 @@ class SWMiniHiveOSC( object ):
       print( "Waiting for Server-thread to finish" )
       self.osc.thread.join() ##!!!
       print( "Done; goodbye" )
+      self.hive.exit()
       sys.exit()
 
   
@@ -321,6 +322,8 @@ if __name__ == "__main__":
 		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
   parser.add_option('-b','--baudrate', action='store',type=int,dest="baudrate",default=57600,
 		  help='the serial port [default:%i]'% 57600)
+  parser.add_option('-a','--apimode', action='store', type="string", dest="apimode",default=False,
+		  help='use API mode for communication with the minibees [default:%s]'% False)
 
   (options,args) = parser.parse_args()
   #print args.accumulate(args.integers)
@@ -329,6 +332,6 @@ if __name__ == "__main__":
   #print( options.host )
   
   print( "MiniHiveOSC - communicating via OSC with the MiniBee network" )
-  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose )
+  swhive = SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose, options.apimode )
   print( "Created OSC listener at (%s,%i) and OSC sender to (%s,%i) and opened serial port at %s. Now waiting for messages."%(options.ip, options.port, options.host, options.hport, options.serial ) )
   swhive.start()
