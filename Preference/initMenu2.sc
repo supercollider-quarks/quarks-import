@@ -1,5 +1,5 @@
 + Preference {
-	
+/*	
 	*initMenu {
 		
 		Platform.case(\osx, {
@@ -56,4 +56,5 @@
 			};
 		})
 	}
+*/
 }
