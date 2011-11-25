@@ -357,7 +357,16 @@ class MiniHive(object):
 	mid = self.get_new_minibee_id( bee[ 'mid' ] )
 	if mid == bee[ 'mid' ]:
 	  self.mapBeeToSerial[ ser ] = bee[ 'mid' ]
-	  self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ] )
+	  if self.apiMode:
+	    if len( bee['serial'] ) == 14:
+	      self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], "00" + bee[ 'serial' ] )
+	    else:
+	      self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ] )
+	  else: # not api mode
+	    if len( bee['serial'] ) == 16:
+	      self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ][2:] )
+	    else:
+	      self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ] )
 	  self.bees[ bee[ 'mid' ] ].set_lib_revision( bee[ 'libversion' ], bee[ 'revision' ], bee[ 'caps' ] )
 	else:
 	  print "warning trying to assign duplicate minibee id %i"%bee[ 'mid' ]
@@ -897,7 +906,7 @@ class MiniBee(object):
   def getLabels( self ):
     labels = self.customLabels
     labels.extend( self.config.logDataLabels )
-    print( labels )
+    #print( labels )
     #labels = self.config.pinlabels
     #labels.extend( self.config.twilabels )
     return labels

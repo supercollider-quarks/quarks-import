@@ -130,7 +130,7 @@ class HiveConfigFile():
 	  
 	  ### backward compatibility
 	  for conf in bee.getiterator("config"):
-	    print conf
+	    #print conf
 	    hiveconfig['bees'][ bee.get( "serial" ) ][ "configid" ] = int( conf.get( "id" ) )
 	    hiveconfig['bees'][ bee.get( "serial" ) ][ "configname" ] = conf.get( "name" )
 	  #for conf in bee.getiterator("configuration"):
@@ -146,7 +146,7 @@ class HiveConfigFile():
 	      hiveconfig['bees'][ bee.get( "serial" ) ][ "customdata" ][ int( data.get( "id" ) ) ][ "offset" ] = int( data.get( "offset" ) )
 	      hiveconfig['bees'][ bee.get( "serial" ) ][ "customdata" ][ int( data.get( "id" ) ) ][ "scale" ] = int( data.get( "scale" ) )
 	      hiveconfig['bees'][ bee.get( "serial" ) ][ "customdata" ][ int( data.get( "id" ) ) ][ "name" ] = data.get( "name" )
-	  print hiveconfig['bees'][ bee.get( "serial" ) ]
+	  #print hiveconfig['bees'][ bee.get( "serial" ) ]
 
 	hiveconfig['configs'] = {}
 	for configs in node.getiterator("configuration"):
