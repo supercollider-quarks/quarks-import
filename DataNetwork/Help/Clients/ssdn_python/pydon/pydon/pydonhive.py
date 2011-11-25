@@ -876,9 +876,10 @@ class MiniBee(object):
       parsedData.append( data[ idx : idx + sz ] )
       idx += sz
 
-    #print parsedData
+    #print parsedData, self.dataScales, self.customDataScales
 
     for index, dat in enumerate( parsedData ):
+      #print index, dat
       if len( dat ) == 3 :
 	scaledData.append(  float( dat[0] * 65536 + dat[1]*256 + dat[2] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
       if len( dat ) == 2 :
@@ -921,7 +922,7 @@ class MiniBee(object):
 
   def getInputSize( self ):
     if self.cid > 0:
-      return len( self.config.dataScales )
+      return len( self.dataScales )
     return 0
 
   def getOutputSize( self ):
@@ -934,10 +935,10 @@ class MiniBee(object):
     if configid == self.cid:
       self.config.check_config( self.libversion, self.revision )
       #print confirmconfig
-    #print( "CONFIG INFO", configid, confirmconfig, verbose, len( confirmconfig ) )
+      #print( "CONFIG INFO", configid, confirmconfig, verbose, len( confirmconfig ) )
       self.digitalIns = 0
-      self.dataScales = []
-      self.dataOffsets = []
+      #self.dataScales = []
+      #self.dataOffsets = []
       if len( confirmconfig ) > 4:
 	customIns = confirmconfig[5]
 	customDataSize = confirmconfig[6]
@@ -950,6 +951,8 @@ class MiniBee(object):
 	  # there is custom config info in the configuration file, so we take the data from there
 	  myindex = 0
 	  customError = False
+	  self.dataScales = self.customDataScales
+	  self.dataOffsets = self.customDataOffsets
 	  for c in self.customDataInSizes:
 	    #print c,myindex
 	    #if ( self.customDataInSizes 
@@ -966,7 +969,8 @@ class MiniBee(object):
 	      self.customDataInSizes.append( customPinCfgs[i*2 + 1] )
 	  for i in range( customIns ):
 	    self.customDataInSizes[i] = (customDataSize - customPinSizes) / customIns
-
+	  self.dataScales = []
+	  self.dataOffsets = []
 	  for size in self.customDataInSizes:
 	    self.dataOffsets.append( 0 )
 	    self.dataScales.append( 1 )
