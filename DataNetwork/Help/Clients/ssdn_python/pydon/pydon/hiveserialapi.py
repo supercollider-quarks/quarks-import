@@ -107,10 +107,12 @@ class HiveSerialAPI(object):
     )
 
   def remoteatresponse_handler(self, name, packet):
-    print "Remote AT response: ", packet
+    if self.verbose:
+      print "Remote AT response: ", packet
 
   def rfdata_handler(self, name, packet):
-    print "RFData Received: ", packet
+    if self.verbose:
+      print "RFData Received: ", packet
     if packet['rf_data'][0] == 'd' : # minibee sending data
       self.recv_data( packet[ 'rf_data' ][1:], packet[ 'source_addr'], packet['rssi'] )
     elif packet['rf_data'][0] == 's':
@@ -119,7 +121,8 @@ class HiveSerialAPI(object):
       else:
 	self.parse_serial( packet[ 'rf_data' ][2:10], ord( packet[ 'rf_data' ][10] ), packet[ 'rf_data' ][11], ord( packet[ 'rf_data' ][12] ), 1 )
     elif packet['rf_data'][0] == 'w':
-      print( "wait config", packet[ 'rf_data' ][2], packet[ 'rf_data' ][3] )
+      if self.verbose:
+	print( "wait config", packet[ 'rf_data' ][2], packet[ 'rf_data' ][3] )
       self.hive.wait_config( ord(packet[ 'rf_data' ][2]), ord(packet[ 'rf_data' ][3]) )
     elif packet['rf_data'][0] == 'c': # configuration confirmation
       self.hive.check_config( ord(packet[ 'rf_data' ][2]), ord(packet[ 'rf_data' ][3] ), [ ord(x) for x in packet[ 'rf_data' ][4:] ] )
@@ -217,7 +220,7 @@ class HiveSerialAPI(object):
     datalist = [ msgtype ]
     datalist.append( chr( self.hiveMsgId ) )
     datalist.extend( datalistin )
-    print datalist, datalistin
+    #print datalist, datalistin
     data = ''.join( datalist )
     hrm = struct.pack('>H', rmmy)
     #print( hrm, datalist, data )
