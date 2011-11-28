@@ -11,13 +11,3 @@
 		StatusBox.post(this)
 	}
 }
-
-
-+ Main {
-	shutdown { // at recompile, quit
-		StatusBox.clearDefault;
-		Server.quitAll;
-		this.platform.shutdown;
-		super.shutdown;
-	}
-}
