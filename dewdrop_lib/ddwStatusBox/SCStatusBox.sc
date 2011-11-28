@@ -10,6 +10,15 @@ StatusBox : SCViewHolder {
 	classvar	<default;
 	var	<>display,
 		strToPost = "", notScheduled = true;
+
+	*initClass {
+		// actually I'm not sure this is *really* necessary,
+		// since all classvars are destroyed on shutdown anyway,
+		// but it was in the old code so... eh...
+		ShutDown.add {
+			StatusBox.clearDefault;
+		}
+	}
 	
 	*new { arg argParent, argBounds;
 		^super.new.init(argParent, argBounds)
