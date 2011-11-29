@@ -67,6 +67,21 @@ class DataNetworkOSC(object):
     self.osc.addMsgHandler( "/mapped/minibee/custom", self.handler_mapped_minibee_custom )
     self.osc.addMsgHandler( "/unmapped/minibee/custom", self.handler_unmapped_minibee_custom )    
 
+    #begin# map to broadcast bee
+    self.osc.addMsgHandler( "/map/minihive/output", self.handler_map_minihive )
+    self.osc.addMsgHandler( "/unmap/minihive/output", self.handler_unmap_minihive )    
+
+    self.osc.addMsgHandler( "/map/minihive/custom", self.handler_map_minihive_custom )
+    self.osc.addMsgHandler( "/unmap/minihive/custom", self.handler_unmap_minihive_custom )    
+
+    self.osc.addMsgHandler( "/mapped/minihive/output", self.handler_mapped_minihive )
+    self.osc.addMsgHandler( "/unmapped/minihive/output", self.handler_unmapped_minihive )    
+
+    self.osc.addMsgHandler( "/mapped/minihive/custom", self.handler_mapped_minihive_custom )
+    self.osc.addMsgHandler( "/unmapped/minihive/custom", self.handler_unmapped_minihive_custom )    
+
+    #end# map to broadcast bee
+
     self.osc.addMsgHandler( "/info/minibee", self.handler_info_minibee )
     self.osc.addMsgHandler( "/status/minibee", self.handler_status_minibee )
     self.osc.addMsgHandler( "/info/hive", self.handler_info_hive )
@@ -243,6 +258,7 @@ class DataNetworkOSC(object):
     self.set_registered_hive( False )
     print( "Unregistered as hive client:", args )
 
+
   #@make_method('/map/minibee/output', 'ii')
   def handler_map_minibee( self, path, types, args, source ):
     self.map_minibee( args[0], args[1] )
@@ -282,6 +298,51 @@ class DataNetworkOSC(object):
   def handler_unmapped_minibee_custom( self, path, types, args, source ):
     self.unmapped_minibee_custom( args[0], args[1] )
     print( "Unmapped Minibee custom:", args )
+
+
+### map to hive ###
+
+  #@make_method('/map/minihive/output', 'ii')
+  def handler_map_minihive( self, path, types, args, source ):
+    self.map_minihive( args[0] )
+    print( "Map minihive:", args )
+
+  #@make_method('/unmap/minihive/output', 'ii')
+  def handler_unmap_minihive( self, path, types, args, source ):
+    self.unmap_minihive( args[0] )
+    print( "Unmap Minihive:", args )
+
+  #@make_method('/map/minihive/custom', 'ii')
+  def handler_map_minihive_custom( self, path, types, args, source ):
+    self.map_minihive_custom( args[0] )
+    print( "Map minihive custom:", args )
+
+  #@make_method('/unmap/minihive/custom', 'ii')
+  def handler_unmap_minihive_custom( self, path, types, args, source ):
+    self.unmap_minihive_custom( args[0] )
+    print( "Unmap Minihive custom:", args )
+
+  #@make_method('/mapped/minihive/output', 'ii')
+  def handler_mapped_minihive( self, path, types, args, source ):
+    self.mapped_minihive( args[0] )
+    print( "Mapped minihive:", args )
+
+  #@make_method('/unmapped/minihive/output', 'ii')
+  def handler_unmapped_minihive( self, path, types, args, source ):
+    self.unmapped_minihive( args[0] )
+    print( "Unmapped Minihive:", args )
+
+  #@make_method('/mapped/minihive/custom', 'ii')
+  def handler_mapped_minihive_custom( self, path, types, args, source ):
+    self.mapped_minihive_custom( args[0] )
+    print( "Mapped minihive custom:", args )
+
+  #@make_method('/unmapped/minihive/custom', 'ii')
+  def handler_unmapped_minihive_custom( self, path, types, args, source ):
+    self.unmapped_minihive_custom( args[0] )
+    print( "Unmapped Minihive custom:", args )
+
+### end map to hive
 
   #@make_method('/info/minibee', None )
   def handler_info_minibee( self, path, types, args, source ):
@@ -709,6 +770,23 @@ class DataNetworkOSC(object):
   def unmapped_minibee_custom( self, nodeid, mid ):
     print( "unmapped minibee custom", nodeid, mid )
 
+
+  # receiving confirmation of mapped minihive
+  def mapped_minihive( self, nodeid ):
+    print( "mapped minihive output", nodeid )
+
+  # receiving confirmation of mapped minihive
+  def unmapped_minihive( self, nodeid ):
+    print( "unmapped minihive output", nodeid )
+
+  # receiving confirmation of mapped minihive
+  def mapped_minihive_custom( self, nodeid ):
+    print( "mapped minihive custom", nodeid )
+
+  # receiving confirmation of mapped minihive
+  def unmapped_minihive_custom( self, nodeid ):
+    print( "unmapped minihive custom", nodeid )
+
   # receiving minibee information
   def info_minibee( self, mid, nin, nout ):
     if self.verbose:
@@ -760,6 +838,40 @@ class DataNetworkOSC(object):
     # unmap data from subscribed node to minibee's custom output
     self.network.unmapCustomAction( nodeid, mid )
     self.sendMessage( "/unmapped/minibee/custom", [ nodeid, mid ] )    
+
+
+  # receiving map request output
+  def map_minihive( self, nodeid ):
+    #self.subscribeNode( nodeid )
+    # map data from subscribed node to minihive's data output
+    self.network.mapAction( nodeid, 0xFFFF )
+    self.sendMessage( "/mapped/minihive/output", [ nodeid ] )
+    #msg = liblo.Message( "/mapped/minihive/output", self.port, self.name, nodeid, mid )
+    #self.sendMessage( msg )
+    #del msg
+
+  # receiving map request custom
+  def map_minihive_custom( self, nodeid ):
+    #self.subscribeNode( nodeid )
+    # map data from subscribed node to minihive's custom output
+    self.network.mapCustomAction( nodeid, 0xFFFF )
+    self.sendMessage( "/mapped/minihive/custom", [ nodeid ] )
+    #msg = liblo.Message( "/mapped/minihive/custom", self.port, self.name, nodeid, mid )
+    #self.sendMessage( msg )
+    #del msg
+
+  # receiving unmap request output
+  def unmap_minihive( self, nodeid ):
+    # unmap data from subscribed node to minihive's data output
+    self.network.unmapAction( nodeid, 0xFFFF )
+    self.sendMessage( "/unmapped/minihive/output", [ nodeid ] )
+
+  # receiving map request custom
+  def unmap_minihive_custom( self, nodeid ):
+    # unmap data from subscribed node to minihive's custom output
+    self.network.unmapCustomAction( nodeid, 0xFFFF )
+    self.sendMessage( "/unmapped/minihive/custom", [ nodeid ] )    
+
 
   def setMiniBeeConfiguration( self, config ):
     if not self.network.hive == None:

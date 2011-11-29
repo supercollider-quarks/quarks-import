@@ -58,6 +58,7 @@ class MiniHive(object):
     self.newBeeAction = None
     self.verbose = False
     self.redundancy = 1
+    self.create_broadcast_bee()
     
   def set_verbose( self, onoff ):
     self.verbose = onoff
@@ -212,6 +213,14 @@ class MiniHive(object):
       minibee.waiting = 0
       if self.newBeeAction:
 	self.newBeeAction( minibee )
+	
+  def create_broadcast_bee( self ):
+    mid = 0xFFFF;
+    minibee = MiniBee( mid, serial )
+    minibee.set_lib_revision( 5, 'D', 0 )
+    self.bees[ mid ] = minibee
+    if self.newBeeAction: # and firsttimenewbee:  
+      self.newBeeAction( minibee )    
 
   def new_bee_no_config( self, serial ):
     firsttimenewbee = False
@@ -224,7 +233,7 @@ class MiniHive(object):
       # new minibee, so generate a new id
       mid = self.get_new_minibee_id()
       minibee = MiniBee( mid, serial )
-      minibee.set_lib_revision( 4, 'D', 0 )
+      minibee.set_lib_revision( 5, 'D', 0 )
       self.bees[ mid ] = minibee
       self.mapBeeToSerial[ serial ] = mid
       firsttimenewbee = True
@@ -813,12 +822,18 @@ class MiniBee(object):
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
 
   def send_output( self, serPort, data ):
-    if len( data ) == sum( self.config.dataOutSizes ) :
+    if self.cid > 0:
+      if len( data ) == sum( self.config.dataOutSizes ) :
+	self.outdata = data
+	self.outrepeated = 0
+	self.outMessage = self.create_msg( 'O', self.outdata, serPort )
+	serPort.send_msg( self.outMessage, self.nodeid )
+	#serPort.send_data_inclid( self.nodeid, self.msgID, data )
+    elif self.nodeid == 0xFFFF: #broadcast node
       self.outdata = data
       self.outrepeated = 0
       self.outMessage = self.create_msg( 'O', self.outdata, serPort )
       serPort.send_msg( self.outMessage, self.nodeid )
-      #serPort.send_data_inclid( self.nodeid, self.msgID, data )
 
   def repeat_custom( self, serPort, redundancy ):
     if self.customMessage != None:

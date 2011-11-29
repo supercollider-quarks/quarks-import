@@ -74,7 +74,10 @@ class SWPydonHive( object ):
     self.datanetwork.nodes[ nodeid ].setAction( None )
 
   def setMapCustomAction( self, nodeid, mid ):
-    self.datanetwork.nodes[ nodeid ].setAction( lambda data: self.dataNodeDataToMiniBeeCustom( data, mid ) )
+    if nodeid not in self.datanetwork.nodes:
+      self.datanetwork.osc.add_callback( 'info', nodeid, lambda nid: self.setMapCustomAction( nid, mid ) )
+    else:
+      self.datanetwork.nodes[ nodeid ].setAction( lambda data: self.dataNodeDataToMiniBeeCustom( data, mid ) )
 
 # labeling
   def set_labelbase( self, newlabel ):
