@@ -145,4 +145,25 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 		// hive client should unsubscribe from nodeid, and unmap it from the custom output of the beeid
 	}
 
+
+	mapHiveAllOutput{ |nodeid|
+		addr.sendMsg( '/map/minihive/output', nodeid );
+		// hive client should subscribe to nodeid, and map it to the output of the broadcast bee
+	}
+
+	mapHiveAllCustom{ |nodeid|
+		addr.sendMsg( '/map/minihive/custom', nodeid );
+		// hive client should subscribe to nodeid, and map it to the output of the broadcast bee
+	}
+
+	unmapHiveAllOutput{ |nodeid|
+		addr.sendMsg( '/unmap/minihive/output', nodeid );
+		// hive client should subscribe to nodeid, and map it to the output of the broadcast bee
+	}
+
+	unmapHiveAllCustom{ |nodeid|
+		addr.sendMsg( '/unmap/minihive/custom', nodeid );
+		// hive client should subscribe to nodeid, and map it to the output of the broadcast bee
+	}
+
 }

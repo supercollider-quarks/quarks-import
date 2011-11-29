@@ -169,7 +169,7 @@ SWDataNetwork{
 		}
 	}
 
-	configBee{ |miniBee,cid|
+	configureBee{ |miniBee,cid|
 		var mb;
 		if ( osc.notNil ){
 			if ( miniBee.isKindOf( SWMiniBee ) ){
@@ -202,6 +202,80 @@ SWDataNetwork{
 	loadConfig{ |filename|
 		if ( osc.notNil ){
 			osc.loadConfigLocal( filename );
+		}
+	}
+
+	mapHive{ |node,type=\output|
+		var id;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		switch( type,
+			'custom', { this.mapHiveAllCustom(id)},
+			'output', { this.mapHiveAllOutput(id)}
+		);
+	}
+
+	unmapHive{ |node,type=\output|
+		var id;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		switch( type,
+			'custom', { this.unmapHiveAllCustom(id)},
+			'output', { this.unmapHiveAllOutput(id)}
+		);
+	}
+
+	mapHiveAllOutput{ |nodeID|
+		/*
+		if ( hive.notNil ){
+			hive.mapBee( miniBee, this.nodes[ nodeID ], \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+		*/
+		if ( osc.notNil ){
+			osc.mapHiveAllOutputLocal( nodeID );
+		}
+	}
+
+	unmapHiveAllOutput{ |nodeID|
+		/*
+		if ( hive.notNil ){
+			hive.mapBee( miniBee, this.nodes[ nodeID ], \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+		*/
+		if ( osc.notNil ){
+			osc.unmapHiveAllOutputLocal( nodeID );
+		}
+	}
+
+	mapHiveAllCustom{ |nodeID|
+		/*
+		if ( hive.notNil ){
+			hive.mapBee( miniBee, this.nodes[ nodeID ], \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+		*/
+		if ( osc.notNil ){
+			osc.mapHiveAllCustomLocal( nodeID );
+		}
+	}
+
+	unmapHiveAllCustom{ |nodeID|
+		/*
+		if ( hive.notNil ){
+			hive.mapBee( miniBee, this.nodes[ nodeID ], \output );
+			//	this.nodes[ nodeID ].action = { |data| hive.setOutput( miniBee, data) };
+		};
+		*/
+		if ( osc.notNil ){
+			osc.unmapHiveAllCustomLocal( nodeID );
 		}
 	}
 

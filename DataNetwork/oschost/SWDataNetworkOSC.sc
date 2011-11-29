@@ -284,6 +284,7 @@ SWDataNetworkOSC{
 				}{ verbose.value( 0, "missing port in message"); };
 			}),
 
+			// mapping datanodes to minibees
 			OSCresponderNode( nil, '/map/minibee/output', { |t,r,msg,addr|
 				verbose.value( 1, msg );
 				if ( msg.size > 1 ){
@@ -326,6 +327,53 @@ SWDataNetworkOSC{
 					addr.port = msg[1]; this.unmappedHiveCustom( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ verbose.value( 0, "missing port in message" ); };			}),
 
+			// end mapping datanodes to minibees
+
+			// mapping datanodes to broadcat of bees
+			OSCresponderNode( nil, '/map/minihive/output', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mapHiveAllOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/map/minihive/custom', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mapHiveAllCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/unmap/minihive/output', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmapHiveAllOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/unmap/minihive/custom', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmapHiveAllCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+
+			OSCresponderNode( nil, '/mapped/minihive/output', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mappedHiveAllOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/mapped/minihive/custom', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.mappedHiveAllCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/unmapped/minihive/output', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmappedHiveAllOutput( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+			OSCresponderNode( nil, '/unmapped/minihive/custom', { |t,r,msg,addr|
+				verbose.value( 1, msg );
+				if ( msg.size > 1 ){
+					addr.port = msg[1]; this.unmappedHiveAllCustom( addr, msg[2], msg.copyToEnd( 3 ) );
+				}{ verbose.value( 0, "missing port in message" ); };			}),
+
+
+			/// obsolete :
 			OSCresponderNode( nil, '/map/minibee/pwm', { |t,r,msg,addr|
 				verbose.value( 1, msg );
 				if ( msg.size > 1 ){
@@ -336,6 +384,7 @@ SWDataNetworkOSC{
 				if ( msg.size > 1 ){
 					addr.port = msg[1]; this.mapHiveDig( addr, msg[2], msg.copyToEnd( 3 ) );
 				}{ verbose.value( 0, "missing port in message" ); };			}),
+			/// end - obsolete
 
 			// CLIENT HIVE MANAGEMENT
 
@@ -1119,6 +1168,67 @@ SWDataNetworkOSC{
 		});
 	}
 
+	mappedHiveAllOutput{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/mapped/minihive/output", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/map/minihive/output', msg[0] );
+			}{
+				this.errorMsg( addr, "/mapped/minihive/output", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	unmappedHiveAllOutput{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/unmapped/minihive/output", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/unmap/minihive/output', msg[0] );
+			}{
+				this.errorMsg( addr, "/unmapped/minihive/output", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	mappedHiveAllCustom{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/mapped/minihive/custom", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/map/minihive/custom', msg[0] );
+			}{
+				this.errorMsg( addr, "/mapped/minihive/custom", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+	unmappedHiveAllCustom{ |addr,name,msg|
+		// from minihive should be sent on to the client that requested it
+		var client,res;
+		client = this.findClient( addr, name.asSymbol );
+		if ( client.isNil, {
+			this.errorMsg( addr, "/unmapped/minihive/custom", 15, [name] );
+		},{
+			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
+				hiveNotifier.successResult( '/unmap/minihive/custom', msg[0] );
+			}{
+				this.errorMsg( addr, "/unmapped/minihive/custom", 16, [name,msg[0]] );
+			}
+		});
+	}
+
+
 	createConfigLocal{ |cid,config|
 		// find hive that has this minibee
 		hiveDictionary.do{ |it|
@@ -1593,6 +1703,39 @@ SWDataNetworkOSC{
 		};
 	}
 
+	mapHiveAllOutputLocal{ |nodeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.mapHiveAllOutput( nodeid );
+		};
+	}
+
+	unmapHiveAllOutputLocal{ |nodeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.unmapHiveAllOutput( nodeid );
+		};
+	}
+
+	mapHiveAllCustomLocal{ |nodeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.mapHiveAllCustom( nodeid );
+		};
+	}
+
+	unmapHiveAllCustomLocal{ |nodeid|
+		//	network.mapHiveOutput( nodeid, beeid ); // TODO: still needed?
+		// look for hive clients with bees
+		hiveDictionary.do{ |it|
+			it.unmapHiveAllCustom( nodeid );
+		};
+	}
+
+
 	mapHiveOutput{ |addr,name,msg|
 		var there,node;
 		there = this.findClient( addr, name.asSymbol );
@@ -1701,6 +1844,119 @@ SWDataNetworkOSC{
 			this.logMsg( "/unmap/minibee/custom:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
 		});
 	}
+
+
+
+
+	mapHiveAllOutput{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/map/minihive/output", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						this.mapHiveAllOutputLocal( msg[0] );
+						hiveNotifier.add( '/map/minihive/output', msg[0], there, '/mapped/minibee/output' );
+						//		addr.sendMsg( '/mapped/minibee/output', msg[0], msg[1] );
+					},{
+						this.errorMsg( addr, "/map/minihive/output", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/map/minihive/output", 5, msg );
+				});
+			this.logMsg( "/map/minihive/output:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+	unmapHiveAllOutput{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/unmap/minihive/output", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						//	network.unmapHiveOutput( msg[0], msg[1] );
+						// look for hive clients with bees
+						//	hiveDictionary.do{ |it|
+						//	it.unmapHiveOutput( msg[0], msg[1] );
+						//};
+						this.unmapHiveAllOutputLocal( msg[0] );
+						hiveNotifier.add( '/unmap/minihive/output', msg[0], there, '/unmapped/minihive/output' );
+						//	addr.sendMsg( '/unmapped/minibee/output', msg[0], msg[1] );
+					},{
+						this.errorMsg( addr, "/unmap/minihive/output", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/unmap/minihive/output", 5, msg );
+				});
+			this.logMsg( "/unmap/minihive/output:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+	mapHiveAllCustom{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/map/minihive/custom", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						//network.mapHiveCustom( msg[0], msg[1] );
+						//hiveDictionary.do{ |it|
+						//	it.mapHiveCustom( msg[0], msg[1] );
+						//};
+						this.mapHiveAllCustomLocal( msg[0] );
+						hiveNotifier.add( '/map/minihive/custom', msg[0], there, '/mapped/minibee/custom' );
+						//		addr.sendMsg( '/mapped/minibee/custom', msg[0], msg[1] );
+					},{
+						this.errorMsg( addr, "/map/minihive/custom", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/map/minihive/custom", 5, msg );
+				});
+			this.logMsg( "/map/minihive/custom:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
+	unmapHiveAllCustom{ |addr,name,msg|
+		var there,node;
+		there = this.findClient( addr, name.asSymbol );
+		if ( there.isNil, {
+			this.errorMsg( addr, "/unmap/minihive/custom", 15, [name] );
+		},{
+			msg[0] = msg[0].asInteger;
+			node = network.nodes.at( msg[0] );
+			if ( node.notNil,
+				{
+					if ( there.checkForSetter(node), {
+						//network.unmapHiveCustom( msg[0], msg[1] );
+						//	hiveDictionary.do{ |it|
+							//	it.unmapHiveCustom( msg[0], msg[1] );
+							//};
+						this.unmapHiveAllCustomLocal( msg[0] );
+						//	addr.sendMsg( '/unmapped/minibee/custom', msg[0], msg[1] );
+						hiveNotifier.add( '/unmap/minihive/custom', msg[0], there, '/unmapped/minibee/custom' );
+					},{
+						this.errorMsg( addr, "/unmap/minihive/custom", 4, msg );
+					});
+				},{
+					this.errorMsg( addr, "/unmap/minihive/custom", 5, msg );
+				});
+			this.logMsg( "/unmap/minihive/custom:" + msg[0] + " from client with IP"+addr.ip+"and port"+addr.port );
+		});
+	}
+
 
 	// is deprecated:
 	mapHivePWM{ |addr,name,msg|
