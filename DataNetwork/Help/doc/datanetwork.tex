@@ -195,6 +195,28 @@ A client can also provide a hive of MiniBees, by using the special hive register
 \verb|/unmapped/minibee/output| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/output messages - hiveclient -> host \\
 \verb|/unmapped/minibee/custom| & isii & port no., name, node ID, minibee ID & reply to /unmap/minibee/custom messages - hiveclient -> host \\
 \hline
+\verb|/map/minihive/output| & isi & port no., name, node ID & map node output to MiniBee output broadcast (reply /mapped/minihive/output) - client -> host\\
+\verb|/map/minihive/custom| & isi & port no., name, node ID & map node output to MiniBee custom output broadcast (reply /mapped/minihive/custom) - client -> host\\
+\verb|/map/minihive/output| & i & node ID & map node output to MiniBee output broadcast (reply /mapped/minihive/output) - host -> hiveclient\\
+\verb|/map/minihive/custom| & i & node ID & map node output to MiniBee custom output broadcast (reply /mapped/minihive/custom) - host -> hiveclient\\
+% \verb|/map/minihive/pwm| & isii & port no., name, node ID, minihive ID &  map node output to MiniBee pwm output (reply /mapped)\\
+% \verb|/map/minihive/digital| & isii & port no., name, node ID, minihive ID &  map node output to MiniBee digital output (reply /mapped/minihive)\\
+\verb|/mapped/minihive/output| & i & node ID & reply to /map/minihive/output messages - host -> client\\
+\verb|/mapped/minihive/custom| & i & node ID & reply to /map/minihive/custom messages - host -> client \\
+\verb|/mapped/minihive/output| & isi & port no., name, node ID & reply to /map/minihive/output messages - hiveclient -> host \\
+\verb|/mapped/minihive/custom| & isi & port no., name, node ID & reply to /map/minihive/custom messages - hiveclient -> host \\
+\hline
+\verb|/unmap/minihive/output| & isi & port no., name, node ID & unmap node output to MiniBee output broadcast (reply /unmapped/minihive/output)\\
+\verb|/unmap/minihive/custom| & isi & port no., name, node ID & unmap node output to MiniBee custom output broadcast (reply /unmapped/minihive/custom)\\
+\verb|/unmap/minihive/output| & i & node ID & unmap node output to MiniBee output broadcast(reply /unmapped/minihive/output) - host -> hiveclient\\
+\verb|/unmap/minihive/custom| & i & node ID & unmap node output to MiniBee custom output broadcast (reply /unmapped/minihive/custom) - host -> hiveclient\\
+% \verb|/map/minihive/pwm| & isii & port no., name, node ID, minihive ID &  map node output to MiniBee pwm output (reply /mapped)\\
+% \verb|/map/minihive/digital| & isii & port no., name, node ID, minihive ID &  map node output to MiniBee digital output (reply /mapped/minihive)\\
+\verb|/unmapped/minihive/output| & i & node ID & reply to /unmap/minihive/output messages - host -> client\\
+\verb|/unmapped/minihive/custom| & i & node ID & reply to /unmap/minihive/custom messages - host -> client \\
+\verb|/unmapped/minihive/output| & isi & port no., name, node ID & reply to /unmap/minihive/output messages - hiveclient -> host \\
+\verb|/unmapped/minihive/custom| & isi & port no., name, node ID & reply to /unmap/minihive/custom messages - hiveclient -> host \\
+\hline
 
 \end{tabular}
 \end{center}

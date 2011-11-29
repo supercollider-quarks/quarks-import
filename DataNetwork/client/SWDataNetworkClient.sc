@@ -185,6 +185,22 @@ SWDataNetworkClient : SWDataNetwork{
 				if ( verbose > 0, { msg.postln; });
 				this.unmappedNode( msg[1], msg[2], 'custom' );
 			}),
+			OSCresponderNode( host, '/mapped/minihive/output', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.mappedNode( msg[1], -1, 'output' );
+			}),
+			OSCresponderNode( host, '/mapped/minihive/custom', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.mappedNode( msg[1], -1, 'custom' );
+			}),
+			OSCresponderNode( host, '/unmapped/minihive/output', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.unmappedNode( msg[1], -1, 'output' );
+			}),
+			OSCresponderNode( host, '/unmapped/minihive/custom', { |t,r,msg,addr|
+				if ( verbose > 0, { msg.postln; });
+				this.unmappedNode( msg[1], -1, 'custom' );
+			}),
 			OSCresponderNode( host, '/configured/minibee', { |t,r,msg,addr|
 				if ( verbose > 0, { msg.postln; });
 				this.configuredBee( msg[1], msg[2] );
@@ -435,7 +451,7 @@ SWDataNetworkClient : SWDataNetwork{
 		this.sendSimpleMsg( '/remove/all' );
 	}
 
-	configBee{ |miniBee,cid|
+	configureBee{ |miniBee,cid|
 		var mb;
 		if ( miniBee.isKindOf( SWMiniBee ) ){
 			mb = miniBee.id;
@@ -494,6 +510,32 @@ SWDataNetworkClient : SWDataNetwork{
 		switch( type,
 			'custom', { this.sendMsgWithArgs( '/unmap/minibee/custom', [id, mb] )},
 			'output', { this.sendMsgWithArgs( '/unmap/minibee/output', [id, mb] )}
+		);
+	}
+
+	mapHive{ |node,type=\output|
+		var id;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		switch( type,
+			'custom', { this.sendMsgWithArgs( '/map/minihive/custom', [id] )},
+			'output', { this.sendMsgWithArgs( '/map/minihive/output', [id] )}
+		);
+	}
+
+	unmapHive{ |node,type=\output|
+		var id;
+		if ( node.isKindOf( SWDataNode ) ){
+			id = node.id;
+		}{
+			id = node;
+		};
+		switch( type,
+			'custom', { this.sendMsgWithArgs( '/unmap/minihive/custom', [id] )},
+			'output', { this.sendMsgWithArgs( '/unmap/minihive/output', [id] )}
 		);
 	}
 
@@ -729,5 +771,4 @@ SWDataNetworkClient : SWDataNetwork{
 	makeGui{
 		^SWDataNetworkClientGui.new( this );
 	}
-
 }
