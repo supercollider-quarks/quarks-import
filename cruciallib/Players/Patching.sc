@@ -1,4 +1,5 @@
 
+
 PatchIn {
 
 	var <>nodeControl,<>connectedTo;
@@ -31,6 +32,7 @@ PatchIn {
 	}
 }
 
+
 AudioPatchIn : PatchIn {
 
 	rate { ^\audio }
@@ -38,18 +40,17 @@ AudioPatchIn : PatchIn {
 		nodeControl.value = bus.index;
 	}
 	value_ { arg val;
-		// the nodeControl indicates the audio bus number
-		// to set the value of audio, would have to set up a bus and set the sample value
-		thisMethod.notYetImplemented;
+		if(nodeControl.node.isPlaying,{
+			nodeControl.value = val;
+		})
 	}
 }
 
+
 ControlPatchIn : AudioPatchIn {
 	rate { ^\control }
-	value_ { arg val;
-		nodeControl.value = val;
-	}
 }
+
 
 ScalarPatchIn : ControlPatchIn {
 	rate { ^\scalar }
@@ -57,6 +58,8 @@ ScalarPatchIn : ControlPatchIn {
 		// nothing to do
 	}
 }
+
+
 ObjectPatchIn : ScalarPatchIn {
 	rate { ^\noncontrol }
 }
@@ -157,6 +160,7 @@ PatchOut {
 	}
 }
 
+
 ControlPatchOut : PatchOut { // you are returned from a .kr play
 
 	init {
@@ -200,6 +204,7 @@ ControlPatchOut : PatchOut { // you are returned from a .kr play
 		thisMethod.notYetImplemented;
 	}
 }
+
 
 AudioPatchOut : ControlPatchOut {
 
@@ -252,16 +257,20 @@ ScalarPatchOut : PatchOut {
 	}
 }
 
+
 ObjectPatchOut : ScalarPatchOut {
 
 }
 
+
 // this class is only used for KrNumberEditor to send its changes to the server
-// it sends it directly to the Synthh using the NodeControl
+// it sends it directly to the Synth using the NodeControl
 // its not the best design actually
 
 UpdatingScalarPatchOut : ScalarPatchOut {
+
 	var enabled=false;
+
 	*new { arg source,bus,enabled=true;
 		^this.prNew(source,enabled)
 	}
@@ -302,3 +311,5 @@ UpdatingScalarPatchOut : ScalarPatchOut {
 		enabled = false;
 	}
 }
+
+
