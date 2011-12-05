@@ -1,30 +1,25 @@
 
+
+
 AbstractConsole {
 
 	var <>layout,<>defaultPath;
 
-	getPathThen {  arg then ... args;
-		/*
-		PutFileDialog.new("Filename..." ++ then.asString, defaultPath, { arg ok, path;
-			if (ok, {
-				defaultPath = path;
-				this.performList(then,[path] ++ args)
-			})
-		})
-		*/
-	}
+	getPathThen {  arg then ... args; }
 	addToLayout { arg moreFunc;
 		moreFunc.value(layout)
 	}
 }
 
+
+
 SynthConsole : AbstractConsole  {
 
 	var <>format, <>duration;
 	var <>ugenFunc,<>onRecordOrWrite;
-	 var pauseControl;
+	var pauseControl;
 
-	 var tempoG;
+	var tempoG;
 
 	*new { arg ugenFunc,layout;
 		^super.new.ugenFunc_(ugenFunc).layout_(layout.asPageLayout).format_(SoundFileFormats.new)
@@ -42,8 +37,10 @@ SynthConsole : AbstractConsole  {
 		ActionButton(layout,"scope",{this.doScope(duration)})
 	}
 	fftScope {
-		//ActionButton(layout,"fftScope",{this.doFFTScope})
-		//	.background_(Color.green);
+		if(SCFreqScope.notNil,{
+			ActionButton(layout,"FreqScope",{this.doFreqScope})
+				.background_(Color.green);
+		})
 	}
 	record { arg defpath;
 		/*if(defpath.notNil,{ defaultPath = defpath });
@@ -86,11 +83,10 @@ SynthConsole : AbstractConsole  {
 	doScope { arg duration=0.5;
 	    this.ugenFunc.scope(duration)
 	}
-	doFFTScope {
-//		Synth.fftScope({ arg synth;
-//			Tempo.setTempo;
-//			this.ugenFunc.value(synth)
-//		})
+	doFreqScope {
+		if(SCFreqScopeWindow.notNil,{
+			SCFreqScopeWindow(400, 200, 0);
+		})
 	}
 
 	doStop { arg stopFunc;
@@ -131,7 +127,7 @@ SynthConsole : AbstractConsole  {
 SaveConsole : AbstractConsole {
 
 	var <>object;
-	var <path; // defaultPath may be a function
+	var <>path; // defaultPath may be a function
 	var <>onSaveAs; // arg path
 
 	*new { arg object, path,layout;
@@ -140,7 +136,7 @@ SaveConsole : AbstractConsole {
 	}
 
 	print {
-		ActionButton(layout,"post",{ object.asCompileString.postln });
+		ActionButton(layout,"postcs",{ object.asCompileString.postln });
 	}
 	printPath {
 		ActionButton(layout,"post path",{ path.value.asCompileString.postln })
@@ -152,13 +148,7 @@ SaveConsole : AbstractConsole {
 		 	},{
 		 		this.doSave
 		 	})
-	 	},minWidth).background_(
-	 		if(path.value.isNil,{ // virgin
-	 			GUI.skin.background
-	 		},{
-	 			Color.new255(255,242,89)
-	 		})
-	 	);
+	 	},minWidth).background_(GUI.skin.background)
 	}
 	saveAs { arg onSaveF,default;
 		defaultPath = default ? defaultPath;
@@ -175,8 +165,6 @@ SaveConsole : AbstractConsole {
 		});
 	}
 	getPathThen {  arg then ... args;
-		//var defPath;
-		//defPath=(defaultPath.value ? object).asString;
 		GUI.dialog.savePanel({arg argpath;
 			this.path = argpath;
 			this.performList(then,[path] ++ args);
@@ -202,13 +190,9 @@ SaveConsole : AbstractConsole {
 		object.asCompileString.write(vpath);
 		onSaveAs.value(vpath);
 	}
-
-	path_ { arg p;
-		if(p.notNil,{
-			path = PathName(p).asRelativePath
-		})
-	}
 }
+
+
 
 SoundFileFormats { // an interface
 
@@ -257,4 +241,5 @@ SoundFileFormats { // an interface
 		^nil
 	}
 }
+
 
