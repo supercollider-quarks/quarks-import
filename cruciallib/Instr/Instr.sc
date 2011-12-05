@@ -8,7 +8,7 @@ Instr  {
 	var <explicitSpecs;// specs that were explicitly stated on construction (not guessed)
 
 	// specs are optional : can be guessed from the argnames
-	// outSpec is optional : can be determined by evaluating the func and examining the result
+	// outSpec is optional but recommended : can be determined by evaluating the func and examining the result
 	*new { arg name, func, specs, outSpec;
 		var previous;
 		if(func.isNil,{ ^this.at(name) });
@@ -28,6 +28,12 @@ Instr  {
 	}
 	*at { arg  name;
 		^this.objectAt(name);
+	}
+	*load { arg name;
+	    // forces a reload from file
+		name = this.symbolizeName(name);
+		Library.global.removeAtPath(name.copy.addFirst(this));
+	    ^this.at(name)
 	}
 	*loadAll {
 	    this.prLoadDir(this.dir);
@@ -127,7 +133,9 @@ Instr  {
 		^(this.defArgAt(i) ?? {this.specs.at(i).tryPerform(\default)})
 	}
 
-	defName { ^this.class.symbolizeName(name).collect(_.asString).join($.) }
+	defName { 
+	    ^this.class.symbolizeName(name).collect(_.asString).join($.)
+	}
 	asSynthDef { arg args,outClass=\Out;
 		var synthDef;
 		synthDef = InstrSynthDef.new;
