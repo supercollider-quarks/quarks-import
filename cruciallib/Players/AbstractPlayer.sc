@@ -310,8 +310,13 @@ AbstractPlayer : AbstractFunction  {
 			//server = nil;
 		});
 	}
-	record { arg path,endBeat,onComplete,recHeaderFormat='AIFF', recSampleFormat='int24',atTime;
-		PlayerRecorder(this).record(path,endBeat,onComplete,recHeaderFormat='AIFF', recSampleFormat='int24',atTime)
+	record { arg path,endBeat,onComplete,recHeaderFormat, recSampleFormat,atTime;
+		PlayerRecorder(this).record(path,
+			endBeat,
+			onComplete,
+			recHeaderFormat ?? {(this.server ? Server.default).recHeaderFormat}, 
+			recSampleFormat ?? {(this.server ? Server.default).recSampleFormat},
+			atTime)
 	}
 
 	busIndex {
@@ -322,13 +327,13 @@ AbstractPlayer : AbstractFunction  {
 		if(patchOut.isNil,{ ^nil });
 		^patchOut.bus
 	}
-	// does not dynamically change your bus
 	bus_ { arg b;
 		if(b.notNil,{
 			if(patchOut.notNil,{
 				patchOut.bus = b;
-			});
-			Error("This is not prepared for play, there is no patchOut to store the bus in").throw;
+			},{
+				Error(this.asString + " is not prepared for play, there is no patchOut to store the bus in").throw;
+			})
 		});
 	}
 	group_ { arg g;
