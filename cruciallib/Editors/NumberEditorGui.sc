@@ -14,72 +14,75 @@ NumberEditorGui : EditorGui {
 		if(layout.isNil,{ l.front });
 	}
 	guiBody { arg layout,slider=true, box=true;
-		var bounds,h;
+		var bounds,h,w;
 		bounds = layout.indentedRemaining;
 
 		// massive space,
 			// box, slider horz
-		if(bounds.width >= 140 and: {bounds.height >= 11},{
-			h = min(bounds.height, GUI.skin.buttonHeight);
+		w = bounds.width;
+		h = bounds.height;
+		if(w >= 140 and: {h >= GUI.skin.buttonHeight},{
+			h = min(h, GUI.skin.buttonHeight);
+			w = min(w, GUI.skin.buttonHeight * 16);
 			if(box, { this.box(layout,Rect(0,0,40,h)); });
-			if(slider,{ this.slider(layout,Rect(0,0,100,h)); });
+			if(slider,{ this.slider(layout,Rect(0,0,w-40-4,h)); });
 			^this
 		});
 		// width < height
 			// go vert
-		if(bounds.width < bounds.height,{
+		if(w < h,{
 			// height > 100
 				// box, slider
-			if(bounds.height > 100 and: {bounds.width >= 30},{
+			if(h > 100 and: {w >= 30},{
 				layout.comp({ |l|
 					var y;
-					this.box(l,Rect(0,0,y = min(40,bounds.width),GUI.skin.buttonHeight));
-					this.slider(l,Rect(0,y,min(30,bounds.width),h-GUI.skin.buttonHeight));
-				},Rect(0,0,40,h = bounds.height.max(130)))
+					this.box(l,Rect(0,0,y = min(40,w),GUI.skin.buttonHeight));
+					this.slider(l,Rect(0,y,min(30,w),h-GUI.skin.buttonHeight));
+				},Rect(0,0,40,h = h.max(130)))
 				^this
 			});
-			if(bounds.height > 100 ,{
-				this.slider(layout,Rect(0,0,min(40,bounds.width),bounds.height.min(150)));
+			if(h > 100 ,{
+				this.slider(layout,Rect(0,0,min(40,w),h.min(150)));
 				^this
 			});
 			// height < 100, > 30
 				// slider
-			if(bounds.height >= 30,{
-				this.slider(layout,Rect(0,0,min(40,bounds.width),bounds.height));
+			if(h >= 30,{
+				this.slider(layout,Rect(0,0,min(40,w),h));
 				^this
 			});
 
 			// height < 30
 				// box
-			if(bounds.height <= 30,{
-				this.box(layout,Rect(0,0,min(40,bounds.width),bounds.height));
+			if(h <= 30,{
+				this.box(layout,Rect(0,0,min(40,w),h));
 				^this
 			});
 
 		},{// width > height
-			h = min(bounds.height, GUI.skin.buttonHeight);
+			h = min(h, GUI.skin.buttonHeight);
 
 			// width > 100
 				// box, slider
 
 			// width < 100, > 30
 				// slider
-			if(bounds.width.inclusivelyBetween(30,100),{
+			if(w.inclusivelyBetween(30,100),{
 				if(slider,{
-					this.slider(layout,Rect(0,0,bounds.width,h));
+					this.slider(layout,Rect(0,0,w,h));
 				},{
-					this.box(layout,Rect(0,0,bounds.width,h));
+					this.box(layout,Rect(0,0,w,h));
 				});
 				^this
 			});
 
 			// width < 30
-			if(bounds.width <= 30,{
+			if(w <= 30,{
 				// box
 				if(box,{
-					this.box(layout,Rect(0,0,bounds.width,h));
+					this.box(layout,Rect(0,0,w,h));
 				},{
-					this.slider(layout,Rect(0,0,bounds.width,h));
+					this.slider(layout,Rect(0,0,w,h));
 				});
 				^this
 			});
@@ -87,9 +90,9 @@ NumberEditorGui : EditorGui {
 
 		// any unmatched
 		if(slider,{
-			this.slider(layout,Rect(0,0,bounds.width,h));
+			this.slider(layout,Rect(0,0,w,h));
 		},{
-			this.box(layout,Rect(0,0,bounds.width,h));
+			this.box(layout,Rect(0,0,w,h));
 		});
 		^this
 	}
@@ -120,7 +123,7 @@ NumberEditorGui : EditorGui {
 			if(modifiers.isCtrl,{
 			    move = (y - startPoint.y).neg;
 				if(modifiers.isShift,{
-					range = 1800.0;
+					range = 4000.0;
 				},{
 					range = 300.0;
 				});
@@ -137,7 +140,7 @@ NumberEditorGui : EditorGui {
 		numv.scroll = false;
 		numv.clipLo = model.spec.minval;
 		numv.clipHi = model.spec.maxval;
-		
+		numv.focusColor = GUI.skin.focusColor ?? {this.spec.color};
 		/*numv.keyDownAction = { arg char,modifiers,unicode,keycode;
 			if("012356789-.".includes(char),{
 				this.defaultKeyDownAction(char, modifiers, unicode, keycode);
@@ -152,8 +155,9 @@ NumberEditorGui : EditorGui {
 	slider { arg layout, bounds;
 		var r;
 		slv = GUI.slider.new(layout, bounds);
-		slv.focusColor_(Color.yellow(1.0,0.2));
+		slv.focusColor = GUI.skin.focusColor ?? {this.spec.color};
 		slv.setProperty(\value,model.spec.unmap(model.poll));
+		slv.thumbSize = min(bounds.height,bounds.width) / 1.61803399;
 		slv.action_({arg th;
 			model.activeValue_(model.spec.map(th.value)).changed(slv)
 		});
@@ -161,6 +165,12 @@ NumberEditorGui : EditorGui {
 	}
 	update {arg changed,changer; // always has a number box
 		{
+			if(changer == 'spec',{
+				if(numv.notNil,{
+					numv.clipLo = model.spec.minval;
+					numv.clipHi = model.spec.maxval;
+				})
+			});					
 			if(changer !== numv and: {numv.notNil},{
 				numv.value_(model.poll);
 			});
@@ -179,11 +189,13 @@ KrNumberEditorGui : NumberEditorGui {
 
 
 PopUpEditorGui : EditorGui {
+
 	var popV;
 	    // temp, I don't really have a spec here
         // we arent editing a "pop up", so the class is misnamed
         // just to get this gui representation
         // maybe NumberEditor should use this gui if it has a named integers spec
+
 	guiBody { arg layout;
 		var horSize;
 		horSize = model.labels.maxValue({arg item; item.size }) * 12;
@@ -192,6 +204,7 @@ PopUpEditorGui : EditorGui {
 			.action_({ arg nb;
 				model.selectByIndex(popV.value).changed(this)
 			});
+		popV.focusColor = GUI.skin.focusColor ?? {Color.grey(0.5,0.5)};
 		popV.background = GUI.skin.background;
 		if(consumeKeyDowns,{ popV.keyDownAction = {nil}; });
 		popV.setProperty(\value,model.selectedIndex)
@@ -204,15 +217,16 @@ PopUpEditorGui : EditorGui {
 }
 
 
-
 BooleanEditorGui : EditorGui {
+
 	var cb;
+
 	guiBody { arg layout,bounds;
-		var bg,b;
-		bg = Color.clear;
+		var bg,b,skin;
+		skin = GUI.skin;
 		if(bounds.isNil,{ bounds = layout.bounds; });
 
-		b = Rect(0,0,14,14);
+		b = Rect(0,0,skin.buttonHeight,skin.buttonHeight);
 		if(bounds.notNil,{
 			if(b.width > bounds.width,{
 				b.width= bounds.width;
@@ -223,10 +237,11 @@ BooleanEditorGui : EditorGui {
 				b.height = bounds.height;
 			});
 		});
-		cb = GUI.button.new( layout,b);
-		cb.states = [[" ",bg,bg],["X",Color.black,bg]];
-		cb.font = GUI.font.new("Helvetica",9);
+		cb = Button( layout,b);
+		cb.states = [[" ",Color.black,skin.offColor],[" ",Color.black,skin.onColor]];
+		cb.font = Font(*skin.fontSpecs);
 		cb.setProperty(\value,model.value.binaryValue);
+		cb.focusColor = GUI.skin.focusColor ?? {Color.clear};
 		cb.action = { model.activeValue_(cb.value != 0,this) };
 		if(consumeKeyDowns,{ cb.keyDownAction = {nil}; });
 	}
@@ -235,5 +250,6 @@ BooleanEditorGui : EditorGui {
 			cb.setProperty(\value,model.value.binaryValue);
 		});
 	}
+	
 }
 
