@@ -134,8 +134,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p3">Enter the environment and execute code.</p>
 <p class="p2"><br></p>
-<p class="p3"><b>next(... args)<span class="Apple-converted-space"> </span></b></p>
-<p class="p3"><b>value(... args)</b></p>
+<p class="p3"><b>next(... args)</b></p>
+<p class="p3"><b>value(... args)</b>  // calls ~next(*args)</p>
 <p class="p3"><b>reset</b></p>
 <p class="p3"><b>update</b></p>
 <p class="p3"><b>asStream</b></p>
@@ -143,6 +143,8 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><b>free</b></p>
 <p class="p2"><br></p>
 <p class="p3">Evaluates the function contained in the corresponding environment variable with the arguments supplied. If no function is given, the call returns nil. This is to allow Protos to behave as streams.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Note:</b> 'next' and 'value' both call the function stored under ~next. For Streams, 'next' and 'value' are synonyms; likewise, they are implemented the same in Proto.</p>
 <p class="p2"><br></p>
 <p class="p3"><b>perform(selector, ... args)</b></p>
 <p class="p3"><b>tryPerform(selector, ... args)</b></p>
