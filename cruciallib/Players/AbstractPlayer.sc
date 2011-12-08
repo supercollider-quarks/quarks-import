@@ -129,7 +129,7 @@ AbstractPlayer : AbstractFunction  {
 			// Patches cannot know their defName until they have built
 			def = this.asSynthDef;
 			defName = def.name;
-			defName.debug("defname loaded");
+			//defName.debug("defname");
 			dn = defName.asSymbol;
 			bytes = def.asBytes;
 

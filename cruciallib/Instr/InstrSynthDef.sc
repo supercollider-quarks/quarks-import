@@ -138,11 +138,10 @@ InstrSynthDef : SynthDef {
 		});
 		longName = name;
 		firstName = argInstr.name.last.asString;
-		if(firstName.size > 20,{
+		if(firstName.size > 18,{
 			firstName = "Instr";
 		});
 		name = firstName ++ "*" ++ longName.hash;
-		// name.debug("name");
 		controlNames = saveControlNames;
 		^result
 	}
@@ -319,6 +318,16 @@ InstrSynthDef : SynthDef {
 			stream << iks;
 		});
 	}
+	
+	*loadDefFileToBundle { arg def,bundle,server;
+		var dn;
+		dn = def.name.asSymbol;
+		if(Library.at(SynthDef,server,dn).isNil,{
+			bundle.addPrepare(["/d_recv", def.asBytes]);
+			this.watchServer(server);
+			Library.put(SynthDef,server,dn,true);
+		});
+	}	
 	*watchServer { arg server;
 		if(NotificationCenter.registrationExists(server,\didQuit,this).not,{
 			NotificationCenter.register(server,\didQuit,this,{

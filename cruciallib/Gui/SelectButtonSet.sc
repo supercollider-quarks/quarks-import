@@ -1,4 +1,5 @@
 
+
 SelectButtonSet  {
 
 	var butts,<selected=0,<>action,<>colorFunc,<>selectedColor,<>labelArray;
@@ -10,9 +11,15 @@ SelectButtonSet  {
 		action,				// action.value(selectedIndex,this)
 		color,
 		selectedColor,
-		width=20,height=20;
+		width=20,height;
 
-		^super.new.init(layout.asFlowView,width,height,labelArrayOrQnty,action,color,selectedColor)
+		^super.new.init(layout.asFlowView,
+			width,
+			height ?? {GUI.skin.buttonHeight},
+			labelArrayOrQnty,
+			action,
+			color,
+			selectedColor)
 	}
 
 	init { arg layout,x,y,arglabelArray,argaction,
@@ -20,14 +27,14 @@ SelectButtonSet  {
 
 		//layout=layout.asFlowView;//PageLayout;
 		//layout=layout.asPageLayout;
-		action=argaction;
-		colorFunc=argcolorFunc ?? { Color.white };
-		selectedColor=argselectedColor ?? {Color.red(alpha:0.7)};
+		action = argaction;
+		colorFunc = argcolorFunc ?? { Color.white };
+		selectedColor = argselectedColor ?? {Color.red(alpha:0.7)};
 
 		if(arglabelArray.isNumber,{
-			 labelArray=Array.series(arglabelArray,0,1)
+			labelArray = Array.series(arglabelArray,0,1)
 		},{
-			labelArray=arglabelArray
+			labelArray = arglabelArray
 		});
 
 	   butts=
@@ -100,6 +107,5 @@ SelectButtonSet  {
 	font_ { arg f;
 		butts.do({ |b| b.font_(f); });
 	}
-
 }
 

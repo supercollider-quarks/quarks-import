@@ -1,11 +1,12 @@
 
+
 BeatSched {
 
 	classvar <global;
 
 	var clock,<tempo,<tempoClock;
 	var epoch=0.0,beatEpoch=0.0;
-	var nextTask; // for exclusive locks
+	var nextTask;
 
 	var pq,nextAbsTime,nextAbsFunc,nextAbsList;
 
@@ -37,27 +38,12 @@ BeatSched {
 	time { ^Main.elapsedTime - epoch }
 	time_ { arg seconds; epoch = Main.elapsedTime - seconds; }
 
-	// if the tempo changed at any time in the past, this is wrong !
 	beat {
-		//[tempo.secs2beats(Main.elapsedTime - epoch)
-		//	,tempoClock.elapsedBeats - beatEpoch ].debug("via tempo, via clock");
-
-		//^tempo.secs2beats(Main.elapsedTime - epoch)
 		^tempoClock.elapsedBeats - beatEpoch
 	}
 	beat_ { arg beat;
-		// setting the beat will reset the fabric of beat-time itself
-		// so that any previously playing musical elements are not
-		// expected to line up with anything you do in the future.
-		// its a hard reset.
 		epoch = Main.elapsedTime - tempo.beats2secs(beat);
 		beatEpoch = tempoClock.elapsedBeats - beat;
-		//  it means that the although we are using the tempoClock for relative beat scheduling
-		// the determination of the epoch (beat 0) is set NOW.
-
-
-		// tempoClock.beats2secs( tempoClock.elapsedBeats );
-		// tempo.beats2secs(beat);
 	}
 	clear {
 		pq.clear;
@@ -66,7 +52,8 @@ BeatSched {
 			tempoClock.clear;
 		});
 	}
-	deltaTillNext { arg quantize; // delta in beats till next beat
+	deltaTillNext { arg quantize; 
+		// return delta in beats till next 0.25/1/4/8 beat
 		var beats,next;
 		beats = this.beat;
 		next = beats.trunc(quantize);
@@ -132,7 +119,6 @@ BeatSched {
 				nil
 			}
 		);
-		//this.xtsched(tempo.beats2secs(beats),function)
 	}
 	qsched { arg quantize,function;
 		this.sched(this.deltaTillNext(quantize),function)
@@ -141,7 +127,7 @@ BeatSched {
 		this.xsched(this.deltaTillNext(quantize),function )
 	}
 	tschedAbs { arg time,function;
-		if(time >= this.time,{ // in the future ?
+		if(time >= this.time,{ // future only
 			pq.put(time,function);
 			// was something else already scheduled before me ?
 			if(nextAbsTime.notNil,{
@@ -150,20 +136,19 @@ BeatSched {
 					this.tschedAbsNext;
 				})
 			},{
-				this.tschedAbsNext; // sched meself
+				this.tschedAbsNext;
 			});
 		})
 	}
 	xtschedAbs { arg time,function;
-		if(time >= this.time,{ // in the future ?
+		if(time >= this.time,{ // future only
 			pq.clear;
 			this.xblock;
 			this.tsched(time,function)
 		});
 	}
 	schedAbs { arg beat,function;
-		tempo.schedAbs(beat,function);
-		//this.tschedAbs(tempo.beats2secs(beat),function)
+		tempoClock.schedAbs(beat + beatEpoch,function);
 	}
 	/*xschedAbs { arg beat,function;
 		if(beat >= this.beat,{ // in the future ?
@@ -191,7 +176,9 @@ BeatSched {
 	}
 }
 
+
 OSCSched : BeatSched {
+	
 	classvar <global;
 
 	*initClass { global = this.new; }
@@ -255,13 +242,18 @@ OSCSched : BeatSched {
 
 	sched { arg beats,server,bundle,onArrival,onSend;
 		var latency;
-		latency = server.latency ? 0.05;
-		tempoClock.dsched(beats - latency,{ // this is correct : treat latency as though it were beats ...
-			onSend.value;
-			// and convert those beats to seconds here
-			// inaccurate final delivery if tempo is changing quickly
-			server.listSendBundle(tempo.beats2secs(latency),bundle);
-			nil
+		if(beats <= 1.0,{
+			server.listSendBundle(tempo.beats2secs(beats),bundle);
+		},{
+			latency = server.latency ? 0.05;
+			tempoClock.dsched(beats - latency,{ // using latency as though it were beats
+				onSend.value;
+				// and convert those beats to seconds here
+				// inaccurate final delivery if tempo is changing quickly
+				// during the final latency gap
+				server.listSendBundle(tempo.beats2secs(latency),bundle);
+				nil
+			});
 		});
 		if(onArrival.notNil,{
 			tempoClock.dsched(beats,{ onArrival.value; nil })
@@ -305,21 +297,24 @@ OSCSched : BeatSched {
 	}
 	// xtschedAbs
 	schedAbs { arg beat,server,bundle,onArrival;
-		/*  to do...
-		if(time >= this.time,{ // in the future ?
-			pq.put(time,[server,bundle,onArrival]);
-			// was something else already scheduled before me ?
-			if(nextAbsTime.notNil,{
-				if(time == pq.topPriority ,{ // i'm next
-					pq.put(nextAbsTime,nextAbsList); // put old top back on queue
-					this.tschedAbsNext;
-				})
-			},{
-				this.tschedAbsNext; // sched meself
-			});
+		var beats;
+		beats = beat - this.beat;
+		if(beats.isPositive,{
+			this.sched(beats, server, bundle,onArrival);
+		});
+	}
+	aschedFunc { arg beat,func;
+		if(beat >= this.beat,{
+			tempoClock.schedAbs(beatEpoch + beat,{func.value; nil});
 		})
-		*/
-		this.tschedAbs(tempo.beats2secs(beat),server,bundle,onArrival)
+	}
+	schedAtTime { arg atTime,server,bundle;
+		atTime.schedBundle(bundle,server)
+	}
+	xschedAtTime { arg atTime,server,bundle;
+		// tricky. for now:
+		atTime.schedBundle(bundle,server)
+		// the lock will come soon
 	}
 
 	xschedBundle { arg beatDelta,server,bundle;
@@ -353,3 +348,5 @@ OSCSched : BeatSched {
 		});
 	}
 }
+
+

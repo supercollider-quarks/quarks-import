@@ -1,24 +1,18 @@
 
+
 // abstract  class
 HasPatchIns : AbstractPlayer {
 
 	var <patchIns;
 
-	//  private
-	didSpawn {
-		super.didSpawn;
+	connectPatchIns {
 		//i know of the synth, i hand out the NodeControls
 		patchIns.do({ arg patchIn,argi;
 			patchIn.nodeControl_(NodeControl(synth,this.argNameAt(argi)));
 			this.inputs.at(argi).connectToPatchIn(patchIn,false);
 		});
 	}
-	// currently Patch just hold onto the PatchIns but they are disconnected
-	//freeToBundle { |bundle|
-	//	super.freeToBundle(bundle);
-	//	bundle.addFunction({ patchIns = nil; });
-	//}
-	//subclassResponsibility
+
 	synthArgsIndices { ^this.subclassResponsibility(thisMethod) }
 	inputs { ^this.subclassResponsibility(thisMethod) }
 
@@ -33,35 +27,6 @@ HasPatchIns : AbstractPlayer {
 		patchOut = PatchOut.performList(bus.rate,[nil,bus.server.asGroup,bus]);
 		patchOut.connectTo(patchIns.at(i), this.isPlaying );
 	}
-
-	/*
-	have to bundle it
-		connectInputToPlayer { arg i,player;
-			// does it have patchOut
-			if(player.patchOut.isNil,{
-				// always uncomfortable to not have patchOut decided
-				player.makePatchOut(this.group,true);
-			});
-			player.patchOut.connectTo(patchIns.at(i), this.isPlaying);
-		}
-	*/
-	/*
-	setInput { arg i,newarg;
-		var old,newargpatchOut;
-		old = args.at(i);
-		args.put(i,newarg);
-		if(this.isPlaying,{
-			old.free; // release old  thru some manager ?
-			newarg
-
-			//old.patchOut.releaseConnection;
-			newargpatchOut = newarg.play(Destination.newByRate(this.instr.specs.at(i).rate,
-								NodeControl(patchOut.synth,i + 1)));
-			newargpatchOut.retainConnection;
-			newargpatchOut.connectTo(patchIns.at(i));
-		});
-	}
-	*/
 
 	inputProxies { // just this patch
 		^this.inputs.select({ arg a; a.isKindOf(PlayerInputProxy) })
@@ -125,6 +90,7 @@ HasPatchIns : AbstractPlayer {
 	}
 }
 
+
 Patch : HasPatchIns  {
 
 	var <instr,<args;
@@ -166,6 +132,12 @@ Patch : HasPatchIns  {
 		inputs.do({ |in,i|
 			this.setInput(i,in)
 		});
+	}
+	instr_ { arg newInstr;
+		this.invalidateSynthDef;
+		instr = newInstr;
+		instr.addDependant(this);
+		this.changed(\instr);
 	}
 	set { arg index, value;
 		var argg;
@@ -368,8 +340,8 @@ Patch : HasPatchIns  {
 			if(this.specAt(i).rate === \noncontrol
 				or: {ag.rate === \noncontrol}
 			,{
-				// watch scalars for changes.
-				// if Env or Sample or quantity changed, synth def is invalid
+				// watch objects for changes.
+				// if Env or Sample or a quantity changed, the synth def is invalid
 				if(ag.isNumber.not,{
 					ag.addDependant(this);
 				});
@@ -382,7 +354,9 @@ Patch : HasPatchIns  {
 		if(this.args.includes(changed),{
 			if(this.isPlaying,{
 				newArgs = synthDef.secretDefArgs(this.args);
-				synth.performList(\set,newArgs);
+				if(newArgs.notEmpty,{
+					synth.performList(\set,newArgs);
+				})
 			},{
 				this.invalidateSynthDef;
 			})
@@ -401,8 +375,8 @@ Patch : HasPatchIns  {
 	}
 	invalidateSynthDef {
 		this.removeSynthDefCache;
-		this.releaseArgs;
-		this.instr.removeDependant(this);
+		//this.releaseArgs;
+		//this.instr.removeDependant(this);
 	}
 	releaseArgs {
 		// Sample, Env, NumberEditor are watched
@@ -411,7 +385,7 @@ Patch : HasPatchIns  {
 	didFree {
 		var did;
 		did = super.didFree;
-		if(did,{ this.invalidateSynthDef; });
+		//if(did,{ this.invalidateSynthDef; });
 		^did
 	}
 
@@ -462,6 +436,7 @@ Patch : HasPatchIns  {
 				++ synthDef.secretDefArgs
 			)
 		);
+		this.connectPatchIns;
 		bundle.addMessage(this,\didSpawn);
 	}
 	didSpawn {
