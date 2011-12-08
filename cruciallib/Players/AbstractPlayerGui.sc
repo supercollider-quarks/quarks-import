@@ -1,4 +1,6 @@
 
+
+
 AbstractPlayerGui : ObjectGui {
 
 	gui { arg parent,bounds ... args;
@@ -9,7 +11,6 @@ AbstractPlayerGui : ObjectGui {
 			// top level controls
 			this.synthConsole(layout);
 			this.saveConsole(layout);
-			Do(\topGuiPlugIns,model,layout);
 			layout.startRow;
 		});
 
@@ -40,9 +41,6 @@ AbstractPlayerGui : ObjectGui {
 		layout.startRow;
 		this.performList(\gui,[layout,bounds] ++ args);
 
-		/** plug in **/
-		Do(\topGuiPlugIns,model,layout);
-
 		this.enableKeyDowns;
 		if(parent.isNil,{
 			layout.resizeToFit;
@@ -52,18 +50,23 @@ AbstractPlayerGui : ObjectGui {
 	}
 
 	writeName { arg layout;
-		//color it based on whether it has a .path
-						// (was loaded from disk)
-		super.writeName(layout);
+		this.prWriteName(layout,this.model.asString);
+		if(InspectorLink.notNil,{
+			InspectorLink.icon(model,layout)
+		});
 		if(model.path.notNil,{
-			ActionButton(layout,"edit file",{
+			ActionButton(layout,"edit source",{
 				model.path.openTextFile;
 			});
 		});
 	}
-//	keyDowns {
-//		view.keyDownAction = this.keyDownResponder;
-//	}
+	viewDidClose {
+		if(model.isPlaying.not,{
+			model.free
+		});
+		super.viewDidClose;
+	}
+	
 	keyDownResponder {
 		var k;
 		k = KeyCodeResponder.new;
@@ -88,15 +91,9 @@ AbstractPlayerGui : ObjectGui {
 	synthConsole { arg layout;
 		var s, server;
 		server = model.server.asTarget.server;
-		server.gui(layout).output(layout);
-		// SynthConsole(model,layout).play.registerPlayKey.record.pauseableRecord.write({
-			// model.timeDuration }).scope.stop.formats.tempo;
+		server.gui(layout).meters(layout);
 		s = SynthConsole(model,layout).play.record.stop.free.tempo;
-
-		ServerErrorGui(server).gui(layout);
-
-		//NotificationCenter.register(s,\didRecordOrWrite,model,{
-			// NotificationCenter.notify(model,\didRecordOrWrite) });
+		//ServerErrorGui(server).gui(layout);
 	}
 
 	durationString { // time
@@ -127,7 +124,6 @@ AbstractPlayerGui : ObjectGui {
 			}).update;
 		);
 	}
-
 }
 
 

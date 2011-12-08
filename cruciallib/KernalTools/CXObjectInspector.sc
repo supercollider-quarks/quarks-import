@@ -2,6 +2,8 @@
 
 CXObjectInspector : ObjectGui {
 
+	classvar displayHooks;
+	
 	writeName { arg layout;
 		ClassNameLabel.newBig(model.class,layout);
 		GUI.dragSource.new(layout,Rect(0,0,500,30))
@@ -15,7 +17,10 @@ CXObjectInspector : ObjectGui {
 		var vert,list,listItems,actions,val;
 		listItems = List.new;
 		actions = List.new;
-
+		
+		displayHooks.at(model.class).value(model,layout);
+	
+		layout.startRow;
 		this.instVarsGui(listItems,actions);
 
 		// slotAt
@@ -83,6 +88,40 @@ CXObjectInspector : ObjectGui {
 			model.class.openCodeFile;
 		});
 	}
+	
+	*initClass {
+		var hook;
+		displayHooks = IdentityDictionary.new;
+		this.registerHook(Function,{ arg model,layout;
+			layout.startRow;
+			if(model.def.sourceCode.notNil,{
+				this.sourceCodeGui(model.def.sourceCode,layout,700);
+			})
+		});
+		hook = { arg model,layout;
+				layout.startRow;
+				model.keysValuesDo({ arg k,v;
+					InspectorLink.captioned(k.asString,v,layout.startRow);
+				});
+			};
+		([Dictionary] ++ Dictionary.allSubclasses).do { arg klass;
+			this.registerHook(klass,hook);
+		};
+	}
+	*registerHook { arg class,function;
+		displayHooks[class] = function;
+	}
+	
+	*sourceCodeGui { arg sourceCode, layout,width=700;
+		var f,height,tf;
+		f = GUI.font.new("Courier",12.0);
+		height = sourceCode.bounds(f).height + 5;
+		tf = TextView(layout,Rect(0,0,width,height));
+		tf.string = sourceCode;
+		tf.font_(f);
+		tf.syntaxColorize;
+		^tf
+	}		
 }
 
 

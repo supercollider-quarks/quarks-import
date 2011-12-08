@@ -17,13 +17,14 @@ Crucial {
 			(
 				fontSpecs: 	["Helvetica", 11.0],
 				fontColor: 	Color.black,
-				background: 	Color.white,
+				background: 	Color(1.0, 1.0, 1.0, 0.80597014925373),
 				foreground:	Color.grey(0.95),
 				onColor:		Color.new255(255, 250, 250),
 				offColor:		Color.clear,
 				gap:			4 @ 4,
 				margin: 		2@0,
-				buttonHeight:	17
+				buttonHeight:	17,
+				focusColor: Color(1.0, 0.98507462686567,0)
 			));
 	}
 
@@ -34,6 +35,10 @@ Crucial {
 		Spec.specs.putAll(
 		  IdentityDictionary[
 			'audio'->AudioSpec.new,
+			'input'->AudioSpec.new,
+			'unipolar'->ControlSpec.new(0, 1, 'lin', 0, 0.5),
+			'bipolar'->ControlSpec.new(-1, 1, 'lin', 0, 0),
+
 			//'lofreq'->ControlSpec.new(0.1, 100, 'exp', 0, 6),
 			//'rq'->ControlSpec.new(0.001, 2, 'exp', 0, 0.707),
 			//'boostcut'->ControlSpec.new(-20, 20, 'lin', 0, 0),
@@ -41,7 +46,7 @@ Crucial {
 			'octave'->ControlSpec.new(-6, 10, 'lin', 1, 2),
 			'sampleStart'->ControlSpec.new(0, 4, 'lin', 0.25, 2),
 			'degree'->ControlSpec.new(0, 11, 'lin', 1, 6),
-			'ffreq4'->ControlSpec.new(0, 1, 'lin', 0, 0.5),
+			//'ffreq4'->ControlSpec.new(0, 1, 'lin', 0, 0.5),
 			'sdetune'->ControlSpec.new(0, 1, 'lin', 0, 0.5),
 			'slewRise'->ControlSpec.new(10, 10000, 'lin', 0, 5005),
 			'slewFall'->ControlSpec.new(10, 10000, 'lin', 0, 5005),
@@ -49,13 +54,15 @@ Crucial {
 			'pitch'->ControlSpec.new(-4, 4, 'lin', 0, 0),
 
 			'trig'->TrigSpec.new(0, 1, 'lin', 0, 0.0),
+			'trigger'->TrigSpec.new(0, 1, 'lin', 0, 0.0),
 			'gate'->TrigSpec.new(0, 1, 'lin', 0, 0.0),
 
 			'legato'->StaticSpec.new(0.01, 4, 'lin', 0, 0.9),
 			'release'->ControlSpec.new(0, 16, 'lin', 0, 0.5),
 			'bicoef'->ControlSpec.new(-1, 1, 'lin', 0, 0.2),
 			'freq2'->ControlSpec.new(40, 5000, 'exp', 0, 447.214),
-			'rq8'->ControlSpec.new(0.0001, 8, 'lin', 0, 1.0),
+			// goes to 8
+			'rq8'->ControlSpec.new(0.0001, 8, 'exp', 0, 1.0),
 			'safeffreq'->ControlSpec.new(200, 16000, 'exp', 0, 1788.85),
 			'saferq'->ControlSpec.new(0.001, 0.7, 'lin', 0, 0.3505),
 			'chaos'->ControlSpec.new(0, 5, 'lin', 0, 2.5),
@@ -87,7 +94,6 @@ Crucial {
 			'revTime'->ControlSpec.new(0, 16, 'lin', 0, 8),
 			'taps'->StaticIntegerSpec.new(1, 10, 6),
 			'combs'->StaticIntegerSpec.new(1, 10, 6),
-			'unipolar'->ControlSpec.new(0, 1, 'lin', 0, 0.5),
 			'microDelay'->ControlSpec.new(0.0001, 0.05, 'lin', 0, 0.02505),
 			'microAttack'->ControlSpec.new(0.0001, 0.2, 'lin', 0, 0.10005),
 			'microDecay'->ControlSpec.new(0.0001, 0.2, 'lin', 0, 0.10005),
@@ -125,7 +131,6 @@ Crucial {
 			'stretch'->ControlSpec.new(0.0125, 4, 'lin', 0, 1.0),
 			'tempoFactor'->ControlSpec.new(0.125, 4, 'lin', 0.125, 1.0),
 			'coef'->ControlSpec.new(0, 1, 'lin', 0, 0.5),
-			'bipolar'->ControlSpec.new(-1, 1, 'lin', 0, 0),
 			'widefreq'->ControlSpec.new(0.1, 20000, 'exp', 0, 440),
 			'attack'->ControlSpec.new(0, 16, 'lin', 0, 0.1),
 			'chaosParam'->ControlSpec.new(1, 30, 'lin', 0, 2.0),
@@ -143,7 +148,10 @@ Crucial {
 			\k->ControlSpec(-6.0,6.0),
 			\stepsPerOctave->ControlSpec(1.0,128.0,\lin,1.0,12.0),
 			\mul -> ControlSpec(0.0,1.0,\lin,0,1.0),
-			\add -> ControlSpec(0.0,1.0,\lin,0.0,0.0)
+			\add -> ControlSpec(0.0,1.0,\lin,0.0,0.0),
+			'bufnum' -> StaticIntegerSpec(0,100,0),
+			'sndbuf' -> StaticIntegerSpec(0,100,0)
+			
 		  ]
 		);
 	}
@@ -162,7 +170,7 @@ Crucial {
 			call Crucial-initLibraryItems first
 		*/
 
-		var a,rec,pause;
+		var a,rec,pause,width=256;
 		if(menu.notNil,{ menu.close });
 
 		menu = PageLayout.new("");
@@ -176,9 +184,8 @@ Crucial {
 		},{
 			Server.default.startAliveThread;
 			Server.default.dumpOSC(0)
-		},Server.default.dumpMode != 0 ,minWidth: 250);
-
-
+		},Server.default.dumpMode != 0 ,minWidth: width);
+		
 		if(debugNodeWatcher.isNil,{
 			debugNodeWatcher = AnnotatedDebugNodeWatcher(Server.default);
 		});
@@ -186,45 +193,45 @@ Crucial {
 			debugNodeWatcher.start;
 		},{
 			debugNodeWatcher.stop;
-		},debugNodeWatcher.isWatching,minWidth: 250);
+		},debugNodeWatcher.isWatching,minWidth: width);
 
 		ToggleButton(menu.startRow,"Server Log",{
 			ServerLog.start;
 		},{
 			ServerLog.stop;
-		},false,minWidth: 250);
+		},false,minWidth: width);
 
 		ActionButton(menu.startRow,"ServerLog.report",{
 			ServerLog.gui(tail:500);
-		},minWidth: 250);
+		},minWidth: width);
 
 		ActionButton(menu.startRow,"Query All Nodes",{
-			Library.at(\menuItems,\tools,'Server Node Report').value;		},minWidth: 250);
+			Library.at(\menuItems,\tools,'Server Node Report').value;		},minWidth: width);
 
 		ActionButton(menu.startRow,"Annotated Buses",{
-			Library.at(\menuItems,\tools,'Annotated Buses Report').value;		},minWidth: 250);
+			Library.at(\menuItems,\tools,'Annotated Buses Report').value;		},minWidth: width);
 
 		ActionButton(menu.startRow,"Listen to Buses",{
-			Library.at(\menuItems,\tools,'listen to audio busses').value;		},minWidth: 250);
+			Library.at(\menuItems,\tools,'listen to audio busses').value;		},minWidth: width);
 
 		ActionButton(menu.startRow,"Gui debugger",{
 			Library.at(\menuItems,\tools,\guiDebugger).value;
-		},minWidth: 250);
+		},minWidth: width);
 
 		ActionButton(menu.startRow,"Annotated Nodes",{
-			Library.at(\menuItems,\tools,'Annotated Nodes Report').value;		},minWidth: 250);
+			Library.at(\menuItems,\tools,'Server Node Report').value;		},minWidth: width);
 
 		ActionButton(menu.startRow,"edit ~/startup.rtf",{
 			"startup.rtf".openDocument
-		},minWidth: 250);
+		},minWidth: width);
 
 		ActionButton(menu.startRow,"kill all",{
 			Server.killAll;
-		},minWidth: 250);
+		},minWidth: width);
 
 		ActionButton(menu.startRow,"Quarks",{
 			Quarks.gui;
-		},minWidth: 250);
+		},minWidth: width);
 
 
 		//TempoGui.setTempoKeys;
@@ -250,10 +257,10 @@ Crucial {
 		});
 
 		// tools
-		Library.put(\menuItems,\load,'browse for objects...',{
+		Library.put(\menuItems,\load,'Open Player...',{
 			GetFileDialog({ arg ok,loadPath;
 				if(ok,{
-					loadPath.loadPath.topGui;
+					loadPath.loadPath.gui;
 				});
 			})
 		});
@@ -279,8 +286,7 @@ Crucial {
 					},{
 						listen.stop
 					});
-					CXLabel( layout, b.start.asString + "(" ++ b.size.asString ++ ")"
-						,100 );
+					CXLabel( layout, b.start.asString + "(" ++ b.size.asString ++ ")",100 );
 
 					bus = BusPool.findBus(s,b.start);
 					if(bus.notNil,{
@@ -409,54 +415,39 @@ Crucial {
 			UnicodeResponder.tester;
 		});
 
-//		Library.put(\menuItems,\introspection,'find class...',{
-//			GetStringDialog("Classname or partial string","",{
-//				arg ok,string;
-//				var matches,f,classes;
-//				matches = IdentitySet.new;
-//				if(ok,{
-//					classes = Class.allClasses.reject({ arg cl; cl.class === Class });
-//					classes.do({ arg cl;
-//						if(cl.name.asString.containsi(string),{
-//							matches = matches.add(cl);
-//						});
-//					});
-//
-//					Sheet({ arg f;
-//						matches.do({ arg cl;
-//							ClassNameLabel(cl,f.startRow,200);
-//							ActionButton(f,"source",{
-//								cl.openCodeFile;
-//							},60);
-//							ActionButton(f,"help",{
-//								cl.openHelpFile;
-//							},60);
-//						});
-//						if(matches.isEmpty,{
-//							CXLabel(f,"No matches found");
-//						});
-//					},"matches" + string);
-//				})
-//			});
-//		});
-
-		Library.put(\menuItems,\introspection,\classfinder,{
+		Library.put(\menuItems,\introspection,\classfinder,{ 
+			var close=true;
 			GetStringDialog("Search classes...","",{ arg ok,string;
 				Sheet({ |layout|
-					var matches;
+					var matches,first;
 					Object.allSubclasses.do({ |class|
 						if(class.isMetaClass.not and: {class.name.asString.find(string,true).notNil},{
-							matches = matches.add(class,true);
-							layout.startRow;
-							//ClassNameLabel(class,layout,300);
-							ActionButton(layout,class.name.asString,{ class.openCodeFile; },300);
+							matches = matches.add(class);
 						});
 					});
 					if(matches.isNil,{
 						("No classes matching " + string + "found").gui(layout);
-					})
-				},"Class search")
-			})
+					},{
+						if(matches.size == 1,{
+							matches.first.openCodeFile;
+							if(close ? true,{layout.window.close; });
+						},{
+							matches.sortMap({|c| c.name }).do { arg class;
+								var b;
+								layout.startRow;
+							    b = ActionButton(layout,class.name.asString,{ 
+								    class.openCodeFile; 
+								    if(close ? true,{layout.window.close; });
+								},300);
+								first = first ? b;
+							}
+						});
+						if(first.notNil,{
+						    first.focus
+						});
+					});
+				},"Class search",Rect(500,800,500,500))
+			},Rect(500,800,100,100))
 		});
 
 		Library.put(\menuItems,\introspection,\methodfinder,{
@@ -606,15 +597,11 @@ Crucial {
 //			MLIDbrowser(\Instr,onSelect).gui
 //		});
 
-		Library.put(\menuItems,\post,'post Instr address',{
-			MLIDbrowser(Instr,{ arg instr;
-				instr.dotNotation.post;
-			}).gui;
-		});
-
-		Library.put(\menuItems,\sounds,'make new Patch',{
-			MLIDbrowser(Instr,{ arg instr;
-				Patch(instr.name).topGui
+		Library.put(\menuItems,\post,'Instr Browser',{
+		    InstrBrowser({ arg layout,instr;
+		        ActionButton(layout,"post Instr name",{
+				    instr.dotNotation.post;
+				}).beginDragAction = {instr.dotNotation};
 			}).gui;
 		});
 
@@ -667,23 +654,6 @@ Crucial {
 				})
 			});
 		});
-
-		/*
-		Library.put(\menuItems,\tools,'Annotated Node Report',{
-			var a;
-			a = Library.at(AbstractPlayer, \busAnnotations, Server.default,\audio);
-			if(a.notNil,{
-				a.keysValuesDo({ |k,v|
-					[k,v].postln
-				})
-			});
-			a = Library.at(AbstractPlayer, \busAnnotations, Server.default,\control);
-			if(a.notNil,{
-				a.keysValuesDo({ |k,v|
-					[k,v].postln
-				})
-			});
-		});*/
 
 		Library.put(\menuItems,\tools,'Server Node Report',{
 			var probe,probing,resp,nodes,server,report,indent = 0,order=0;

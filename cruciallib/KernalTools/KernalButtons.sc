@@ -59,7 +59,7 @@ Tile : ActionButton { // the name comes from Squeak
 
 InspectorLink : ActionButton {
 	
-	*new { arg  target,layout,minWidth=100;
+	*new { arg  target,layout,minWidth=150;
 		^super.new(layout,target.asString,{target.insp},minWidth,nil,
 			Color.new255(70, 130, 200),
 			Color.white,
@@ -75,6 +75,10 @@ InspectorLink : ActionButton {
 			.action_({ target.insp })
 			.states_([["insp",Color.black,Color.white]])
 			.font_(GUI.font.new("Helvetica",9));
+	}
+	*captioned { arg caption,target,layout,minWidth=150;
+		CXLabel(layout,caption,minWidth:minWidth);
+		this.new(target,layout);
 	}
 }
 
