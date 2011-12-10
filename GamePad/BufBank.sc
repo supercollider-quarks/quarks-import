@@ -12,7 +12,7 @@ BufBank {
 		server = serv ? Server.default;			// make blank buffers to reserve numbers
 		if (server.serverRunning.not, { "boot server first!".postln; ^this });
 
-		bufs = { |i| Buffer(server, 0, 1, bufnum: i) } ! numBufs; 
+		bufs = { |i| Buffer(server, 0, 1) } ! numBufs; 
 		jamBufs = bufs.keep(numJams);
 		fileBufs = bufs.drop(numJams);
 
