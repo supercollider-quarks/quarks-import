@@ -54,7 +54,7 @@ HrSimpleModulator : HadronPlugin
 				var input = InFeedback.ar(inBus0);
 				Out.kr(prOutBus, A2K.kr(input));
 				
-			}).memStore;
+			}).add;
 			
 			Server.default.sync;
 			

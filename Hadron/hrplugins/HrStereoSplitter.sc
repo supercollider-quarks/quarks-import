@@ -60,7 +60,7 @@ HrStereoSplitter : HadronPlugin
 				Out.ar(outBusL, inL * smoothed);
 				Out.ar(outBusR, inR * smoothed);
 				
-			}).memStore;
+			}).add;
 			
 			Server.default.sync;
 			

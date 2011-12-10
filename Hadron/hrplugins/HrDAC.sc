@@ -48,7 +48,7 @@ HrDAC : HadronPlugin
 				var sound = [InFeedback.ar(inBus1), InFeedback.ar(inBus2)];
 				sound = Select.ar(limiter, [sound, Limiter.ar(LeakDC.ar(sound))]);
 				Out.ar(0, sound * level.lag(0.1));
-			}).memStore;
+			}).add;
 			
 			Server.default.sync;
 			synthInstance = Synth("hrDAC"++uniqueID, [\inBus1, inBusses[0], \inBus2, inBusses[1]], group);

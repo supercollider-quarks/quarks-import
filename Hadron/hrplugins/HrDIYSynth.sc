@@ -68,7 +68,7 @@ HrDIYSynth : HadronPlugin
 		fork
 		{
 					
-			sDef.memStore;
+			sDef.add;
 			
 			Server.default.sync;
 			

@@ -81,7 +81,7 @@ HrADC : HadronPlugin
 				Out.ar(outBus0, SoundIn.ar(hw0, mul.lag(0.1)));
 				Out.ar(outBus1, SoundIn.ar(hw1, mul.lag(0.1)));
 				
-			}).memStore;
+			}).add;
 			
 			Server.default.sync;
 			synthInstance = Synth("hrADC"++uniqueID, [\outBus0, outBusses[0], \outBus1, outBusses[1]], group);
