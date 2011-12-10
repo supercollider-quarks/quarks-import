@@ -1,6 +1,7 @@
 HrWrapSynth : HadronPlugin
 {
 	var <synthInstance, sliders, numBoxes, setFunctions, synthBusArgs, startButton, storeArgs, specs;
+	var ctlNameStrings;
 	
 	*new
 	{|argParentApp, argIdent, argUniqueID, argExtraArgs, argCanvasXY|
@@ -27,8 +28,8 @@ HrWrapSynth : HadronPlugin
 		
 		numControls = SynthDescLib.global.synthDescs.at(argExtraArgs[0].asSymbol).metadata.at(\specs).size;
 		
-		numIns = SynthDescLib.global.synthDescs.at(argExtraArgs[0].asSymbol).controlNames.select({|item| item.find("inBus", true, 0) == 0; }).size;
-		numOuts = SynthDescLib.global.synthDescs.at(argExtraArgs[0].asSymbol).controlNames.select({|item| item.find("outBus", true, 0) == 0; }).size;
+		numIns = SynthDescLib.global.synthDescs.at(argExtraArgs[0].asSymbol).controlNames.count({|item| item.asString.find("inBus", true, 0) == 0; });
+		numOuts = SynthDescLib.global.synthDescs.at(argExtraArgs[0].asSymbol).controlNames.count({|item| item.asString.find("outBus", true, 0) == 0; }).size;
 		
 		bounds = Rect(400, 400, 350, 50 + (numControls * 30));
 		

@@ -65,7 +65,7 @@ HrStereoMixer : HadronPlugin
 				Out.ar(transitBus.index, inL * smoothed);
 				Out.ar(transitBus.index+1, inR * smoothed);
 				
-			}).memStore;
+			}).add;
 			
 			SynthDef("hrMixerSummer"++uniqueID,
 			{
@@ -73,7 +73,7 @@ HrStereoMixer : HadronPlugin
 				var sound = [In.ar(transitBus.index), In.ar(transitBus.index+1)];
 				Out.ar(outBus0, sound[0]);
 				Out.ar(outBus1, sound[1]);
-			}).memStore;
+			}).add;
 			
 			Server.default.sync;
 			
