@@ -123,6 +123,7 @@ private:
 
 	static int announceHandler( handlerArgs );
 	static int quitHandler( handlerArgs );
+	static int clientQuitHandler( handlerArgs );
 
 	static int errorHandler( handlerArgs );
 	static int warnHandler( handlerArgs );

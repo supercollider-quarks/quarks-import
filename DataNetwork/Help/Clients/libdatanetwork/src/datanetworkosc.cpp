@@ -123,7 +123,7 @@ void DataNetworkOSC::setNetwork( DataNetwork* network )
 int DataNetworkOSC::findHost( const char *hostip )
 {
 	if ( curlHost( hostip ) == 0 ){
-		cout << "Found host at " << hostip << ", port " << curlBuffer << "\n";
+// 		cout << "Found host at " << hostip << ", port " << curlBuffer << "\n";
 		hostAddress = lo_address_new( hostip, curlBuffer.data() );
 		start();
 		return 0;
@@ -139,6 +139,8 @@ void DataNetworkOSC::addMethods()
 {
 	addMethod( "/datanetwork/announce", "si", announceHandler, this );
 	addMethod( "/datanetwork/quit", "si", quitHandler, this );
+
+	addMethod( "/client/quit", "is", clientQuitHandler, this );
 
 	addMethod( "/ping", "is", pingHandler, this );
 
@@ -226,6 +228,19 @@ int DataNetworkOSC::pingHandler( handlerArgs )
 // 	cout << "[DataNetworkOSC::genericHandler] ping: " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
 
 	( ( DataNetworkOSC* ) user_data )->sendPong();
+    return 0;
+}
+
+int DataNetworkOSC::clientQuitHandler( handlerArgs )
+{
+	if ( ( ( DataNetworkOSC* ) user_data )->postDebug )
+ 		cout << "[DataNetworkOSC:quit/client]: " + ( ( DataNetworkOSC* ) user_data )->getContent( path, types, argv, argc ) << "\n";
+//     lo_address from = lo_message_get_source( msg );
+
+	/// TODO: check if this was really for me
+    if ( argv[ 0 ]->i == ( ( DataNetworkOSC* ) user_data )->port && ( &argv[ 1 ]->s == ( ( DataNetworkOSC* ) user_data )->name ) ){
+      datanetwork->quit();
+    }
     return 0;
 }
 

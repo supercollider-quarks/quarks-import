@@ -79,6 +79,11 @@ public:
 	bool registered;
 	
 	void debug( bool onoff );
+	
+	void quit();
+	void setQuitFunction( void (*quitFunc)() );
+	
+
 
 // ------- END - use in client ------
 
@@ -121,6 +126,9 @@ private:
 	nodeMap dataNodes;
 	beeMap miniBees;
 
+	void (*quitFunction)();// = NULL;
+
+	
 	void addNode( int id, const char *label  = "" );
 	bool nodeExists( int id );
 	void removeNodeFromMap( int id );
