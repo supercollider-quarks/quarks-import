@@ -33,6 +33,9 @@ DataNetwork::DataNetwork( )
 	registered = false;
 
 	osc = NULL;
+	
+	void (*quitFunction)() = NULL;
+
 }
 
 /**  create an osc client interface for it: */
@@ -368,6 +371,19 @@ void DataNetwork::setRegistered( bool reg )
 	registered = reg;
 	if ( registered )
 		refreshNodeSettings();
+}
+
+/**
+	A quit request from the host
+*/
+void DataNetwork::quit(){
+  if ( this->quitFunction != NULL ){
+    this->quitFunction();
+  }
+}
+
+void DataNetwork::setQuitFunction( void (*quitFunc)(void) ){
+    quitFunction = quitFunc;
 }
 
 /**
