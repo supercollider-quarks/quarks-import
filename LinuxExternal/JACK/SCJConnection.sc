@@ -1,7 +1,7 @@
 SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections, <properties;
 	var <srcchan, <deschan, <source, <destination;
 	classvar <>verbose = false;
-	
+
 	*initClass{
 		alsadef = ["system:","playback_","capture_"];
 		scdef = ["SuperCollider:","in_","out_"];
@@ -29,7 +29,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 		var pp, line1, line2;
 		connections = ();
 		pp = Pipe.new(prepend++"jack_lsp -c", "r");
-		line1 = pp.getLine;							
+		line1 = pp.getLine;
 		while({line1.notNil}, {
 			line2 = pp.getLine;
 			if ( line2.notNil,
@@ -37,14 +37,14 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 					if ( line2.containsStringAt(0, "   "),
 						{
 							connections.put( line1.asSymbol, line2.copyToEnd(3).asSymbol );
-							line1 = pp.getLine; 
+							line1 = pp.getLine;
 						},
 						{
 							line1 = line2;
 						});
 				},
 				{ line1 = line2 });
-		});	
+		});
 		pp.close;
 		^connections;
 	}
@@ -53,7 +53,7 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 	var pp,line1, line2, prop;
 		properties = ();
 		pp = Pipe.new(prepend++"jack_lsp -p", "r");
-		line1 = pp.getLine;							
+		line1 = pp.getLine;
 			while({line1.notNil}, {
 			line2 = pp.getLine;
 			if ( line2.notNil,
@@ -64,14 +64,14 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 							prop[0] = prop[0].copyToEnd(1);
 							prop = prop.keep( prop.size -1 );
 							properties.put( line1.asSymbol, prop );
-							line1 = pp.getLine; 
+							line1 = pp.getLine;
 						},
 						{
 							line1 = line2;
 						});
 				},
 				{ line1 = line2 });
-		});	
+		});
 		pp.close;
 		^properties;
 	}
@@ -81,12 +81,12 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 		cnt = 0;
 		allports = ();
 		pp = Pipe.new(prepend++"jack_lsp", "r");
-		line = pp.getLine;							
+		line = pp.getLine;
 		while({line.notNil}, {
 			allports.put( cnt, line.asSymbol );
-			line = pp.getLine; 
+			line = pp.getLine;
 			cnt = cnt + 1;
-		});	
+		});
 		pp.close;
 		^allports;
 	}
@@ -94,8 +94,8 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 	*connect{ |srcch, desch, src, des|
 		var command;
 		if ( src.isNil or: des.isNil,
-			{ 
-				Task({ 
+			{
+				Task({
 					srcch.do{ |it,i|
 						command = prepend++"jack_connect" + allports.at(it) + allports.at( desch[i] );
 						if ( verbose ){ command.postln; };
@@ -119,11 +119,11 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 				}).play;
 			});
 	}
-	
+
 	*disconnect{ |srcch, desch, src, des|
 		var command;
 		if ( src.isNil or: des.isNil,
-			{ 
+			{
 				Task({ srcch.do{ |it,i|
 					command = prepend++"jack_disconnect" + allports.at(it) + allports.at( desch[i] );
 					command.unixCmd;
