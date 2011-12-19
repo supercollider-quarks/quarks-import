@@ -26,9 +26,9 @@
 			});
 		};
 
-		MIDIPort.autoFreeSockets.not.if({
-			MethodError("MIDIPort.autoFreeSockets must be true to use miditest.", this).throw;
-		});
+		// MIDIPort.autoFreeSockets.not.if({
+		// 	MethodError("MIDIPort.autoFreeSockets must be true to use miditest.", this).throw;
+		// });
 
 		channel = channel ? 0;
 			// can have controllers on a different midi channel (or different device)
@@ -82,35 +82,6 @@
 		"in the console window.".postln;
 		^voicer
 	}
-
-	argsAndIndices {
-		var out;	
-		out = IdentityDictionary.new;
-		func.def.argNames.do({ |name, i|
-			out.put(name, i);
-		});
-		^out
-	}
-
-	listArgs { |inputs|
-		var	dummyPatch,	// Instrs that use Instr-wrap must be patched before revealing all args
-			names, spc;
-		try {	// this might fail, so set up a fallback position
-			dummyPatch = this.patchClass.new(this, inputs);
-			dummyPatch.asSynthDef;
-			names = dummyPatch.argNames;
-			spc = dummyPatch.argSpecs;
-		} {		// on failure
-			names = this.argNames;
-			spc = specs;
-		};
-		("\n\n" ++ this.asString).postln;
-		names.do({ arg n, i;
-			n.post;
-			" -> ".post;
-			spc[i].asCompileString.postln;
-		});
-	}
 	
 	miditestMono { arg channel = 0, initArgs, target, bus, ctlChannel;
 		^this.miditest(channel, initArgs, target, bus, ctlChannel, { |instr, initArgs, target, bus|
@@ -134,7 +105,7 @@
 
 + SynthDef {
 	miditest { arg channel = 0, specs, target, bus, ctlChannel, makeVoicerFunc;
-		var voicer, socket, patch, spec, name, layout;
+		var voicer, socket, patch, spec, name, layout, cnames, md;
 		
 		var close = {
 			var gctemp;
@@ -158,13 +129,12 @@
 			});
 		};
 
-		MIDIPort.autoFreeSockets.not.if({
-			MethodError("MIDIPort.autoFreeSockets must be true to use miditest.", this).throw;
-		});
+		// MIDIPort.autoFreeSockets.not.if({
+		// 	MethodError("MIDIPort.autoFreeSockets must be true to use miditest.", this).throw;
+		// });
 
 		channel = channel ? 0;
 		ctlChannel = ctlChannel ? channel;
-		specs = specs ? Array.new;
 
 		this.send(target.asTarget.server);	// tell the server about me
 		
@@ -178,9 +148,23 @@
 			// how to exempt args? provide non-SimpleNumber in initArgs
 		
 			// now make midi controllers
-		this.allControlNames.do({ arg cn, i;
+			// use (midiControls: #[name0, name1...]) to choose which controls get midified
+			// otherwise it's all of them
+		md = this.metadata ?? { () };
+		cnames = md[\midiControls] ?? { this.allControlNames.collect(_.name) };
+		if(md[\specs].notNil and: { specs.isNil }) {
+			specs = this.allControlNames.collect { |cname|
+				var temp = md[\specs][cname.name.asSymbol];
+				temp.tryPerform(\asSpec) ?? { temp }
+			};
+		} {
+			specs ?? { specs = [] };
+		};
+		this.allControlNames.do({ arg cn;
+			var i;
 				// freq and gate must be omitted
 			name = cn.name.asSymbol;
+			i = this.allControlNames.detectIndex { |cn| name == cn.name.asSymbol };
 			#[\freq, \gate, \outbus].includes(name).not.if({
 				specs[i].respondsTo(\asSpec).if({
 					spec = specs.at(cn.index).asSpec ?
@@ -189,7 +173,7 @@
 				}, {
 					spec = specs[i];
 				});
-				(spec.rate != \scalar).if({
+				(spec.rate != \scalar and: { cnames.includes(name) }).if({
 					socket.addControl(
 						nil,		// let Socket find me a controller
 						name,
@@ -200,7 +184,9 @@
 						ctlChannel
 					);
 				}, {
-					voicer.setArgDefaults([name, spec.tryPerform(\default) ?? { spec }])
+					if(spec.notNil) {
+						voicer.setArgDefaults([name, spec.tryPerform(\default) ?? { spec }])
+					};
 				});
 			});
 		});
