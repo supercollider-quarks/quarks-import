@@ -25,7 +25,14 @@ Arguments as in .connect.<br>
 <br>
 <pre>SCJConnection.getconnections</pre><br>
 Get a list of current jack connections (via jack_lsp).<br>
-List gets stored in class variable .connections<br>
+List gets stored in class variable .connections.<br>
+<br>
+This variable is in the format:<br>
+<pre>(
+	'readable_port_name': ['a_writable_port_name', 'another_writable_port_name'],
+	'another_readable_port_name': ['a_writable_port_name']
+)</pre>
+All port names are symbols.<br>
 <br>
 <pre>SCJConnection.getproperties</pre><br>
 Get a list of properties of all jack ports (via jack_lsp).<br>

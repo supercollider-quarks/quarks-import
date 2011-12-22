@@ -26,24 +26,20 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 	}
 
 	*getconnections{
-		var pp, line1, line2;
+		var pp, line1, line2, destArray;
 		connections = ();
 		pp = Pipe.new(prepend++"jack_lsp -c", "r");
 		line1 = pp.getLine;
 		while({line1.notNil}, {
-			line2 = pp.getLine;
-			if ( line2.notNil,
-				{
-					if ( line2.containsStringAt(0, "   "),
-						{
-							connections.put( line1.asSymbol, line2.copyToEnd(3).asSymbol );
-							line1 = pp.getLine;
-						},
-						{
-							line1 = line2;
-						});
-				},
-				{ line1 = line2 });
+			destArray = Array.new;
+			while {
+				line2 = pp.getLine;
+				line2.notNil and: { line2.containsStringAt(0, "   ") }
+			} {
+				destArray = destArray.add(line2.copyToEnd(3).asSymbol);
+				connections.put( line1.asSymbol, destArray );
+			};
+			line1 = line2;
 		});
 		pp.close;
 		^connections;
@@ -97,12 +93,13 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 			{
 				Task({
 					srcch.do{ |it,i|
-						command = prepend++"jack_connect" + allports.at(it) + allports.at( desch[i] );
+						command = prepend++"jack_connect" + allports.at(it).asCompileString + allports.at( desch[i] ).asCompileString;
 						if ( verbose ){ command.postln; };
 						command.unixCmd;
 						0.2.wait;
 					};
 					this.getconnections;
+					NotificationCenter.notify(this, \connectDone);
 				}).play;
 			},
 			{
@@ -125,11 +122,12 @@ SCJConnection { classvar <>alsadef, <>scdef, <>prepend, <allports, <connections,
 		if ( src.isNil or: des.isNil,
 			{
 				Task({ srcch.do{ |it,i|
-					command = prepend++"jack_disconnect" + allports.at(it) + allports.at( desch[i] );
+					command = prepend++"jack_disconnect" + allports.at(it).asCompileString + allports.at( desch[i] ).asCompileString;
 					command.unixCmd;
 					if ( verbose ){ command.postln; };
 					0.2.wait;};
 					this.getconnections;
+					NotificationCenter.notify(this, \disconnectDone);
 				}).play;
 			},
 			{
