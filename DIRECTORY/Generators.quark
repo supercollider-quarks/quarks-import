@@ -3,5 +3,6 @@
 	\path: 		"Generators",
 	\summary:		"An implementation of generators, a special type of stateless stream",
 	\author: 		"James McCartney",
-	\version:		0.1
+	\version:		0.1,
+	\status:		"stable"
 )

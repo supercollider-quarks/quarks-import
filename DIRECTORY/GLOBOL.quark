@@ -6,5 +6,6 @@
 	\organization: 	"think local, act GLOBOL",
 	\country: 		"",
 	\since: 		"2009",
-	\helpdoc: "GLOBOL.html"
+	\helpdoc: "GLOBOL.html",
+	\status:		"experimental"
 )

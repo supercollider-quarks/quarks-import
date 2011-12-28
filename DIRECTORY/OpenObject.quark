@@ -5,5 +5,6 @@
 	\version:		"0.2",
 	\author: 		"Julian Rohrhuber, Fredrik Olofsson",
 	\country: 		"Germany",
-	\since: 		"2009"
+	\since: 		"2009",
+	\status:		"stable"
 )
