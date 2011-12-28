@@ -6,5 +6,6 @@
 	\organization: 	"University Cologne",
 	\helpdoc:		"help/MathLib.html",
 	\country: 		"Germany",
-	\since: 		"2006"
+	\since: 		"2006",
+	\status:		"beta"
 )

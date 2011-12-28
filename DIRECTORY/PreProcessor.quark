@@ -5,5 +5,6 @@
 	\author: 		"Julian Rohrhuber",
 	\country: 		"Germany",
 	\since: 		"2007",
-\helpdoc: "help/PreProcessor.scd"
+\helpdoc: "help/PreProcessor.scd",
+	\status:		"stable"
 )

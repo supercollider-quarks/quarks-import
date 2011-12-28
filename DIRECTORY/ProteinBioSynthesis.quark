@@ -6,5 +6,6 @@
 	\organization: 	"HfbK Hamburg",
 	\country: 		"Germany",
 	\since: 		"2001",
-\helpdoc: "help/ProteinBioSynthesis.help.rtf"
+	\helpdoc: "help/ProteinBioSynthesis.help.rtf",
+	\status:		"stable"
 )
