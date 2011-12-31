@@ -1,0 +1,20 @@
+0000000000000000000000000000000000000000 6b6c1e2ea44b39ee455023dfca518088f054a32e crucialfelix <crucialfelix@gmail.com> 1301407519 +0200	commit: initial
+6b6c1e2ea44b39ee455023dfca518088f054a32e 662e36a0a28b801f7346f44f2641003cacab81f0 crucialfelix <crucialfelix@gmail.com> 1301408268 +0200	commit: readme
+662e36a0a28b801f7346f44f2641003cacab81f0 322f6e26c29bedc02c84ac33c756616703d97d55 crucialfelix <crucialfelix@gmail.com> 1301409430 +0200	commit: rewrite
+322f6e26c29bedc02c84ac33c756616703d97d55 36d7800487fb7bfddff624a7e76683ae4579d0a2 crucialfelix <crucialfelix@gmail.com> 1301453489 +0200	commit: kr and ar loop oscillators work now
+36d7800487fb7bfddff624a7e76683ae4579d0a2 7fd63f90bf6849c99f51fc738403332d85d3cb56 crucialfelix <crucialfelix@gmail.com> 1301785824 +0200	commit: refactor. Splines are now mathematical objects,
+7fd63f90bf6849c99f51fc738403332d85d3cb56 59de051d57d797684f81874a885f9161c98a6eb8 crucialfelix <crucialfelix@gmail.com> 1301799958 +0200	commit: add: SplineMapper for using a spline as a mapping function
+59de051d57d797684f81874a885f9161c98a6eb8 6932bd3da817a434f4be38d7c6b4caeb4fd1eae1 crucialfelix <crucialfelix@gmail.com> 1301963777 +0200	commit: BezierSpline and editor for it
+6932bd3da817a434f4be38d7c6b4caeb4fd1eae1 ce436d7285e3893a8140a5f075a9eff8b437e601 crucialfelix <crucialfelix@gmail.com> 1301963992 +0200	commit: readme update
+ce436d7285e3893a8140a5f075a9eff8b437e601 304bded4673c362d7248ae8c3607197ea94f034d crucialfelix <crucialfelix@gmail.com> 1302050791 +0200	commit: unlimited num control points
+304bded4673c362d7248ae8c3607197ea94f034d 336095618dbd00de83c07ccd2fefa0b31af788cf crucialfelix <crucialfelix@gmail.com> 1302386218 +0200	commit: fix: spline guis were mapping incorrectly
+336095618dbd00de83c07ccd2fefa0b31af788cf bc018cb74846e4939cf44270a22ceceec6c4bda7 crucialfelix <crucialfelix@gmail.com> 1302386302 +0200	commit: fix: spline guis were mapping incorrectly
+bc018cb74846e4939cf44270a22ceceec6c4bda7 a470affc7d9cd9c8b79e843ae220172bcc212b0c crucialfelix <crucialfelix@gmail.com> 1303091771 +0200	commit: show text values of cursor, swedish crosshairs
+a470affc7d9cd9c8b79e843ae220172bcc212b0c e770b9efcc59b6580593ac51c465ebc3ab2ec85a crucialfelix <crucialfelix@gmail.com> 1317828457 +0200	commit: GridLines: simple renaming, comments
+e770b9efcc59b6580593ac51c465ebc3ab2ec85a a56bf0169759afab4f3bbb39ee522216cb654b4c crucialfelix <crucialfelix@gmail.com> 1317828611 +0200	commit: bug in Spline value : forgot the interpolationKey
+a56bf0169759afab4f3bbb39ee522216cb654b4c aa5b74ed4a425b15b28a5169ddb23f3d62dc87d0 crucialfelix <crucialfelix@gmail.com> 1317828625 +0200	commit: SplineGen storeArgs
+aa5b74ed4a425b15b28a5169ddb23f3d62dc87d0 edc32b506896b5599e034739dbc43605778dfe31 crucialfelix <crucialfelix@gmail.com> 1320613386 +0100	commit: remove wslib dependency
+edc32b506896b5599e034739dbc43605778dfe31 7a10b2b5bc7d62a8e70ab86999e8cd13cf362d04 crucialfelix <crucialfelix@gmail.com> 1320613449 +0100	commit: allow SplineGui to be zoomable
+7a10b2b5bc7d62a8e70ab86999e8cd13cf362d04 1e4ea8955f6976cc19c3c28aa6141b20895977b6 crucialfelix <crucialfelix@gmail.com> 1320613500 +0100	commit: GridLines: fix display of x numbers if the area is not big enough
+1e4ea8955f6976cc19c3c28aa6141b20895977b6 26fc2dda54f82de14eae4a8d89e413ad31af0909 crucialfelix <crucialfelix@gmail.com> 1320613526 +0100	commit: minor helpfile tweaks
+26fc2dda54f82de14eae4a8d89e413ad31af0909 ac3ef2bf797fc9a5348f777c16d0da2ea29df41c crucialfelix <crucialfelix@gmail.com> 1320630622 +0100	commit: fix point and control point editing : better algo for detecting where along the spline that the double click should insert the point
