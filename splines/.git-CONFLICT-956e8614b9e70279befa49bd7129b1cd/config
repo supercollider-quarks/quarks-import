@@ -1,9 +1,0 @@
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = false
-	logallrefupdates = true
-	ignorecase = true
-[remote "github"]
-	url = git@github.com:crucialfelix/splines.git
-	fetch = +refs/heads/*:refs/remotes/github/*
