@@ -1,10 +1,12 @@
 CLASS:: BezierSpline
-summary:: A Bézier spline is a series of Bézier curves joined end to end where the last point of one curve coincides with the starting point of the next curve. Bézier curves are expressed as 2 points with an array of 0 or more control points between them.
+summary:: A Bézier spline is a series of Bézier curves joined end to end where the last point of one curve coincides with the starting point of the next curve.
 categories:: Splines
 related:: Classes/LinearSpline
 
 DESCRIPTION::
-Like other spline classes, the points may be of 2 or more more dimensions.  Control points should be of the same dimensional order as the points.
+The Bézier curves lie between each point on the spline and have an array of 0 or more control points that express the curvature.
+
+Like other spline classes, the points may be of 2 or more more dimensions.  Control points should be of the same dimensional order as the points. The BezierSplineGui can only edit in 2D.
 
 The number of control points determines the order of that segment:
 list::
@@ -13,6 +15,26 @@ list::
 ## 2 : cubic
 ## ...
 ## N : ntic
+::
+
+code::
+(
+b = BezierSpline(
+	[ 0, 0 ], 
+		[  ], 
+	[ 1, 1 ], 
+		[ [ 1.56875, 0.3125 ] ], 
+	[ 2, 2 ], 
+		[ [ 2.23125, 0.54166666666667 ], [ 2.78125, 0.6875 ] ], 
+	[ 3, 3 ], 
+		[ [ 3.0375, 4.6875 ], [ 3.475, 1.3958333333333 ], [ 3.4875, 5.125 ] ], 
+	[ 4, 4 ], 
+		[ [ 4.2875, 1.875 ], [ 4.76875, 1.0208333333333 ], [ 4.38125, 4.3333333333333 ], [ 4.69375, 5.5416666666667 ] ], 
+	[ 5, 5 ], 
+	false);
+
+b.gui(nil,1000@300);
+)
 ::
 
 Methods that return a point will return an array [x,y], not a Point object as that class is limited to 2 dimensions.  Methods that take a point as setter may be either an array or a Point object that will be converted to a point array.

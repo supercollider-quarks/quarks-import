@@ -3,13 +3,13 @@
 LinearSpline  { // : AbstractFunction
 
 	var <>points,<>isClosed;
-	
+
 	*new { |points,isClosed=false|
 		^super.newCopyArgs(points.collect(_.asArray),isClosed)
 	}
 	storeArgs { ^[points,isClosed] }
 	simplifyStoreArgs { |args| ^args }
-	
+
 	value { arg u;
 		var args,i,ii;
 		i = u.floor;
@@ -22,7 +22,7 @@ LinearSpline  { // : AbstractFunction
 	}
 	interpolate { arg divisions=128;
 		// along the spline path
-		// actually gives divisions * numPoints 
+		// actually gives divisions * numPoints
 		var step;
 		step = points.size.asFloat / divisions.asFloat;
 		^Array.fill(divisions,{ arg i; this.value(i * step) })
@@ -44,9 +44,9 @@ LinearSpline  { // : AbstractFunction
 		var value,totalTime;
 
 		value = 1 - domain;
-		
+
 		ps = this.interpolate( (divisions / points.size * 4.0).asInteger ); // oversampled
-		
+
 		totalTime = ps.last[domain];
 		// TODO
 		// interpolates from time 0
@@ -85,13 +85,13 @@ LinearSpline  { // : AbstractFunction
 					})
 				})
 			});
-							
+
 		^Array.fill(divisions,{ |i|
 			t = i * step;
 			feed.next
 		})
 	}
-	
+
 	xypoints {
 		^points.collect({ |p| Point(p[0],p[1]) })
 	}
@@ -103,7 +103,7 @@ LinearSpline  { // : AbstractFunction
 			points.removeAt(i)
 		});
 	}
-	
+
 	minMaxVal { arg dim;
 		var maxes,mins,numd;
 		numd = this.numDimensions;
@@ -118,7 +118,7 @@ LinearSpline  { // : AbstractFunction
 			});
 		};
 		^[mins,maxes]
-	}		
+	}
 	normalizeDim { arg dim,min=0.0,max=1.0;
 		// normalize the points
 		// not the resulting line
@@ -140,10 +140,10 @@ LinearSpline  { // : AbstractFunction
 		^LinearSpline(points ++ thou.points,isClosed)
 	}
 
-	guiClass { 
+	guiClass {
 		// 2D only
-		^SplineGui 
-	}	
+		^SplineGui
+	}
 	// see MathLib/ScatterView3d for viewing 3D into a 2D plane
 }
 
@@ -151,7 +151,7 @@ LinearSpline  { // : AbstractFunction
 BSpline : LinearSpline {
 
 	var <>order;
-	
+
 	*new { |points,order=2.0,isClosed=false|
 		^super.newCopyArgs(points.collect(_.asArray),isClosed).order_(order)
 	}
@@ -171,7 +171,7 @@ BSpline : LinearSpline {
 	}
 	interpolate { arg divisions=128;
 		// along the spline path
-		// actually gives divisions * numSegments 
+		// actually gives divisions * numSegments
 		var step, controls,list,part1Array;
 
 		step = (points.size.asFloat - 1) / divisions.asFloat;
@@ -185,46 +185,46 @@ BSpline : LinearSpline {
 		part1Array = list.collect({ |item,ii|
 				this.splineIntPart1( [item, list.clipAt(ii+1)], controls[0][ii], controls[1][ii] )
 			});
-		
-		^Array.fill(divisions,{ arg i; 
+
+		^Array.fill(divisions,{ arg i;
 			var is;
 			is = i * step;
 			this.splineIntPart2( part1Array[is.floor], is.frac );
 		})
 	}
-		
-   	bSplineIntControls { arg list;
-   		var delta;
-   		delta = this.bSplineIntDeltaControls( list );
-   		^[ 
-   			list.collect({ |item, i| item + ( delta[i] ? 0 ); }),
-   			list[1..].collect({ |item, i| item - ( delta[i+1] ? 0 ); })  ++ [ list.first - list.last ] 
+
+	bSplineIntControls { arg list;
+		var delta;
+		delta = this.bSplineIntDeltaControls( list );
+		^[
+			list.collect({ |item, i| item + ( delta[i] ? 0 ); }),
+			list[1..].collect({ |item, i| item - ( delta[i+1] ? 0 ); })  ++ [ list.first - list.last ]
 		];
-   	}
+	}
 	bSplineIntDeltaControls { arg list;
 		// adapted from http://ibiblio.org/e-notes/Splines/Bint.htm
 		var n, b, a, d;
 
 		n = list.size;
 		#b, a, d = { ( 0 ! n ) } ! 3;
-		 
+
 		b[1] = -1/order;
 		a[1] = (list.clipAt(2) - list[0])/order;
-		
+
 		if(n > 2,{
 			( 2 .. (n-1) ).do { |i|
 				b[i] = -1/(b[i-1] + order);
 			   	a[i] = ((list.clipAt(i+1) - list[i-1] - a[i-1]) * -1) * b[i];
 			  	};
 		});
-				  	
+
 		( (n-2) .. 0 ).do { |i|
 		   if( a[i] != 0 )
 		  	{ d[i] = a[i] + (d[i+1]*b[i]); }
 		  	{ d[i] = (d[i+1]*b[i]); }
 		 };
 	   ^d;
-   	}
+	}
 	splineIntFunctionArray { |list,i, x1array, x2array|
 		var part1Array;
 		// x1array and x2array should have the same size as list
@@ -233,7 +233,7 @@ BSpline : LinearSpline {
 				this.splineIntPart1( [item, list.clipAt(ii+1)], x1array[ii], x2array[ii] )
 			});
 		^this.splineIntPart2( part1Array[i.floor], i.frac );
-	}   	
+	}
 
 	splineIntPart1 { |list,x1, x2| // used once per step
 		var y1, y2;
@@ -241,61 +241,55 @@ BSpline : LinearSpline {
 		#y1, y2 = list;
 										// c0 = y1; -> use y1 instead
 		c1 = (x1 - y1) * 3 ;				// c1 = (3 * x1) - (3 * y1);
-		c2 = (x2 - (x1*2) + y1) * 3;		// c2 = (3 * x2) - (6 * x1) + (3 * y1);  
-		c3 = (y2 - y1) - ((x2 - x1) * 3); 	// c3 = y2 - (3 * x2) + (3 * x1) - y1; 
-		^[ y1, c1, c2, c3 ]; 
+		c2 = (x2 - (x1*2) + y1) * 3;		// c2 = (3 * x2) - (6 * x1) + (3 * y1);
+		c3 = (y2 - y1) - ((x2 - x1) * 3); 	// c3 = y2 - (3 * x2) + (3 * x1) - y1;
+		^[ y1, c1, c2, c3 ];
 	}
-		
+
 	splineIntPart2 { |list,i| // used for every index
-		^((list[3] * i + list[2]) * i + list[1]) * i + list[0]; 
+		^((list[3] * i + list[2]) * i + list[1]) * i + list[0];
 	}
 	++ { arg thou;
 		^BSpline(points ++ thou.points,order,isClosed)
 	}
-		
+
 	*defaultOrder { ^2.0 }
 }
 
 
 BezierSpline : LinearSpline {
-	
+
 	var <>controlPoints;
-	
+
 	*new { arg ... things;
-		var isClosed,points,controlPoints,nu;
-		if(things.size.odd,{
-			isClosed = things.pop;
-		},{
-			isClosed = false
+		var isClosed = false,points,controlPoints,nu;
+		if(things.last.isKindOf(Boolean),{
+			isClosed = things.pop
 		});
-		points = Array.new(things.size/2);
-		controlPoints = Array.new(things.size/2);
-		things.do { arg p,i;
-			if(i.even,{
-				points.add(p.asArray)
-			},{
-				controlPoints.add(p.collect(_.asArray))
-			});
-		};
+		if(things.size.odd,{ // last controlPoints only needed if isClosed
+			things = things.add( [] )
+		});
+		# points, controlPoints = things.clump(2).flop;
+		points = points.collect(_.asArray);
+		controlPoints = controlPoints.collect({ arg cps; cps.collect(_.asArray) });
 		nu = super.new(points,isClosed);
 		nu.controlPoints = controlPoints;
 		^nu
 	}
 	*fromPoints { arg points=[],controlPoints,isClosed=false;
+		if(controlPoints.isNil,{
+			controlPoints = [] ! points.size-1;
+		},{
+			controlPoints = controlPoints ++ Array.fill(points.size-1 - controlPoints.size,{[]})
+		});
 		^super.new(points,isClosed).controlPoints_(controlPoints ?? {Array.fill(points.size-1,{[]})})
 	}
-	storeArgs { 
-		var ps = Array.newClear(points.size * 2 + 1);
-		points.do({ arg p,i;
-			ps[i * 2] = p;
-			ps[i * 2 + 1] = controlPoints[i];
-		});
-		ps[points.size * 2] = isClosed;
-		^ps
+	storeArgs {
+		^[points,controlPoints].flop.flatten(1).add(isClosed)
 	}
-	interpolate { arg divisions=128;		
+	interpolate { arg divisions=128;
 		// along the spline path
-		// actually gives divisions * numPoints 
+		// actually gives divisions * numPoints
 		var ps,funcs;
 		funcs = #['linear','quadratic','cubic'];
 		points.do { arg p,i;
@@ -317,7 +311,7 @@ BezierSpline : LinearSpline {
 				};
 			});
 		};
-		^ps			
+		^ps
 	}
 	linear { arg t,p1,p2,cps;
 		^p1.blend(p2,t)
@@ -331,20 +325,20 @@ BezierSpline : LinearSpline {
 	ntic { arg t,p1,p2,cps;
 		// anything greater than cubic .. gazillionic
 		var sum,n;
-		n = cps.size;
+		n = cps.size + 1;
 		sum = (1-t).pow(n) * p1;
 		(n-1..1).do { arg ni,i;
 			var binomialCoef;
 			binomialCoef = n.factorial / (ni.factorial * (n - ni).factorial);
 			sum = sum + (binomialCoef * t.pow(n-ni) * (1-t).pow(ni) * cps[i] )
-		};			
-		^sum	+ (t.pow(n) * p2);
+		};
+		^sum + (t.pow(n) * p2);
 	}
 	createPoint { arg p,i;
 		super.createPoint(p,i);
 		controlPoints = controlPoints.insert(i,[]);
 		this.changed('points');
-	}		
+	}
 	createControlPoint { arg p,pointi,cpi;
 		var cps;
 		cps = controlPoints[pointi];
@@ -375,7 +369,7 @@ BezierSpline : LinearSpline {
 
 /*
 HermiteSpline : BSpline {
-	
+
 	interpolationKey { ^\hermite }
 
 }
@@ -385,5 +379,5 @@ HermiteSpline : BSpline {
 	//http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull.E2.80.93Rom_spline
 	//http://stackoverflow.com/questions/1251438/catmull-rom-splines-in-python
 	/* For example, most camera path animations generated from discrete key-frames are handled using Catmull–Rom splines. They are popular mainly for being relatively easy to compute, guaranteeing that each key frame position will be hit exactly, and also guaranteeing that the tangents of the generated curve are continuous over multiple segments.*/
-		
+
 

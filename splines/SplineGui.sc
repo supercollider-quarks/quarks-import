@@ -34,13 +34,18 @@ SplineGui : ObjectGui {
 		bounds = layout.decorator.bounds;
 		
 		uv = UserView( layout, bounds );
+		//uv.resize = 5;
 		this.background = GUI.skin.background;
 		
 		// this can recalc on resize
 		boundsHeight = bounds.height.asFloat;
 		boundsWidth = bounds.width.asFloat;
 
-		gridLines = GridLines(uv,bounds,this.spec,domainSpec);
+		if(\Grid.asClass.notNil,{
+			gridLines = DrawGrid(bounds,Grid(domainSpec),Grid(this.spec));
+		},{
+			gridLines = GridLines(uv,bounds,this.spec,domainSpec);
+		});
 		this.setZoom(domainSpec.minval,domainSpec.maxval);
 		
 		grey = Color.black.alpha_(0.5);
@@ -48,7 +53,7 @@ SplineGui : ObjectGui {
 
 			gridLines.draw;
 						
-			grey.set; 
+			Pen.color = grey; 
 			// can cache an array of Pen commands
 			model.xypoints.do { |point,i|
 				var focPoint;
@@ -56,33 +61,32 @@ SplineGui : ObjectGui {
 				point = this.map(point);
 				Pen.addArc(point,range,0,2pi);
 				if(i==selected,{
-					Color.blue.set;
+					Pen.color = Color.blue;
 					Pen.fill;
 					// crosshairs
-					Color(0.92537313432836, 1.0, 0.0, 0.41791044776119).set;
+					Pen.color = Color(0.92537313432836, 1.0, 0.0, 0.41791044776119);
 					Pen.moveTo(0@point.y);
 					Pen.lineTo(Point(bounds.width-1,point.y));
 					Pen.moveTo(point.x@0);
 					Pen.lineTo(Point(point.x,bounds.height-1));
 					Pen.stroke;
 
-					grey.set; 
+					Pen.color = grey;
 					// text
-					// better to be able to defer to the GridLines for string repr
+					// better to be able to defer to the Grid for  repr
 					Pen.use {
 						Pen.translate(point.x,point.y);
 						Pen.rotate(0.5pi);
-						focPoint.x.asFloat.asStringPrec(4).drawAtPoint(Point(-45,0),nil,grey);
+						Pen.stringAtPoint(focPoint.x.asFloat.asStringPrec(4),Point(-45,0));
 					};
-					focPoint.y.asFloat.asStringPrec(4).drawAtPoint(Point(point.x+15,point.y-15),nil,grey);
-					
+					Pen.stringAtPoint( focPoint.y.asFloat.asStringPrec(4), Point(point.x+15,point.y-15) );
 				},{
 					Pen.stroke;
 				})
 			};
 			this.drawControlPoints();
 			
-			Color.blue.set;
+			Pen.color = Color.blue;
 			Pen.moveTo( this.map( model.points[0]) );
 
 			model.interpolate(density).do { arg point,i;
@@ -94,6 +98,7 @@ SplineGui : ObjectGui {
 		this.makeMouseActions;
 		
 		this.update;
+		// make a BSplineGui to separate this out
 		if(model.class !== LinearSpline,{
 			this.curveGui(layout);
 		});
@@ -178,19 +183,21 @@ SplineGui : ObjectGui {
 	spec_ { arg sp;
 		spec = sp;
 		gridLines.spec = sp;
+		this.update;
 	}
 	setDomainSpec { arg dsp,setGridLines=true;
 		domainSpec = dsp;
 		if(setGridLines,{
-			gridLines.domainSpec = dsp;
-		})
+			gridLines.x.setZoom(dsp.minval,dsp.maxval);
+		});
+		this.update;
 	}
 	setZoom { arg argFromX,argToX;
 		var toXpixels;
 		fromX = argFromX.asFloat;
 		toX = argToX.asFloat;
 		domainSpec = ControlSpec(domainSpec.minval,max(toX,domainSpec.maxval));
-		gridLines.domainSpec = ControlSpec(fromX,toX);
+		gridLines.x.setZoom(fromX,toX);
 		if(boundsWidth.notNil,{
 			fromXpixels = this.rawMapX(fromX);
 			toXpixels = this.rawMapX(toX);
@@ -275,7 +282,7 @@ BezierSplineGui : SplineGui {
 	drawControlPoints {
 		model.controlPoints.do { |cps,cpi|
 			var next;
-			Color(0.55223880597015, 0.36106502462071, 0.20605925595901).set;			cps.do { arg point,i;
+			Pen.color = Color(0.55223880597015, 0.36106502462071, 0.20605925595901);			cps.do { arg point,i;
 				Pen.addArc(this.map(point),range,0,2pi);
 				if(selectedCP == [cpi,i],{
 					Pen.fill;
@@ -284,7 +291,7 @@ BezierSplineGui : SplineGui {
 				});
 			};
 			
-			Color(0.55223880597015, 0.36106502462071, 0.20605925595901, 0.5).set;			Pen.moveTo(this.map(model.points[cpi]));
+			Pen.color = Color(0.55223880597015, 0.36106502462071, 0.20605925595901, 0.5);			Pen.moveTo(this.map(model.points[cpi]));
 			cps.do { arg point,i;
 				Pen.lineTo(this.map(point));
 			};

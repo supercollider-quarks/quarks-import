@@ -1,11 +1,11 @@
 /*
-	copied from Plot
+	This was the first draft of DrawGrid/Grid
+	the line algo comes from Plotter
 	
-	grid lines divide the space evenly without regard to units.
-	for example 5 seconds will get divided into 4 even divisions
+	it is provided here so that SplineGui can have a fallback grid lines 
+	implementation if DrawGrid/Grid is not present
+	which is the case in 3.4 and (at this time) 3.5 before gridlines is merged in
 	
-	a better division strategy can be specified explicitly, 
-	one that the spec or application can suggest
 */
 
 GridLines {
@@ -169,6 +169,11 @@ GridLines {
 		};
 	}
 
+	x { ^this }
+	setZoom { arg from,to;
+		domainSpec.minval = from;
+		domainSpec.maxval = to;
+	}
 
 	prStrokeGrid {
 		Pen.width = 1;
