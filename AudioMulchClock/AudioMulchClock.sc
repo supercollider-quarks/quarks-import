@@ -35,7 +35,11 @@ AudioMulchClock {
 			var items = [];
 			if(m[1]!=tick, {
 				(this.class.name++": start "++m[1]).postln;
-				queue.array.pairsDo{|time, item| items = items.add(item)};
+				if(PriorityQueue.findMethod(\do).notNil) { // 3.5 support
+					queue.do {|item| items = items.add(item)};
+				} {
+					queue.array.pairsDo{|time, item| items = items.add(item)};
+				};
 				queue.clear;
 				items.do {|item| item.reset; this.schedAbs(m[1].roundUp(beatsPerBar*24), item)};
 			}, {
@@ -108,7 +112,11 @@ AudioMulchClock {
 	}
 	clear {
 		(this.class.name++": clear").postln;
-		queue.array.pairsDo{|time, item| item.removedFromScheduler};
+		if(PriorityQueue.findMethod(\do).notNil) { // 3.5 support
+			queue.do {|item| item.removedFromScheduler};
+		} {
+			queue.array.pairsDo{|time, item| item.removedFromScheduler};
+		};
 		queue.clear;
 		if(permanent.not, {
 			start.remove;
