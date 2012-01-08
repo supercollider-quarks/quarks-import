@@ -3,7 +3,7 @@
 	\path:			"Canvas3D",
 	\summary:		"3D wire-frame vector graphics canvas",
 	\author:		"Jonatan Liljedahl",
-	\helpdoc:		"Classes/Canvas3D",
+	\schelp:		"Classes/Canvas3D",
 	\url:			"http://www.kymatica.com/",
 	\since:			"2011",
 	\version:		0.9
