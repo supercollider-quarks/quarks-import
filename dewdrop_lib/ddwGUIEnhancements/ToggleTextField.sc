@@ -1,5 +1,5 @@
 
-ToggleTextField : SCViewAdapter {
+ToggleTextField : SCViewHolder {
 	// text field that is programmatically switchable on or off
 	// when on, keyboard input goes into the string and is "trapped"
 	// (no key bubbling)
