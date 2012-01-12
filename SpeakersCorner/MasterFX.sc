@@ -45,6 +45,14 @@ MasterFX {
 		defer({ this.wakeUp }, 0.2);
 	}
 	
+	hide { 
+		Ndef.all[server.name].envir.removeAt(pxChain.proxy.key);
+	}
+		// maybe it is useful to see it under some circumstances
+	show { 
+		Ndef.all[server.name].envir.put(pxChain.proxy.key, pxChain.proxy);
+	}
+	
 	init { |inServer, inNumChannels, inSlotNames, inBusIndex| 
 		var proxy;
 		server = inServer ? Server.default;
@@ -55,6 +63,8 @@ MasterFX {
 		proxy.ar(numChannels); 
 		proxy.bus_(this.bus);
 		pxChain = ProxyChain.from(proxy, inSlotNames ? []);
+		
+		this.hide;	// hide by default
 		
 		all.put(server.name, this);
 		
