@@ -67,14 +67,12 @@ class HiveSerial(object):
     self.hive = hive
     
   def announce( self ):
-    msg = bytearray(b" A\n")
-    msg[0] = chr( 92 )
+    msg = chr( 92 )+"A\n"
     #print msg
     self.serial.write( msg )
 
   def quit( self ):
-    msg = bytearray(b" Q\n")
-    msg[0] = chr( 92 )
+    msg = chr(92)+"Q\n"
     #self.serial.write( msg )
     self.serial.close()
     
@@ -98,8 +96,7 @@ class HiveSerial(object):
     if self.verbose:
       print( "sending bee me", ser, onoff )
     self.incMsgID()
-    msg = bytearray(b" M")
-    msg[0] = chr( 92 )
+    msg = chr( 92 )+"M"
     msg = self.appendToMsg( msg, self.hiveMsgId )
     msg += msg.join( ser.split() )
     msg = self.appendToMsg( msg, onoff )
@@ -110,8 +107,7 @@ class HiveSerial(object):
     if self.verbose:
       print( "sending bee id", ser, nodeid, configid )
     self.incMsgID()
-    msg = bytearray(b" I")
-    msg[0] = chr( 92 )
+    msg = chr( 92 )+"I"
     msg = self.appendToMsg( msg, self.hiveMsgId )
     msg += msg.join( ser.split() )
     msg = self.appendToMsg( msg, nodeid )
@@ -124,8 +120,7 @@ class HiveSerial(object):
     if self.verbose:
       print( "sending configuration", configuration )
     self.incMsgID()
-    msg = bytearray(b" C")
-    msg[0] = chr( 92 )
+    msg = chr( 92 )+"C"
     msg = self.appendToMsg( msg, self.hiveMsgId )
     msg = self.appendToMsg( msg, nodeid )
     for conf in configuration:
@@ -155,9 +150,7 @@ class HiveSerial(object):
       print( "sending message", msg )
 
   def create_beemsg( self, msgtype, mid, msgid, msgdata ):
-    msg = bytearray(b" O")
-    msg[0] = chr( 92 )
-    msg[1] = msgtype
+    msg = chr( 92 )+msgtype
     msg = self.appendToMsg( msg, mid )
     msg = self.appendToMsg( msg, msgid )
     for dat in msgdata:
@@ -182,8 +175,7 @@ class HiveSerial(object):
   def send_xmsg( self, mid, data ):
     #self.hiveMsgId = self.hiveMsgId + 1
     self.incMsgID()
-    msg = bytearray(b" X")
-    msg[0] = chr( 92 )
+    msg = chr(92)+"X"
     #msg[1] = mtype
     msg = self.appendToMsg( msg, mid )
     msg = self.appendToMsg( msg, self.hiveMsgId )
@@ -196,8 +188,7 @@ class HiveSerial(object):
   def send_run( self, mid, run ):
     #self.hiveMsgId = self.hiveMsgId + 1
     self.incMsgID()
-    msg = bytearray(b" R")
-    msg[0] = chr( 92 )
+    msg = chr(92)+"R"
     msg = self.appendToMsg( msg, mid )
     msg = self.appendToMsg( msg, self.hiveMsgId )
     if run:
@@ -210,8 +201,7 @@ class HiveSerial(object):
   def send_loop( self, mid, loop ):
     #self.hiveMsgId = self.hiveMsgId + 1
     self.incMsgID()
-    msg = bytearray(b" L")
-    msg[0] = chr( 92 )
+    msg = chr(92)+"L"
     msg = self.appendToMsg( msg, mid )
     msg = self.appendToMsg( msg, self.hiveMsgId )
     if loop:

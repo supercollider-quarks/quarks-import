@@ -9,6 +9,8 @@ Dependencies are:
 * pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
 * pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/ - download: http://sourceforge.net/projects/pyserial/files/pyserial/2.5/pyserial-2.5.tar.gz/download
 * python-xbee-api (version 2.0.0 or higher) - (included in the packaged version)
+* optparse_gui (version 0.1) - (included in the packaged version)
+* python libmapper, see: http://www.idmil.org/software/libmapper/downloads
 
 python :
 check which version you have:
@@ -17,11 +19,18 @@ If it is lower than 2.6 you will need to get a version higher than 2.6.
 
 Install the dependencies:
 
+optparse_gui :
+extract archive and:
+  $ cd optparse_gui-0.1
+  $ sudo python setup.py install
+
 pyOSC :
+extract archive and:
   $ cd pyosc
   $ sudo ./setup.py install
 
 XBee-2.0.0 :
+extract archive and:
   $ cd XBee-2.0.0
   $ sudo ./setup.py install
 
@@ -36,27 +45,46 @@ pyserial will be installed automatically if it is not yet installed.
 
 go to the pydon directory
   $ cd pydon
-  
+
 start:
-  $ python swpydonhive.py
+  $ python metapydonhive.py
+  will pop up a gui where you can set the options
+  the default options are saved to a file named "pydondefaults.ini", so that next time you open the program, you'll have the same defaults
+
+From metapydonhive you can choose which kind of client to use:
+  - datanetwork: integrate with the SenseWorld DataNetwork
+  - libmapper: integrate with the libmapper world (from IDMIL)
+  - osc: send osc messages to a certain destination (MiniHiveOSC)
+  - junXion: send osc messages that STEIM's JunXion can deal with
+
+
+start:
+  $ python metapydonhive.py -h
   
 this will print the help:
 
-Usage: swpydonhive.py [options]
+Usage: metapydonhive.py [options]
 
-Create a datanetwork client to communicate with the minibee network.
+MetaPydonHive - Create a client to communicate with the minibee network.
 
 Options:
   -h, --help            show this help message and exit
-  -p PORT, --port=PORT  the port on which the client will listen
-                        [default:57600]
-  -i IP, --ip=IP        the ip on which the client will listen
-                        [default:0.0.0.0]
-  -n NAME, --name=NAME  the name of the client in the datanetwork
-                        [default:pydonhive]
+  -P PROGRAM, --program=PROGRAM
+                        Which program/infrastructure do you want to use?
+                        options: datanetwork, osc, libmapper, junxion
+  -s SERIAL, --serial=SERIAL
+                        the serial port [default:/dev/ttyUSB0]
+  -a, --apimode         use API mode for communication with the minibees
+                        [default:False]
+  -v, --verbose         verbose printing [default:False]
   -c CONFIG, --config=CONFIG
                         the name of the configuration file for the minibees
                         [default:pydon/configs/hiveconfig.xml]
+  -n NAME, --name=NAME  the name of the client in the datanetwork
+                        [default:pydonhive] (needed for datanetwork or
+                        libmapper)
+  -b BAUDRATE, --baudrate=BAUDRATE
+                        the serial port [default:57600]
   -m MINIBEES, --nr_of_minibees=MINIBEES
                         the number of minibees in the network [default:20]
   -o MBOFFSET, --minibee_offset=MBOFFSET
@@ -65,13 +93,11 @@ Options:
   -d HOST, --host_ip=HOST
                         the ip address of the datanetwork host
                         [default:127.0.0.1]
-  -v VERBOSE, --verbose=VERBOSE
-                        verbose printing [default:0]
-  -s SERIAL, --serial=SERIAL
-                        the serial port [default:/dev/ttyUSB0]
-  -b BAUDRATE, --baudrate=BAUDRATE
-                        the serial port [default:57600]
-  -a APIMODE, --apimode=APIMODE
-                        use API mode for communication with the minibees
-                        [default:False]
-
+  -t HPORT, --host_port=HPORT
+                        the port on which the application that has to receive
+                        the OSC messages will listen [default:57120] (needed
+                        for osc or junxion)
+  -i IP, --ip=IP        the ip on which the client will listen
+                        [default:0.0.0.0]
+  -p PORT, --port=PORT  the port on which the client will listen
+                        [default:57600]
