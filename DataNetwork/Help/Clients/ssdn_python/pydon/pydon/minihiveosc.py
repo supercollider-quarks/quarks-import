@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import optparse
+import optparse_gui
 # from Python v2.7 on should become argparse
 import sys
 import time
@@ -9,7 +10,7 @@ import time
 import OSC
 import threading
 
-from pydon import pydonhive
+import pydonhive
 
 class MiniHiveOSC(object):
   #def __init__(self, port, dnosc ):
@@ -145,6 +146,9 @@ class MiniHiveOSC(object):
 
   def infoMiniBee( self, serial, mid, insize, outsize ):
     self.sendMessage( "/minibee/info", [ serial, mid, insize, outsize ] )
+    
+  def sendStatusInfo( self, nid, status ):
+    self.sendMessage( "/minibee/status", [ nid, status ] )
 
   def dataMiniBee( self, mid, data ):
     alldata = [ mid ]
@@ -278,6 +282,7 @@ class SWMiniHiveOSC( object ):
   def hookBeeToOSC( self, minibee ):
     self.osc.infoMiniBee( minibee.serial, minibee.nodeid, minibee.getInputSize(), minibee.getOutputSize() )
     minibee.set_action( self.minibeeDataToOSC )
+    minibee.set_status_action( self.osc.sendStatusInfo )
     if self.verbose:
       print( "hooking bee to OSC out", minibee,  minibee.getInputSize(),  minibee.getOutputSize() )
 
@@ -302,12 +307,18 @@ class SWMiniHiveOSC( object ):
 
 # main program:
 if __name__ == "__main__":
+  if 1 == len( sys.argv ):
+    option_parser_class = optparse_gui.OptionParser
+  else:
+    option_parser_class = optparse.OptionParser
 
-  parser = optparse.OptionParser(description='Create a program that speaks OSC to communicate with the minibee network.')
-  parser.add_option('-p','--port', type=int, action='store',dest="port",default=57600,
-		  help='the port on which the minihiveosc will listen [default:%i]'% 57600 )
-  parser.add_option('-i','--ip', type="string", action='store',dest="ip",default="0.0.0.0",
-		  help='the ip on which the client will listen [default:%s]'% "0.0.0.0" )
+  parser = option_parser_class(description='Create a program that speaks OSC to communicate with the minibee network.')
+  parser.add_option('-s','--serial', action='store',type="string",dest="serial",default="/dev/ttyUSB0",
+		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
+  parser.add_option('-a','--apimode', action='store_true', dest="apimode",default=False,
+		  help='use API mode for communication with the minibees [default:%s]'% False)
+  parser.add_option('-v','--verbose', action='store_true',dest="verbose",default=False,
+		  help='verbose printing [default:%i]'% False)
   parser.add_option('-c','--config', action='store', type="string", dest="config",default="pydon/configs/hiveconfig.xml",
 		  help='the name of the configuration file for the minibees [default:%s]'% 'pydon/configs/hiveconfig.xml')
   parser.add_option('-m','--nr_of_minibees', type=int, action='store',dest="minibees",default=10,
@@ -316,14 +327,12 @@ if __name__ == "__main__":
 		  help='the ip address of the application that has to receive the OSC messages [default:%s]'% "127.0.0.1")
   parser.add_option('-t','--host_port', type=int, action='store',dest="hport",default=57120,
 		  help='the port on which the application that has to receive the OSC messages will listen [default:%i]'% 57120 )
-  parser.add_option('-v','--verbose', action='store',dest="verbose",default=False,
-		  help='verbose printing [default:%i]'% False)
-  parser.add_option('-s','--serial', action='store',type="string",dest="serial",default="/dev/ttyUSB0",
-		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
   parser.add_option('-b','--baudrate', action='store',type=int,dest="baudrate",default=57600,
 		  help='the serial port [default:%i]'% 57600)
-  parser.add_option('-a','--apimode', action='store', type="string", dest="apimode",default=False,
-		  help='use API mode for communication with the minibees [default:%s]'% False)
+  parser.add_option('-i','--ip', type="string", action='store',dest="ip",default="0.0.0.0",
+		  help='the ip on which the client will listen [default:%s]'% "0.0.0.0" )
+  parser.add_option('-p','--port', type=int, action='store',dest="port",default=57600,
+		  help='the port on which the minihiveosc will listen [default:%i]'% 57600 )
 
   (options,args) = parser.parse_args()
   #print args.accumulate(args.integers)

@@ -91,6 +91,10 @@ class DataNetworkOSC(object):
 
     self.osc.addMsgHandler( "/configure/minibee", self.handler_mbconfig )
     self.osc.addMsgHandler( "/configured/minibee", self.handler_mbconfiged )
+    
+    self.osc.addMsgHandler( "/saveid/minibee", self.handler_mbsaveid )
+    self.osc.addMsgHandler( "/announce/minibee", self.handler_mbannounce )
+    
     self.osc.addMsgHandler( "/minihive/configuration/create", self.handler_config )
     self.osc.addMsgHandler( "/minihive/configuration/created", self.handler_configed )
     self.osc.addMsgHandler( "/minihive/configuration/delete", self.handler_config_delete )
@@ -100,6 +104,7 @@ class DataNetworkOSC(object):
     self.osc.addMsgHandler( "/minihive/configuration/load", self.handler_cfload )
     self.osc.addMsgHandler( "/minihive/configuration/loaded", self.handler_cfloaded )
 
+    self.osc.addMsgHandler( "/minihive/ids/save", self.handler_saveids )
 
     self.osc.addMsgHandler('default', self.osc.noCallback_handler)
 
@@ -137,6 +142,7 @@ class DataNetworkOSC(object):
   #@make_method('/error', 'ssi')
   def handler_error_msg( self, path, types, args, source ):
     # could add a check if this is really me
+    #if args[2] == 6:
     print( "Error from datanetwork:", args )
 
   #@make_method('/warn', 'ssi')
@@ -418,6 +424,21 @@ class DataNetworkOSC(object):
 
   def handler_cfloaded( self, path, types, args, source ):    
     print( "MiniHive configuration loaded:", args )
+
+  def handler_mbsaveid( self, path, types, args, source ):    
+    self.minibeeSaveID( args[0] )
+    if self.verbose:
+      print( "MiniBee save id:", args )
+
+  def handler_mbannounce( self, path, types, args, source ):    
+    self.minibeeAnnounce( args[0] )
+    if self.verbose:
+      print( "MiniBee announce:", args )
+
+  def handler_saveids( self, path, types, args, source ):    
+    self.saveIDs()
+    if self.verbose:
+      print( "MiniHive save ids:", args )
 
 # end minibee management
 
@@ -886,6 +907,21 @@ class DataNetworkOSC(object):
       self.network.hive.set_minibee_config( config[0], config[1] )
       self.sendMessage( "/configured/minibee", config )
 
+  def minibeeAnnounce( self, mid ):
+    if not self.network.hive == None:
+      self.network.hive.announce_minibee_id( mid )
+      #self.sendMessage( "/configured/minibee", config )
+
+  def minibeeSaveID( self, mid ):
+    if not self.network.hive == None:
+      self.network.hive.store_minibee_id( mid )
+      #self.sendMessage( "/configured/minibee", config )
+
+  def saveIDs( self ):
+    if not self.network.hive == None:
+      self.network.hive.store_ids()
+      #self.sendMessage( "/configured/minibee", config )
+
   def queryConfigurations( self ):
     if not self.network.hive == None:
       self.network.hive.query_configurations( self )
@@ -1076,25 +1112,26 @@ class DataNetwork(object):
       self.nodes[ nodeid ].setType( dntype )
       #except:
     if nodeid not in self.nodes:
-      print( "InfoNode: nodeid ", nodeid, "not in nodes", self.nodes )
+      print( "InfoNode: nodeid ", nodeid, " not in nodes") #, self.nodes )
 
   def infoSlot( self, nodeid, slotid, label, dntype ):
     if nodeid in self.nodes:
       self.nodes[ nodeid ].setLabelSlot( slotid, label )
     else:
-      print( "InfoSlot: nodeid ", nodeid, "not in nodes", self.nodes )
+      if self.verbose:
+	print( "InfoSlot: nodeid ", nodeid, " not in nodes" ) #, self.nodes )
 
   def setNodeData( self, nodeid, data ):
     if nodeid in self.nodes:
       self.nodes[ nodeid ].setData( data )
     else:
-      print( "DataNode: nodeid ", nodeid, "not in nodes", self.nodes )
+      print( "DataNode: nodeid ", nodeid, " not in nodes" ) #, "not in nodes", self.nodes )
 
   def setSlotData( self, nodeid, slotid, data ):
     if nodeid in self.nodes:
       self.nodes[ nodeid ].setDataSlot( slotid, data )
     else:
-      print( "SlotData: nodeid ", nodeid, "not in nodes", self.nodes )
+      print( "SlotData: nodeid ", nodeid, " not in nodes" ) #, "not in nodes", self.nodes )
 
   def sendData( self, nodeid, data ):
     self.osc.setData( nodeid, data )

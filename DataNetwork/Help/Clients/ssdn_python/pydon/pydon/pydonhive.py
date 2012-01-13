@@ -41,7 +41,8 @@ def find_key(dic, val):
 # beginning of MiniHive:
 
 class MiniHive(object):
-  def __init__(self, serial_port, baudrate = 57600, apiMode = False ):
+  def __init__(self, serial_port, baudrate = 57600, apiMode = False,
+               poll = None ):
     #self.minibeeCount = 0
     self.name = ""
     self.bees = {}
@@ -59,6 +60,7 @@ class MiniHive(object):
     self.verbose = False
     self.redundancy = 1
     self.create_broadcast_bee()
+    self.poll = poll
     
   def set_verbose( self, onoff ):
     self.verbose = onoff
@@ -108,7 +110,10 @@ class MiniHive(object):
 	    if bee.count > 5000:
 	      bee.count = 0
 	      self.serial.send_me( bee.serial, 0 )
-      time.sleep(0.005)
+      if self.poll:
+        self.poll()
+      else:
+        time.sleep(0.005)
 
   def exit( self ):
     self.serial.quit()
@@ -199,7 +204,23 @@ class MiniHive(object):
 	bee.set_status( 'waiting' )
 	bee.waiting = 0
     return True
+  
+  def store_ids( self ):
+    if self.apiMode:
+      self.serial.store_remote_at16( 0xFFFF )
     
+  def store_minibee_id( self, mid ):
+    if self.apiMode:
+      if mid in self.bees:
+	minibee = self.bees[ mid ]
+	self.serial.store_remote_at64( minibee.serial )
+
+  def announce_minibee_id( self, mid ):
+    if self.apiMode:
+      if mid in self.bees:
+	#minibee = self.bees[ mid ]
+	self.serial.announce( mid )
+
   def set_minibee_config( self, mid, cid ):
     if mid in self.bees: # if the minibee exists
       minibee = self.bees[ mid ]      
@@ -287,6 +308,8 @@ class MiniHive(object):
       self.bees[beeid].parse_data( msgid, data, self.verbose )
     else:
       print( "received data from unknown minibee", beeid, msgid, data )
+      if self.apiMode and beeid == 0xFFFA: #unconfigured minibee
+	self.serial.announce( 0xFFFA )
     if self.verbose:
       print( "received new data", beeid, msgid, data )
     # find minibee, set data to it
@@ -867,57 +890,59 @@ class MiniBee(object):
 
   def parse_data( self, msgid, data, verbose = False ):
     # to do: add msgid check
-    idx = 0
-    parsedData = []
-    scaledData = []
-    for sz in self.customDataInSizes:
-      parsedData.append( data[ idx : idx + sz ] )
-      idx += sz
+    if self.cid > 0:
+      idx = 0
+      parsedData = []
+      scaledData = []
+      for sz in self.customDataInSizes:
+	parsedData.append( data[ idx : idx + sz ] )
+	idx += sz
 
-    if self.config.digitalIns > 0:
-      # digital data as bits
-      nodigbytes = self.config.digitalIns / 8 + 1
-      digstoparse = self.config.digitalIns
-      digitalData = data[idx : idx + nodigbytes]
-      idx += nodigbytes
-      for byt in digitalData:
-	for j in range(0, min(digstoparse,8) ):
-	  parsedData.append( [ min( (byt & ( 1 << j )), 1 ) ] )
-	digstoparse -= 8
-    #else: 
-      # digital data as bytes
+      if self.config.digitalIns > 0:
+	# digital data as bits
+	nodigbytes = self.config.digitalIns / 8 + 1
+	digstoparse = self.config.digitalIns
+	digitalData = data[idx : idx + nodigbytes]
+	idx += nodigbytes
+	for byt in digitalData:
+	  for j in range(0, min(digstoparse,8) ):
+	    parsedData.append( [ min( (byt & ( 1 << j )), 1 ) ] )
+	  digstoparse -= 8
+      #else: 
+	# digital data as bytes
 
-    for sz in self.config.dataInSizes:
-      parsedData.append( data[ idx : idx + sz ] )
-      idx += sz
+      for sz in self.config.dataInSizes:
+	parsedData.append( data[ idx : idx + sz ] )
+	idx += sz
+      #print parsedData, self.dataScales, self.customDataScales
 
-    #print parsedData, self.dataScales, self.customDataScales
-
-    for index, dat in enumerate( parsedData ):
-      #print index, dat
-      if len( dat ) == 3 :
-	scaledData.append(  float( dat[0] * 65536 + dat[1]*256 + dat[2] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
-      if len( dat ) == 2 :
-	scaledData.append(  float( dat[0]*256 + dat[1] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
-      if len( dat ) == 1 :
-	scaledData.append( float( dat[0] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
-    self.data = scaledData
-    if self.status != 'receiving':
-      if self.firstDataAction != None:
-	self.firstDataAction( self.nodeid, self.data )
-    self.set_status( 'receiving' )
-    if len(self.data) == ( len( self.config.dataScales ) + len( self.customDataInSizes ) ):
-      if self.dataAction != None :
-	self.dataAction( self.data, self.nodeid )
-      if self.logAction != None :
-	self.logAction( self.nodeid, self.getLabels(), self.getLogData() )
+      for index, dat in enumerate( parsedData ):
+	#print index, dat
+	if len( dat ) == 3 :
+	  scaledData.append(  float( dat[0] * 65536 + dat[1]*256 + dat[2] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
+	if len( dat ) == 2 :
+	  scaledData.append(  float( dat[0]*256 + dat[1] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
+	if len( dat ) == 1 :
+	  scaledData.append( float( dat[0] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
+      self.data = scaledData
+      if self.status != 'receiving':
+	if self.firstDataAction != None:
+	  self.firstDataAction( self.nodeid, self.data )
+      self.set_status( 'receiving' )
+      if len(self.data) == ( len( self.config.dataScales ) + len( self.customDataInSizes ) ):
+	if self.dataAction != None :
+	  self.dataAction( self.data, self.nodeid )
+	if self.logAction != None :
+	  self.logAction( self.nodeid, self.getLabels(), self.getLogData() )
+	if verbose:
+	  print( "data length ok", len(self.data), len( self.config.dataScales ), len( self.customDataInSizes ) )
+      #print self.nodeid, data, parsedData, scaledData
+      else:
+	print( "data length not ok", len(self.data), len( self.config.dataScales ), len( self.customDataInSizes ) )
       if verbose:
-	print( "data length ok", len(self.data), len( self.config.dataScales ), len( self.customDataInSizes ) )
-    #print self.nodeid, data, parsedData, scaledData
-    else:
-      print( "data length not ok", len(self.data), len( self.config.dataScales ), len( self.customDataInSizes ) )
-    if verbose:
-      print( "data parsed and scaled", self.nodeid, self.data ) 
+	print( "data parsed and scaled", self.nodeid, self.data )
+    elif verbose:
+      print( "no config defined for this minibee", self.nodeid, data )
     
   def getLabels( self ):
     labels = self.customLabels
@@ -1001,10 +1026,10 @@ class MiniBee(object):
 	print( "ERROR: samples per message NOT correct", confirmconfig[0], self.config.samplesPerMessage )
       if (confirmconfig[1]*256 + confirmconfig[2]) == self.config.messageInterval :
 	if verbose:
-	  print( "message interval correct", confirmconfig[1:2], self.config.messageInterval )
+	  print( "message interval correct", confirmconfig[1:3], self.config.messageInterval )
       else:
 	configres = False
-	print( "ERROR: message interval NOT correct", confirmconfig[1:2], self.config.messageInterval )
+	print( "ERROR: message interval NOT correct", confirmconfig[1:3], self.config.messageInterval )
       if confirmconfig[3] == (sum( self.config.dataInSizes ) + sum( self.customDataInSizes )):
 	if verbose:
 	  print( "data input size correct", confirmconfig[3], self.config.dataInSizes, self.customDataInSizes )

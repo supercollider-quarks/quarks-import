@@ -48,7 +48,7 @@ class HiveConfigFile():
 
       if bee.hasCustom:
 	el_beeCustom = ET.SubElement( el_bee, "custom" )
-	for cusD in bee.customData.items():
+	for cusD in bee.customData.items(): #FIXME: this is not encoded as such in MiniBee at the moment
 	  el_customData = ET.SubElement( el_beeCustom, "data" )
 	  el_customData.set( "id", str(cusD.cid) )
 	  el_customData.set( "size", str(cusD.size) )
