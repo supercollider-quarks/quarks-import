@@ -12,19 +12,24 @@ CtLoop : EventLoop {
 	<>scaler=1, <>shift=0.0,	// assumes normalized values.
 	<>rescaled=false, <nonRescalableCtls, inverter=1; 
 	
+	var <loops;
+	
 	*new { arg key, ctlMap; 
 		^super.newCopyArgs(key, ctlMap).init;		
 	}
 	
 	init { 
-		nonRescalableCtls = Set[];
+		loops = List[];
 		list = List[];
+
+		nonRescalableCtls = Set[];
+		
 		task = TaskProxy({ 
 			var dt, index, event, ctlID, val, listSize, intro = true; 
 			index = (start * list.size).round.round.asInteger;
 			
 			"CtLoop task starts.".postln; 
-			loop({ 
+			loop({
 				listSize = list.size;
 				if (list.isEmpty) { 
 					0.1.wait; 
@@ -77,7 +82,12 @@ CtLoop : EventLoop {
 		try { list.first.put(0, list.first[0] + delta) };
 	}
 	
-	clear { list.clear; then = nil; this.resetLoop.resetScaling; }
+	clear { 
+		if (loops.last !== list) { loops.add(list) };
+		list = List[]; 
+		then = nil; 
+		this.resetLoop.resetScaling; 
+	}
 	
 	startRec { |instant = false| 
 		isRecording = true; 
@@ -88,8 +98,9 @@ CtLoop : EventLoop {
 
 	stopRec {  
 		isRecording = false; 
+		loops.add(list);
 		"\n  %(%).stopRec;\n".postf(this.class, key); 
-		this.postRecFix 
+		this.postRecFix;
 	}
 	
 	toggleRec { |instant=false| if (isRecording, { this.stopRec }, { this.startRec(instant) }); }
