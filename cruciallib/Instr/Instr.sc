@@ -36,25 +36,35 @@ Instr  {
 	    ^this.at(name)
 	}
 	*loadAll {
-	    this.prLoadDir(this.dir);
+		this.prLoadDir(this.dir);
 		this.prLoadDir(Platform.userExtensionDir ++ "/quarks/*/Instr");
 	}
 	*prLoadDir { arg dir;
-	    var paths;
-	    paths = (dir +/+ "*").pathMatch.reject { |path| path.splitext[1] == "sc" };
-	    paths.do { |path|
+		var paths;
+		paths = (dir +/+ "*").pathMatch.reject { |path| path.splitext[1] == "sc" };
+		paths.do { |path|
 	        if(path.last == $/,{
 	            this.prLoadDir(path)
 	        },{
-    			{
-				path.loadPath(false);
-    			}.try({ arg err;
-    				("ERROR while loading " + path).postln;
-    				err.throw;
-    			});
-    		});
+	    			{
+					path.loadPath(false);
+	    			}.try({ arg err;
+	    				("ERROR while loading " + path).postln;
+	    				err.throw;
+	    			});
+	    		});
 		};
 	}
+	*addExcludePaths {
+		// 3.5 + only
+		(Platform.userExtensionDir ++ "/quarks/*/Instr").pathMatch.do { arg path;
+			LanguageConfig.addExcludePath(path)
+		}
+		/*
+		Instr.addExcludePaths;
+		LanguageConfig.store;
+	*/	
+	}		
 	*clearAll {
 		Library.global.removeAt(this)
 	}
@@ -87,6 +97,51 @@ Instr  {
 	kr { arg ... inputs;
 		^func.valueArrayEnvir(inputs);
 	}
+	asSynthDef { arg args,outClass=\Out;
+		var synthDef;
+		synthDef = InstrSynthDef.new;
+		synthDef.build(this,args ? [],outClass);
+		^synthDef
+	}
+	writeDefFile { arg dir;
+		this.asSynthDef.writeDefFile(dir);
+	}
+	write { arg dir;
+		var synthDef;
+		synthDef = this.asSynthDef;
+		synthDef.writeDefFile(dir);
+	}
+	// for use in patterns
+	add { arg args, libname, completionMsg, keepDef = true;
+		^this.asSynthDef(args).add(libname,completionMsg, keepDef);
+	}
+	store { arg args;
+		^this.asSynthDef(args).store
+	}
+	// create a synth
+	after { arg anode,args,bundle,atTime;
+		^this.prMakeSynth(\addAfterMsg,anode,args,bundle,atTime)
+	}
+	before { arg anode,args,bundle,atTime;
+		^this.prMakeSynth(\addBeforeMsg,anode,args,bundle,atTime)
+	}
+	head { arg anode,args,bundle,atTime;
+		^this.prMakeSynth(\addToHeadMsg,anode,args,bundle,atTime)
+	}
+	tail { arg anode,args,bundle,atTime;
+		^this.prMakeSynth(\addToTailMsg,anode,args,bundle,atTime)
+	}
+	replace { arg anode,args,bundle,atTime;
+		^this.prMakeSynth(\addReplaceMsg,anode,args,bundle,atTime)
+	}
+
+	spawnEvent { arg event;
+		event['type'] = \instr;
+		event['instr'] = this;
+		event.play;	
+	}
+	
+	// using in a stream	
 	next { arg ... inputs;
 		^func.valueArray(inputs)
 	}
@@ -125,7 +180,7 @@ Instr  {
 	}
 	defArgAt { arg i;
 		var nn;
-		nn=func.def.prototypeFrame;
+		nn = func.def.prototypeFrame;
 		^nn.at(i)
 	}
 	// the default value supplied in the function
@@ -134,41 +189,39 @@ Instr  {
 	}
 
 	defName { ^this.class.symbolizeName(name).collect(_.asString).join($.) }
-	asSynthDef { arg args,outClass=\Out;
-		var synthDef;
-		synthDef = InstrSynthDef.new;
-		synthDef.build(this,args,outClass);
-		^synthDef
+	// used by Synth
+	asDefName { arg args;
+		^this.asSynthDef(args).name
 	}
-
+					
 	prepareToBundle { arg group,bundle;
 		this.asSynthDef.prepareToBundle(group,bundle);
 	}
 
-	writeDefFile { arg dir;
-		this.asSynthDef.writeDefFile(dir);
-	}
-	write { arg dir;
-		var synthDef;
-		synthDef = this.asSynthDef;
-		synthDef.writeDefFile(dir);
-	}
-	// for use in patterns
-	store {
-		var args;
-		args = this.specs.collect({ arg spec,i;
-				if(spec.rate == \control or: spec.rate == \stream,{
-					IrNumberEditor(this.initAt(i),spec);
-				},{
-					spec.defaultControl(this.initAt(i))
-				})
-			});
-		^this.asSynthDef(args).store
-	}
-	asDefName {
-		^this.store.name
-	}
 	funcDef { ^func.def }
+
+	
+	prMakeSynth { arg targetStyle,anode,args,bundle,atTime;
+		var b,def, synth,synthDefArgs;
+		anode = anode.asTarget;
+		b = bundle ?? {MixedBundle.new};
+		args = args ?? { this.specs.collect(_.default) };
+		def = this.asSynthDef(args);
+		InstrSynthDef.loadDefFileToBundle(def,b,anode.server);
+		synth = Synth.basicNew(def.name,anode.server);
+		synthDefArgs = Array.new(args.size);
+		this.specs.do { arg sp,i;
+			if(sp.rate != 'noncontrol',{
+				synthDefArgs.add( args[i] )
+			})
+		};
+		b.add( synth.perform(targetStyle,anode,synthDefArgs) );
+		if(bundle.isNil,{
+			b.sendAtTime(anode.server,atTime)
+		});
+		^synth
+	}		
+
 	test { arg ... args;
 		var p;
 		p = Patch(this.name,args);
@@ -181,6 +234,8 @@ Instr  {
 	plot { arg args,duration=5.0;
 		^Patch(this.name,args).plot(duration)
 	}
+	
+	
 	*choose { arg start;
 		// this is only choosing from Instr in memory,
 		// it is not loading all possible Instr from file
@@ -354,8 +409,40 @@ Instr  {
 
 	*initClass {
 		Class.initClassTree(Document);
+		
 		// default is relative to your doc directory
 		if(dir.isNil,{ dir = Document.dir ++ "Instr/"; });
+		
+		Class.initClassTree(Event);
+		Event.addEventType(\instr,{ arg server;
+			var instr, instrArgs,patch;
+			~server = server;
+			
+			instr = ~instr.asInstr;
+			if(instr.notNil,{
+				~freq = ~detunedFreq.value;
+				~amp = ~amp.value;
+				~sustain = ~sustain.value;
+				instrArgs = instr.argNames.collect({ arg an,i; 
+								var inp,spec;
+								inp = currentEnvironment[an] ?? {instr.defArgAt(i)};
+								spec = instr.specs.at(i);
+								if(spec.rate == \control,{
+									if(inp.rate == \control,{
+										inp
+									},{
+										IrNumberEditor( inp.synthArg, spec )
+									})
+								},{
+									inp
+								})
+							});
+				patch = Patch(instr,instrArgs);
+				patch.play(~group ? server,server.latency,~bus);
+				patch.patchOut.releaseBusses; // not needed, and I wont free myself
+				~patch = patch;
+			})
+		});
 	}
 	init { arg specs,outsp;
 		if(path.isNil,{

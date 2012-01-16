@@ -1,3 +1,5 @@
+
+
 XFader  {  // UNIPOLAR
 		// LinXFade2 is now cheaper (in c)
 
@@ -35,7 +37,7 @@ XFaderN  {
 		inputs = inputs.dereference;
 		whiches = PanAz.ar(inputs.size,SinOsc.ar(0.0,add:1.0),bipolar,width);
 
-		^Mix.ar(
+		^Mix.new(
 			inputs.collect({ arg sound,i;
 				sound * whiches.at(i)
 			})
@@ -46,7 +48,7 @@ XFaderN  {
 		inputs = inputs.dereference;
 		whiches = PanAz.ar(inputs.size,SinOsc.ar(0.0,add:1.0),bipolar,width);
 
-		^Mix.ar(
+		^Mix.new(
 			inputs.collect({ arg sound,i;
 				sound * whiches.at(i)
 			})
@@ -96,3 +98,4 @@ Impulsar {  // see also Trig
 		//^ImpulseSequencer.ar({trig.poll},K2A.ar(trig),mul,add)
 	}
 }
+
