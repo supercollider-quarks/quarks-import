@@ -20,7 +20,7 @@ Crucial {
 				background: 	Color(1.0, 1.0, 1.0, 0.80597014925373),
 				foreground:	Color.grey(0.95),
 				onColor:		Color.new255(255, 250, 250),
-				offColor:		Color.clear,
+				offColor:		Color(0.77, 0.77, 0.77, 0.6),
 				gap:			4 @ 4,
 				margin: 		2@0,
 				buttonHeight:	17,
@@ -150,7 +150,8 @@ Crucial {
 			\mul -> ControlSpec(0.0,1.0,\lin,0,1.0),
 			\add -> ControlSpec(0.0,1.0,\lin,0.0,0.0),
 			'bufnum' -> StaticIntegerSpec(0,100,0),
-			'sndbuf' -> StaticIntegerSpec(0,100,0)
+			'sndbuf' -> StaticIntegerSpec(0,100,0),
+			\instr -> InstrNameSpec()
 			
 		  ]
 		);
@@ -258,10 +259,8 @@ Crucial {
 
 		// tools
 		Library.put(\menuItems,\load,'Open Player...',{
-			GetFileDialog({ arg ok,loadPath;
-				if(ok,{
-					loadPath.loadPath.gui;
-				});
+			File.openDialog("Open player",{ arg loadPath;
+				loadPath.loadPath.gui;
 			})
 		});
 
@@ -273,38 +272,7 @@ Crucial {
 		});
 
 		Library.put(\menuItems,\test,'listen to audio busses',{
-			var s;
-			s = Server.default;
-			Sheet({ |layout|
-				CXLabel( layout, "Audio Busses",width:685);
-				s.audioBusAllocator.blocks.do({ |b|
-					var listen,bus;
-					listen = Patch({ In.ar( b.start, b.size ) });
-					layout.startRow;
-					ToggleButton( layout,"listen",{
-						listen.play
-					},{
-						listen.stop
-					});
-					CXLabel( layout, b.start.asString + "(" ++ b.size.asString ++ ")",100 );
-
-					bus = BusPool.findBus(s,b.start);
-					if(bus.notNil,{
-						layout.flow({ |f|
-							var ann;
-							ann = BusPool.getAnnotations(bus);
-
-							if(ann.notNil,{
-								ann.keysValuesDo({ |client,name|
-									f.startRow;
-									Tile(client,f);
-									CXLabel(f,":"++name);
-								});
-							});
-						})
-					});
-				})
-			},"Audio Busses");
+			BussesTool.new(Server.default)
 		});
 
 		Library.put(\menuItems,\test,'UnitTest.runAll',{
@@ -398,14 +366,12 @@ Crucial {
 		});*/
 
 		Library.put(\menuItems,\post,'post path...',{
-			GetFileDialog({ arg ok,loadPath;
-				if(ok,{
-					PathName(loadPath).asRelativePath.asCompileString.post;
-				});
+			File.openDialog("Post path as string",{ arg loadPath;
+				PathName(loadPath).asRelativePath.asCompileString.post;
 			})
 		});
 		Library.put(\menuItems,\post,'post array of paths...',{
-			CocoaDialog.getPaths({ arg paths;
+			GUI.dialog.getPaths({ arg paths;
 				Post <<<  paths.collect({ arg p;
 							PathName(p).asRelativePath })
 					<< Char.nl;
@@ -417,7 +383,7 @@ Crucial {
 
 		Library.put(\menuItems,\introspection,\classfinder,{ 
 			var close=true;
-			GetStringDialog("Search classes...","",{ arg ok,string;
+			Sheet.getString("Search classes...","",{ arg string;
 				Sheet({ |layout|
 					var matches,first;
 					Object.allSubclasses.do({ |class|
@@ -451,7 +417,7 @@ Crucial {
 		});
 
 		Library.put(\menuItems,\introspection,\methodfinder,{
-			GetStringDialog("Search methods...","",{ arg ok,string;
+			Sheet.getString("Search methods...","",{ arg string;
 				Sheet({ |layout|
 					var matches;
 					Object.allSubclasses.do({ |class|
@@ -470,8 +436,32 @@ Crucial {
 			})
 		});
 
+		Library.put(\menuItems,\introspection,\findRespondingMethodFor,{
+			Sheet.getString("Search for: Class.methodname","",{ arg string;
+				Sheet({ |layout|
+					var class,method,methodName;
+					# class, methodName = string.split($.);
+					class = class.asSymbol.asClass;
+					methodName = methodName.asSymbol;
+					if(class.notNil,{
+						while({ class != Meta_Object },{
+							method = class.findMethod(methodName);
+							if(method.notNil,{
+								method.gui;
+								class = Meta_Object
+							 },{
+							 	class = class.superclass;
+							 });
+						});
+					},{
+						("Class not found" + string).gui
+					})
+				},"Method search")
+			})
+		});
+
 		Library.put(\menuItems,\introspection,\findReferencesToClass,{
-			GetStringDialog("Class name:","",{ arg ok,string;
+			Sheet.getString("Class name:","",{ arg string;
 				Class.findAllReferences(string.asSymbol).do({ arg ref;
 					ref.postln;
 				});

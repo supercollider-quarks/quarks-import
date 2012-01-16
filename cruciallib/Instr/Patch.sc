@@ -104,12 +104,6 @@ Patch : HasPatchIns  {
 	*new { arg name,inputs,outClass;
 		^super.new.loadSubject(name).createArgs(loadDocument(inputs) ? []).outClass_(outClass ? Out)
 	}
-	rand { arg standardDeviation=0.15;
-		this.inputs.do({ |in,i|
-			// at least NumberEditors will respond
-			in.tryPerform(\rand,standardDeviation,this.instr.initAt(i));
-		})
-	}
 	inputs { ^args }
 	// insert a new input into this arg position
 	setInput { arg index, newArg;
@@ -154,6 +148,12 @@ Patch : HasPatchIns  {
 			(argg.asString + "does not respond to set").warn;
 		});
 	}
+	rand { arg standardDeviation=0.15;
+		this.inputs.do({ |in,i|
+			// at least NumberEditors will respond
+			in.tryPerform(\rand,standardDeviation,this.instr.initAt(i));
+		})
+	}
 	doesNotUnderstand { arg selector ... dnuargs;
 		var sel,setter,argName,index;
 		sel = selector.asString;
@@ -173,6 +173,7 @@ Patch : HasPatchIns  {
 			^args[index]
 		});
 	}
+	
 	argNames { ^this.instr.argNames }
 	argNameAt { arg i; ^instr.argNameAt(i) }
 	specAt { arg i; ^instr.specs.at(i) }
@@ -244,15 +245,26 @@ Patch : HasPatchIns  {
 	}
 
 	createArgs { arg argargs;
-		var argsSize;
+		var argsSize,temp;
 		argsForSynth = [];
 		argNamesForSynth = [];
 		patchIns = [];
 		synthPatchIns = [];
 		argsSize = this.instr.argsSize;
 		synthArgsIndices = Array.newClear(argsSize);
-
-		args=Array.fill(argsSize,{arg i;
+		if(argargs.isKindOf(Dictionary),{
+			temp = nil ! argsSize;
+			argargs.keysValuesDo { arg k,v;
+				var i;
+				i = this.instr.argNames.indexOf(k);
+				if(i.notNil,{
+					temp[i] = v
+				})
+			};
+			argargs = temp
+		});
+								
+		args = Array.fill(argsSize,{arg i;
 			var proto,spec,ag,patchIn,darg,inSpec;
 			spec = instr.specs.at(i);
 			if(argargs.at(i).notNil,{
@@ -294,33 +306,33 @@ Patch : HasPatchIns  {
 			patchIn = PatchIn.newByRate(spec.rate);
 			patchIns = patchIns.add(patchIn);
 
-			// although input is control, arg could overide that
+			// although input is control, an arg could overide that
 			if(spec.rate != \noncontrol
-				and: {ag.rate != \noncontrol}
-			,{
+				and: {ag.rate != \noncontrol} ,{
 				// if rate is \stream and spec is not EventStream
-				// then fail
+				// then it should fail
 				argsForSynth = argsForSynth.add(ag);
 				argNamesForSynth = argNamesForSynth.add(this.argNameAt(i));
 				synthPatchIns = synthPatchIns.add(patchIn);
 				synthArgsIndices.put(i,synthPatchIns.size - 1);
-			},{
-				// watch noncontrols for changes.
-				// if Env or Sample or quantity changed, synth def is invalid
-				//if(ag.isNumber.not,{ ag.addDependant(this); });
 			});
 			ag
 		});
 	}
-
+	defName {
+		^defName ?? {
+			defName = InstrSynthDef.makeDefName(this.instr,this.args,this.outClass)[1];
+		}
+	}
 	asSynthDef {
-		// could be cached, must be able to invalidate it
-		// if an input changes
 		^synthDef ?? {
-			synthDef = InstrSynthDef.build(this.instr,this.args,this.outClass);
-			defName = synthDef.name;
+			synthDef = InstrSynthDef.cacheAt(this.defName,Server.default) ?? {
+						synthDef = InstrSynthDef.build(this.instr,this.args,this.outClass);
+						synthDef;
+					};
+			
 			// the synthDef has now evaluated and can know the number of channels
-			// but if it returned an Out.ar then it does not know
+			// but if it returned a manual Out.ar then it does not know
 			// so we will have to trust the Instr outSpec
 			if(synthDef.numChannels.notNil,{
 				numChannels = synthDef.numChannels;
@@ -348,8 +360,19 @@ Patch : HasPatchIns  {
 			});
 		});
 	}
-	update { arg changed,changer;
+	update { arg changed,what;
 		var newArgs;
+		if(changed === this.instr,{
+			^this.removeSynthDefCache;
+		});
+		if(changed === synth,{
+			if(what == 'n_end',{
+				this.children.do(_.stop);
+				stepChildren.do(_.stop);
+				status = \isStopped;
+			});
+			^this.changed(status)
+		});
 		// one of my scalar inputs changed
 		if(this.args.includes(changed),{
 			if(this.isPlaying,{
@@ -360,9 +383,6 @@ Patch : HasPatchIns  {
 			},{
 				this.invalidateSynthDef;
 			})
-		});
-		if(changed === this.instr,{
-			this.removeSynthDefCache;
 		});
 	}
 	removeSynthDefCache {
@@ -375,8 +395,6 @@ Patch : HasPatchIns  {
 	}
 	invalidateSynthDef {
 		this.removeSynthDefCache;
-		//this.releaseArgs;
-		//this.instr.removeDependant(this);
 	}
 	releaseArgs {
 		// Sample, Env, NumberEditor are watched
@@ -385,7 +403,6 @@ Patch : HasPatchIns  {
 	didFree {
 		var did;
 		did = super.didFree;
-		//if(did,{ this.invalidateSynthDef; });
 		^did
 	}
 
@@ -430,6 +447,7 @@ Patch : HasPatchIns  {
 		synth = Synth.basicNew(this.defName,this.server);
 		this.annotate(synth,"synth");
 		NodeWatcher.register(synth);
+		synth.addDependant(this);
 		bundle.add(
 			synth.addToTailMsg(patchOut.group,
 				this.synthDefArgs
@@ -459,12 +477,14 @@ Patch : HasPatchIns  {
 		});
 		^args
 	}
-	defName { ^defName } // super would say 'Patch'
 
 	stopToBundle { arg bundle;
 		super.stopToBundle(bundle);
 		stepChildren.do({ |sc|
 			sc.stopToBundle(bundle)
+		});
+		bundle.addFunction({
+			synth.removeDependant(this)
 		})
 	}
 
@@ -504,12 +524,23 @@ Patch : HasPatchIns  {
 		});
 		^result
 	}
+	asEvent {
+		var e;
+		e = ('type':'instr','instr':this.instr);
+		this.instr.argNames.do { arg an,i;
+			e[an] = args[i].dereference
+		};
+		^e
+	}
+	embedInStream { arg event;
+		^yield(event !? { event.copy.putAll(this.asEvent) })
+	}
 
 	children { ^args }
 
 	printOn { arg s;
 		var n;
-		s << this.class.name << "(" <<< instr.dotNotation << ")";
+		s << this.class.name << "(" <<< (instr !? {instr.dotNotation}) << ")";
 		if((n = this.name).notNil,{
 			s << "{"++n++"}";
 		});
@@ -519,21 +550,29 @@ Patch : HasPatchIns  {
 		if(this.class === Patch,{ // an indulgence ...
 			last = args.size - 1;
 			// anything with a path gets stored as abreviated
-			stream << "(" <<< this.instr.dotNotation << ",[";
-				if(stream.isKindOf(PrettyPrintStream),{ stream.indent(1); });
-				args.do({ arg ag,i;
-					stream.nl;
-					stream <<< enpath(ag);
-					if(i != last,{ stream << "," });
-				});
-				if(stream.isKindOf(PrettyPrintStream),{ stream.indent(-1); });
+			if(this.instr.path.notNil,{
+				stream << "(" <<< this.instr.dotNotation << ",[";
+			},{
+				stream << "(" << this.instr.func.def.sourceCode << ",[";
+			});
+			
+			if(stream.isKindOf(PrettyPrintStream),{ stream.indent(1); });
+			args.do({ arg ag,i;
+				stream.nl;
+				stream <<< enpath(ag);
+				if(i != last,{ stream << "," });
+			});
+			if(stream.isKindOf(PrettyPrintStream),{ stream.indent(-1); });
+			
 			stream.nl;
 			stream << "])";
 		},{
 			super.storeParamsOn(stream)
 		});
 	}
-	storeArgs { ^[this.instr.name,args] }
+	storeArgs { 
+		^[this.instr.name,args] 
+	}
 	guiClass { ^PatchGui }
 }
 

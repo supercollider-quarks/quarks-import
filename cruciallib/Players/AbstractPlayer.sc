@@ -104,7 +104,7 @@ AbstractPlayer : AbstractFunction  {
 		});
 	}
 	loadDefFileToBundle { arg bundle,server;
-		var def,bytes,dn;
+		var def,dn;
 		// Patch needs to know children numChannels
 		// before it can know its own.
 		// this is the only reason we are forcing the children to load
@@ -113,31 +113,19 @@ AbstractPlayer : AbstractFunction  {
 		this.children.do({ arg child;
 			child.loadDefFileToBundle(bundle,server);
 		});
-		// yes, I might be producing a stream
+		// I might be producing a stream
 		// and I'll pass it to your synthArg
 		if(this.rate === 'stream',{ ^this });
 
 		dn = this.defName;
-		if(dn.isNil or: {
-			Library.at(SynthDef,server,dn.asSymbol).isNil
-		},{
-			// Patches are discarding their cache on purpose
-			// just to be on the safe side.
-			// at some point I'll tighten this up again and honor the cache for Patch
-			//dn.debug("dn was nil");
-			// save it in the archive of the player or at least the name.
-			// Patches cannot know their defName until they have built
+		if(InstrSynthDef.cacheAt(dn,server).isNil,{
 			def = this.asSynthDef;
 			defName = def.name;
-			//defName.debug("defname");
-			dn = defName.asSymbol;
-			bytes = def.asBytes;
+			
+			bundle.addPrepare(["/d_recv", def.asBytes]);
 
-			bundle.addPrepare(["/d_recv", bytes]);
-
-			// InstrSynthDef watches \serverRunning to clear this if the server severs
 			InstrSynthDef.watchServer(server);
-			Library.put(SynthDef,server,dn,true);
+			InstrSynthDef.cachePut(def,server);
 		});
 	}
 	// the default behavior for play
@@ -180,7 +168,7 @@ AbstractPlayer : AbstractFunction  {
 		bundle.sendAtTime(this.server,atTime,timeOfRequest);
 	}
 	spawnToBundle { arg bundle,selector=\addToTailMsg;
-		bundle.addMessage(this,\didSpawn);
+		bundle.addFunction({this.didSpawn});
 		this.children.do({ arg child;
 			child.spawnToBundle(bundle);
 		});
@@ -307,6 +295,7 @@ AbstractPlayer : AbstractFunction  {
 			patchOut.free; // frees the busses
 			patchOut = nil;
 			group  = nil;
+			this.class.removeAnnotation(this)
 			//server = nil;
 		});
 	}
@@ -411,15 +400,13 @@ AbstractPlayer : AbstractFunction  {
 	// inside an InstrSynthDef a player can insert itself as a stepchild
 	// of the patch and play inline
 	ar {
-		var dn,synthDef, buildSynthDef;
-		// if not built, then build
-		dn = this.defName;
-		if(dn.isNil or: {Library.at(SynthDef,server,dn.asSymbol).isNil},{
-			buildSynthDef = UGen.buildSynthDef;
-			synthDef = this.asSynthDef;
-			UGen.buildSynthDef = buildSynthDef;
-		});
-		^UGen.buildSynthDef.playerIn(this)
+		if(UGen.buildSynthDef.class === InstrSynthDef,{
+			// if not built, then build in case numChannels/rate are unknown
+			this.asSynthDef;
+			^UGen.buildSynthDef.playerIn(this)
+		},{
+			SubclassResponsibilityError(this,thisMethod,this.class).throw
+		})
 	}
 	kr { ^this.ar }
 	value {  ^this.ar }
@@ -539,12 +526,6 @@ AbstractPlayer : AbstractFunction  {
 		path = apath;
 		name = nil;
 		NotificationCenter.notify(AbstractPlayer,\saveAs,[this,path]);
-		/* to receive this:
-			NotificationCenter.register(AbstractPlayer,\saveAs,you,
-			{ arg model,path;
-				// do any saveAs handlers you wish
-			});
-		*/
 	}
 
 	asCompileString { // support arg sensitive formatting
@@ -567,44 +548,30 @@ AbstractPlayer : AbstractFunction  {
 			stream << ".new";
 		})
 	}
+	simplifyStoreArgs { arg args; ^args }
 
 	annotate { arg thing,note;
-		this.class.annotate(thing,"owner:" + this.asString + ":" + note);
+		if(Annotations.notNil,{
+			Annotations.register(this);
+			if(note.notNil,{
+				Annotations.put(thing,this,note)
+			},{
+				Annotations.put(thing,this)
+			})
+		})
 	}
 	*annotate { arg thing,note;
-		var prev;
-		prev = this.getAnnotation(thing);
-		if(prev.notNil,{
-			note = prev ++ ";;" + note;
-		});
-		if(thing.isKindOf(Node),{
-			Library.put(AbstractPlayer, \nodeAnnotations,
-				thing.server ?? {"node has no server, cannot annotate".die},
-				thing.nodeID ?? {"nodeID is nil, cannot annotate".die},
-			 	note);
-		},{
-			if(thing.isKindOf(Bus),{
-				Library.put(AbstractPlayer, \busAnnotations,
-					thing.server ?? {"Bus has no server, cannot annotate".die},
-					thing.rate ?? {"Bus has no rate, cannot annotate".die},
-					thing.index ?? {"Bus has no index, cannot annotate".die},
-					note);//thing.asString + ":" +
-			});
-		});
+		if(Annotations.notNil,{
+			Annotations.put(thing,note)
+		})
 	}
 	*getAnnotation { arg thing;
-		^if(thing.isKindOf(Node),{
-			Library.at(AbstractPlayer, \nodeAnnotations, thing.server, thing.nodeID);
-		},{
-			if(thing.isKindOf(Bus),{
-				Library.at(AbstractPlayer, \busAnnotations, thing.server,thing.rate, thing.index);
-			});
-		});
-		//^Library.at(AbstractPlayer, node.server, node.nodeID) ? "";
+		if(Annotations.isNil, { ^nil });
+		^Annotations.at(thing)
 	}
-	*removeAnnotation { arg thing;
-		// shouldnt have to do this since its just a lookup by integer indices
-		// and its better to know what it once was annotated as (if it failed to be released etc.)
+	*removeAnnotation { arg thing; 
+		if(Annotations.isNil, { ^nil });
+		Annotations.unregister(thing) 
 	}
 
 	// using the arg passing version
@@ -623,8 +590,8 @@ AbstractPlayer : AbstractFunction  {
 }
 
 
-SynthlessPlayer : AbstractPlayer { // should be higher
-
+SynthlessPlayer : AbstractPlayer {
+	
 	var <>isPlaying=false;
 
 	loadDefFileToBundle { }

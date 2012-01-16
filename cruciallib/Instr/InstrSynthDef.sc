@@ -2,7 +2,7 @@
 InstrSynthDef : SynthDef {
 
 	var <longName;
-	var instr;
+	var instr,<instrName;
 	var inputs; // the inputs supplied the last time this was built
 	var outputProxies; // the output proxies those inputs created, primarily used for error reporting
 
@@ -34,7 +34,9 @@ InstrSynthDef : SynthDef {
 			UGen.buildSynthDef = stacked;
 		} {
 			UGen.buildSynthDef = stacked;
-		}
+		};
+		# longName, name = InstrSynthDef.makeDefName(instr,args,outClass);
+		("InstrSynthDef built:" + name).inform;		
 	}
 	buildUgenGraph { arg argInstr,args,outClass;
 		var result,fixedID="",firstName;
@@ -43,6 +45,7 @@ InstrSynthDef : SynthDef {
 		outClass = outClass.asClass;
 
 		instr = argInstr;
+		instrName = instr.dotNotation;
 		inputs = args;
 
 		// restart controls in case of *wrap
@@ -62,12 +65,6 @@ InstrSynthDef : SynthDef {
 				rate = result.rate;
 				numChannels = max(1,result.size);
 
-				if(outClass === XOut,{
-					"XOut not tested yet.".error;
-					//out = outClass.perform(if(this.rate == \audio,\ar,\kr),
-					//			inputs.at(0),xfader.value,out)
-				});
-
 				rate.switch(
 					\audio, {
 						result = outClass.ar(Control.names([\out]).ir([0]) , result);
@@ -81,7 +78,6 @@ InstrSynthDef : SynthDef {
 							+ result + this.buildErrorString).error;
 					},
 					\noncontrol,{
-
 						("InstrSynthDef: result of your Instr function was a noncontrol rate object:"
 							+ result + this.buildErrorString).error;
 					},
@@ -98,7 +94,7 @@ InstrSynthDef : SynthDef {
 			info.postln;
 			//this.dumpUGens;
 			// since we failed while loading synth defs
-			// any other previously succesful builds will
+			// any other previously successful builds will
 			// assume that they finished loading
 			// so clear all from the cache
 			InstrSynthDef.clearCache(Server.default);
@@ -106,44 +102,25 @@ InstrSynthDef : SynthDef {
 			err.throw;
 		});
 
-		name = argInstr.dotNotation.asString ++ "." ++ outClass.name.asString;
-		this.allControlNames.do({ |controlName,i|
-			name = name ++ ".";
-			// the argNames are fixed for the Instr so we don't need to save them
-			// but after that comes secret args and the out
-			if(i > argInstr.argNames.size,{
-				name = name ++ controlName.name.asString;
-			},{
-				//inputs[i].addToDefName
-				// if outputProxy != control
-
-
-			});
-			switch(controlName.rate,
-				\control, {
-					name = name ++ "kr";
-				},
-				\noncontrol, {
-					name = name ++ "nc";
-				},
-				\scalar, {
-					name = name ++ "ir";
-				});
-			// defaultValue is not just what the synth def is built with
-			// but also important things like qnty are passed in this way
-			// that can completely alter the synth def architecture
-			if(controlName.defaultValue.notNil,{
-				name = name ++ controlName.defaultValue.asCompileString;
-			});
-		});
-		longName = name;
-		firstName = argInstr.name.last.asString;
-		if(firstName.size > 18,{
-			firstName = "Instr";
-		});
-		name = firstName ++ "*" ++ longName.hash;
 		controlNames = saveControlNames;
 		^result
+	}
+	*makeDefName { arg instr,args,outClass=\Out;
+		var name,longName,firstName;
+		
+		longName = [instr.dotNotation,outClass];
+		args.do { arg obj,i;
+			var r;
+			r = instr.specs.at(i).rate;
+			longName = longName.add(if(r == 'noncontrol',{obj},{r}))
+		};
+		
+		firstName = instr.name.last.asString;
+		if(firstName.size > 18,{
+			firstName = firstName.copyRange(0,16);
+		});
+		name = firstName ++ "#" ++ longName.hash;
+		^[longName,name]
 	}
 
 	// passed to Instr function but not to synth
@@ -181,13 +158,6 @@ InstrSynthDef : SynthDef {
 		^object.instrArgFromControl(bus);
 	}
 
-//	addSecretAr { arg object,initialValue,selector;
-//		var name;
-//		name = "__secret_ar__"++(secretIr.size);
-//		secretAr = secretAr.add( [object,initialValue,secretKr.size,selector]);
-//		// secretIr = secretIr.add([name,value,argi,selector]);
-//		^Control.names([name]).ar([initialValue])
-//	}
 	secretObjects {
 		var so;
 		so = IdentitySet.new;
@@ -231,11 +201,16 @@ InstrSynthDef : SynthDef {
 	buildControlsWithObjects { arg instr,objects;
 		var argNames,defargs,outputProxies;
 		objects.do({ arg obj,argi; obj.initForSynthDef(this,argi) });
-		defargs = (argNames = instr.argNames).collect({ arg name,defargi;
-			var defarg;
-			defarg = (objects.at(defargi) ?? {instr.initAt(defargi)});
-			defarg.addToSynthDef(this,name);
-			defarg
+		argNames = instr.argNames;
+		defargs = argNames.collect({ arg name,defargi;
+			var obj,init;
+			obj = objects.at(defargi);
+			init = instr.initAt(defargi);
+			if(obj.isNil,{
+				obj = instr.specs.at(defargi).defaultControl(init);
+			});								
+			obj.addToSynthDef(this,name,init);
+			obj
 		});
 		outputProxies = this.buildControls;
 		// the objects themselves know how best to be represented in the synth graph
@@ -272,8 +247,7 @@ InstrSynthDef : SynthDef {
 		super.finishBuild;
 		inputs = nil;
 		outputProxies = nil;
-		instr = nil;
-		("InstrSynthDef built:" + name).inform;
+		instr = nil; // could hold onto stuff
 	}
 	buildErrorString {
 		^String.streamContents({ arg stream;
@@ -297,7 +271,6 @@ InstrSynthDef : SynthDef {
 				});
 			});
 	}
-	instrName { ^instr.dotNotation }
 	tempoKr { arg object,selector;
 		// first client to request will later be asked to produce the TempoBus
 		^(tempTempoKr ?? {
@@ -307,32 +280,25 @@ InstrSynthDef : SynthDef {
 		})
 	}
 
-	*defNameFromObjects { arg objects;
-		^String.streamContents({ arg stream;
-			var iks=0;
-			objects.do({ arg obj,argi;
-				// returns 0/i 1/k 2/s tag, adds values if any to stream
-				iks = (3 ** argi) *  obj.addToDefName(stream) + iks;
-				//obj
-			});
-			stream << iks;
-		});
+	*cacheAt { arg defName,server;
+		^Library.at(SynthDef,server ? Server.default,defName.asSymbol)
 	}
-	
+	*cachePut { arg def,server;
+		Library.put(SynthDef,server ? Server.default,def.name.asSymbol,def)
+	}
 	*loadDefFileToBundle { arg def,bundle,server;
 		var dn;
 		dn = def.name.asSymbol;
 		if(Library.at(SynthDef,server,dn).isNil,{
 			bundle.addPrepare(["/d_recv", def.asBytes]);
 			this.watchServer(server);
-			Library.put(SynthDef,server,dn,true);
+			this.cachePut(def,server);
 		});
-	}	
+	}
 	*watchServer { arg server;
 		if(NotificationCenter.registrationExists(server,\didQuit,this).not,{
 			NotificationCenter.register(server,\didQuit,this,{
-					this.clearCache(server);
-					//this.loadCacheFromDir(server);
+				this.clearCache(server);
 			});
 		});
 	}
@@ -353,7 +319,7 @@ InstrSynthDef : SynthDef {
 			Library.global.removeAt(SynthDef,s,defName.asSymbol);
 		})
 	}
-		
+	
 	*buildSynthDef {
 		var sd;
 		sd = UGen.buildSynthDef;
@@ -366,20 +332,6 @@ InstrSynthDef : SynthDef {
 		^sd
 	}
 
-	// in the context of an InstrSynthDef
-	/*
-		Patch({
-			t = Impulse.ar(1);
-			InstrSynthDef.buildSynthDef.onTrig(
-				t,
-				{ arg value;
-					[value,"trigged"].postln
-				},
-				SinOsc.ar(0.01)
-			);
-			t
-		}).play
-	*/
 	// execute the func in the client whenever triggered
 	// see Patch help
 	onTrig { |trig,func,value=0.0|

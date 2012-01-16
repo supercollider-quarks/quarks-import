@@ -281,6 +281,7 @@ NamedIntegersSpec : ControlSpec {
 	}
 }
 
+
 ScalarSpec : ControlSpec {
 	// \scalar means .ir or i_initialValue
 	// SendTrig etc. output a 0.0
@@ -298,6 +299,9 @@ NonControlSpec : Spec {
 	rate { ^\noncontrol }
 	canKr { ^false }
 }
+
+
+SymbolSpec : NonControlSpec {}
 
 
 EnvSpec : NonControlSpec {
@@ -504,22 +508,22 @@ InstrNameSpec : HasItemSpec {
 	var <>hasGate,<>hasAudioInput; // nil means "does not care"
 
 	*new { arg outSpec,hasGate,hasAudioInput;
-		^super.new(outSpec).hasGate_(hasGate).hasAudioInput_(hasAudioInput)
+		^super.new(outSpec ?? {AudioEventSpec.new}).hasGate_(hasGate).hasAudioInput_(hasAudioInput)
 	}
 	rate {^\noncontrol }
 	canAccept { arg ting;
 		^(ting.isString and: {Instr(ting).notNil})
 	}
+	constrain { arg instr; ^instr }
 }
 
 
-// jh: for generic object input to a Patch
 ObjectSpec : Spec {
 
 	var  <>defaultControl;
 
-	*new { |obj|
-		^super.newCopyArgs(obj)
+	*new { |defaultControl|
+		^super.newCopyArgs(defaultControl)
 	}
 
 	storeArgs { |stream|

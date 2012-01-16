@@ -7,15 +7,15 @@ ServerGui : ObjectGui {
 	writeName {}
 	guiBody { arg layout;
 
-		var active,booter,height;
-		
-		height = GUI.skin.buttonHeight;
+		var active,booter,height,skin;
+		skin = GUI.skin;
+		height = skin.buttonHeight;
 		
 		if(model.isLocal,{
-			booter = GUI.button.new(layout, Rect(0,0, 47, height));
-			booter.states = [["Boot", Color.black, Color.clear],
-						   ["Quit", Color.black, Color.clear]];
-			booter.font = GUI.font.new("Helvetica",10);
+			booter = Button(layout, Rect(0,0, 47, height));
+			booter.states = [["Boot", skin.fontColor, skin.background],
+						   ["Quit", skin.fontColor, skin.background]];
+			//booter.font = GUI.font.new("Helvetica",10);
 			booter.action = { arg view;
 				if(view.value == 1, {
 					booting.value;
@@ -108,30 +108,43 @@ ServerGui : ObjectGui {
 					}];
 	}
 	// button to switch the output the server is connected to
-	output { |layout|
+	output { |layout,width=140|
 		var switch,devs,current;
-		switch = PopUpMenu(layout, Rect(0,0, 140, GUI.skin.buttonHeight));
+		switch = PopUpMenu(layout, Rect(0,0, width, GUI.skin.buttonHeight));
 		switch.focusColor = Color.clear;
 		
 		devs = ServerOptions.outDevices;
-		switch.items = devs;
-		current = model.options.device;
+		switch.items = devs.collect({ arg dev; dev.select({ arg c; c.isAlphaNum or: c.isSpace }) });
+		current = model.options.outDevice;
 		if(current.notNil,{
-			if(current.isSequenceableCollection,{
-				current = model.options.outDevice;
-			});
-			switch.value = devs.indexOf(current);
+			switch.value = devs.indexOf(current) ? 0;
 		});
 		switch.action = {
 			var ll;
 			ll = switch.items[switch.value];
-			model.options.device = ll;
+			model.options.outDevice = ll;
+		};
+	}
+	input { |layout,width=140|
+		var switch,devs,current;
+		switch = PopUpMenu(layout, Rect(0,0, width, GUI.skin.buttonHeight));
+		switch.focusColor = Color.clear;
+		
+		devs = ServerOptions.inDevices;
+		switch.items = devs.collect({ arg dev; dev.select({ arg c; c.isAlphaNum or: c.isSpace }) });
+		current = model.options.inDevice;
+		if(current.notNil,{
+			switch.value = devs.indexOf(current) ? 0;
+		});
+		switch.action = {
+			var ll;
+			ll = switch.items[switch.value];
+			model.options.inDevice = ll;
 		};
 	}
 	meters { |layout,bounds|
 	    ActionButton(layout,"Meters",{
 	        model.meter
-	        //ServerMeterView(model)
 	    })
     }
 	tail { |layout|
