@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys, optparse
-import optparse_gui
+try:
+  import optparse_gui
+  haveGui = True
+except:
+  haveGui = False
 
 
 import mapper
@@ -112,7 +116,7 @@ class LMPydonHive( object ):
 # main program:
 if __name__ == "__main__":
 
-  if 1 == len( sys.argv ):
+  if 1 == len( sys.argv ) and haveGui:
     option_parser_class = optparse_gui.OptionParser
   else:
     option_parser_class = optparse.OptionParser

@@ -3,10 +3,22 @@
 
 import sys
 import optparse
-import optparse_gui
+try:
+  import optparse_gui
+  haveGui = True
+except:
+  haveGui = False
 import ConfigParser
 
-from pydon import lmpydonhive
+programchoices = ['datanetwork', 'osc', 'junxion' ]
+
+try:
+  from pydon import lmpydonhive
+  programchoices.append( 'libmapper' )
+  haveLibmapper = True
+except:
+  haveLibmapper = False
+
 from pydon import swpydonhive
 from pydon import minihiveosc
 from pydon import minihivejunxion
@@ -27,7 +39,7 @@ if __name__ == "__main__":
   if not configParser.has_section( 'program' ):
     configParser.add_section( 'program' )
   
-  if 1 == len( sys.argv ):
+  if 1 == len( sys.argv ) and haveGui:
     option_parser_class = optparse_gui.OptionParser
   else:
     option_parser_class = optparse.OptionParser
@@ -39,7 +51,8 @@ if __name__ == "__main__":
 		      dest="program",
 		      default = configParser.get( 'program', 'program' ),
 		      #group="program", option = "program",
-                      choices = ['datanetwork', 'osc', 'libmapper', 'junxion' ],
+                      #choices = ['datanetwork', 'osc', 'libmapper', 'junxion' ],
+                      choices = programchoices
                       )
   
   parser.add_option('-s','--serial', action='store',type="string",dest="serial",
@@ -163,5 +176,8 @@ if __name__ == "__main__":
     print( "Created OSC listener at (%s,%i) and OSC sender to (%s,%i) and opened serial port at %s. Now waiting for messages."%(options.ip, options.port, options.host, options.hport, options.serial ) )
     swhive.start()
   elif options.program == 'libmapper':
-    lmhive = lmpydonhive.LMPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [options.mboffset,options.minibees], options.verbose, options.apimode )
-    lmhive.start()
+    if haveLibmapper:
+      lmhive = lmpydonhive.LMPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [options.mboffset,options.minibees], options.verbose, options.apimode )
+      lmhive.start()
+    else:
+      print( "libmapper is not available, please check your installation or choose another mode" )
