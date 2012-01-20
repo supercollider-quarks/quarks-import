@@ -7,15 +7,17 @@ INSTALLATION
 Dependencies are:
 * python (version 2.6 or higher) - e.g. http://www.python.org/download/releases/2.7.1/
 * pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
-* pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/ - download: http://sourceforge.net/projects/pyserial/files/pyserial/2.5/pyserial-2.5.tar.gz/download
+* pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/ - download: http://sourceforge.net/projects/pyserial/files/pyserial/2.5/pyserial-2.5.tar.gz/download, to use the XBee Xplorer coordinator board, you will also need an FTDI driver for your platform.
 * python-xbee-api (version 2.0.0 or higher) - (included in the packaged version)
-* optparse_gui (version 0.1) - (included in the packaged version)
-* python libmapper, see: http://www.idmil.org/software/libmapper/downloads
+* optparse_gui (version 0.1) - (included in the packaged version); this is dependent itself on wxPython
+* python libmapper, see: http://www.idmil.org/software/libmapper/downloads ; will be gracefully skipped if not needed
 
 python :
 check which version you have:
   $ python --version
 If it is lower than 2.6 you will need to get a version higher than 2.6.
+
+(make sure Python is in your path (esp. for Windows!))
 
 Install the dependencies:
 
@@ -23,6 +25,8 @@ optparse_gui :
 extract archive and:
   $ cd optparse_gui-0.1
   $ sudo python setup.py install
+  
+NOTE: optparse_gui is depended on wxPython, so you will need that too. For Mac OSX 64bit there is unfortunately no package available at the moment, so you'll have to do without the gui.
 
 pyOSC :
 extract archive and:

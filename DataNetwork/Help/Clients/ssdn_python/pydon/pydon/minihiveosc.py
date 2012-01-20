@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import optparse
-import optparse_gui
+try:
+  import optparse_gui
+  haveGui = True
+except:
+  haveGui = False
 # from Python v2.7 on should become argparse
 import sys
 import time
@@ -307,7 +311,7 @@ class SWMiniHiveOSC( object ):
 
 # main program:
 if __name__ == "__main__":
-  if 1 == len( sys.argv ):
+  if 1 == len( sys.argv ) and haveGui:
     option_parser_class = optparse_gui.OptionParser
   else:
     option_parser_class = optparse.OptionParser

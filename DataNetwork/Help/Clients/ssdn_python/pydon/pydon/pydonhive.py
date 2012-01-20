@@ -4,6 +4,7 @@ import time
 import sys
 import os
 import datetime
+import math
 
 import optparse
 #print time
@@ -401,7 +402,7 @@ class MiniHive(object):
 	      self.bees[ bee[ 'mid' ] ] = MiniBee( bee[ 'mid' ], bee[ 'serial' ] )
 	  self.bees[ bee[ 'mid' ] ].set_lib_revision( bee[ 'libversion' ], bee[ 'revision' ], bee[ 'caps' ] )
 	else:
-	  print "warning trying to assign duplicate minibee id %i"%bee[ 'mid' ]
+	  print( "warning trying to assign duplicate minibee id %i"%bee[ 'mid' ] )
 	#print bee[ 'configid' ]
 	#thisconf = self.configs[ bee[ 'configid' ] ]
 	if bee[ 'configid' ] > 0:
@@ -706,7 +707,8 @@ class MiniBeeConfig(object):
 	  self.logDataFormat.append( 1 )
 	  self.logDataLabels.append( self.pinlabels[ pinname ] )  
 
-    #print self.dataInSizes, self.dataOutSizes, self.dataScales
+    #if self.verbose:
+    #print self.digitalIns, self.dataInSizes, self.dataOutSizes, self.dataScales
     #print self.logDataFormat, self.logDataLabels
     #print "-----END CHECKING CONFIG------"
    
@@ -897,13 +899,14 @@ class MiniBee(object):
       for sz in self.customDataInSizes:
 	parsedData.append( data[ idx : idx + sz ] )
 	idx += sz
-
+      #print "index after custom data in size", idx
       if self.config.digitalIns > 0:
 	# digital data as bits
-	nodigbytes = self.config.digitalIns / 8 + 1
+	nodigbytes = int(math.ceil(self.config.digitalIns / 8.))
 	digstoparse = self.config.digitalIns
 	digitalData = data[idx : idx + nodigbytes]
 	idx += nodigbytes
+	#print "index after digitalIn", idx, nodigbytes, digitalData
 	for byt in digitalData:
 	  for j in range(0, min(digstoparse,8) ):
 	    parsedData.append( [ min( (byt & ( 1 << j )), 1 ) ] )
@@ -917,7 +920,7 @@ class MiniBee(object):
       #print parsedData, self.dataScales, self.customDataScales
 
       for index, dat in enumerate( parsedData ):
-	#print index, dat
+	#print index, dat, self.dataOffsets[ index ], self.dataScales[ index ]
 	if len( dat ) == 3 :
 	  scaledData.append(  float( dat[0] * 65536 + dat[1]*256 + dat[2] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
 	if len( dat ) == 2 :
@@ -926,8 +929,10 @@ class MiniBee(object):
 	  scaledData.append( float( dat[0] - self.dataOffsets[ index ] ) / float( self.dataScales[ index ] ) )
       self.data = scaledData
       if self.status != 'receiving':
+	print ( "receiving data from minibee %i."%(self.nodeid) )
 	if self.firstDataAction != None:
 	  self.firstDataAction( self.nodeid, self.data )
+	#self.serial.send_me( self.bees[beeid].serial, 0 )
       self.set_status( 'receiving' )
       if len(self.data) == ( len( self.config.dataScales ) + len( self.customDataInSizes ) ):
 	if self.dataAction != None :
@@ -976,7 +981,7 @@ class MiniBee(object):
       self.config.check_config( self.libversion, self.revision )
       #print confirmconfig
       #print( "CONFIG INFO", configid, confirmconfig, verbose, len( confirmconfig ) )
-      self.digitalIns = 0
+      #self.digitalIns = 0
       #self.dataScales = []
       #self.dataOffsets = []
       if len( confirmconfig ) > 4:
@@ -1030,12 +1035,12 @@ class MiniBee(object):
       else:
 	configres = False
 	print( "ERROR: message interval NOT correct", confirmconfig[1:3], self.config.messageInterval )
-      if confirmconfig[3] == (sum( self.config.dataInSizes ) + sum( self.customDataInSizes )):
+      if confirmconfig[3] == (self.config.digitalIns + sum( self.config.dataInSizes ) + sum( self.customDataInSizes )):
 	if verbose:
-	  print( "data input size correct", confirmconfig[3], self.config.dataInSizes, self.customDataInSizes )
+	  print( "data input size correct", confirmconfig[3], self.config.digitalIns, self.config.dataInSizes, self.customDataInSizes )
       else:
 	configres = False
-	print( "ERROR: data input size NOT correct", confirmconfig[3], self.config.dataInSizes, self.customDataInSizes )
+	print( "ERROR: data input size NOT correct", confirmconfig[3], self.config.digitalIns, self.config.dataInSizes, self.customDataInSizes )
       if confirmconfig[4] == sum( self.config.dataOutSizes ):
 	if verbose:
 	  print( "data output size correct", confirmconfig[4], self.config.dataOutSizes )
