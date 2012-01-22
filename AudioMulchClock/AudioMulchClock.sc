@@ -80,7 +80,7 @@ AudioMulchClock {
 		var delta;
 		//("doSched tickdur: "++tickdur++" ofs: "++ofs++" tick: "++tick).postln;
 		SystemClock.sched(ofs * tickdur, {
-			delta = item.awake(tick, Main.elapsedTime, this);
+			delta = item.awake(tick.asFloat, Main.elapsedTime, this);
 			if(delta.isNumber, {
 				this.sched(delta+(ofs/24), item);
 			});
