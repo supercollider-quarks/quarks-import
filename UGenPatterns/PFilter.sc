@@ -135,6 +135,12 @@ PHPZ1 : PLPZ1 {
 	}
 }
 
+PChanged : FilterPattern {
+	*new {|pattern, threshold= 0, mul= 1, add= 0|
+		^Pif(PHPZ1(pattern, mul, add).abs>threshold, 1, 0);
+	}
+}
+
 PLPZ2 : FilterPattern {
 	var <>mul, <>add;
 	*new {|pattern, mul= 1, add= 0|
