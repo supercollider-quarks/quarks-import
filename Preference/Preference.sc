@@ -90,7 +90,7 @@ Preference {
 		fileNames.keysValuesDo { |name, val|
 			var str = name.asString;
 			if(str.splitext.first == "startup") {
-				this.set(name);
+				this.setPreference(name);
 				this.initMenu;
 				^this
 			};
@@ -98,13 +98,14 @@ Preference {
 		this.reset;
 	}
 	
-	*set { |which|
+	*setPreference { |which|
 			var path = fileNames.at(which.asSymbol);
 			if(pathMatch(startupFilePath).isEmpty or: { isSymLink(startupFilePath) }) {
 				if(path.notNil) {
 					systemCmd("ln -s -F " ++ path + startupFilePath);
 					current = which;
 					this.initMenu;
+					this.executePreload(path);
 				} {
 				 	"Preference: no file of this name found: %\n".postf(which) 
 				};
@@ -124,6 +125,29 @@ Preference {
 		this.initMenu;
 	}
 
+	*executePreload { |path|
+		
+		//var a = thisProcess.platform.startupFiles.last;
+		var i, j, string, names;
+		
+		// need a try here, because of a strange bug in String:find
+		try {
+			File.use(path, "r", { |f|
+				string = f.readAllString
+			});
+			
+			// check if any preferences are declared in startup file
+			// which need to be executed before recompile (paths and quarks)
+			i = string.find("PREFERENCES:");
+			if(i.notNil) { i = string.find("QUARKS INSTALLED", offset: i) };
+			if(i.notNil) { i = string.find("\n", offset: i) };
+			j = string.find("\n\n", offset: i);
+			names = string[i+1..j].split(Char.nl).drop(-1);
+			names.do { |name| if(name.first != $-) { include(name) } { exclude(name.drop(1)) } };
+			
+		};
+				
+	}
 		
 	*openRepository {
 		var str = "open";
@@ -144,6 +168,14 @@ Preference {
 		systemCmd("open" + path);
 	}
 	
+	*postInstalledQuarks {
+		"\nQUARKS INSTALLED:".postln;
+		Quarks.installed.do { |quark|
+			quark.name.postln;	
+		};
+		"\n\n".postln;
+	}
+	
 	*initMenu {
 		
 		Platform.case(\osx, {
@@ -152,7 +184,7 @@ Preference {
 				var parent = CocoaMenuItem.default.findByName("startup");
 				var isDefault;
 				
-				parent.remove;
+				if (parent.notNil) { parent.remove; };
 				
 				isDefault = (current == \default) or: { current == \default_startup };
 				
@@ -168,47 +200,44 @@ Preference {
 				parent = CocoaMenuItem.default.findByName("startup");
 				
 				SCMenuSeparator(parent, 2);
-	
-				
+
+				CocoaMenuItem.add(["startup", "Open current startup"], { 
+					this.openStartupFile; 
+				}).enabled_(current != \none);		
+
+				CocoaMenuItem.add(["startup", "Open startup folder"], { 
+					this.openRepository; 
+				});
+
+				SCMenuSeparator(parent, 5);
+
 				names.do { |name|
 					var menuName = name.asString;
-					var item = CocoaMenuItem.add(["startup", menuName], { this.set(name) });
+					var item = CocoaMenuItem.add(["startup", menuName], { this.setPreference(name) });
 					item.enabled = (current != name);
 				};
 				
-				SCMenuSeparator(parent, names.size + 3);
-				
-				CocoaMenuItem.add(["startup", "Open current startup"], { 
-					this.openStartupFile; 
-				}).enabled_(current != \none);				
-				CocoaMenuItem.add(["startup", "Open repository"], { 
-					this.openRepository; 
-				});
+				SCMenuSeparator(parent, names.size + 6);
 				
 				CocoaMenuItem.add(["startup", "Open quarks window"], { 
 					Quarks.gui;
 				});
 				
-				CocoaMenuItem.add(["startup", "init", "Copy examples from quark"], { 
+				CocoaMenuItem.add(["startup", "Post installed Quarks"], { 
+					this.postInstalledQuarks; 
+				});
+								
+				CocoaMenuItem.add(["startup", "Copy examples from quark"], { 
 					this.copyExamplesFromQuark;
 					this.initFilePaths; 
 					this.initMenu;
 				});
 				
-				CocoaMenuItem.add(["startup", "init", "Refresh this menu"], { 
+				CocoaMenuItem.add(["startup", "Refresh this menu"], { 
 					this.initFilePaths; 
 					this.initMenu;
-				});
-				
-				CocoaMenuItem.add(["startup", "init", "Reset post window"], {
-					var str = Document.listener.text;
-					Document.listener.close;
-					Document.new(" post", str, true);
-					
-				});
-			
+				});				
 			};
-			
 		})
 	}
 	
