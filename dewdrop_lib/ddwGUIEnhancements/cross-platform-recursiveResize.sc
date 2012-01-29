@@ -47,11 +47,6 @@
 	isView { ^false }
 }
 
-+ StartRow {
-	recursiveResize { ^nil }
-	findRightBottom { ^Point(0, 0) }
-}
-
 
 + Point {
 	max { arg that;

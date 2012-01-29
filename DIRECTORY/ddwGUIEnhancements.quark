@@ -1,3 +1,5 @@
+var dep;
+
 (
 	name:		"ddwGUIEnhancements",
 	path:		"dewdrop_lib/ddwGUIEnhancements",
@@ -6,5 +8,11 @@
 	version:		1.0,
 	helpdoc:		"",
 	url:			"http://www.dewdrop-world.net/sc3",
-	dependencies:	if('Crucial'.asClass.isNil) { #["cruciallib"] }
+	// this syntax might look a little funny at first, but it's legal:
+	// a parenthesized expression sequence (separated by ;)
+	dependencies:	(
+		if('Crucial'.asClass.isNil) { dep = dep.add("cruciallib") };
+		if(Main.versionAtMost(3, 4)) { dep = dep.add("ddwGUIEnhancements3.4") };
+		dep
+	)
 )
