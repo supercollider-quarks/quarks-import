@@ -410,10 +410,10 @@ MixerPanWidget : MixerWidgetBase {
 		view.value_(0.5);
 	}
 	restoreView { 
-		('JSCView'.asClass.notNil and: { view.isKindOf(JSCView) }).if({
-			view.background_(gui.color1)
-		}, {
+		('SCView'.asClass.notNil and: { view.isKindOf(SCView) }).if({
 			view.background_(HiliteGradient(gui.color2, gui.color1, \h, 50, 0.5));
+		}, {
+			view.background_(gui.color1)
 		});
 	}
 	defaultValue { ^0.5 }
@@ -437,10 +437,10 @@ MixerLevelSlider : MixerWidgetBase {
 		view.value_(0);
 	}
 	restoreView {
-		('JSCView'.asClass.notNil and: { view.isKindOf(JSCView) }).if({
-			view.background_(gui.color1)
-		}, {
+		('SCView'.asClass.notNil and: { view.isKindOf(SCView) }).if({
 			view.background_(Gradient(gui.color2, gui.color1, \v, 50));
+		}, {
+			view.background_(gui.color1)
 		});
 	}
 	updateKeys { ^\level }
@@ -448,10 +448,10 @@ MixerLevelSlider : MixerWidgetBase {
 
 MixerLevelSliderH : MixerLevelSlider {
 	restoreView { 
-		('JSCView'.asClass.notNil and: { view.isKindOf(JSCView) }).if({
-			view.background_(gui.color1)
-		}, {
+		('SCView'.asClass.notNil and: { view.isKindOf(SCView) }).if({
 			view.background_(Gradient(gui.color1, gui.color2, \h, 50));
+		}, {
+			view.background_(gui.color1)
 		});
 	}
 }
