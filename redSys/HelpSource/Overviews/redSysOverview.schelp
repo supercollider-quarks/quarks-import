@@ -153,6 +153,7 @@ TABLE::
 ## link::Classes/RedFrik:: || noise socks!
 ## link::Classes/RedDirection:: || detects inc/dec of a signal
 ## link::Classes/RedImpulse:: || resettable impulse train
+## link::Classes/RedLine:: || resettable line generator
 ## link::Classes/RedLive:: || sample and repeat
 ## link::Classes/RedOverdub:: || overdub recording
 ## link::Classes/RedSequencer:: || simple sequencer
@@ -165,6 +166,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 120205:
+//added RedLine
 //--changes 120122:
 //added RedImpulse
 //--changes 111115:
