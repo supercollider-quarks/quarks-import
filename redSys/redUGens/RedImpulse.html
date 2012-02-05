@@ -39,7 +39,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">//--</p>
 <p class="p7">s.boot</p>
 <p class="p4"><br></p>
-<p class="p7">a= {<span class="s3">|freq= 2, phase= 0, t_reset= 0|</span> <span class="s4">RedImpulse</span>.ar(freq, t_reset)}.play(fadeTime:0)</p>
+<p class="p7">a= {<span class="s3">|freq= 2, t_reset= 0|</span> <span class="s4">RedImpulse</span>.ar(freq, t_reset)}.play(fadeTime:0)</p>
 <p class="p4"><br></p>
 <p class="p7">a.set(<span class="s5">\freq</span>, 1)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//change frequency</p>
 <p class="p7">a.set(<span class="s5">\freq</span>, 1, <span class="s5">\t_reset</span>, 1)<span class="Apple-tab-span">	</span>//change frequency and reset phase</p>
@@ -49,7 +49,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><br></p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
-<p class="p7">a= {<span class="s3">|freq= 2, phase= 0, t_reset= 0|</span> SinOsc.ar(400, 0, Decay.kr(<span class="s6">RedImpulse</span>.kr(freq, t_reset)))}.play(fadeTime:0)</p>
+<p class="p7">a= {<span class="s3">|freq= 2, t_reset= 0|</span> SinOsc.ar(400, 0, Decay.kr(<span class="s6">RedImpulse</span>.kr(freq, t_reset)))}.play(fadeTime:0)</p>
 <p class="p4"><br></p>
 <p class="p7">a.set(<span class="s5">\freq</span>, 1)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//change frequency</p>
 <p class="p7">a.set(<span class="s5">\freq</span>, 1, <span class="s5">\t_reset</span>, 1)<span class="Apple-tab-span">	</span>//change frequency and reset phase</p>
