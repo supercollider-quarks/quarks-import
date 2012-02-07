@@ -102,3 +102,43 @@ PLinLin : FilterPattern {
 		};
 	}
 }
+
+PDC : Pattern {
+	var <>in, <>length;
+	*new {|in= 0, length= inf|
+		^super.newCopyArgs(in, length);
+	}
+	storeArgs {^[in, length]}
+	embedInStream {|inval|
+		var inStr= in.asStream;
+		var inVal;
+		length.value(inval).do{
+			inVal= inStr.next(inval);
+			if(inVal.isNil, {^inval});
+			inval= inVal.yield;
+		};
+		^inval;
+	}
+}
+
+PSilent : Pattern {
+	var <>numChannels, <>length;
+	*new {|numChannels= 1, length= inf|
+		^super.newCopyArgs(numChannels, length);
+	}
+	storeArgs {^[numChannels, length]}
+	embedInStream {|inval|
+		var numStr= numChannels.asStream;
+		var numVal;
+		length.value(inval).do{
+			numVal= numStr.next(inval);
+			if(numVal.isNil, {^inval});
+			if(numVal>1, {
+				inval= 0.dup(numVal).yield;
+			}, {
+				inval= 0.yield;
+			});
+		};
+		^inval;
+	}
+}

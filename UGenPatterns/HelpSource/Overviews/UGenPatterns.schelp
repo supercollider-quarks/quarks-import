@@ -6,6 +6,7 @@ SECTION:: Generators
 
 LIST::
 ## link::Classes/PClipNoise::
+## link::Classes/PDC::
 ## link::Classes/PFSinOsc::
 ## link::Classes/PImpulse::
 ## link::Classes/PLFPulse::
@@ -14,6 +15,7 @@ LIST::
 ## link::Classes/PLine::
 ## link::Classes/PPulse::
 ## link::Classes/PSaw::
+## link::Classes/PSilent::
 ## link::Classes/PSinOsc::
 ## link::Classes/PWhiteNoise::
 ## link::Classes/PXLine::
