@@ -7,13 +7,16 @@ SECTION:: Generators
 LIST::
 ## link::Classes/PClipNoise::
 ## link::Classes/PDC::
+## link::Classes/PExpRand::
 ## link::Classes/PFSinOsc::
 ## link::Classes/PImpulse::
+## link::Classes/PIRand::
 ## link::Classes/PLFPulse::
 ## link::Classes/PLFSaw::
 ## link::Classes/PLFTri::
 ## link::Classes/PLine::
 ## link::Classes/PPulse::
+## link::Classes/PRand::
 ## link::Classes/PSaw::
 ## link::Classes/PSilent::
 ## link::Classes/PSinOsc::
