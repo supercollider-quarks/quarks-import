@@ -16,19 +16,14 @@ Preference {
 			
 			// for now, user dir only
 			startupFilePath = startupFilePath ?? { thisProcess.platform.startupFiles.last };			repositoryDirPath = repositoryDirPath ?? {
-				(startupFilePath.dirname +/+ "startupfiles").escapeChar($ );
-			}; 
+				(startupFilePath.dirname +/+ "startupfiles");
+			};
+			repositoryDirPath = repositoryDirPath.escapeChar($ );
 			examplesFolder = examplesFolder ?? { 
 				this.filenameSymbol.asString.dirname +/+ "startup_examples/";
 			}; 
-			startupFilePath = startupFilePath.escapeChar($ );
-			if(pathMatch(startupFilePath).notEmpty and: { isSymLink(startupFilePath).not }) {
-				"************************************************************************\n"
-				"Preference: in order to use preference switching, move your startup file "
-				"to the startupfiles folder first, and recompile.\n"
-				"Preference.openRepository;\n"
-				"************************************************************************".postln
-			};
+			//startupFilePath = startupFilePath.escapeChar($ );
+			if(this.safeToCreateSymlink.not) { this.postInitWarning };
 			
 			if(pathMatch(repositoryDirPath).isEmpty) {
 				systemCmd(postln("mkdir -p" + repositoryDirPath));
@@ -53,36 +48,29 @@ Preference {
 		fileNames = ();
 		filePaths.do { |path|
 			var key = path.basename.asSymbol;
-			fileNames[key] = path.escapeChar($ );
+			fileNames[key] = path;
 		}
 	}
 	
 	*findCurrentStartup {
-		var startupPointsTo, stat, index;
-		if(pathMatch(startupFilePath).isEmpty) { current = \none; ^this };
-		stat = unixCmdGetStdOut("stat -F" + startupFilePath);
+		var startupPointsTo, stat, index, path;
+		// the current startup file is the one symlinked to the extensions folder
+		path = startupFilePath.escapeChar($ );
+		if(pathMatch(path).isEmpty) { current = \none; ^this };
+		stat = unixCmdGetStdOut("stat -F" + path);
 		index = stat.find("->");
-		if(index.notNil) {
+		if(index.isNil) {
+			current = \default;
+		} {
 			startupPointsTo = stat[index + 2 ..];
 			if(startupPointsTo.last == Char.nl) {
 				startupPointsTo = startupPointsTo.drop(-1)
 			};
 			current = startupPointsTo.basename.asSymbol;
-		} {
-			current = \default;
 		};
 		"Current startup file: %\n".postf(current);
 	}
 	
-	*copyExamplesFromQuark {
-			var filePaths = pathMatch(this.filenameSymbol.asString.dirname 
-												+/+ "example_setups/*");
-			filePaths.do { |path|
-				path = path.escapeChar($ );
-				// cp -n: copy, do not overwrite existing file
-				systemCmd("cp -n % %".format(path, repositoryDirPath +/+ path.basename));
-			};
-	}
 	
 	
 	*setToDefault {
@@ -98,25 +86,32 @@ Preference {
 		this.reset;
 	}
 	
+	
+	
 	*setPreference { |which|
 			var path = fileNames.at(which.asSymbol);
-			if(pathMatch(startupFilePath).isEmpty or: { isSymLink(startupFilePath) }) {
+			var symlinkPath = startupFilePath.escapeChar($ );
+			("\n\nSwitching to startup file:" + which).postln;
+			if(this.safeToCreateSymlink) {
 				if(path.notNil) {
-					systemCmd("ln -s -F " ++ path + startupFilePath);
+					systemCmd("ln -s -F " ++ path.escapeChar($ ) + symlinkPath);
 					current = which;
 					this.initMenu;
 					this.executePreload(path);
 				} {
 				 	"Preference: no file of this name found: %\n".postf(which) 
 				};
-			};
+			} {
+				this.postInitWarning;
+
+			}
 	}
 
 	
 	*reset {
-		if(pathMatch(startupFilePath).notEmpty) { 
-				if(isSymLink(startupFilePath)) {
-					systemCmd("rm" + startupFilePath);
+		if(pathMatch(startupFilePath.escapeChar($ )).notEmpty) { 
+				if(isSymLink(startupFilePath.escapeChar($ ))) {
+					systemCmd("rm" + startupFilePath.escapeChar($ ));
 					current = \none;
 				} {
 					"Preference: Please remove your startup file manually".postln;
@@ -124,29 +119,23 @@ Preference {
 		};
 		this.initMenu;
 	}
+	
 
 	*executePreload { |path|
-		
-		//var a = thisProcess.platform.startupFiles.last;
-		var i, j, string, names;
-		
-		// need a try here, because of a strange bug in String:find
-		try {
-			File.use(path, "r", { |f|
-				string = f.readAllString
-			});
-			
-			// check if any preferences are declared in startup file
-			// which need to be executed before recompile (paths and quarks)
-			i = string.find("PREFERENCES:");
-			if(i.notNil) { i = string.find("QUARKS INSTALLED", offset: i) };
-			if(i.notNil) { i = string.find("\n", offset: i) };
-			j = string.find("\n\n", offset: i);
-			names = string[i+1..j].split(Char.nl).drop(-1);
-			names.do { |name| if(name.first != $-) { include(name) } { exclude(name.drop(1)) } };
-			
-		};
-				
+		var i, k, string, code;		
+		File.use(path, "r") { |f| string = f.readAllString };
+		// check if any preferences are declared in startup file
+		// and which need to be executed before recompile (usually Language Config and quarks)
+		i = string.find("/*\nPREFERENCES:");
+		if(i.notNil) {
+			i = string.find("\n", offset: i + 10);
+			k = string.find("*/", offset: i);
+			if(k.notNil) {
+				code = string[i+1..k-1];
+				"Preference switch - running the following code:".postln;
+				code.postln.interpret;
+			}	
+		}		
 	}
 		
 	*openRepository {
@@ -165,16 +154,21 @@ Preference {
 				^this
 			};
 		};
-		systemCmd("open" + path);
+		systemCmd("open" + path.escapeChar($ ));
 	}
 	
 	*postInstalledQuarks {
-		"\nQUARKS INSTALLED:".postln;
+		"\n\n".post;
 		Quarks.installed.do { |quark|
-			quark.name.postln;	
+			"'%'.include;\n".postf(quark.name);	
 		};
-		"\n\n".postln;
 	}
+	
+	*safeToCreateSymlink {
+		var symlinkPath = startupFilePath.escapeChar($ );
+		^pathMatch(symlinkPath).isEmpty or: { isSymLink(symlinkPath) }
+	}
+	
 	
 	*initMenu {
 		
@@ -186,7 +180,7 @@ Preference {
 				
 				if (parent.notNil) { parent.remove; };
 				
-				isDefault = (current == \default) or: { current == \default_startup };
+				isDefault = (current == \default) or: { current == 'startup.scd' };
 				
 				CocoaMenuItem.add(["startup", "default"], {
 					this.setToDefault;
@@ -227,18 +221,38 @@ Preference {
 					this.postInstalledQuarks; 
 				});
 								
-				CocoaMenuItem.add(["startup", "Copy examples from quark"], { 
+				CocoaMenuItem.add(["startup", "init", "Copy examples from quark"], { 
 					this.copyExamplesFromQuark;
 					this.initFilePaths; 
 					this.initMenu;
 				});
 				
-				CocoaMenuItem.add(["startup", "Refresh this menu"], { 
+				CocoaMenuItem.add(["startup", "init", "Refresh this menu"], { 
 					this.initFilePaths; 
 					this.initMenu;
 				});				
 			};
 		})
+	}
+	
+	*postInitWarning {
+		"************************************************************************\n"
+		"Preference: in order to use preference switching, move your startup file "
+		"to the startupfiles folder first, and recompile.\n"
+		"Preference.openRepository;\n"
+		"************************************************************************".postln	
+	}
+	
+	*copyExamplesFromQuark {
+			var filePaths = pathMatch(this.filenameSymbol.asString.dirname 
+												+/+ "example_setups/*");
+			filePaths.do { |path|
+				path = path.escapeChar($ );
+				// cp -n: copy, do not overwrite existing file
+				systemCmd("cp -n % %"
+					.format(path, repositoryDirPath +/+ path.basename)
+				);
+			};
 	}
 	
 
