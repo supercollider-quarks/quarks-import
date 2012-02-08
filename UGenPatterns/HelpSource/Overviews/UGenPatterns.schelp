@@ -39,6 +39,7 @@ LIST::
 ## link::Classes/PHPZ1::
 ## link::Classes/PHPZ2::
 ## link::Classes/PInRange::
+## link::Classes/PInRect::
 ## link::Classes/PIntegrator::
 ## link::Classes/PLastValue::
 ## link::Classes/PLatch::

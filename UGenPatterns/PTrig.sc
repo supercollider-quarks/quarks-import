@@ -294,6 +294,30 @@ PInRange : FilterPattern {
 	}
 }
 
+PInRect : FilterPattern {
+	var <>y= 0, <>rect;
+	*new {|pattern, y= 0, rect|
+		^super.newCopyArgs(pattern, y, rect);
+	}
+	storeArgs {^[pattern, y, rect]}
+	embedInStream {|inval|
+		var xStr= pattern.asStream;
+		var yStr= y.asStream;
+		var rectStr= rect.asStream;
+		var xVal, yVal, rectVal;
+		loop{
+			xVal= xStr.next(inval);
+			if(xVal.isNil, {^inval});
+			yVal= yStr.next(inval);
+			if(yVal.isNil, {^inval});
+			rectVal= rectStr.next(inval);
+			if(rectVal.isNil, {^inval});
+			
+			inval= rectVal.containsPoint(Point(xVal, yVal)).binaryValue.yield;
+		};
+	}
+}
+
 PFold : PInRange {
 	embedInStream {|inval|
 		var evtStr= pattern.asStream;
