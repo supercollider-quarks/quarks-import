@@ -156,6 +156,7 @@ TABLE::
 ## link::Classes/RedLine:: || resettable line generator
 ## link::Classes/RedLive:: || sample and repeat
 ## link::Classes/RedOverdub:: || overdub recording
+## link::Classes/RedRamp:: resettable phasor with per period rate control|| 
 ## link::Classes/RedSequencer:: || simple sequencer
 ## link::Classes/RedSequencer2:: || simple sequencer
 ## link::Classes/RedStereo:: || panning effect
@@ -166,6 +167,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 120208:
+//added RedRamp
 //--changes 120205:
 //added RedLine
 //--changes 120122:
