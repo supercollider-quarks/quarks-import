@@ -13,8 +13,7 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d5100d; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d5100d}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {text-decoration: underline ; color: #1b39f5}
 span.s3 {color: #1b39f5}
@@ -30,9 +29,9 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3"><br></p>
 <p class="p1">see also: <a href="../../../../../../supercollider/build/Install/SuperCollider/SuperCollider.app/Contents/Resources/Help/UGens/Triggers/Phasor.html"><span class="s2">Phasor</span></a>, <a href="../../../../../../supercollider/build/Install/SuperCollider/SuperCollider.app/Contents/Resources/Help/UGens/Triggers/Sweep.html"><span class="s3">Sweep</span></a></p>
 <p class="p3"><br></p>
-<p class="p1"><b><span class="Apple-tab-span">	</span>*ar(freq, reset, mul, add)</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><b>*kr(freq, reset, mul, add)</b></p>
-<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>freq - the time it takes to ramp from 0 to 1 in Hertz. Only updated at the start of each ramp.</p>
+<p class="p1"><b><span class="Apple-tab-span">	</span>*ar(dur, reset, mul, add)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>*kr(dur, reset, mul, add)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>dur - the time it takes to ramp from 0 to 1 in seconds. Only updated at the start of each ramp.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reset - a trigger to reset the phase</p>
 <p class="p4"><br></p>
 <p class="p5"><br></p>
@@ -45,7 +44,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s4">SinOsc</span>.ar(fre, 0, 0.2)!2;</p>
 <p class="p7">}.play;</p>
 <p class="p7">)</p>
-<p class="p8"><br></p>
+<p class="p4"><br></p>
 <p class="p6">//--</p>
 <p class="p7">b= <span class="s4">Buffer</span>.read(s, <span class="s5">"sounds/a11wlk01.wav"</span>, 5000, 30000);</p>
 <p class="p7">(</p>
@@ -55,7 +54,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7"><span class="Apple-tab-span">	</span><span class="s4">Splay</span>.ar(<span class="s4">BufRd</span>.ar(b.numChannels, b, pha*<span class="s4">BufFrames</span>.ir(b)));</p>
 <p class="p7">}.play;</p>
 <p class="p7">)</p>
-<p class="p8"><br></p>
+<p class="p4"><br></p>
 <p class="p7">b.free</p>
 </body>
 </html>

@@ -10,11 +10,14 @@ CLASSMETHODS::
 
 METHOD:: new
 
-ARGUMENT:: x
+ARGUMENT:: pattern
+pattern x-position
 
 ARGUMENT:: y
+pattern y-position
 
 ARGUMENT:: rect
+a link::Classes/Rect:: object.
 
 EXAMPLES::
 
