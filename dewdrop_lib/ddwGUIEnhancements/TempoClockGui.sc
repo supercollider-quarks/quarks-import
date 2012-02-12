@@ -3,7 +3,7 @@ TempoClockGui : ObjectGui {
 		// displays current status of a tempoclock; updates every beat
 	classvar 		namewidth = 100, nameheight = 18,
 				numheight = 40, numwidth = 70,
-				height = 50, width = 500,
+				height = 50, width = 600,
 				spec;
 
 	var	<w, <name, <namev, <bars, <beats, updater;	// counter guis
@@ -32,8 +32,8 @@ TempoClockGui : ObjectGui {
 		
 		lay.isNil.if({	// if no window given...
 				// use the previously opened TempoClock window or make a new one if needed
-			lay = w ?? { w = ResizeHeightFlowWindow.new("TempoClock", 
-				Rect(0, 20, width + 150, height))
+			lay = w ?? { w = ResizeFlowWindow.new("TempoClock", 
+				Rect(0, 20, width + 5, height))
 			};
 		}, {
 			mainLayout = lay;
@@ -48,7 +48,7 @@ TempoClockGui : ObjectGui {
 		namev.isNil.if({	// only make views if we don't already have them
 			name = n ? name ? "";
 
-			mainFlow = FixedWidthFlowView(lay, Rect.new(0, 0, width, height), margin: 2@2);
+			mainFlow = FlowView(lay, Rect.new(0, 0, width, height), margin: 2@2);
 			tempoFlow = FlowView(mainFlow, Rect(0, 0, 350, height), margin: 2@2);
 
 			namev = GUI.staticText.new(tempoFlow, Rect.new(0, 0, namewidth, nameheight))
