@@ -20,7 +20,7 @@ Collective {
 	
 	*initClass {
 		allActive = IdentityDictionary.new;
-		UI.registerForShutdown { allActive.do(_.quit) };
+		ShutDown.add({ allActive.do(_.quit) });
 	}
 	
 	// maybe should use def access scheme
@@ -409,14 +409,14 @@ Collector : Participation {
 		super.start;
 		CmdPeriod.add(this);
 		shutdownFunc = { this.quit };
-		UI.registerForShutdown(shutdownFunc);
+		ShutDown.add(shutdownFunc);
 		
 	}
 	stop {
 		task.stop;
 		super.stop;
 		CmdPeriod.remove(this);
-		UI.unregisterForShutdown(shutdownFunc)
+		ShutDown.remove(shutdownFunc);
 	}
 	cmdPeriod { if(eternal) {this.start } }
 	
