@@ -14,29 +14,30 @@ ARGUMENT:: dur
 the time it takes to ramp from 0 to 1 in seconds. Only updated at the start of each ramp.
 
 ARGUMENT:: reset
-a trigger to reset the ramp
+a trigger to reset the ramp. Must be control rate (kr).
 
 EXAMPLES::
 
 CODE::
 s.boot
 (
-{
+a= {
 	var pha= RedRamp.ar(LFNoise1.kr(1).range(0.01, 1.25), MouseX.kr>0.5);
 	var fre= pha.linexp(0, 1, 400, 800);
 	SinOsc.ar(fre, 0, 0.2)!2;
 }.play;
 )
+a.free
 
 //--
-b= Buffer.read(s, "sounds/a11wlk01.wav", 5000, 30000);
+b= Buffer.read(s, Help.dir +/+ "sounds/a11wlk01.wav", 5000, 30000);
 (
-{
+a= {
 	var lfo= LFNoise1.kr(5).exprange(0.05, 1);
 	var pha= RedRamp.ar(lfo*(BufFrames.ir(b)/SampleRate.ir));
 	Splay.ar(BufRd.ar(b.numChannels, b, pha*BufFrames.ir(b)));
 }.play;
 )
-
+a.free
 b.free
 ::

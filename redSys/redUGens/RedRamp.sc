@@ -4,13 +4,11 @@
 
 RedRamp {
 	*ar {|dur= 1, reset= 0, mul= 1, add= 0|
-		var timer= Duty.ar(dur, reset, dur);
-		var trg= HPZ1.ar(timer).abs>0;
-		^MulAdd(Sweep.ar(trg, 1/dur), mul, add);
+		var phasor= EnvGen.ar(Env(#[0, 1], [dur]).circle, 1-Trig1.kr(reset, ControlDur.ir));
+		^MulAdd(phasor, mul, add);
 	}
 	*kr {|dur= 1, reset= 0, mul= 1, add= 0|
-		var timer= Duty.kr(dur, reset, dur);
-		var trg= HPZ1.kr(timer).abs>0;
-		^MulAdd(Sweep.kr(trg, 1/dur), mul, add);
+		var phasor= EnvGen.kr(Env(#[0, 1], [dur]).circle, 1-Trig1.kr(reset, ControlDur.ir));
+		^MulAdd(phasor, mul, add);
 	}
 }
