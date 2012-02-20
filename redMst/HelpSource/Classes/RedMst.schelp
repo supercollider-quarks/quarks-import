@@ -250,7 +250,7 @@ h= {SinOsc.ar([600, 606], 0, 0.1)};
 i= SynthDef(\def, {|gate= 1| Out.ar(0, SinOsc.ar([700, 707], 0, 0.1*EnvGen.kr(Env.asr, gate, doneAction:2)))}).add;
 j= {"testing, testing".postln}.asRoutine;		//wrap functions in routines to play them
 k= BBCut2(CutStream1.new, BBCutProc11.new);
-l= BBCut2(CutBuf2(BBCutBuffer(Help.dir +/+ "sounds/break")), BBCPPermute.new);	//(bad style as buffer not freed)
+l= BBCut2(CutBuf2(BBCutBuffer(Platform.resourceDir +/+ "sounds/break")), BBCPPermute.new);	//(bad style as buffer not freed)
 m= RedMOD.read("~/mods/lukas/eva.mod").prepareForPlay;
 n= RedXM.read("~/mods/4-mat_-_rose.xm").prepareForPlay;
 

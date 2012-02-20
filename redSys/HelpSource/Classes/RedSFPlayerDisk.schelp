@@ -78,7 +78,7 @@ EXAMPLES::
 CODE::
 s.boot;
 a= RedSFPlayerDisk.new
-a.read(Help.dir +/+ "sounds/a11wlk01-44_1.aiff")
+a.read(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff")
 a.play				//default is play out on bus 0 with rate 1 and 0 fadeTime
 a.stop
 

@@ -119,14 +119,16 @@ a.sortFunc= nil			//the default
 //cmd period to stop
 
 
-//--scanning sound file folder each time menu is pressed.
+//--scanning a folder each time menu is pressed.
 //--slightly inefficient but keeps menu/folder in sync
 (
+var root= "~/Music".standardizePath;	//edit this!
 var w= Window("popuptreemenu - scan", Rect(200, 400, 300, 100)).front;
 var buildTreeFunc;
-a= PopUpTreeMenu.new(w, Rect(10, 20, 200, 20)).items_(["sounds"]);
+a= PopUpTreeMenu.new(w, Rect(10, 20, 200, 20)).items_([root.basename]);
 buildTreeFunc= {|path|
 	var deepPathMatch, syms, tree;
+	var dir= path.dirname;
 	deepPathMatch= {|pn|
 		var arr= [];
 		pn.pathMatch.do{|x|
@@ -139,7 +141,8 @@ buildTreeFunc= {|path|
 		arr
 	};
 	syms= deepPathMatch.value(PathName(path)).collect{|x|
-		x.fullPath.split($/).collect{|y| y.asSymbol}
+		var pathNoRoot= x.fullPath.copyToEnd(root.size);
+		pathNoRoot.split($/).collect{|y| y.asSymbol}
 	};
 	tree= ();
 	syms.do{|x|
@@ -157,10 +160,10 @@ buildTreeFunc= {|path|
 	tree;
 };
 a.openAction_{|view, x, y|
-	"rebuilding tree of /sounds directory".postln;
-	view.tree= buildTreeFunc.value("sounds");	//build and replace tree
+	("rebuilding tree of"+root).postln;
+	view.tree= buildTreeFunc.value(root); //build and replace tree
 };
 a.closeAction_{|view, x, y| "closing".postln};
-a.action_{|view, val| ("selected:"+val).postln};
+a.action_{|view, val| ("selected:"+root++val.join($/)).postln};
 )
 ::
