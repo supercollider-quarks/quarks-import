@@ -155,10 +155,12 @@ TABLE::
 ## link::Classes/RedImpulse:: || resettable impulse train
 ## link::Classes/RedLine:: || resettable line generator
 ## link::Classes/RedLive:: || sample and repeat
+## link::Classes/RedOnePole:: || one pole filter with separate up and down coefficients
 ## link::Classes/RedOverdub:: || overdub recording
 ## link::Classes/RedRamp:: resettable phasor with per period rate control|| 
 ## link::Classes/RedSequencer:: || simple sequencer
 ## link::Classes/RedSequencer2:: || simple sequencer
+## link::Classes/RedSlide:: || logarithmic lag
 ## link::Classes/RedStereo:: || panning effect
 ## link::Classes/RedStereo2:: || panning effect
 ## link::Classes/RedTapeRecorder:: || sampling and looping
@@ -167,6 +169,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 120221:
+//added RedOnePole, RedSlide
 //--changes 120208:
 //added RedRamp
 //--changes 120205:
