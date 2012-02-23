@@ -1,6 +1,6 @@
 CLASS:: Canvas3D
 summary:: 3D vector graphics canvas
-categories:: Graphics>3D
+categories:: GUI>3D
 related:: Classes/Canvas3DItem
 
 DESCRIPTION::
