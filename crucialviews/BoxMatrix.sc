@@ -4,7 +4,8 @@ BoxMatrix : SCViewHolder {
 
     var <numRows,<numCols;
     var bounds,boxes,<focusedPoint,handlers;
-    var <>draggingPoint,<>dragOn=inf,draggingXY,mouseDownPoint;
+    var <>draggingPoint,draggingXY,mouseDownPoint;
+    var <>dragOn=inf; // pixel distance to initiate drag or a symbol like \isCntrl
     var <>background,<styles,<defaultStyle;
     var pen, boxWidth,boxHeight,isDown=false;
 
@@ -57,10 +58,7 @@ BoxMatrix : SCViewHolder {
         };
         view.mouseDownAction = {|me, x, y, modifiers, buttonNumber, clickCount|
             if(this.mouseDownIsDragStart(modifiers,x,y),{
-                draggingPoint = this.boxPoint(x,y);
-                draggingXY = x@y;
-                this.transferFocus(draggingPoint);
-                this.view.refresh;
+	            this.startDrag(x,y);
             },{
                 isDown = true;
                 this.handleCoords(x,y,'mouseDownAction',[modifiers, buttonNumber, clickCount],
@@ -156,41 +154,50 @@ BoxMatrix : SCViewHolder {
     // args: fromBox,toBox,modifiers
     onBoxDrag_ { arg func;
         this.setHandler('onBoxDrag',{ arg toBox,draggingPoint,modifiers;
-	         func.value(this.at(this.boxPoint(draggingPoint.x,draggingPoint.y)),toBox,modifiers) 
+	         func.value(this.at(this.boxPoint(draggingPoint.x,draggingPoint.y)),toBox,modifiers,draggingPoint) 
 	    });
         if(dragOn == inf,{
             dragOn = 4
         });
     }
     // private
-    receiveBoxDrag { arg toPoint,modifiers;
-        this.handle(toPoint,'onBoxDrag',[draggingPoint,modifiers]);
+    receiveBoxDrag { arg toBoxPoint,modifiers;
+        this.handle(toBoxPoint,'onBoxDrag',[draggingPoint,modifiers]);
         draggingPoint = nil;
-        this.transferFocus(toPoint);
+        this.transferFocus(toBoxPoint);
     }
+    startDrag { arg x,y;
+        draggingPoint = this.boxPoint(x,y);
+        draggingXY = x@y;
+        this.transferFocus(draggingPoint);
+        this.view.refresh;
+    } 
 
     // rearranging
-    copy { arg fromPoint,toPoint;
+    copy { arg fromBoxPoint,toBoxPoint;
 	    var box;
-	    box = this.getBox(fromPoint).copy;
-	    box.point = toPoint;
-        boxes.put(toPoint,box);
+	    box = this.getBox(fromBoxPoint).copy;
+	    box.point = toBoxPoint;
+        boxes.put(toBoxPoint,box);
     }
     clear { arg point;
         boxes.removeAt(point);
     }
-    move { arg fromPoint,toPoint;
-        if(fromPoint != toPoint,{
-            this.copy(fromPoint,toPoint);
-            this.clear(fromPoint);
+    clearAll {
+        boxes = Dictionary.new;
+    }
+    move { arg fromBoxPoint,toBoxPoint;
+        if(fromBoxPoint != toBoxPoint,{
+            this.copy(fromBoxPoint,toBoxPoint);
+            this.clear(fromBoxPoint);
         });
     }
-    swap { arg fromPoint,toPoint;
+    swap { arg fromBoxPoint,toBoxPoint;
         var tmp;
-        tmp = this.getBox(toPoint).copy;
-        this.copy(fromPoint,toPoint);
-        tmp.point = toPoint;
-        boxes[toPoint] = tmp;
+        tmp = this.getBox(toBoxPoint).copy;
+        this.copy(fromBoxPoint,toBoxPoint);
+        tmp.point = toBoxPoint;
+        boxes[toBoxPoint] = tmp;
     }
 
 
@@ -254,8 +261,8 @@ BoxMatrix : SCViewHolder {
             this.getBox(focusedPoint)
         }
     }
-    transferFocus { arg toPoint;
-        focusedPoint = toPoint
+    transferFocus { arg toBoxPoint;
+        focusedPoint = toBoxPoint
     }
     
 	addStyle { arg box,styleName;
@@ -320,8 +327,8 @@ BoxMatrix : SCViewHolder {
         },{
             ^modifiers.perform(dragOn)
         })
-     }
-     isDragging { arg modifiers,x,y;
+    }
+    isDragging { arg modifiers,x,y;
          if(dragOn.isNumber,{
              if(mouseDownPoint.notNil,{
                  if((x@y).dist(mouseDownPoint) > dragOn,{
