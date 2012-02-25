@@ -36,7 +36,6 @@ InstrSynthDef : SynthDef {
 			UGen.buildSynthDef = stacked;
 		};
 		# longName, name = InstrSynthDef.makeDefName(instr,args,outClass);
-		("InstrSynthDef built:" + name).inform;		
 	}
 	buildUgenGraph { arg argInstr,args,outClass;
 		var result,fixedID="",firstName;
