@@ -92,7 +92,7 @@ KeyCodeResponder {
 	*clear { this.global.clear }
 	// remove me when you close your window !
 	remove { this.clear }
-	*remove { SCView.globalKeyDownAction = nil; }
+	*remove { View.globalKeyDownAction = nil; }
 	*resetKeycode { arg keycode;
 		this.at(keycode).reset
 	}
@@ -180,13 +180,13 @@ KeyCodeResponder {
 		^this.at(keycode).value(view, char,modifier,unicode,keycode);
 	}
 	*value { arg view,keycode,modifier,unicode;
-		^this.at(unicode).value(unicode,modifier)
+		^this.at(keycode).value(keycode,modifier)
 	}
 
 	*global {
 		^global ?? {
 			global = this.new;
-			SCView.globalKeyDownAction = global;
+			View.globalKeyDownAction = global;
 			global
 		}
 	}
