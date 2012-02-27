@@ -31,7 +31,7 @@ Insp {
 				// what's the calling method ?
 				notes.do({ arg ag;
 					if(ag.isString or: {ag.isKindOf(Symbol)},{
-						CXLabel(box,ag.asString)
+						SimpleLabel(box,ag.asString)
 					},{
 						InspectorLink(ag,box);
 					});
@@ -40,7 +40,7 @@ Insp {
 				if(guiInstead,{
 					subject.gui(box)
 				},{
-					CXObjectInspector(subject).gui(box);
+					ObjectInsp(subject).gui(box);
 				});
 			}/*,Rect(180,0,775,900)*/);
 			box.visible = hidden.not;
