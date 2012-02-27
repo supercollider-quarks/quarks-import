@@ -1,7 +1,7 @@
 (
 	\name: "crucialviews",
 	\path: "crucialviews", 
-	\summary: "Views, user views and layout tools ",
+	\summary: "BoxMatrix, BusMeters",
 	\author: "felix",
 	\helpdoc: "Help/crucialviews.htm"
 )
