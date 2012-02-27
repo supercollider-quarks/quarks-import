@@ -1,3 +1,432 @@
+commit ba98caf66a93094d5a2916b666028c5208e7d449
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 18:48:24 2012 +0100
+
+    moved methods
+
+commit 8bf50aced0f96a75653f738f5d05ee88b6953c20
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 18:48:15 2012 +0100
+
+    class name changes for new ServerTools quark
+
+commit 6584a0741ce68fa7da9d2bf4d54e77cba87d3737
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 18:47:08 2012 +0100
+
+    exporting ServerTools quark
+
+commit e483e007a8ef270ab6a4cbe9b71f7f3b3dfb4301
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:43:45 2012 +0100
+
+    rename CxObjectInspector -> ObjectInsp
+
+commit 8ed70e5801bd4a96994df09d3227db032dc50234
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:42:23 2012 +0100
+
+    ArgNameLabel -> ArgName
+
+commit 385d8d06cb5d2ff7a84c2499c3923a763878108e
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:42:03 2012 +0100
+
+    display references/references to on class browser
+
+commit fa2c06519474c2f95fdf151a4366e9727e5a60eb
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:41:06 2012 +0100
+
+    add Class classesReferenced, referencesTo
+
+commit 813b8948f86f18339e6be07cbc301bee556079d0
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:39:33 2012 +0100
+
+    KernalButtons: switch superclass to SimpleButton
+
+commit 73821ba267355f9e0894725fc946e381b80f34ea
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:38:08 2012 +0100
+
+    remove reference to Sheet, switch to SimpleLabel
+
+commit 10ba1d30232c6ad3c2ad1ce9fd4d226b9b7e3140
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:37:24 2012 +0100
+
+    KernalTools and ServerTools : CXLabel -> SimpleLabel
+
+commit e72ddd4d8e02ff78b503a2af461c97d8b0d1dcf6
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:33:34 2012 +0100
+
+    add KernalTools/SimpleButton [although it will be moved to a new quark shortly)
+
+commit c3c64f4729ecc2b92c8a69a489ec0c16f9345103
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:32:50 2012 +0100
+
+    move VariableNameLabel to KernalTools/KernalButtons.sc
+
+commit 602fd6e151cdb622560fa0df04e198b47231e895
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 15:31:49 2012 +0100
+
+    move Tile to Gui/ActionButton
+
+commit a0bc1a06e1c4e8ed044f97d05fd262cf2d96f8fb
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 00:47:15 2012 +0100
+
+    gui debugger: StartRow no longer exists, removing reference
+
+commit 36fa6cceac09c8a3cd53452f9f1fa01c274b8c73
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 00:30:07 2012 +0100
+
+    fix: StreamSpec for changes in NumberGui that now checks the clipLo/clipHi
+
+commit 76b4888df2bb7c930114d34f8581eaac44972c81
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 00:29:38 2012 +0100
+
+    remove hook/hack for CXSoundFile
+
+commit 8d14a0bf2d77dd62400f0dc3dc54b69872d17a92
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 00:29:16 2012 +0100
+
+    change SCView -> View
+
+commit 956a5fe4029e4cf9698c27ae8bab7ec6843d382f
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 00:28:22 2012 +0100
+
+    fix: unicode vs keycode mistype in a very rarely used method
+
+commit 19d3373613cf9dc8fdd9cb68eb759da0e14ec873
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 00:27:56 2012 +0100
+
+    add KeyResponder which combines Unicode, KeyCode and special keys support (arrows, backspace etc)
+
+commit 7377047a787e4cafcf4be1ac9b886d902fd59a7d
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Feb 25 21:09:41 2012 +0100
+
+    ServerGui fix for non-mac; thanks jamshark
+
+commit e7b9961ee6c735e53e8a56ca89806d9376742e00
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Feb 25 20:52:21 2012 +0100
+
+    add extra debug information in error
+
+commit 3ef3165e4e67bd12fd0be4dcab6eb95e87e43714
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Feb 25 20:52:06 2012 +0100
+
+    move SCCompositeView resizeToFit deprec method into scide_scapp/deprecated
+
+commit 585592b60683584a0b229513b519a317bf493ead
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Feb 25 20:51:24 2012 +0100
+
+    specs: change from rgb() for colors
+    change color scheme - though they will change again to a configurable set
+
+commit de97e4f6539c1c3dc3a8568114c8405dc9d95526
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Feb 25 20:49:19 2012 +0100
+
+    InstrNameSpec: add default spec of AudioEventSpec
+
+commit 225ae033b1bccf49899dbf00a41d907b857f3fd1
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Feb 25 20:48:13 2012 +0100
+
+    svn r2179 | jamshark70 | NumberEditorGUI: NumberBox's clip limits weren't set by clipLo/Hi from the spec
+
+commit 844242740e71473fd251b54aa4fa4a98e6a5da19
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:29:19 2012 +0100
+
+    ServerGui : do not set font specifically to Helvetica
+
+commit 2d4a105480b608e07f7fc8d26a60067a19667b70
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:28:24 2012 +0100
+
+    GetFieldDialog -> File.openDialog
+
+commit 359dc06934b2358ad3efdfa7830daf4589c76c44
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:28:11 2012 +0100
+
+    Mix.ar -> Mix.new
+
+commit efce590f9122d7c2469dd846722388b06421fa4b
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:27:36 2012 +0100
+
+    make a Patch printOn work even if there is no instr set
+
+commit 87d7c37676eaad45827fd8e518767b569b6694de
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:26:45 2012 +0100
+
+    better size estimate for Instr code window
+
+commit aa89ab6209db563f7cfbee92a3904652499aa2e4
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:26:21 2012 +0100
+
+    Instr-addExcludePaths to exclude compile paths of all Instr folders for 3.5
+
+commit 76067ac53c116b328f74ee20ab9e854025edaf3d
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:25:49 2012 +0100
+
+    GetFileDialog -> File.openDialog
+    GetStringDialog -> Sheet.getString
+
+commit a6b7fadfe91b282a5f22c6e3d86161b6ac70b299
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:23:50 2012 +0100
+
+    gui methods clean up for SC 3.5, synchronizes with the changes now in 3.5 beta
+
+commit 329674af122bc0d3a69f4d021d377add1a13b3c9
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Jan 16 01:21:20 2012 +0100
+
+    GridLayout -> GridLayoutCalc (to avoid name clash with GridLayout in 3.5)
+
+commit 6ef81daa1796003b1228b40ea0835665c01d94c7
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:13:04 2011 +0100
+
+    \instr -> InstrNameSpec : important to find an editor when editing an Event (using DictionaryEditor)
+
+commit f31aadb9a650e0692d58b24e47858b5bd6a89571
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:12:23 2011 +0100
+
+    minor help file updates
+
+commit 241acd63f66366ed5f22c6be85f3e29406df3e86
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:12:04 2011 +0100
+
+    add: Dictionary-enpath (esp. for saving protoEvents that have players embedded in them)
+
+commit 00cd66a85e7f08a1bf9efc198758a1c60b956f3f
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:11:28 2011 +0100
+
+    minor cleanups
+
+commit 268500105284ec5390ba311c63c56560c111c8a4
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:10:51 2011 +0100
+
+    BeatSched: always create own TempoClock, no reason to use the global
+
+commit ba71fbbe22a914a2e756a06dbaca681ea567d824
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:10:10 2011 +0100
+
+    add: DefNameLabel
+    fix: ServerLog better display, filtering by Bus
+    link to Instr from InstrSynthDef insp
+
+commit 3f9dfd7da27da2d1abaad998006ad51266473442
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:08:27 2011 +0100
+
+    fix: Insp registerHook didn't include initial class
+
+commit d9e1d0c369fe4f7959f0b096ca56fd028e22196d
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:07:50 2011 +0100
+
+    InstrNameSpec: does not constrain
+
+commit fb508ac0f41ca0fea5eb0de9a33628789f26151e
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:07:04 2011 +0100
+
+    Spec: add mapToSpec
+
+commit b811f21ea41186b3109f5d67221eefda823e10f8
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:05:59 2011 +0100
+
+    PatchGui display size cleanup.
+    deprecating the dragSink inputs. code is still there in the comments
+
+commit 3e47e0ff3e302b369d13e6ae823824bb497bc8ae
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:05:20 2011 +0100
+
+    Patch: asEvent (type is \instr) and embedInStream
+
+commit 94b4be24e05777ee0bc808a296ed6b16845787c0
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:04:48 2011 +0100
+
+    Patch: track synth in case it ends, stop children and set self to isStopped
+
+commit 6604f4b311a2f69a8dac660337366c52d2549a30
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:03:52 2011 +0100
+
+    allow Patch to be created with a dict/event for its args (so you can specify by keyword arg)
+
+commit 05f47c4e3f6537576b4c59bca69b510bad78785a
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:02:41 2011 +0100
+
+    fix InstrBrowser sizing issues
+    fix AbstractPlayerGui resizing issue
+
+commit 4d03b75652bea77e67abfcf5aa419b5378fc8df5
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:01:42 2011 +0100
+
+    Instr event: allow \instr to be nil and allow it to be an Instr (not always an instr name)
+
+commit 89f722a6f6a886b795b72fb3e469677b5508c5a1
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 02:00:31 2011 +0100
+
+    add Editor.for to convert any object into its corresponding Editor
+    add DictionaryEditor
+
+commit e9bdf41b391af5243af9e4b325af38604f788ba9
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 01:59:47 2011 +0100
+
+    add findRespondingMethodFor library utility func
+
+commit 644ea4fdba58fdf426943289c858e07a73267bec
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 26 01:59:22 2011 +0100
+
+    add BussesTool
+
+commit 7d4e7854702dee1edd243d4f6b144fd779e81e8a
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:52:16 2011 +0100
+
+    rgb => Color.new255
+
+commit 46837f5b81c95540c94fba76e521fb6f352ad239
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:51:58 2011 +0100
+
+    add ServerQueryTreeGui to show the node tree on the server with all annotations and integration with server log
+    ServerLog : add filtering by nodeID and defName, display filtered results in a micro gui
+    adds two method extensions to Server: async and getQueryTree
+
+commit 46cc8cbe44bd08649ac194e840d92fd0c9a800ff
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:49:22 2011 +0100
+
+    add Annotations which replaces the previous annotation system.
+    this will be moved to a separate quark as part of ServerTools
+
+commit 53f395aaf2e969151e672868145ab32cb4609bd5
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:47:41 2011 +0100
+
+    \instr event type for Event patterns
+
+commit 9b67d4ff5b34fddd6635ad0b5451ce0193ee381b
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:46:28 2011 +0100
+
+    Insp: add Insp hooks for custom displays for any class
+    make InspectorLink buttons automatically front the Insp window
+
+commit 603ec9fe92b2e3527a5c6197e770237d6c533dd0
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:44:18 2011 +0100
+
+    BeatSched fix: if beat is in future then do not silently skip schedding it
+    fix one typo / wrong method call
+
+commit 27f620c4fdffeb2a995673c6d420684b803607d1
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Sat Dec 24 15:43:14 2011 +0100
+
+    Instr: new defName calc system. its faster, no collisions and can be done without compiling def
+
+commit 70cb4fec5be4bda3a656308af62ac5a2ee83ab5e
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Tue Dec 20 00:22:24 2011 +0100
+
+    fix saving in InstrSpawner; earlier commit did break something with arg order
+
+commit f5d674ab265356af0b2e3426cb5fbd49cddc04b3
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Tue Dec 20 00:19:54 2011 +0100
+
+    fix some display sizing issues in InstrBrowser
+
+commit 7826dcae0ff9e898eeb6c29470ebb7a88750aa0e
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Tue Dec 20 00:18:52 2011 +0100
+
+    Instr: support asSynthDef([\ir,\kr]) to simply specify the rates without supplying dummy objects
+    this also supports patterns the same as SynthDef: .add([\ir,\ir]) and .store
+    note: previously assumed to create \ir for Pattern usage, now defers to the Instr's spec so a control rate input on the Instr will get a control rate input on the SynthDef, and if you want \ir then specify it when making the def
+
+commit d43808affed44ef5d58c758b70da9d0b6beaf73e
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:25:54 2011 +0100
+
+    minor white space cleanups
+
+commit 6d2a428d8fa1c05e671d1de9427b02a265b3ed7a
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:25:14 2011 +0100
+
+    add: SwitchByKind class
+
+commit 19714acc9c398fbaa1a1024a2168dcc1152e35d8
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:25:00 2011 +0100
+
+    ServerGui: add inputDevice selection,
+    fix Cocoa issue with ( chars causing menu to be disabled
+
+commit dbe1700ad13af6f4f308800d3fe463ab7df8fd26
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:22:58 2011 +0100
+
+    Patch, InstrSpawner: fix save compile string with directly supplied raw function
+
+commit e997efd1bd712edd7b54afd2123ceb2c72b13dcc
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:21:45 2011 +0100
+
+    InstrBrowser: add input and output spec filtering, add new rates
+
+commit ba6df4580ce6fe857c82e95317c56fcbae099ba2
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:21:19 2011 +0100
+
+    Instr: after before head tail replace
+
+commit 50841bfe347f10c3c956361f067084c1e210756b
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Dec 19 02:20:44 2011 +0100
+
+    NumberEditorGui: fix dims of tall faders
+
 commit ee25e182ac0e0f8530dd655b2b44a3c364e994b4
 Author: crucialfelix <crucialfelix@gmail.com>
 Date:   Thu Dec 8 20:15:34 2011 +0100
