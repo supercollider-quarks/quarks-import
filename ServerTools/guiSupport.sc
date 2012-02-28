@@ -1,27 +1,34 @@
 
+/*
+	experimental but can later be moved into Quark later
+	as they are useful tools for checking dependencies
+	
+	main problem: doesn't catch class references inside { } blocks yet
+*/
 
 + Class {
 
-	classesReferenced {
+	referencesClasses {
 		var package = this.package;
 		var refklasses = IdentitySet.new;
-		this.methods.do { arg meth;
+		(this.class.methods ++ this.methods).do { arg meth;
 			if(meth.package == package,{
-				refklasses.addAll(meth.classesReferenced)
+				refklasses.addAll(meth.referencesClasses)
 			})
 		};
 		^refklasses
 	}
 	referencesTo { // slow !
 		^Class.allClasses.select({ arg class;
-			class.classesReferenced.includes(this)
+			class.referencesClasses.includes(this)
 		})
 	}
 }
 
+
 + Method {
 
-	classesReferenced {
+	referencesClasses {
 		var selectors,refklasses;
 		refklasses = [];
 		selectors = this.selectors;
@@ -40,3 +47,26 @@
 		^refklasses
 	}
 }
+
+
++ Quark {
+
+	referencesPackages {
+		^Quark.referencesPackages(this.name)
+	}
+	*referencesPackages { arg quarkName;
+		var p,q,all;
+		q = Quark.find(quarkName.asString);
+		all = IdentitySet.new;
+		q.definesClasses.do { arg cl;
+			all.addAll( cl.referencesClasses )
+		};
+		q.definesExtensionMethods.do { arg m;
+			all.addAll( m.referencesClasses )
+		};
+		p = all.collect(_.package).as(IdentitySet);
+		p.remove(quarkName.asSymbol);
+		^p.as(Array)
+	}
+}
+
