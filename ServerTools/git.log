@@ -1,0 +1,103 @@
+commit b7fe069d41c2bb31dddd0e0f566b5df79d73c7af
+Merge: 7705bc5 7d7c536
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 20:43:10 2012 +0100
+
+    Merge branch 'release/0.9'
+
+commit 7d7c536e306fb9a3c4bfe7388cb3c99ba583ce2d
+Merge: 7705bc5 0b4da8d
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 20:42:29 2012 +0100
+
+    Merge branch 'feature/docs' into develop
+
+commit 0b4da8d80674016e12429fa85fe70623d0ffb517
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 20:41:31 2012 +0100
+
+    minor comments
+
+commit 246bee4c09bf05c1ee193d86f91532bb8256ec3f
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 20:41:18 2012 +0100
+
+    *makeHelpDocs creates ALL missing class help docs for a package and saves them to HelpSource/Classes
+
+commit 3a186085b670cecb1be71c0163064b22f7e3052e
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 20:40:15 2012 +0100
+
+    BussesTool: this requires cruciallib, so it makes a check for existence of Patch and just posts a warning
+
+commit 236ecd3604bd202096ad6b779c6ab1b2a08aa322
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 20:39:31 2012 +0100
+
+    First round of documentation
+
+commit 7705bc5e4a334f704d6af567fd6bbcedbcd7dab4
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 15:30:06 2012 +0100
+
+    rename to referencesClasses for consistency with definesClasses, referencesPackages
+
+commit 23fbfab950c4606eab594f2d83f395d74d63bcbe
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 15:28:21 2012 +0100
+
+    add: Quark:referencesPackages, fix: Class.classesReferenced
+
+commit 97c8e61ad08b25c85d7cad415e37c59089e191f4
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 15:27:09 2012 +0100
+
+    fix: use \Classname.asClass.notNil to check for the presence of other classes
+
+commit eda1dcfa2aad4d6bc384dfec6fd7b6e9f7634185
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 15:01:28 2012 +0100
+
+    rename ServerQueryTreeGui to ServerTreeGui
+
+commit f77efe0f286c288784085d07057c1dab8d3745d0
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 15:00:47 2012 +0100
+
+    implement and use SimpleButton .labelColor  rather than .color
+
+commit 0ed744116568a536f9db8233439f523eb92e7299
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 14:59:48 2012 +0100
+
+    remove use of Sheet
+
+commit c88a4cd1378fcc97b373adb08938f6ebc605ca4c
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 14:59:21 2012 +0100
+
+    change recvOSCfunc to addOSCRecvFunc
+
+commit bdcb7b8d3b0c6a671fb2ab7ee9d53cf556d9cffb
+Author: crucialfelix <felix@crucial-systems.com>
+Date:   Tue Feb 28 14:58:09 2012 +0100
+
+    remove use of Sheet, rework findMethod
+
+commit 2467de5cf6531f2b2bee9aab10a3409d4cfb1ece
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 20:20:45 2012 +0100
+
+    add back big/icon/captioned methods as they are in use in cruciallib
+
+commit d0690404591b0837aa5cf2ee1486222d1220891a
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 20:20:26 2012 +0100
+
+    Insp: fix placement issues Qt vs cocoa
+
+commit af77293c671458571a479b00480b61fb45a0b93c
+Author: crucialfelix <crucialfelix@gmail.com>
+Date:   Mon Feb 27 18:34:44 2012 +0100
+
+    initial ServerTools
