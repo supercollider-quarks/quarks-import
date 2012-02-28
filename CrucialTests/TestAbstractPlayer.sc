@@ -59,7 +59,6 @@ TestAbstractPlayer : UnitTest {
 			// ideally should know if it was given to you
 			// but ususually uses a SharedBus in that case
 			bus.free;
-			AbstractPlayer.removeAnnotation(bus);
 		});
 		
 		this.assertEquals( s.audioBusAllocator.blocks.size,0,"should be no busses allocated now");
