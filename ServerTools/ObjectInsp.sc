@@ -128,7 +128,7 @@ ObjectInsp : ObjectGui {
 				SimpleLabel(layout,cn.defaultValue);
 			};
 			layout.startRow;
-			if(InstrSynthDef.notNil and: {def.isKindOf(InstrSynthDef)},{
+			if(\InstrSynthDef.asClass.notNil and: {def.isKindOf(InstrSynthDef)},{
 				InspButton(def.instrName.asInstr ? def.instrName,layout);
 			});
 			if(def.name.notNil,{
@@ -178,7 +178,7 @@ ClassGui : ObjectInsp {
 					width = layoutWidth / (model.superclasses.size + 1);
 				},{
 					width = layoutWidth;
-				});			
+				});
 				SimpleLabel(layout,model.asString,[width,30],font:Font("Helvetica-Bold",18));
 				layout.startRow;
 				SimpleButton(layout, "Source code",{
@@ -250,31 +250,31 @@ ClassGui : ObjectInsp {
 				//		this.displayMethodsOf(model);
 				//	},minWidth:width)
 				//});
-				SimpleButton(layout,"find method...",{
-					var b,callback,prompt;
-					prompt = "find method...";
-					callback = { arg string;
-						var class,method;
+
+				SimpleButton(layout,"vertical find method...",{
+					var w,b,callback = { arg string;
+						var found;
 						string = string.asSymbol;
-						class = model;
-						while({ class != Meta_Object },{
-							method = class.findMethod(string);
-							if(method.notNil,{
-								method.gui;
-								class = Meta_Object
-							 },{
-							 	class = class.superclass;
-							 });
-						});
+						found = ([model] ++ model.superclasses).any({ arg class;
+									var method;
+									method = class.findMethod(string);
+									if(method.notNil,{
+										method.gui;
+										true
+									 },{
+										false	 
+									 });
+								});
+						if(found.not,{
+							// needs a gui report in the dialog
+							("Method not found:" + string).inform;						});
 					};
-					PageLayout.new.flow({ arg l;
-						b = 	TextField(l,Rect(0,0,150,30));
-						b.string = "";
-						b.action = {arg field; callback.value(field.value); l.close; };
-					}).resizeToFit;
+					w = PageLayout("method?",Rect(200,200,170,40),scroll:false);
+					b = 	TextField(w,Rect(5,5,150,30));
+					b.string = "";
+					b.action = { arg field; callback.value(field.value); w.close; };
 					{ b.focus }.defer;
 				});
-
 				this.dependantsGui(layout);
 
 				SimpleLabel(layout.startRow,"subclasses:",layoutWidth).bold;
@@ -283,7 +283,7 @@ ClassGui : ObjectInsp {
 
 				SimpleLabel(layout.startRow,"classes referenced by" + model ++ ":",layoutWidth).bold;
 				layout.startRow;
-				model.classesReferenced.do { arg klass;
+				model.referencesClasses.do { arg klass;
 					ClassNameLabel(klass,layout.startRow)
 				};
 
@@ -408,7 +408,7 @@ MethodGui : ObjectGui {
 
 		SimpleLabel(layout.startRow,"classes referenced:",300).bold;
 		layout.startRow;
-		model.classesReferenced.do { arg klass;
+		model.referencesClasses.do { arg klass;
 			ClassNameLabel(klass,layout.startRow)
 		};
 	}
