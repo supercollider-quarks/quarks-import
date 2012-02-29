@@ -1,5 +1,16 @@
 
+/*
+	any class can implement writeZArchive and *readZArchive to implement its own data format.
+	for instance a sequencer pattern could stream each step to the archive in an integer or float format.
+
+
+*/
+
 + Object {
+	/*
+	the default for any object is to write itself asCompileString to disk.  this is often very large and
+	inefficient, but its the default and it works for most objects
+	*/
 	writeZArchive { arg akv;
 		var thing;
 		thing = this.asCompileString;
@@ -28,6 +39,7 @@
 }
 
 + Nil {
+	// $X"nil" -> $N is a 4:1 compression ratio !
 	writeZArchive { arg akv;
 		akv.putChar($N);
 	}
