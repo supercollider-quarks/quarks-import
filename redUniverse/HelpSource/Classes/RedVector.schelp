@@ -21,7 +21,6 @@ METHOD:: manhattan
 Get the sum of the absolute differences as a link::Classes/Float::. code::(vec1-vec2).abs.sum::.
 DISCUSSION::
 Sometimes when just comparing distances it is not necessary to perform pow2 and sqrt calculations. In those situations this method will be a lot faster than link::#-distance::.
-::
 
 METHOD:: dot
 Dot product.

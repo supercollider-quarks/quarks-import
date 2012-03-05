@@ -25,7 +25,6 @@ Maximum sliding window size. The default is 4096.
 
 METHOD:: length
 Maximum length for matching pattern. The default is 32.
-::
 
 EXAMPLES::
 
