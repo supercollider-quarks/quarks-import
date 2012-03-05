@@ -82,6 +82,9 @@ class DataNetworkOSC(object):
 
     #end# map to broadcast bee
 
+    self.osc.addMsgHandler( "/run/minibee", self.handler_run_minibee )
+    self.osc.addMsgHandler( "/loopback/minibee", self.handler_loop_minibee )
+
     self.osc.addMsgHandler( "/info/minibee", self.handler_info_minibee )
     self.osc.addMsgHandler( "/status/minibee", self.handler_status_minibee )
     self.osc.addMsgHandler( "/info/hive", self.handler_info_hive )
@@ -263,6 +266,14 @@ class DataNetworkOSC(object):
   def handler_unregistered_hive( self, path, types, args, source ):
     self.set_registered_hive( False )
     print( "Unregistered as hive client:", args )
+
+  def handler_run_minibee( self, path, types, args, source ):
+    self.run_minibee( args[0], args[1] )
+    print( "Run minibee:", args )
+
+  def handler_loop_minibee( self, path, types, args, source ):
+    self.loop_minibee( args[0], args[1] )
+    print( "Loopback minibee:", args )
 
 
   #@make_method('/map/minibee/output', 'ii')
@@ -828,6 +839,15 @@ class DataNetworkOSC(object):
   def statusMinibee( self, mid, status ):
     self.sendMessage( "/status/minibee", [ mid, status ] )
 
+  def run_minibee( self, mid, status ):
+    self.network.runAction( mid, status )
+    #self.sendMessage( "/mapped/minibee/output", [ nodeid, mid ] )
+
+  def loop_minibee( self, mid, status ):
+    self.network.loopAction( mid, status )
+    #self.sendMessage( "/mapped/minibee/output", [ nodeid, mid ] )
+    
+
   # receiving map request output
   def map_minibee( self, nodeid, mid ):
     #self.subscribeNode( nodeid )
@@ -1060,6 +1080,8 @@ class DataNetwork(object):
     
     self.hive = None
    
+    self.runAction = None
+    self.loopAction = None
     self.mapAction = None
     self.unmapAction = None
     self.mapCustomAction = None
@@ -1073,7 +1095,13 @@ class DataNetwork(object):
     
   def add_setter( self, nodeid ):
     self.setters.add( nodeid )
-    
+
+  def set_runAction( self, action ):
+    self.runAction = action
+
+  def set_loopAction( self, action ):
+    self.loopAction = action
+
   def set_mapAction( self, action ):
     self.mapAction = action
 

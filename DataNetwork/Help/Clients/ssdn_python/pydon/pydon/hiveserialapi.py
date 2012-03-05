@@ -87,6 +87,7 @@ class HiveSerialAPI(object):
     
     self.dispatch = Dispatch( self.serial )
     self.register_callbacks()
+    self.verbose = False
     self.xbee = XBee( self.serial, callback=self.dispatch.dispatch, escaped=True)
     
     self.hiveMsgId = 0
@@ -126,6 +127,9 @@ class HiveSerialAPI(object):
       self.hive.wait_config( ord(packet[ 'rf_data' ][2]), ord(packet[ 'rf_data' ][3]) )
     elif packet['rf_data'][0] == 'c': # configuration confirmation
       self.hive.check_config( ord(packet[ 'rf_data' ][2]), ord(packet[ 'rf_data' ][3] ), [ ord(x) for x in packet[ 'rf_data' ][4:] ] )
+    elif packet['rf_data'][0] == 'i': # info message
+      print( "info message",  packet, [ ord(x) for x in packet[ 'rf_data' ][2:] ] )
+      #self.hive.check_config( ord(packet[ 'rf_data' ][2]), ord(packet[ 'rf_data' ][3] ), [ ord(x) for x in packet[ 'rf_data' ][4:] ] )
     self.log_data( packet )
     
   def set_verbose( self, onoff ):
@@ -314,7 +318,7 @@ class HiveSerialAPI(object):
       data.append( int( ByteToHex( x ), 16 ) )    
     nid = int( ByteToHex( source ), 16 )
     rssi = int( ByteToHex( rfrssi ), 16 )
-    msgid = int( ByteToHex( rfdata[1] ), 16 )
+    msgid = int( ByteToHex( rfdata[0] ), 16 )
     if self.verbose:
       print( "receiving data from minibee", nid, msgid, data, rssi )
     self.hive.new_data( nid, msgid, data, rssi )

@@ -31,6 +31,10 @@ class SWPydonHive( object ):
     # self.datanetwork.setterCallback(
       
     self.hive.set_newBeeAction( self.hookBeeToDatanetwork )
+    
+    self.datanetwork.set_runAction( self.runMiniBee )
+    self.datanetwork.set_loopAction( self.loopMiniBee )
+    
     self.datanetwork.set_mapAction( self.mapMiniBee )
     self.datanetwork.set_mapCustomAction( self.mapMiniBeeCustom )
     self.datanetwork.set_unmapAction( self.unmapMiniBee )
@@ -84,6 +88,13 @@ class SWPydonHive( object ):
       self.datanetwork.osc.add_callback( 'info', nodeid, lambda nid: self.setMapCustomAction( nid, mid ) )
     else:
       self.datanetwork.nodes[ nodeid ].setAction( lambda data: self.dataNodeDataToMiniBeeCustom( data, mid ) )
+
+  def runMiniBee( self, mid, status ):
+    self.hive.bees[ mid ].send_run( self.hive.serial, status )
+
+  def loopMiniBee( self, mid, status ):
+    self.hive.bees[ mid ].send_loopback( self.hive.serial, status )
+
 
 # labeling
   def set_labelbase( self, newlabel ):

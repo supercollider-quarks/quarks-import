@@ -29,6 +29,8 @@ class MiniHiveOSC(object):
     #self.osc.addMsgHandler( "/minibee", self.handler_output )
     self.osc.addMsgHandler( "/minibee/output", self.handler_output )
     self.osc.addMsgHandler( "/minibee/custom", self.handler_custom )
+    self.osc.addMsgHandler( "/minibee/run", self.handler_run )
+    self.osc.addMsgHandler( "/minibee/loopback", self.handler_loopback )
     
     self.osc.addMsgHandler( "/minibee/configuration", self.handler_mbconfig )
     self.osc.addMsgHandler( "/minibee/configuration/query", self.handler_mbconfig_query )
@@ -58,6 +60,16 @@ class MiniHiveOSC(object):
 
   #@make_method('/datanetwork/announce', 'si')
   #def announced( self, path, args, types ):
+  def handler_run( self, path, types, args, source ):    
+    self.setRun( args[0], args[1] )
+    if self.verbose:
+      print( "MiniBee Run:", args )
+
+  def handler_loopback( self, path, types, args, source ):    
+    self.setLoopback( args[0], args[1] )
+    if self.verbose:
+      print( "MiniBee Loopback:", args )
+
   def handler_output( self, path, types, args, source ):    
     self.setOutput( args[0], args[1:] )
     if self.verbose:
@@ -167,7 +179,15 @@ class MiniHiveOSC(object):
 
   def setCustom( self, mid, data ):
     self.hive.oscToMiniBee( mid, data )
-    
+
+  def setRun( self, mid, data ):
+    #print( self.hive, mid, data )
+    self.hive.oscRunToMiniBee( mid, data )
+
+  def setLoopback( self, mid, data ):
+    #print( self.hive, mid, data )
+    self.hive.oscLoopbackToMiniBee( mid, data )
+
   def setMiniBeeConfiguration( self, config ):
     if len( config ) == 3:
       # set minibee with serial number to given id
@@ -294,6 +314,16 @@ class SWMiniHiveOSC( object ):
     self.osc.dataMiniBee( nid, data )
     if self.verbose:
       print( nid,  data )
+
+  def oscRunToMiniBee( self, nid, status ):
+    self.hive.bees[ nid ].send_run( self.hive.serial, status )
+    if self.verbose:
+      print( "minibee run", nid,  status )
+
+  def oscLoopbackToMiniBee( self, nid, status ):
+    self.hive.bees[ nid ].send_loopback( self.hive.serial, status )
+    if self.verbose:
+      print( "minibee loopback", nid,  status )
 
 # data node to minibee
   def oscToMiniBee( self, nid, data ):
