@@ -6,7 +6,7 @@ NOTE::
 SwingOSC users (Linux and Windows) need to change in the examples from link::Classes/RedWindow:: to link::Classes/RedJWindow::
 ::
 
-definitionList::
+list::
 ## link::Quarks/redUniverse/Examples/001-single.scd::
 ## link::Quarks/redUniverse/Examples/002-multiple.scd::
 ## link::Quarks/redUniverse/Examples/003-multiple_wind.scd::
