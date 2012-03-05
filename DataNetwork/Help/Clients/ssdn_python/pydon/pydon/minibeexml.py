@@ -29,32 +29,34 @@ class HiveConfigFile():
 
     for bid, bee in hive.bees.items():
       #print bee
-      el_bee = ET.SubElement(el_hive, "minibee")
-      el_bee.set( "serial", str(bee.serial) )
-      el_bee.set( "id", str(bee.nodeid) )
-      comment = ET.Comment('the id given inside the minibee tag is the unique id or number of the minibee')
-      el_bee.append(comment)
-      el_bee.set( "revision", str(bee.revision) )
-      el_bee.set( "libversion", str(bee.libversion) )
-      el_bee.set( "caps", str(bee.caps) )
-      el_bee.set( "name", str(bee.name) )
-      comment = ET.Comment('the configutaion inside the minibee tag is the unique id of the configuration that is used. It has to match one of the configuration id\'s that are defined in this file.')
-      el_bee.append(comment)
-      el_bee.set( "configuration", str(bee.cid) )
-      if bee.cid < 0:
-	el_bee.set( "configuration", str(bee.cid) )
-	comment = ET.Comment('This minibee has no configuration yet! Change it to use one of the configurations in this file.')
+      if bee.nodeid < 65535:
+	el_bee = ET.SubElement(el_hive, "minibee")
+	el_bee.set( "serial", str(bee.serial) )
+	el_bee.set( "id", str(bee.nodeid) )
+	comment = ET.Comment('the id given inside the minibee tag is the unique id or number of the minibee')
 	el_bee.append(comment)
+	el_bee.set( "revision", str(bee.revision) )
+	el_bee.set( "libversion", str(bee.libversion) )
+	el_bee.set( "caps", str(bee.caps) )
+	el_bee.set( "name", str(bee.name) )
+	comment = ET.Comment('the configutaion inside the minibee tag is the unique id of the configuration that is used. It has to match one of the configuration id\'s that are defined in this file.')
+	el_bee.append(comment)
+	el_bee.set( "configuration", str(bee.cid) )
+	if bee.cid < 0:
+	  el_bee.set( "configuration", str(bee.cid) )
+	  comment = ET.Comment('This minibee has no configuration yet! Change it to use one of the configurations in this file.')
+	  el_bee.append(comment)
 
-      if bee.hasCustom:
-	el_beeCustom = ET.SubElement( el_bee, "custom" )
-	for cusD in bee.customData.items(): #FIXME: this is not encoded as such in MiniBee at the moment
-	  el_customData = ET.SubElement( el_beeCustom, "data" )
-	  el_customData.set( "id", str(cusD.cid) )
-	  el_customData.set( "size", str(cusD.size) )
-	  el_customData.set( "offset", str(cusD.offset) )
-	  el_customData.set( "scale", str(cusD.scale) )
-	  el_customData.set( "name", str(cusD.name) )
+	if bee.hasCustom:
+	  el_beeCustom = ET.SubElement( el_bee, "custom" )
+	  for index in range( len( bee.customDataInSizes ) ):
+	#for cusD in bee.customData.items(): #FIXME: this is not encoded as such in MiniBee at the moment
+	    el_customData = ET.SubElement( el_beeCustom, "data" )
+	    el_customData.set( "id", str( index ) )
+	    el_customData.set( "size", str( bee.customDataInSizes[ index ] ) )
+	    el_customData.set( "offset", str( bee.customDataOffsets[ index ] ) )
+	    el_customData.set( "scale", str( bee.customDataScales[ index ] ) )
+	    el_customData.set( "name", str( bee.customLabels[ index ] ) )
 
       #el_beeConfig.set( "name", "" )
       #ET.dump( el_bee )

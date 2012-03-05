@@ -75,8 +75,8 @@ parser.add_option('-s','--serial', action='store',type="string",dest="serial",de
 		  help='the serial port [default:%s]'% '/dev/ttyUSB0')
 parser.add_option('-b','--baudrate', action='store',type=int,dest="baudrate",default=57600,
 		  help='the serial port [default:%i]'% 57600)
-parser.add_option('-a','--apimode', action='store', type="string", dest="apimode",default=False,
-		  help='use API mode for communication with the minibees [default:%s]'% False)
+parser.add_option('-a','--apimode', action='store', type="string", dest="apimode",default=True,
+		  help='use API mode for communication with the minibees [default:%s]'% True)
 
 (options,args) = parser.parse_args()
   #print args.accumulate(args.integers)
@@ -98,8 +98,10 @@ hive.load_from_file( options.config )
 
 hive.set_newBeeAction( hookBeeToLog )
 hive.serial.set_log_action( writeLogAction )
-    
-hive.run()
 
-#hive.exit()
+try :
+  hive.run()
+except (SystemExit, RuntimeError,KeyboardInterrupt, IOError ) :
+  print( "\nDone; goodbye" )
+  hive.exit()
 
