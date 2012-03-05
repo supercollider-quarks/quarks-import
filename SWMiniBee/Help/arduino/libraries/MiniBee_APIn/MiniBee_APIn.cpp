@@ -204,7 +204,7 @@ void MiniBee_API::loopStep( bool usedelay ){
       if ( usedelay ){ delay( smpInterval ); }
       break;
     case PAUSING:
-      if ( actcount == 0 ){ // send an I'm active message every 100 smpIntervals
+      if ( actcount == 0 ){ // send an I'm paused message every 100 smpIntervals
 	sendPaused();
       }
       if ( usedelay ){ delay( 500 ); }
@@ -310,10 +310,16 @@ uint8_t MiniBee_API::readSensors( uint8_t db ){
 //end TODO: check/
 
 void MiniBee_API::sendData(void){
+  boolean result = false;
+  byte count = 0;
     msg_id_send++;
     msg_id_send = msg_id_send%256;
-    sendTx16( N_DATA, outData, datacount );
-    datacount = 0;
+    
+    while ( !result && count < 3 ){ // try to send max. three times
+      result = sendTx16( N_DATA, outData, datacount );
+      count++;
+    }
+      //     datacount = 0;
 }
 
 void MiniBee_API::sendActive(void){
@@ -368,8 +374,9 @@ void MiniBee_API::readXBeePacket(){
       routeMsg( recvMsgType, data, datasize, source );
       // TODO check option, rssi bytes    
 //       flashLed(STATUS_LED, 1, 10);
-    } else { // not something we were expecting
-      flashLed(STATUS_LED, 1, 10);    
+//     } else { // not something we were expecting
+//       flashLed(STATUS_LED, 1, 10);    
+//     }
     }
   }
 //   sendTx16( N_INFO, data, datasize );
@@ -603,6 +610,7 @@ void MiniBee_API::parseConfig(void){
   config_id = config[0];
   msgInterval = config[1]*256 + config[2];
   samplesPerMsg = config[3];
+  smpInterval = msgInterval / samplesPerMsg;
 
   if ( outData != NULL ){
     free(outData);
@@ -754,9 +762,6 @@ void MiniBee_API::parseConfig(void){
 	
   datacount = 0;
   datasize += customDataSize;
-  datasize = datasize * samplesPerMsg;
-
-  smpInterval = msgInterval / samplesPerMsg;
 
 #if MINIBEE_ENABLE_TWI == 1
   if ( twiOn ){
@@ -777,8 +782,8 @@ void MiniBee_API::parseConfig(void){
   configInfoN[0] = node_id;
   configInfoN[1] = config_id;
   configInfoN[2] = samplesPerMsg;
-  configInfoN[3] = (uint8_t) (smpInterval/256);
-  configInfoN[4] = (uint8_t) (smpInterval%256);
+  configInfoN[3] = (uint8_t) (msgInterval/256);
+  configInfoN[4] = (uint8_t) (msgInterval%256);
   configInfoN[5] = datasize;
   configInfoN[6] = datasizeout;
   configInfoN[7] = customInputs;
@@ -792,6 +797,8 @@ void MiniBee_API::parseConfig(void){
   }
   sendTx16( N_CONF, configInfoN, confSize );
   free( configInfoN );
+
+  datasize = datasize * samplesPerMsg;
 
   outData = (uint8_t*)malloc(sizeof(uint8_t) * datasize);
 
@@ -984,40 +991,47 @@ void MiniBee_API::sendXBeeSerial(){
 }
 
 
-void MiniBee_API::sendTx16( char type, uint8_t* data, uint8_t length ){
+boolean MiniBee_API::sendTx16( char type, uint8_t* data, uint8_t length ){
   payload[0] = (uint8_t) type;
 //   payload[1] = node_id;
   payload[1] = msg_id_send;
+
+  txs16.setPayloadLength( length + 2 );
+
   for ( uint8_t i=0; i<length; i++ ){
     payload[i+2] = data[i];
-  }
-  
-  txs16.setPayloadLength( length + 2 );
-//   txs16.setPayload( payload );
+  }  
+  txs16.setPayload( payload );
   
   xbee.send(txs16);
 //   flashLed(STATUS_LED, 1, 100);
 
+  digitalWrite( STATUS_LED, 0 );
   // after sending a tx request, we expect a status response
   // wait up to 5 seconds for the status response
-  if (xbee.readPacket(5000)) { // got a response!
+  if (xbee.readPacket( 20 )) { // got a response!
 	// should be a znet tx status            	
 	if (xbee.getResponse().getApiId() == TX_STATUS_RESPONSE) {
 	  xbee.getResponse().getTxStatusResponse(txStatus);
 		
 	  // get the delivery status, the fifth byte
-	  if (txStatus.getStatus() == SUCCESS) {
+	  if (txStatus.getStatus() != SUCCESS) {
 		// success.  time to celebrate
 // 		flashLed(STATUS_LED, 5, 50);
-	  } else {
+// 	  } else {
 		// the remote XBee did not receive our packet. is it powered on?
-		flashLed(STATUS_LED, 3, 50);
+// 		flashLed(STATUS_LED, 3, 50);
+	    digitalWrite( STATUS_LED, 1 );
+	    return false;
 	  }
 	}      
     } else {
       // local XBee did not provide a timely TX Status Response -- should not happen
-      flashLed(STATUS_LED, 3, 50);
+//       flashLed(STATUS_LED, 3, 50);
+	digitalWrite( STATUS_LED, 1 );
+	return false;
     }
+    return true;
 }
 
 void MiniBee_API::flashLed(int pin, int times, int wait) {  
