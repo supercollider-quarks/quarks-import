@@ -375,6 +375,35 @@ PWrap : PInRange {
 	}
 }
 
+PSchmidt : PInRange {
+	var state= 0;
+	embedInStream {|inval|
+		var evtStr= pattern.asStream;
+		var lowStr= lo.asStream;
+		var higStr= hi.asStream;
+		var outVal, lowVal, higVal;
+		loop{
+			outVal= evtStr.next(inval);
+			if(outVal.isNil, {^inval});
+			lowVal= lowStr.next(outVal);
+			if(lowVal.isNil, {^inval});
+			higVal= higStr.next(outVal);
+			if(higVal.isNil, {^inval});
+			
+			if(state==1, {
+				if(outVal<lowVal, {
+					state= 0;
+				});
+			}, {
+				if(outVal>higVal, {
+					state= 1;
+				});
+			});
+			inval= state.yield;
+		};
+	}
+}
+
 PLastValue : FilterPattern {
 	var <>diff;
 	*new {|pattern, diff= 0.01|
