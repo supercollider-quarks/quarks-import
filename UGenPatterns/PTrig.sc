@@ -376,8 +376,8 @@ PWrap : PInRange {
 }
 
 PSchmidt : PInRange {
-	var state= 0;
 	embedInStream {|inval|
+		var state= 0;
 		var evtStr= pattern.asStream;
 		var lowStr= lo.asStream;
 		var higStr= hi.asStream;
