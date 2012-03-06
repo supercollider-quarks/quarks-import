@@ -58,6 +58,7 @@ LIST::
 ## link::Classes/PPulseCount::
 ## link::Classes/PRunningMax::
 ## link::Classes/PRunningMin::
+## link::Classes/PSchmidt::
 ## link::Classes/PTDelay::
 ## link::Classes/PToggleFF::
 ## link::Classes/PTrig::
