@@ -139,7 +139,63 @@ TestInstr : UnitTest {
 	}
 }
 
+TestPappliedInstr : UnitTest {
 
+	test_value {
+		var i,p,v;
+		i = Instr("_test.papplied",{ arg min = 0,max=10;
+					blend(min,max,0.5)
+				});
+		p = i.papply( (max:4) );
+		v = p.value(1);
+		this.assertEquals( v , blend(1,4,0.5),"valueing the instr with one arg should work")
+	}
+	
+	test_defArgs {
+		var i,p,v;
+		i = Instr("_test.papplied",{ arg min = 0,max=10;
+					blend(min,max,0.5)
+				});
+		p = i.papply( (max:4) );
+		v = p.value;
+		this.assertEquals( v , blend(0,4,0.5),"valueing the instr with no args should use the default min arg of 0")
+	}
+
+	test_defArgs2 {
+		var i,p,v;
+		i = Instr("_test.papplied",{ arg ignore=0,min = 0,max=10;
+					blend(min,max,0.5)
+				});
+		p = i.papply( (max:4) );
+		v = p.value(1);
+		this.assertEquals( v , blend(0,4,0.5),"valueing the instr with less than the full args should use default args for the rest")
+	}
+}
+
+
+TestCompositeInstr : UnitTest {
+	
+	test_first_input {
+		var a,b,c,r;
+		a = Instr("_test.tci.a",{ arg freq=440; freq.asString });
+		b = Instr("_test.tci.b",{ arg input,plus="x"; input ++ plus });
+		c = CompositeInstr(a,b);
+
+		r = c.value;
+		this.assertEquals(r , "440x","with no args supplied, the default args 440 and x should be concatenated: 440x");
+		
+		r = c.value(100,"y");
+		this.assertEquals( r , "100y","supplying 100 and y, the result should be the string 100y");
+	}
+	test_second_input {
+		var a,b,c,r;
+		a = Instr("_test.tci.a",{ arg freq=440; freq.asString });
+		b = Instr("_test.tci.b",{ arg input,plus="x"; input ++ plus });
+		c = CompositeInstr(a,b,1);
+		r = c.value("first","second");
+		this.assertEquals( r , "secondfirst","first instr is passed to 2nd input, so string should be secondfirst");
+	}
+}
 
 
 TestInterfaceDef : UnitTest {
