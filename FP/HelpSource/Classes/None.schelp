@@ -1,5 +1,4 @@
 CLASS:: None
 summary:: Represents a non-existing value.
-categories:: Monad
+categories:: FP
 related:: Classes/Option
-

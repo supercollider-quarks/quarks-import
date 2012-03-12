@@ -3,7 +3,7 @@
 *  Scala API (c) 2002-2010, LAMP/EPFL
 *  http://scala-lang.org/
 *
-* conversion to sc: Miguel Negrão, 2011
+* conversion to sc: Miguel Negr√£o, 2011
 */
 
 Option {
@@ -82,9 +82,3 @@ None : Option {
     
 }
 
-+Dictionary{
-	get{ |key|
-		var x = this.at(key);
-		^if(x.isNil){ None }{ Some(x) }
-	}	
-}
