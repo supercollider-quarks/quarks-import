@@ -1,5 +1,5 @@
 CLASS:: Some
 summary:: Represents an existing value.
-categories:: Monad
+categories:: FP
 related:: Classes/Option
 

@@ -1,6 +1,6 @@
 CLASS:: Option
-summary:: Represents optional values. Implements the linkOption monad.
-categories:: Monad
+summary:: Represents optional values.
+categories:: FP
 related:: Classes/Some, Classes/None
 
 DESCRIPTION::
@@ -11,6 +11,8 @@ It allows to build up calculations based on values that can be valid or not, wit
 This class is copied from the Scala Option class.
 
 For more information see http://en.wikipedia.org/wiki/Option_type.
+
+Is a type instance of Functor, Applicative Functor, Monad
 
 CLASSMETHODS::
 

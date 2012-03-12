@@ -1,0 +1,8 @@
+(
+	\name: 			"FP",
+	\path: 			"FP",
+	\summary:		"Functional Programming related classes",
+	\author: 		"Miguel Negr‹o",
+	\since: 		"2011",
+	\version:		0.1
+)
