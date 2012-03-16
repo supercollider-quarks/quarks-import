@@ -1,11 +1,11 @@
 (
-	name:		"cruciallib",
-	path:		"cruciallib",
-	summary:	"The Player system including Patch/Instr, Sample, GUI widgets, scheduling tools and misc. This is included with SuperCollider releases through SC 3.4 in the SCClassLibrary. This quark is for those working with 3.5+",
-	author:		"felix",
-	version:	1.0,
-	url:		"http://crucial-systems.com/",
-	helpdoc:	"Help/CRUCIAL-LIBRARY.html",
-	isCompatible:	{ Main.versionAtLeast(3,5) },
-	dependencies: ["ServerTools"]
+	\name:		"cruciallib",
+	\path:		"cruciallib",
+	\summary:	"The AbstractPlayer system including Patch, Instr, Sample, scheduling tools and misc",
+	\author:	"felix",
+	\version:	"4.0.0",
+	\url:		"https://github.com/crucialfelix/crucial-library",
+	\helpdoc:	"Help/CRUCIAL-LIBRARY.html",
+	\isCompatible:	{ Main.versionAtLeast(3,5) },
+	\dependencies: ["ServerTools"]
 )
