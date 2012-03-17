@@ -135,7 +135,14 @@ VoicerProxyGui : ObjectGui {
 	writeName { arg layout;
 		var n;
 		n = model.asString;
-		InspectorLink.icon(model,layout);
+		block { |break|
+			['InspButton', 'InspectorLink'].do { |classname|
+				if(classname.asClass.notNil) {
+					classname.asClass.icon(model, layout);
+					break.();
+				};
+			};
+		};
 		dragSource = GUI.dragSource.new(layout,Rect(0,0,(n.size * 7.5).max(160),17))
 			.stringColor_(Color.new255(70, 130, 200))
 			.background_(Color.white)
