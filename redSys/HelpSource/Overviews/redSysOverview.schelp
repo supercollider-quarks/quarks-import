@@ -24,7 +24,6 @@ TABLE::
 ## link::Classes/RedEfxDely:: || delay
 ## link::Classes/RedEfxDist:: || distortion
 ## link::Classes/RedEfxGuit:: || guitar amp
-## link::Classes/RedEfxFFTA:: || spectral gate
 ## link::Classes/RedEfxFreq:: || frequency shifter
 ## link::Classes/RedEfxOcta:: || octavider
 ## link::Classes/RedEfxPch2:: || pitch shifter
@@ -169,6 +168,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 120317:
+//some minor fixes to look better with gui qt, fix for 3.5 random helpfile lookup in redtoolsmenu, removed RedEfxFFTA from redEffects because it needs sc3-plugins installed
 //--changes 120221:
 //added RedOnePole, RedSlide
 //--changes 120208:

@@ -80,7 +80,7 @@ RedToolsMenu {
 				['system', 'count characters'], {
 					("there are"+Document.current.selectedText.size+"characters in the current selection").postln;
 				},
-				['system', 'post all window postitions'], {
+				['system', 'post all window positions'], {
 					Window.allWindows.do{|x| x.name.post; "   ".post; x.bounds.postln};
 				},
 				['system', 'post all document positions'], {
@@ -105,7 +105,14 @@ RedToolsMenu {
 					).syntaxColorize;
 				},
 				['extras', 'random helpfile'], {
-					Document.open(PathName("Help").deepFiles.reject{|x| #[\jpg, \png, \qtz].includes(x.extension.asSymbol)}.choose.fullPath);
+					var files;
+					if(Main.versionAtLeast(3, 5), {
+						files= List.new;
+						PathName(Help.dir).filesDo{|x| if(x.extension=="html", {files.add(x)})};
+						files.choose.fileNameWithoutExtension.openHelpFile;
+					}, {
+						Document.open(PathName("Help").deepFiles.reject{|x| #[\jpg, \png, \qtz].includes(x.extension.asSymbol)}.choose.fullPath);
+					});
 				},
 				['extras', 'swing boot'], {
 					if('SwingOSC'.asClass.notNil, {
