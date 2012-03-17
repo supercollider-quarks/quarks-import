@@ -116,7 +116,7 @@ RedTapTempoGUI {
 		var cmp, width, height, margin= 4@4, gap= 4@4;
 		position= position ?? {400@600};
 		width= 130;
-		height= 102;
+		height= 122;
 		if(parent.isNil, {
 			parent= Window("redTapTempo", Rect(position.x, position.y, width, height), false);
 			win= parent;

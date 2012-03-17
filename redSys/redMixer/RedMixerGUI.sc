@@ -32,7 +32,7 @@ RedMixerGUI {
 			
 			tabWidth= RedMixerChannelGUI.width+gap.x*(redMixer.mixers.size+redMixer.channels.size);
 			topHeight= 14;
-			tabHeight= RedMixerChannelGUI.height+topHeight;
+			tabHeight= RedMixerChannelGUI.height+2+topHeight;
 			
 			winWidth= tabWidth+(margin.x*2);	//perhaps clip here if only 2 channels or so
 			winHeight= tabHeight+topHeight+gap.y+(margin.y*2);
