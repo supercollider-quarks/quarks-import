@@ -180,13 +180,15 @@ TempoClockGui : ObjectGui {
 			if(currentServer.serverRunning) {
 				metro = DDWMetronome(model, currentServer, spec.map(metroLevel),
 					run: false);
+				defer { metroButton.tryPerform(\value_, 1) };
 			} {
 				"Server % is not running - can't start metronome.".format(currentServer.name).warn;
-				{ metroButton.value = 0 }.defer;
+				{ metroButton.tryPerform(\value_, 0) }.defer;
 			};
 		} {
 			metro.free;
 			metro = nil;
+			defer { metroButton.tryPerform(\value_, 0) };
 		};
 	}
 }
