@@ -1,0 +1,16 @@
+(
+// required:
+	\name:		"CVCenter",
+	\path:		"CVCenter", // almost always the same as the quark name
+	\summary:	"Human readable summary",
+	\author:		"Stefan Nussbaumer",
+
+// optional:
+	\version:		0.85, // must be a float
+	\since:		"2010",
+	\schelp:		"Overviews/CVCenter",
+	\url:			"http://pustota.5tefan.us/coding/CVCenter",
+
+// or (3) arrays with info in this order: [name, version, repositoryBaseUrl]
+	\dependencies:	[["Conductor"], ["TabbedView"]]
+)
