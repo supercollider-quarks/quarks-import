@@ -7,7 +7,7 @@ FE
 [A]CH=C
 [A]ID=1155
 [A]DH=0
-[A]DL=FFFE
+[A]DL=FFFA
 [A]MY=0
 [A]MM=0
 [A]RR=0
