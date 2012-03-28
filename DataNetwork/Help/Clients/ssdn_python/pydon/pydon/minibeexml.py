@@ -76,6 +76,7 @@ class HiveConfigFile():
       el_cfg = ET.SubElement(el_hive, "configuration")
       el_cfg.set( "name", str( cfg.name ) )
       el_cfg.set( "id", str( cfg.configid ) )
+      el_cfg.set( "redundancy", str( cfg.redundancy ) )
       el_cfg.set( "message_interval", str( cfg.messageInterval ) )
       el_cfg.set( "samples_per_message", str( cfg.samplesPerMessage ) )
       for pinkey, pincfg in cfg.pins.items():
@@ -154,6 +155,10 @@ class HiveConfigFile():
 	for configs in node.getiterator("configuration"):
 	  hiveconfig['configs'][ configs.get( "id" ) ] = {}
 	  hiveconfig['configs'][ configs.get( "id" ) ]["cid"] = int( configs.get( "id" ) )
+	  if configs.get( "redundancy" ) != None:
+	    hiveconfig['configs'][ configs.get( "id" ) ]["redundancy"] = int( configs.get( "redundancy" ) )
+	  else :
+	    hiveconfig['configs'][ configs.get( "id" ) ]["redundancy"] = 3
 	  hiveconfig['configs'][ configs.get( "id" ) ]["name"] = configs.get( "name" )
 	  hiveconfig['configs'][ configs.get( "id" ) ]["samples_per_message"] = int( configs.get( "samples_per_message" ) )
 	  hiveconfig['configs'][ configs.get( "id" ) ]["message_interval"] = int( configs.get( "message_interval" ) )

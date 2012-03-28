@@ -79,7 +79,7 @@ class MiniHive(object):
     self.running = True
     self.newBeeAction = None
     self.verbose = False
-    self.redundancy = 10
+    #self.redundancy = 10
     self.create_broadcast_bee()
     self.poll = poll
     
@@ -125,10 +125,10 @@ class MiniHive(object):
 	    self.serial.send_me( bee.serial, 1 )
 	else:
 	  bee.send_data( self.verbose )
-	  bee.repeat_output( self.serial, self.redundancy )
-	  bee.repeat_custom( self.serial, self.redundancy )
-	  bee.repeat_run( self.serial, self.redundancy )
-	  bee.repeat_loop( self.serial, self.redundancy )
+	  bee.repeat_output( self.serial )
+	  bee.repeat_custom( self.serial )
+	  bee.repeat_run( self.serial )
+	  bee.repeat_loop( self.serial )
 	  #if bee.status == 'receiving':
 	    #bee.count = bee.count + 1
 	    #if bee.count > 5000:
@@ -401,6 +401,7 @@ class MiniHive(object):
       for cid, config in hiveconf[ 'configs' ].items():
 	#print cid, config
 	self.configs[ int( cid ) ] = MiniBeeConfig( config[ 'cid' ], config[ 'name' ], config[ 'samples_per_message' ], config[ 'message_interval' ] )
+	self.configs[ int( cid ) ].setRedundancy( config['redundancy' ] );
 	#print config[ 'pins' ]
 	self.configs[ int( cid ) ].setPins( config[ 'pins' ] )
 	self.configs[ int( cid ) ].setPinLabels( config[ 'pinlabels' ] )
@@ -487,6 +488,7 @@ class MiniBeeConfig(object):
     self.logDataFormat = []
     self.logDataLabels = []
     self.digitalIns = 0
+    self.redundancy = 3
 
   #def getConfigForFile( self ):
     #fileconf = {}
@@ -502,7 +504,11 @@ class MiniBeeConfig(object):
     #for pinname, pinconf in self.pins:
       #filepins[ pinname ] = pinconf
     #return filepins
-      
+  
+  def setRedundancy( self, redun ):
+    self.redundancy = redun
+    print self.redundancy
+  
   def setPins( self, filepins ):
     #print filepins
     for pinname, pinfunc in filepins.items():
@@ -801,6 +807,7 @@ class MiniBee(object):
     self.runMessage = None
     self.looprepeated = 0
     self.loopMessage = None
+    #self.redundancy = 3
     
   def set_nodeid( self, mid ):
     self.nodeid = mid
@@ -883,9 +890,9 @@ class MiniBee(object):
 	    self.parse_single_data( newdata, verbose )
 	    self.time_since_last_update = 0
 
-  def repeat_output( self, serPort, redundancy ):
+  def repeat_output( self, serPort ):
     if self.outMessage != None:
-      if self.outrepeated < redundancy :
+      if self.outrepeated < self.config.redundancy :
 	self.outrepeated = self.outrepeated + 1
 	serPort.send_msg( self.outMessage, self.nodeid )
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
@@ -904,9 +911,9 @@ class MiniBee(object):
       self.outMessage = self.create_msg( 'O', self.outdata, serPort )
       serPort.send_msg( self.outMessage, self.nodeid )
 
-  def repeat_custom( self, serPort, redundancy ):
+  def repeat_custom( self, serPort ):
     if self.customMessage != None:
-      if self.customrepeated < redundancy :
+      if self.customrepeated < self.config.redundancy :
 	self.customrepeated = self.customrepeated + 1
 	serPort.send_msg( self.customMessage, self.nodeid )
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
@@ -929,16 +936,16 @@ class MiniBee(object):
     self.loopMessage = self.create_msg( 'L', [ status ], serPort )
     serPort.send_msg( self.loopMessage, self.nodeid )
 
-  def repeat_run( self, serPort, redundancy ):
+  def repeat_run( self, serPort ):
     if self.runMessage != None:
-      if self.runrepeated < redundancy :
+      if self.runrepeated < self.config.redundancy :
 	self.runrepeated = self.runrepeated + 1
 	serPort.send_msg( self.runMessage, self.nodeid )
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
 
-  def repeat_loop( self, serPort, redundancy ):
+  def repeat_loop( self, serPort ):
     if self.loopMessage != None:
-      if self.looprepeated < redundancy :
+      if self.looprepeated < self.config.redundancy :
 	self.looprepeated = self.looprepeated + 1
 	serPort.send_msg( self.loopMessage, self.nodeid )
 	#serPort.send_data( self.nodeid, self.msgID, self.outdata )
