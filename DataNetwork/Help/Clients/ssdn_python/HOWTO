@@ -9,7 +9,7 @@ Dependencies are:
 * pyOSC - http://gitorious.org/pyosc (checkout included in the packaged version)
 * pyserial (version 2.5 or higher) - http://pyserial.sourceforge.net/ - download: http://sourceforge.net/projects/pyserial/files/pyserial/2.5/pyserial-2.5.tar.gz/download, to use the XBee Xplorer coordinator board, you will also need an FTDI driver for your platform.
 * python-xbee-api (version 2.0.0 or higher) - (included in the packaged version)
-* optparse_gui (version 0.1) - (included in the packaged version); this is dependent itself on wxPython
+* optparse_gui (version 0.2) - (included in the packaged version); this is dependent itself on wxPython: http://www.wxpython.org/download.php
 * python libmapper, see: http://www.idmil.org/software/libmapper/downloads ; will be gracefully skipped if not needed
 
 python :
@@ -23,10 +23,16 @@ Install the dependencies:
 
 optparse_gui :
 extract archive and:
-  $ cd optparse_gui-0.1
+  $ cd optparse_gui-0.2
   $ sudo python setup.py install
   
-NOTE: optparse_gui is depended on wxPython, so you will need that too. For Mac OSX 64bit there is unfortunately no package available at the moment, so you'll have to do without the gui.
+NOTE: optparse_gui is depended on wxPython, so you will need that too, from http://www.wxpython.org/download.php.
+
+For Mac OSX 64bit there is unfortunately no package available at the moment, but you can change your system to use 32bit python instead for one session:
+  $ export VERSIONER_PYTHON_PREFER_32_BIT=yes (see Apple's man 1 python)
+or set is as system default:
+  $ defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
+  
 
 pyOSC :
 extract archive and:
