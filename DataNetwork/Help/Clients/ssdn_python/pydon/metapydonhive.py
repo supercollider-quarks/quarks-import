@@ -26,7 +26,7 @@ from pydon import minihivejunxion
 # main program:
 if __name__ == "__main__":
   
-  defaults = {'program': 'datanetwork', 'serial': '/dev/ttyUSB0', 'apimode': "True", 'verbose': "False", 'config': "pydon/configs/hiveconfig.xml", 'name': "pydonhive", "port": "57600", "host": "127.0.0.1", 'ip': "0.0.0.0", 'hport': "57120", 'minibees': "20", 'mboffset': "1", 'baudrate': "57600" }
+  defaults = {'program': 'datanetwork', 'serial': '/dev/ttyUSB0', 'apimode': "True", 'verbose': "False", 'logdata': "False", 'config': "pydon/configs/example_hiveconfig.xml", 'name': "pydonhive", "port": "57600", "host": "127.0.0.1", 'ip': "0.0.0.0", 'hport': "57120", 'minibees': "20", 'mboffset': "1", 'baudrate': "57600" }
   
   configParser = ConfigParser.SafeConfigParser( defaults )
   configParser.read( "pydondefaults.ini" )
@@ -72,7 +72,14 @@ if __name__ == "__main__":
 		  #group="program", option="verbose",
 		  help='verbose printing [default:%s]'% False)
   #parser.add_option('-q','--quiet', action='store_false', dest="verbose")
-		  
+
+  parser.add_option('-l','--logdata', action='store_true', dest="logdata",
+		  #default=False, 
+		  default = configParser.get( 'program', 'logdata' ),
+		  #group="program", option="verbose",
+		  help='log data to file [default:%s]'% False)
+  #parser.add_option('-q','--quiet', action='store_false', dest="verbose")
+
   parser.add_option('-c','--config', action='store', type="string", dest="config",
 		  #default="pydon/configs/hiveconfig.xml",
 		  default = configParser.get( 'hive', 'config' ),
@@ -145,7 +152,7 @@ if __name__ == "__main__":
     #print key, option_dict[ key ]
     config.set( 'serial', key, option_dict[ key ] )
 
-  for key in [ 'program', 'verbose' ]:
+  for key in [ 'program', 'verbose', 'logdata' ]:
     #print key, option_dict[ key ]
     config.set( 'program', key, option_dict[ key ] )
 
@@ -166,6 +173,8 @@ if __name__ == "__main__":
   
   if options.program == 'datanetwork':
     swhive = swpydonhive.SWPydonHive( options.host, options.port, options.ip, options.name, options.minibees, options.serial, options.baudrate, options.config, [options.mboffset,options.minibees], options.verbose, options.apimode )
+    if options.logdata:
+      swhive.initializeLogger()
     swhive.start()
   elif options.program == 'osc':
     swhive = minihiveosc.SWMiniHiveOSC( options.host, options.hport, options.ip, options.port, options.minibees, options.serial, options.baudrate, options.config, [1,options.minibees], options.verbose, options.apimode )

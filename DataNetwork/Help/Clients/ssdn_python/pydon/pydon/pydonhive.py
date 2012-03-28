@@ -464,7 +464,7 @@ class MiniBeeConfig(object):
   miniBeePinConfig = { 'NotUsed': 0, 'DigitalIn': 1, 'DigitalOut': 2, 'AnalogIn': 3, 'AnalogOut': 4, 'AnalogIn10bit': 5, 'SHTClock': 6, 'SHTData': 7, 'TWIClock': 8, 'TWIData': 9, 'Ping': 10, 'Custom': 100, 'Me': 150, 'UnConfigured': 200 };
 
   miniBeeTwiConfig = { 'ADXL345': 10, 'LIS302DL': 11, 'BMP085': 20, 'TMP102': 30, 'HMC58X3': 40 };
-  miniBeeTwiDataSize = { 'ADXL345': [2,2,2], 'LIS302DL': [2,2,2], 'BMP085': [2,3,3], 'TMP102': [2], 'HMC58X3': [2,2,2] };
+  miniBeeTwiDataSize = { 'ADXL345': [2,2,2], 'LIS302DL': [1,1,1], 'BMP085': [2,3,3], 'TMP102': [2], 'HMC58X3': [2,2,2] };
   miniBeeTwiDataScale = { 'ADXL345': [8191,8191,8191], 'LIS302DL': [255,255,255], 'BMP085': [100,100,100], 'TMP102': [16], 'HMC58X3': [2047,2047,2047] }; # 
   miniBeeTwiDataOffset = { 'ADXL345': [0,0,0], 'LIS302DL': [0,0,0], 'BMP085': [27300,0,10000], 'TMP102': [2048], 'HMC58X3': [2048,2048,2048] };
   miniBeeTwiDataLabels = { 'ADXL345': ['accel_x','accel_y','accel_z'], 'LIS302DL': ['accel_x','accel_y','accel_z'], 'BMP085': ['temperature','barometric_pressure','altitude'], 'TMP102': ['temperature'], 'HMC58X3': ['magn_x','magn_y','magn_z'] };

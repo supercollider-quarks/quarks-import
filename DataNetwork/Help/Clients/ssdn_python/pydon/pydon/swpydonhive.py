@@ -13,6 +13,8 @@ import sys
 
 import time
 
+import csv
+
 import pydon
 import pydonhive
 
@@ -135,7 +137,32 @@ class SWPydonHive( object ):
   def dataNodeDataToMiniBeeCustom( self, data, nid ):
     self.hive.bees[ nid ].send_custom( self.hive.serial, data )
 
+# logger:
+  def initializeLogger( self ):
+    # make filename with a date stamp    
+    self.filename = 'logs/hivedebuglog' + time.strftime("_%j_%H_%M_%S") + '.csv'
+    print( "opening new log file", self.filename )
+    self.hiveLogFile = open(self.filename, 'wb')
+    self.hiveLogWriter = csv.writer(self.hiveLogFile, dialect='excel-tab')
+    self.starttime = time.time()
+    self.maxrows = 60 * 60 * 10 * 4
+    self.rows = 0
+    self.hive.serial.set_log_action( self.writeLogAction )
 
+  def openNewLogFile( self ):
+    self.hiveLogFile.close()
+    self.filename = 'logs/hivedebuglog' + time.strftime("_%j_%H_%M_%S") + '.csv'
+    print( "opening new log file", self.filename )
+    self.hiveLogFile = open(self.filename, 'wb')
+    self.hiveLogWriter = csv.writer( self.hiveLogFile, dialect='excel-tab')
+
+  def writeLogAction( self, data ):
+    #print( "writing log data", data )
+    self.rows = self.rows + 1
+    self.hiveLogWriter.writerow( [time.strftime("%j:%H:%M:%S")] + [str(time.time() - self.starttime)] + data )
+    if self.rows > self.maxrows:
+      self.openNewLogFile()
+      self.rows = 0
 
 # main program:
 if __name__ == "__main__":

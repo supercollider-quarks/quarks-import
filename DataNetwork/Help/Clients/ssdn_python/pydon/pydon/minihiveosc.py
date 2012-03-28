@@ -178,7 +178,7 @@ class MiniHiveOSC(object):
     self.hive.oscToMiniBee( mid, data )
 
   def setCustom( self, mid, data ):
-    self.hive.oscToMiniBee( mid, data )
+    self.hive.oscToMiniBeeCustom( mid, data )
 
   def setRun( self, mid, data ):
     #print( self.hive, mid, data )
