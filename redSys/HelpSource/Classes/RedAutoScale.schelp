@@ -13,11 +13,17 @@ METHOD:: ar, kr
 ARGUMENT:: in
 Input signal.
 
-ARGUMENT:: lo, hi
-Desired output range.
+ARGUMENT:: lo
+Desired output range minimum.
 
-ARGUMENT:: inLo, inHi
-Predefined min- and maximum input range.
+ARGUMENT:: hi
+Desired output range maximum.
+
+ARGUMENT:: inLo
+Predefined minimum input range.
+
+ARGUMENT:: inHi
+Predefined maximum input range.
 
 ARGUMENT:: reset
 A trigger that reset range.

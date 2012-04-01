@@ -24,6 +24,10 @@ ARGUMENT:: delaytime
 ARGUMENT:: lagTime
 Time for crossfade.
 
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
 EXAMPLES::
 
 CODE::

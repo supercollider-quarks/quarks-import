@@ -21,7 +21,7 @@ METHOD:: add
 ARGUMENT:: nameArray
 In the form of [category, name].
 
-ARGUMENT:: function
+ARGUMENT:: func
 The actual tool.
 
 METHOD:: makeWindow

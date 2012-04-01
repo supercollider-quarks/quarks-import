@@ -1,7 +1,7 @@
 CLASS:: RedMixerChannel
 SUMMARY:: channel strip
 CATEGORIES:: Red>redMixer
-RELATED:: Classes/RedMixerChannelGUI, Classes/RedMixer, Classes/RedMixerGUI, Classes/RedEffectsModule
+RELATED:: Classes/RedMixerChannelGUI, Classes/RedMixer, Classes/RedMixerGUI, Classes/RedEffectModule
 
 DESCRIPTION::
 NOTE::

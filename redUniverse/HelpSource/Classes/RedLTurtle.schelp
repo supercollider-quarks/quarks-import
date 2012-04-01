@@ -52,8 +52,14 @@ Make up new rules by putting a character : function pair into command dictionary
 METHOD:: makeWindow
 Creates a link::Classes/Window:: and draw the l-system or string. Mainly for testing.
 
+ARGUMENT:: bounds
+A link::Classes/Rect::.
+
 ARGUMENT:: initAngle
 Sets the initial link::Classes/Pen:: rotation in radians.
+
+ARGUMENT:: initTranslate
+Sets the initial link::Classes/Pen:: translation in percent.
 
 METHOD:: lsystem
 Either a link::Classes/RedLSystem:: or a link::Classes/String::. For strings depth and thereby $| scaling is ignored. For l-systems (the preferred way) the depth is calculated ($| scaling by generation).

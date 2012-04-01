@@ -39,6 +39,9 @@ Returns true if location ( link::Classes/RedVector:: ) is within the object.
 METHOD:: collide
 Collision detection. Add acceleration vector to both objects if they touch.
 
+ARGUMENT:: redObj
+Another red object.
+
 ARGUMENT:: safety
 How many times the method should nudge objects apart.
 

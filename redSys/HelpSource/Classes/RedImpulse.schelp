@@ -16,6 +16,10 @@ frequency in Hertz
 ARGUMENT:: reset
 a trigger to reset the phase
 
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
 EXAMPLES::
 
 CODE::
