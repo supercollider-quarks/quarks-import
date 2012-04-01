@@ -28,6 +28,10 @@ pause and resume the line
 ARGUMENT:: reset
 a trigger to reset the line
 
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
 EXAMPLES::
 
 CODE::

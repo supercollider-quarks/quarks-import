@@ -1,7 +1,7 @@
 CLASS:: RedMixGUI
 SUMMARY:: gui for RedMixMono, RedMixStereo, RedMixStereoMono
 CATEGORIES:: Red>redMix
-RELATED:: Classes/redMixOverview, Classes/RedMixMono, Classes/RedMixStereo, Classes/RedMixStereoMono, Classes/RedMatrixMixerGUI, Classes/RedMixerGUI
+RELATED:: Overviews/redMixOverview, Classes/RedMixMono, Classes/RedMixStereo, Classes/RedMixStereoMono, Classes/RedMatrixMixerGUI, Classes/RedMixerGUI
 
 DESCRIPTION::
 

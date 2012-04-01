@@ -16,6 +16,10 @@ the time it takes to ramp from 0 to 1 in seconds. Only updated at the start of e
 ARGUMENT:: reset
 a trigger to reset the ramp. Must be control rate (kr).
 
+ARGUMENT:: mul
+
+ARGUMENT:: add
+
 EXAMPLES::
 
 CODE::

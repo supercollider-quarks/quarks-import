@@ -1,10 +1,10 @@
 CLASS:: RedJWindow
 SUMMARY:: wrapper for JSCWindow
 CATEGORIES:: Red>redUniverse
-RELATED:: Overviews/redUniverseExamplesOverview, Classes/RedWindow, Classes/JSCWindow
+RELATED:: Overviews/redUniverseExamplesOverview, Classes/RedWindow, Classes/Window
 
 DESCRIPTION::
-Adding some functionality to the standard link::Classes/Window:: class. Requires link::Classes/RedVector:: and link::Classes/SwingOSC::. (This class can also be used with osx-swing. Copy the class file RedJWindow.sc into the osx folder.)
+Adding some functionality to the standard link::Classes/Window:: class. Requires link::Classes/RedVector:: and SwingOSC. (This class can also be used with osx-swing. Copy the class file RedJWindow.sc into the osx folder.)
 
 INSTANCEMETHODS::
 

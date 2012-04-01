@@ -12,7 +12,7 @@ Input signal.
 
 ARGUMENT:: thresh
 
-ARGUMENT:: lagTime
+ARGUMENT:: lag
 
 EXAMPLES::
 

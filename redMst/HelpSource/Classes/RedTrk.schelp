@@ -19,6 +19,9 @@ A unique name for this track ( link::Classes/Symbol:: ).
 ARGUMENT:: item
 Some object that responds to play and stop (e.g. link::Classes/Pbind::, link::Classes/Tdef::, link::Classes/Routine:: ).
 
+ARGUMENT:: sections
+An array of indices.
+
 SUBSECTION:: Special class methods
 Add functions to the following class variables if you have special classes that can not be controlled with code::.play:: / code::.stop::, or classes that have argument keywords that does not match code::clock:: and code::quant:: (e.g. when 'clk' is used instead of 'clock'), or classes that need to free resources on clear (e.g. free buffers).
 
