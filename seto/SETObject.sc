@@ -76,7 +76,7 @@ SETObject { 	// abstract class
 	
 	/** method needed for testing purposes*/
 	asArray {
-		^([id, classID, pos, rotAxis, rotEuler, velocity, acceleration, freeSpace].flatten);
+		^([id, classID, pos, rotAxis, rotEuler, velocity, acceleration, freeSpace].flat);
 	}
 	*initClass {
 		super.initClass;
@@ -273,6 +273,14 @@ SETObject { 	// abstract class
 			(row * point).sum;
 		}[0..2]
 	}
+	
+	printOn { arg stream;
+		var title;
+		stream << this.class.name << "(" << format.asCompileString << ", " << id << ")";
+	}
+	
+	//storeArgs { ^this.asArray }
+
 }
 JITseto : SETObject {
 	classvar <>action;
@@ -285,6 +293,40 @@ JITseto : SETObject {
 		
 	}
 }
+
+/** choose function from dictionary based on object id */
+SETODictObj : JITseto {
+	classvar <>actions;
+	classvar <>releaseActions;
+
+	*setAction {|ids, functions, releaseFunctions|
+		actions = actions ? ();
+		releaseActions = releaseActions ? ();
+		
+		[ids, functions, releaseFunctions].flop.do{|idFunc|
+			actions       [idFunc[0]] = idFunc[1];
+			releaseActions[idFunc[0]] = idFunc[2]
+		}
+	}
+	*actionFor {|id|
+		^actions[id];
+	}
+	*releaseActionFor {|id|
+		^releaseActions[id];
+	}
+	*removeAction {|id|
+		actions[id] = nil;
+		releaseActions[id] = nil;
+	}
+	process {
+		this.visible.if({
+			actions[this.classID].value(this);
+		}, {
+			releaseActions[this.classID].value(this);
+		})
+	}
+}
+
 /**
 	A SETObject factory which builds SETOs according to their classID.
 	only works for formats including classID.
