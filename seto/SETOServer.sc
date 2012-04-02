@@ -4,10 +4,13 @@ Implementation of the server-side of SETO
 	http://modin.yuri.at/publications/tuio_gw2005.pdf
 
 Author: 
-	2004, 2005, 2006, 2007
 	Till Bovermann 
+	2012
+	MediaLab Helsinki, Aaalto University	
+
+
+	2004, 2005, 2006, 2007
 	Neuroinformatics Group 
-	Faculty of Technology 
 	Bielefeld University
 	Germany
 */
@@ -313,7 +316,6 @@ SETOServerView {
 	initView{|parent, bounds, tServer|
 		setoServer = tServer;
 		view = GUI.compositeView.new(parent,bounds);
-		//	view.relativeOrigin = true;
 		view.background = Color.white;
 		objects = ();
 	}
