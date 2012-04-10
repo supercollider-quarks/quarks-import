@@ -91,6 +91,8 @@ MiniBee_API::MiniBee_API(){
   status = STARTING;
   msg_type = S_NO_MSG;
   
+  destination = COORD_ADDR;
+  
   msg_id_send = 0;
   node_id = 0;
   config_id = 0;
@@ -459,9 +461,10 @@ void MiniBee_API::routeMsg(uint8_t type, uint8_t *msg, uint8_t size, uint16_t so
 	      readConfigMsg( msg, size );
 	      if ( hasInput ){
 		status = SENSING;
-	      } else if ( hasOutput ){
+	      } else if ( hasOutput | hasCustom ){
 		actcount = 0;
 		status = ACTING;
+		sendActive();
 	      }
 	    }
 	  }
@@ -737,7 +740,7 @@ void MiniBee_API::parseConfig(void){
 #endif
 #if MINIBEE_ENABLE_TWI_LISDL == 1
 	case TWI_LIS302DL:
-	  datasize += 6;
+	  datasize += 3;
 	  break;
 #endif
 #if MINIBEE_ENABLE_TWI_BMP == 1
@@ -990,6 +993,10 @@ void MiniBee_API::sendXBeeSerial(){
   sendTx16( N_SER, serial, 11 );
 }
 
+void MiniBee_API::setDestination( uint16_t addr ){
+    destination = addr;
+    txs16.setAddress16( destination );
+}
 
 boolean MiniBee_API::sendTx16( char type, uint8_t* data, uint8_t length ){
   payload[0] = (uint8_t) type;
@@ -1163,13 +1170,16 @@ int MiniBee_API::readTWIdevices( int dboff ){
 #if MINIBEE_ENABLE_TWI_LISDL == 1
 	      case TWI_LIS302DL:
 		accelLIS->read( &accx, &accy, &accz );
-		accx2 = (unsigned int) (accx + 2048); // from twos complement signed int to unsigned int
-		accy2 = (unsigned int) (accy + 2048); // from twos complement signed int to unsigned int
-		accz2 = (unsigned int) (accz + 2048); // from twos complement signed int to unsigned int
-		dataFromInt( accx, dboff + dbplus );
-		dataFromInt( accy, dboff + dbplus + 2 );
-		dataFromInt( accz, dboff + dbplus + 4 );
-		dbplus += 6;
+		accx2 = (unsigned int) (accx); // from twos complement signed int to unsigned int
+		accy2 = (unsigned int) (accy); // from twos complement signed int to unsigned int
+		accz2 = (unsigned int) (accz); // from twos complement signed int to unsigned int
+		outData[dboff + dbplus] = (uint8_t) accx;
+		outData[dboff + dbplus + 1] = (uint8_t) accy;
+		outData[dboff + dbplus + 2] = (uint8_t) accz;
+// 		dataFromInt( accx, dboff + dbplus );
+// 		dataFromInt( accy, dboff + dbplus + 2 );
+// 		dataFromInt( accz, dboff + dbplus + 4 );
+		dbplus += 3;
 // 		dboff += 6;
 		break;
 #endif
