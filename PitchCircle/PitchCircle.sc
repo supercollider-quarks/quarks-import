@@ -1,8 +1,8 @@
-// PitchCircle 2008-2011 Tom Hall. 
+// PitchCircle 2008-2012 Tom Hall. 
 // GNU licence, http://gnu.org/copyleft/
 // reg /*at*/ ludions /*dot*/ com 
-// Latest version available at www.ludions.com/sc/
-// version 2011-09-07 
+// Latest version usually available at www.ludions.com/sc/
+// version 2012-04-07 (tiny spacing typos corrected) 
 
 PitchCircle {
 
@@ -45,8 +45,8 @@ PitchCircle {
 		labelAlign = \center;
 		labelSize = txtH * 0.4; // radius* 0.1;
 		compView = CompositeView.new(win, Rect(0, 0, size, size +txtH));
-		text = StaticText(compView, Rect(0, 0, size, txtH))
-				.align_(labelAlign)
+		// changed 2012-04 TODO synch to Quark:
+		text = StaticText(compView, Rect(0, 0, size, txtH * 0.75)) 				.align_(labelAlign)
 				.font_(Font("Helvetica", labelSize))
 				.string_("");
 		
@@ -288,11 +288,13 @@ PitchCircle {
 		Pen.translate(centre*0.05, centre * 0.07); // adjust back to centred		// Draw the lines
 		steps.do({ |i|
 			Pen.moveTo(0@((radius * 0.92).neg));
-			Pen.lineTo(0@((radius * 1.08).neg));
+			// formally 1.08, hack to allow SpatioScope to overlay
+			// changed 2012-04 TODO synch to Quark:
+			Pen.lineTo(0@((radius * 1.06).neg)); 
 			Pen.moveTo(0@0);
 			Pen.color = Color.black;
 			Pen.stroke;
-			Pen.rotate((2pi/steps));		
+			Pen.rotate((2pi/steps));
 		});
 	}	
 		
