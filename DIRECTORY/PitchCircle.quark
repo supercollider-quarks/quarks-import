@@ -4,7 +4,7 @@
 	\summary: "PitchCircle provides a visual representation of 12TET C7 segments and subsets",
 	\author: "Tom Hall",
 	\url:           "http://www.ludions.com",
-	\version:	0.9,
+	\version:	0.92,
 	\since: "2008",
 	\helpdoc: "PitchCircle.html"
 )
