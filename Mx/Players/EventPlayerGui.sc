@@ -1,0 +1,154 @@
+
+
+EventListPlayerGui : AbstractPlayerGui {
+	
+	var tg,zoomCalc,rs,hitAreas,selected,mouseDownPoint;
+	var manager;
+	
+	guiBody { arg layout,bounds;
+		// zoom control if top
+		// test buttons to click each one
+		ToggleButton(layout,"debug",{ model.verbose = true },{ model.verbose = false },model.verbose);
+		this.timeGui(layout,bounds ?? {Rect(0,0,layout.bounds.width,100)})
+	}
+	timeGui { arg layout,bounds,maxTime;
+		tg = UserView(layout,bounds);
+		if(maxTime.isNil,{
+			maxTime = model.beatDuration;
+			if(maxTime.isNil,{
+				maxTime = 128
+			},{
+				maxTime = (model.beatDuration * 1.1 + 0.1).ceil;
+			})
+		});
+		zoomCalc = ZoomCalc([0,maxTime],[0,bounds.width]);
+		manager = UserViewObjectsManager(tg,bounds);
+		manager.bindAll;
+		manager.onDoubleClick = { arg obj;
+			Editor.for(obj).gui
+		};
+		manager.onMoved = { arg obj,by;
+			var r,pixelPos,beat;
+			pixelPos = zoomCalc.modelToDisplay(obj['beat']) + by.x;
+			beat = zoomCalc.displayToModel(pixelPos);
+			obj[\beat] = beat;
+			this.updateTimeGui;
+		};
+		manager.onCopy = { arg obj,by;
+			var nobj;
+			nobj = obj.copy;
+			nobj['beat'] = obj['beat'] + by;
+			model.addEvent(nobj);
+		};
+		manager.onDelete = { arg obj;
+			model.removeEvent(obj);
+		};
+		manager.onDoubleClick = { arg obj,p,modifiers;
+			if(modifiers.isCmd,{
+				DictionaryEditor(obj).gui(nil,nil,{ arg ev;
+					var beatChanged = ev['beat'] != obj['beat'];
+					ev.keysValuesDo { arg k,v;
+						obj.put(k,v)
+					};
+					if(beatChanged,{
+						model.schedAll
+					})
+				});
+			},{
+				model.playEvent(obj)
+			})
+		};
+		// control would be mute it
+
+		this.updateTimeGui;
+		tg.drawFunc = manager;
+	}
+	updateTimeGui {
+		var h,black;
+		h = tg.bounds.height;
+		black = Color.black;
+		model.events.do { arg ev,i;
+			var x,r,rs,endBeat,pixelStart,pixelEnd,remove=true;
+			if(ev['beat'].notNil,{
+				endBeat = ev['beat'] + (ev['dur'] ? 1);
+				pixelStart = zoomCalc.modelToDisplay(ev['beat']);
+				pixelEnd = zoomCalc.modelToDisplay(endBeat);
+				if(pixelStart.notNil and: {pixelEnd.notNil},{ // on screen
+
+					r = Rect(0,0,pixelEnd - pixelStart,h);
+					rs = PenCommandList.new;
+					rs.add(\color_,Color.green);
+					rs.add(\addRect,r);
+					rs.add(\draw,3);
+					rs.add(\color_,black);
+					rs.add(\stringCenteredIn, i.asString,r);
+
+					if(manager.objects[ev].isNil,{
+						manager.add(ev,rs,r.moveTo(pixelStart,0));
+						remove = false;
+					},{
+						manager.setBounds(ev,r.moveTo(pixelStart,0));
+						manager.objects[ev].renderFunc = rs;
+						remove = false;
+					})
+				});
+			});
+			if(remove,{
+				manager.remove(ev)
+			})
+		};
+	}
+	setZoom { arg from,to;
+		zoomCalc.setZoom(from,to);
+	}
+	update {
+		this.updateTimeGui;
+		tg.refresh
+	}
+}
+
+
+InstrEventListPlayerGui : EventListPlayerGui {
+	
+	writeName { arg layout;
+		super.writeName(layout);
+		this.addEventButton(layout)
+	}
+	addEventButton { arg layout;
+		ActionButton(layout,"+",{
+			this.addEventDialog(blend(zoomCalc.zoomedRange[0],zoomCalc.zoomedRange[1],0.5).round(1))
+		});
+	}		
+	addEventDialog { arg beat;
+		InstrBrowser({ arg layout,instr;
+			var patch,beatEditor,playingPatch,up;
+			patch = Patch(instr);
+			patch.gui(layout);
+			layout.startRow;
+			ToggleButton(layout,"test",{
+				playingPatch = model.playEvent(patch.asEvent);
+				// Updater(playingPatch
+				// watch for it to die
+				// should just have an onFree binding
+			},{
+				playingPatch.stop.free
+			});
+			ActionButton(layout,"RND",{
+				patch.rand
+			});
+			beatEditor = NumberEditor(beat,[0, min(model.beatDuration ? 128,128) + 512 ]);
+			CXLabel(layout,"At beat");
+			beatEditor.gui(layout);
+			ActionButton(layout,"Insert event",{
+				var e;
+				e = patch.asEvent;
+				e[\beat] = beatEditor.value;
+				model.addEvent(e);
+				model.changed(\didAddEvent);
+			});
+			layout.hr;
+		}).gui
+	}
+}
+
+

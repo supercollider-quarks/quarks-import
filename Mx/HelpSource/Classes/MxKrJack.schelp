@@ -1,0 +1,56 @@
+CLASS:: MxKrJack
+summary:: A hot swappable input point for use in internal patching
+categories:: Mx
+related:: 
+
+DESCRIPTION::
+In particular this is used by the Instr driver to put placeholders in the control inputs.  These can then be connected to dynamically.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+
+argument:: value
+(describe argument here)
+
+argument:: spec
+(describe argument here)
+
+argument:: lag
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+INSTANCEMETHODS::
+
+METHOD:: lag
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: storeArgs
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: instrArgFromControl
+(describe method here)
+
+argument:: control
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: guiClass
+(describe method here)
+
+returns:: (returnvalue)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
