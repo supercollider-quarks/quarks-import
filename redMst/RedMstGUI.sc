@@ -34,12 +34,12 @@ RedMstGUI {
 		win.view.background_(colBack);
 		win.view.decorator= FlowLayout(win.view.bounds);
 		win.view.keyDownAction_{|view, char, mod, uni, key|
-			switch(uni,
-				63235, {RedMst.next},				//<- key
-				63234, {RedMst.prev},				//-> key
-				27, {RedMst.next},					//escape key
-				32, {guiPlay.valueAction_(1-guiPlay.value)}//space
-			);
+			case
+				{uni==63235 or:{key==124}} {RedMst.next}//right arrow key
+				{uni==63234 or:{key==123}} {RedMst.prev}//left arrow key
+				{uni==27} {RedMst.next}				//escape key
+				{uni==32} {guiPlay.valueAction_(1-guiPlay.value)}//space
+			;
 		};
 		
 		guiPlay= Button(win, (size*4)@(size*1.5))
