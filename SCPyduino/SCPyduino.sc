@@ -59,7 +59,7 @@ Firmata {
 		unavailable = -1;
 		digital_input = 0;
 		digital_output = 1;
-		digital_pwm = 2;
+		digital_pwm = 3;
 		
 		
 	}
