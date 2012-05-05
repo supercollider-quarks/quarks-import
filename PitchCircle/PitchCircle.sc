@@ -2,7 +2,7 @@
 // GNU licence, http://gnu.org/copyleft/
 // reg /*at*/ ludions /*dot*/ com 
 // Latest version usually available at www.ludions.com/sc/
-// version 2012-04-07 (tiny spacing typos corrected) 
+// version 2012-05-05 (bugfix hlDots_ method) 
 
 PitchCircle {
 
@@ -45,7 +45,6 @@ PitchCircle {
 		labelAlign = \center;
 		labelSize = txtH * 0.4; // radius* 0.1;
 		compView = CompositeView.new(win, Rect(0, 0, size, size +txtH));
-		// changed 2012-04 TODO synch to Quark:
 		text = StaticText(compView, Rect(0, 0, size, txtH * 0.75)) 				.align_(labelAlign)
 				.font_(Font("Helvetica", labelSize))
 				.string_("");
@@ -69,7 +68,6 @@ PitchCircle {
 		mod = aMod ? mod;
 		offset = anOffset ? offset;
 		steps = aSteps ? steps;
-//		"making notes".inform; // postln
 		case {mod==1} 
 				{ integers = scs.intsSw(tonic, steps);
 				  notes = scs.namesSw(tonic, steps) }
@@ -267,7 +265,6 @@ PitchCircle {
 	
 	makeCircle {
 		var noteLabel, centre;
-//		"drawing circle".inform; // postln
 		centre = size/2;
 		// Draw the circle
 		Pen.color = Color.black; 
@@ -289,7 +286,6 @@ PitchCircle {
 		steps.do({ |i|
 			Pen.moveTo(0@((radius * 0.92).neg));
 			// formally 1.08, hack to allow SpatioScope to overlay
-			// changed 2012-04 TODO synch to Quark:
 			Pen.lineTo(0@((radius * 1.06).neg)); 
 			Pen.moveTo(0@0);
 			Pen.color = Color.black;
@@ -336,7 +332,8 @@ PitchCircle {
 			Pen.perform(\fill);
 			
 			// highlight dot with extra circle
-			if (aHLDots.includes(el), {
+			// also adjust for any offset
+			if (((aHLDots - offset)%steps).includes(el), {
 				Pen.addArc(Point(0, radius.neg), radius*0.07, 0, 2pi); 
 				Pen.width = if(size >= 350, {2}, {1});
 				Pen.perform(\stroke);
