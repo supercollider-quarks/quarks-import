@@ -46,3 +46,55 @@
 	
 }
 
++ Ndef {
+	
+	*new { | key, object |
+		// key may be simply a symbol, or an association of a symbol and a server name
+		var res, server, dict;
+
+		if(key.isKindOf(Association)) {
+			server = Server.named.at(key.value);
+			if(server.isNil) {
+				Error("Ndef(%): no server found with this name.".format(key)).throw
+			};
+			key = key.key;
+		} {
+			server = Server.default;
+		};
+
+		dict = this.dictFor(server);
+		res = dict.envir.at(key);
+		if(res.isNil) {
+			res = super.new(server).key_(key);
+			dict.initProxy(res);
+			dict.envir.put(key, res)
+		};
+
+		object !? { res.source = object };
+		^res;
+	}
+	
+	*do { |func|
+		all.do { |dict| dict.envir.do(func) }	
+	}
+	
+	
+}
+
++ ProxySpace {
+	
+	makeProxy { arg class;
+		var proxy = NodeProxy.new(server);
+		this.initProxy(proxy);
+		^proxy
+	}
+	
+	initProxy { arg proxy;
+		proxy.clock = clock;
+		proxy.awake = awake;
+		if(fadeTime.notNil) { proxy.fadeTime = fadeTime };
+		if(group.isPlaying) { proxy.parentGroup = group };
+		if(quant.notNil) { proxy.quant = quant };
+	}	
+	
+}
