@@ -1,4 +1,4 @@
-PanRingTop : Panner { 
+PanRingTop : MultiOutUGen { 
 	*ar {|numChans=4, in, azi=0.0, elev=0.0, orientation=0.5|
 		^[numChans, in, azi, elev, orientation ].flop.collect({ |inputs|
 			this.ar1(*inputs) 
@@ -20,7 +20,7 @@ PanRingTop : Panner {
 }
 		// 1 top and 1 bottom speaker, 
 		// positions azi wraps, elev clips.
-PanRingTopBot : Panner { 
+PanRingTopBot : MultiOutUGen { 
 	*ar {|numChans=4, in, azi=0.0, elev=0.0, orientation=0.5|
 		^[numChans, in, azi, elev, orientation ].flop.collect({ |inputs|
 			this.ar1(*inputs) 
