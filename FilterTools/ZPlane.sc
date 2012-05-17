@@ -97,21 +97,21 @@ ZPlane {
 		real = (bool ? true).booleanValue
 	}
 	
-	addPole { arg index, item;
+	addPole { arg index, loc;
 		if(index.isKindOf(Integer) or: { index == nil }, {
-			if(item.isKindOf(Polar) and: { item.magnitude.isKindOf(SimpleNumber) and: 			{ item.angle.isKindOf(SimpleNumber) } }, {
+			if(loc.isKindOf(Polar) and: { loc.magnitude.isKindOf(SimpleNumber) and: 			{ loc.angle.isKindOf(SimpleNumber) } }, {
 				//Wrap pole angle between -pi and pi
-				item = Polar.new(item.magnitude, item.angle.wrap(-pi, pi));
-				if(item.angle == pi.neg, { item = Polar.new(item.magnitude, pi) });				//Check for duplicate pole zero pairs
-				if(zeros.detect(_ == item).notNil, { 
+				loc = Polar.new(loc.magnitude, loc.angle.wrap(-pi, pi));
+				if(loc.angle == pi.neg, { loc = Polar.new(loc.magnitude, pi) });				//Check for duplicate pole zero pairs
+				if(zeros.detect(_ == loc).notNil, { 
 					"There is already a zero at this location. Pole removed.".warn 
 				}, {
 					//If the index arg is nil, add the pole to the tail of the array
 					if(index == nil or: { poles[index] == nil }, {
-						poles = poles.add(item);
+						poles = poles.add(loc);
 						//Add conjugate when filter is real and the angle is not 0 or pi radians
-						if(real and: { item.angle.abs != 0.0 } and: { item.angle.abs != pi }, {
-							poles = poles.add(Polar.new(item.magnitude, item.angle.neg))
+						if(real and: { loc.angle.abs != 0.0 } and: { loc.angle.abs != pi }, {
+							poles = poles.add(Polar.new(loc.magnitude, loc.angle.neg))
 						})
 					}, {
 						//If the filter is real, handle conjugation
@@ -119,25 +119,25 @@ ZPlane {
 							//Else, insert the pole at the specified index into the array
 							//Make sure we add the new pole AFTER a conjugate 
 							if(poles[index].angle > 0.0, {
-								poles = poles.insert(index, item);
+								poles = poles.insert(index, loc);
 								//Add conjugate when the angle is not 0 or pi radians
-								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-									poles = poles.insert(index+1, Polar.new(item.magnitude, 										item.angle.neg))
+								if(loc.angle.abs != 0.0 and: { loc.angle.abs != pi }, {
+									poles = poles.insert(index+1, Polar.new(loc.magnitude, 										loc.angle.neg))
 								})
 							}, {
-								poles = poles.insert(index+1, item);
+								poles = poles.insert(index+1, loc);
 								//Add conjugate when the angle is not 0 or pi radians
-								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-									poles = poles.insert(index+2, Polar.new(item.magnitude, 										item.angle.neg))
+								if(loc.angle.abs != 0.0 and: { loc.angle.abs != pi }, {
+									poles = poles.insert(index+2, Polar.new(loc.magnitude, 										loc.angle.neg))
 								})
 							})
 						}, {
 							//If the filter is complex, only insert the original pole
-							poles = poles.insert(index, item)
+							poles = poles.insert(index, loc)
 						})
 					});
 					//Post a warning if the new pole magnitude is > 1.0
-					if(item.magnitude > 1.0, {
+					if(loc.magnitude > 1.0, {
 						"Pole magnitude is larger than 1.0.".warn
 					});
 					this.updNumPolesAndZeros;
@@ -151,22 +151,22 @@ ZPlane {
 		})
 	}
 	
-	addZero { arg index, item;
+	addZero { arg index, loc;
 		if(index.isKindOf(Integer) or: { index == nil }, {
-			if(item.isKindOf(Polar) and: { item.magnitude.isKindOf(SimpleNumber) and: 			{ item.angle.isKindOf(SimpleNumber) } }, {
+			if(loc.isKindOf(Polar) and: { loc.magnitude.isKindOf(SimpleNumber) and: 			{ loc.angle.isKindOf(SimpleNumber) } }, {
 				//Wrap zero angle between -pi and pi
-				item = Polar.new(item.magnitude, item.angle.wrap(-pi, pi));
-				if(item.angle == pi.neg, { item = Polar.new(item.magnitude, pi) });
+				loc = Polar.new(loc.magnitude, loc.angle.wrap(-pi, pi));
+				if(loc.angle == pi.neg, { loc = Polar.new(loc.magnitude, pi) });
 				//Check for duplicate pole zero pairs
-				if(poles.detect(_ == item).notNil, { 
+				if(poles.detect(_ == loc).notNil, { 
 					"There is already a pole at this location. Zero removed.".warn 
 				}, {
 					//If the index arg is nil, add the zero to the tail of the array
 					if(index == nil or: { zeros[index] == nil }, {
-						zeros = zeros.add(item);
+						zeros = zeros.add(loc);
 						//Add conjugate when filter is real and the angle is not 0 or pi radians
-						if(real and: { item.angle.abs != 0.0 } and: { item.angle.abs != pi }, {
-							zeros = zeros.add(Polar.new(item.magnitude, item.angle.neg))
+						if(real and: { loc.angle.abs != 0.0 } and: { loc.angle.abs != pi }, {
+							zeros = zeros.add(Polar.new(loc.magnitude, loc.angle.neg))
 						})
 					}, {
 						//If the filter is real, handle conjugation
@@ -174,21 +174,21 @@ ZPlane {
 							//Else, insert the zero at the specified index into the array
 							//Make sure we add the new zero AFTER a conjugate 
 							if(zeros[index].angle > 0.0, {
-								zeros = zeros.insert(index, item);
+								zeros = zeros.insert(index, loc);
 								//Add conjugate when the angle is not 0 or pi radians
-								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-									zeros = zeros.insert(index+1, Polar.new(item.magnitude, 										item.angle.neg))
+								if(loc.angle.abs != 0.0 and: { loc.angle.abs != pi }, {
+									zeros = zeros.insert(index+1, Polar.new(loc.magnitude, 										loc.angle.neg))
 								})
 							}, {
-								zeros = zeros.insert(index+1, item);
+								zeros = zeros.insert(index+1, loc);
 								//Add conjugate when the angle is not 0 or pi radians
-								if(item.angle.abs != 0.0 and: { item.angle.abs != pi }, {
-									zeros = zeros.insert(index+2, Polar.new(item.magnitude, 										item.angle.neg))
+								if(loc.angle.abs != 0.0 and: { loc.angle.abs != pi }, {
+									zeros = zeros.insert(index+2, Polar.new(loc.magnitude, 										loc.angle.neg))
 								})
 							})
 						}, {
 							//If the filter is complex, only insert original zero
-							zeros = zeros.insert(index, item)
+							zeros = zeros.insert(index, loc)
 						})
 					});
 					this.updNumPolesAndZeros;
@@ -461,14 +461,14 @@ ZPlane {
 			.background_(Color.gray(0.5))
 			.drawFunc_(drawzplane)
 			.keyDownAction_({ arg me, char, mod, uni, key;
-				if(mod == 262401 and: { uni == 16 }, {
+				if(mod == 262144 and: { uni == 16 }, {
 					this.addPole(nil, pos);
 				}, {
-					if(mod == 262401 and: { uni == 26 }, {
+					if(mod == 262144 and: { uni == 26 }, {
 						this.addZero(nil, pos);
 					})
 				});
-				if(mod == 262401 and: { uni == 4 }, {
+				if(mod == 262144 and: { uni == 4 }, {
 					if((index - poles.size) < 0, {
 						this.removePole(index);
 					}, {
@@ -510,7 +510,7 @@ ZPlane {
 			.mouseDownAction_({ arg me, x, y, mod;
 				point = x@y
 			})
-			.mouseMoveAction_({ arg me, x, y, mod; var delta;
+			/*.mouseMoveAction_({ arg me, x, y, mod; var delta;
 				delta = (x@y) - point;
 				delta = delta.x.asInteger@delta.x.asInteger;
 				window.bounds = window.bounds.width_((window.bounds.width+delta.x).max(10))
@@ -520,7 +520,7 @@ ZPlane {
 							window.bounds.top
 						}))
 					})
-			.resize_(9)
+			.resize_(9)*/
 	}
 	
 	close {

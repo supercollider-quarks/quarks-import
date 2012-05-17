@@ -77,7 +77,8 @@ FilterCoef {
 				})
 			});
 			real = true
-		}
+		};
+		^real
 	}
 	
 	*calc { arg poles, zeros, norm = true;
