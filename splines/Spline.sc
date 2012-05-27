@@ -95,6 +95,9 @@ LinearSpline  { // : AbstractFunction
 	xypoints {
 		^points.collect({ |p| Point(p[0],p[1]) })
 	}
+	add { arg p;
+		points = points.add(p.asArray)
+	}
 	createPoint { arg p,i;
 		points = points.insert(i,p.asArray);
 	}
@@ -102,6 +105,9 @@ LinearSpline  { // : AbstractFunction
 		if(points.size > 1,{
 			points.removeAt(i)
 		});
+	}
+	setPoint { arg i,di,val;
+		points[i][di] = val;
 	}
 
 	minMaxVal { arg dim;
@@ -137,7 +143,17 @@ LinearSpline  { // : AbstractFunction
 	//	moveBy
 	//	resizeBy
 	++ { arg thou;
-		^LinearSpline(points ++ thou.points,isClosed)
+		^this.class.new(points ++ thou.points,isClosed)
+	}
+	sliceDimensions { arg dims;
+		^this.class.new(points.slice(nil,dims),isClosed)
+	}
+	spliceDimensions { arg dims,other;
+		other.points.do { arg p,i;
+			dims.do { arg di,ii;
+				points[i][di] = p[ii]
+			}
+		}
 	}
 
 	guiClass {
@@ -155,6 +171,7 @@ BSpline : LinearSpline {
 	*new { |points,order=2.0,isClosed=false|
 		^super.newCopyArgs(points.collect(_.asArray),isClosed).order_(order)
 	}
+
 	storeArgs { ^[points,order,isClosed] }
 
 	value {	arg u;
@@ -252,8 +269,13 @@ BSpline : LinearSpline {
 	++ { arg thou;
 		^BSpline(points ++ thou.points,order,isClosed)
 	}
+	sliceDimensions { arg dims;
+		^this.class.new(points.slice(nil,dims),order,isClosed)
+	}
 
 	*defaultOrder { ^2.0 }
+
+	guiClass { ^BSplineGui }
 }
 
 
@@ -277,16 +299,14 @@ BezierSpline : LinearSpline {
 		^nu
 	}
 	*fromPoints { arg points=[],controlPoints,isClosed=false;
-		if(controlPoints.isNil,{
-			controlPoints = [] ! points.size-1;
-		},{
-			controlPoints = controlPoints ++ Array.fill(points.size-1 - controlPoints.size,{[]})
-		});
-		^super.new(points,isClosed).controlPoints_(controlPoints ?? {Array.fill(points.size-1,{[]})})
+		//p:   [ [x,y],       [x,y],   [x,y], [x,y] ]
+		//cps: [  [[x,y],[x,y]],  [[x,y]],  []      ]
+		^super.new(points,isClosed).controlPoints_(controlPoints ?? { [] ! points.size-1 })
 	}
 	storeArgs {
 		^[points,controlPoints].flop.flatten(1).add(isClosed)
 	}
+	// value not yet implemented
 	interpolate { arg divisions=128;
 		// along the spline path
 		// actually gives divisions * numPoints
@@ -334,16 +354,18 @@ BezierSpline : LinearSpline {
 		};
 		^sum + (t.pow(n) * p2);
 	}
+	add { arg p,cp;
+		controlPoints = controlPoints.add(cp ? []);
+		super.add(p);
+	}
 	createPoint { arg p,i;
-		super.createPoint(p,i);
 		controlPoints = controlPoints.insert(i,[]);
-		this.changed('points');
+		super.createPoint(p,i);
 	}
 	createControlPoint { arg p,pointi,cpi;
 		var cps;
 		cps = controlPoints[pointi];
 		controlPoints[pointi] = cps.insert(cpi??{cps.size},p.asArray);
-		this.changed('points');
 		^[pointi,controlPoints[pointi].size-1]
 	}
 	deletePoint { arg i;
@@ -355,6 +377,9 @@ BezierSpline : LinearSpline {
 	deleteControlPoint { arg pointi,i;
 		controlPoints[pointi].removeAt(i)
 	}
+	setControlPoint { arg i,di,val;
+		controlPoints[i][di] = val;
+	}
 
 	isLinear {
 		^(points.size == 2 and: {controlPoints[0].size == 0})
@@ -362,7 +387,18 @@ BezierSpline : LinearSpline {
 	++ { arg thou;
 		^BezierSpline(points ++ thou.points,controlPoints ++ thou.controlPoints,isClosed)
 	}
-
+	sliceDimensions { arg dims;
+		^this.class.fromPoints(points.slice(nil,dims),
+			controlPoints.slice(nil,dims),isClosed)
+	}
+	spliceDimensions { arg dims,other;
+		super.spliceDimensions(dims,other);
+		other.controlPoints.do { arg p,i;
+			dims.do { arg di,ii;
+				controlPoints[i][di] = p[ii]
+			}
+		}
+	}	
 	guiClass { ^BezierSplineGui }
 }
 
