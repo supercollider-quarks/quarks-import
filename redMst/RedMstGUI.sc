@@ -205,7 +205,7 @@ RedMstGUI2 : RedMstGUI {
 RedMstGUI3 : RedMstGUI2 {
 	prInitUser {|size|
 		var fnt2= fnt.copy.size_(9);
-		guiUser= UserView(win, (win.bounds.width-7)@0)
+		guiUser= UserView(win, Rect(0, 0, win.bounds.width-7, 1))
 			.drawFunc_{|view|
 				var w, h, str;
 				if(RedMst.tracks.notEmpty, {
