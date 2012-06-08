@@ -120,7 +120,9 @@ RedTapTempoGUI {
 		if(parent.isNil, {
 			parent= Window("redTapTempo", Rect(position.x, position.y, width, height), false);
 			win= parent;
-			win.alpha= GUI.skins.redFrik.unfocus;
+			if(Main.versionAtMost(3, 4) and:{GUI.scheme!=\cocoa}, {
+				win.alpha= GUI.skins.redFrik.unfocus;
+			});
 			win.front;
 			CmdPeriod.doOnce({if(win.isClosed.not, {win.close})});
 		});

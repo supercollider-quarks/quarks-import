@@ -41,7 +41,9 @@ RedEffectsRackGUI {
 				Rect(position.x, position.y, winWidth, winHeight),
 				false
 			);
-			win.alpha= GUI.skins.redFrik.unfocus;
+			if(Main.versionAtMost(3, 4) and:{GUI.scheme!=\cocoa}, {
+				win.alpha= GUI.skins.redFrik.unfocus;
+			});
 			win.front;
 			win.view.background= GUI.skins.redFrik.background;
 			win.view.decorator= FlowLayout(win.view.bounds, margin, gap);
