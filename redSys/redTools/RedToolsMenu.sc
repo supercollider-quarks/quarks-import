@@ -191,8 +191,10 @@ RedToolsMenu {
 			}
 		);
 		w= Window("_redTools", Rect(position.x, position.y, width, height), false)
-			/*.alpha_(GUI.skins[\redFrik].unfocus)*/	//temp remove until 3.5 bug fixed
 			.front;
+		if(Main.versionAtMost(3, 4) and:{GUI.scheme!=\cocoa}, {
+			w.alpha_(GUI.skins[\redFrik].unfocus);
+		});
 		ListView(w, w.view.bounds.width@w.view.bounds.height)
 			.font_(RedFont.new)
 			.focus

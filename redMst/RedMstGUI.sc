@@ -29,8 +29,10 @@ RedMstGUI {
 		colBack2= colBack.complementary.alpha_(0.3);
 		colFore2= colFore.complementary.alpha_(0.7);
 		win= Window("RedMst", Rect(300, Window.screenBounds.height-50, size*9.5+20, size*6+25), false)
-			.alpha_(skin.unfocus ? 0.9)
 			.front;
+		if(Main.versionAtMost(3, 4) and:{GUI.scheme!=\cocoa}, {
+			win.alpha_(skin.unfocus ? 0.9);
+		});
 		win.view.background_(colBack);
 		win.view.decorator= FlowLayout(win.view.bounds);
 		win.view.keyDownAction_{|view, char, mod, uni, key|

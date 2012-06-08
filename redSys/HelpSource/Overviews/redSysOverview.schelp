@@ -168,6 +168,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 120608:
+//many gui windows did not show under sc3.5 cocoa osx due to alpha channel bug.  now fixed
 //--changes 120317:
 //some minor fixes to look better with gui qt, fix for 3.5 random helpfile lookup in redtoolsmenu, removed RedEfxFFTA from redEffects because it needs sc3-plugins installed
 //--changes 120221:
