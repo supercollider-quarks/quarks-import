@@ -909,7 +909,11 @@ MixerScope {
 		} {
 			channel = mc;
 			bus = mc.inbus;
-			buffer = Buffer.alloc(channel.server, 4096, mc.def.outChannels);
+			if(GUI.current.name == \QtGUI and: { channel.server.hasShmInterface }) {
+				buffer = ScopeBuffer.alloc(channel.server, mc.def.outChannels);
+			} {
+				buffer = Buffer.alloc(channel.server, 4096, mc.def.outChannels);
+			};
 			this.makeServerObjects;
 			this.gui(layout);
 		};
@@ -925,8 +929,13 @@ MixerScope {
 	makeServerObjectsToBundle { arg bundle;
 		var def;
 		def = SynthDef.new("mxscope" ++ GUI.current.name ++ buffer.numChannels, { |bus, bufnum|
-			(if(GUI.current.name == \CocoaGUI) { ScopeOut } { JScopeOut })
-			.ar(In.ar(bus, buffer.numChannels), bufnum)
+			(switch(GUI.current.name)
+				{ \CocoaGUI } { ScopeOut }
+				{ \SwingGUI } { JScopeOut }
+				{ \QtGUI } {
+					if(channel.server.hasShmInterface) { ScopeOut2 } { ScopeOut }
+				}
+			).ar(In.ar(bus, buffer.numChannels), bufnum)
 		});
 		bundle.add(["/d_recv", def.asBytes,
 			[\s_new, def.name, synthID = channel.server.nodeAllocator.allocPerm, 1,
@@ -961,7 +970,7 @@ MixerChannelReconstructor {
 			<>queueDelay = 0.05;
 	
 	*initClass {
-		CmdPeriod.add(this);
+		ServerTree.add(this);
 		mixers = IdentityDictionary.new;	// server -> List of mixerchannels
 		bundleQueue = List.new;
 	}
@@ -1033,7 +1042,7 @@ MixerChannelReconstructor {
 		});
 	}
 	
-	*cmdPeriod {
+	*doOnServerTree {
 		var bundle;
 		mixers.keysValuesDo({ |s, channels|
 			bundle = List.new;
