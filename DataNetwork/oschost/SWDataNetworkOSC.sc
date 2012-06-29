@@ -1117,6 +1117,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/map/minibee/output', msg[1], msg[0] );
+				network.performHook( \mappedOutput, msg[0] );
 			}{
 				this.errorMsg( addr, "/mapped/minibee/output", 16, [name,msg[1]] );
 			}
@@ -1132,6 +1133,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/map/minibee/custom', msg[1], msg[0] );
+				network.performHook( \mappedCustom, msg[0] );
 			}{
 				this.errorMsg( addr, "/mapped/minibee/custom", 16, [name,msg[1]] );
 			}
@@ -1147,6 +1149,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/unmap/minibee/output', msg[1], msg[0] );
+				network.performHook( \unmappedOutput, msg[0] );
 			}{
 				this.errorMsg( addr, "/unmapped/minibee/output", 16, [name,msg[1]] );
 			}
@@ -1162,6 +1165,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/unmap/minibee/custom', msg[1], msg[0] );
+				network.performHook( \unmappedCustom, msg[0] );
 			}{
 				this.errorMsg( addr, "/unmapped/minibee/custom", 16, [name,msg[1]] );
 			}
@@ -1177,6 +1181,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/map/minihive/output', msg[0] );
+				network.performHook( \mappedOutput, msg[0] );
 			}{
 				this.errorMsg( addr, "/mapped/minihive/output", 16, [name,msg[0]] );
 			}
@@ -1192,6 +1197,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/unmap/minihive/output', msg[0] );
+				network.performHook( \unmappedOutput, msg[0] );
 			}{
 				this.errorMsg( addr, "/unmapped/minihive/output", 16, [name,msg[0]] );
 			}
@@ -1207,6 +1213,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/map/minihive/custom', msg[0] );
+				network.performHook( \mappedCustom, msg[0] );
 			}{
 				this.errorMsg( addr, "/mapped/minihive/custom", 16, [name,msg[0]] );
 			}
@@ -1222,6 +1229,7 @@ SWDataNetworkOSC{
 		},{
 			if ( client.isKindOf( SWDataNetworkOSCHiveClient ) ){
 				hiveNotifier.successResult( '/unmap/minihive/custom', msg[0] );
+				network.performHook( \unmappedOutput, msg[0] );
 			}{
 				this.errorMsg( addr, "/unmapped/minihive/custom", 16, [name,msg[0]] );
 			}

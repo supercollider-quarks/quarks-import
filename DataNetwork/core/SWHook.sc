@@ -1,6 +1,7 @@
 SWHookSet {
 
 	var collection;
+	var <verbose;
 
 	*new{
 		^super.new.init;
@@ -8,6 +9,12 @@ SWHookSet {
 
 	init{
 		collection = IdentityDictionary.new;
+		verbose = Verbosity.new( 0, \swHookSet )
+	}
+
+	verbose_{ |newveb|
+		verbose.destroy;
+		verbose = newveb;
 	}
 
 	add{ |type,id,action|
@@ -27,9 +34,10 @@ SWHookSet {
 		myhook = collection.at( mykey );
 		if ( myhook.notNil ){
 			myhook.perform( *args );
+			verbose.value( 1, ("performing hook action" + type + id ) );
 			collection.removeAt( mykey ); // remove the hook after executing it
 		}{
-			("no hooks for" + type + id ).postln;
+			verbose.value( 2, ("no hooks for" + type + id ) );
 		};
 	}
 
@@ -44,7 +52,6 @@ SWHook {
 	}
 
 	perform{ |...args|
-		("performing hook action" + type + id).postln;
 		this.action.value( *args );
 	}
 

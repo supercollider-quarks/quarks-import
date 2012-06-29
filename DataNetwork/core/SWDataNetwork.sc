@@ -5,7 +5,7 @@
 SWDataNetwork{
 	var <spec;
 	var <nodes;
-	var <>verbose=0; // 1 is warning, 2 is all;
+	var <>verbose; // 1 is informative, 2 is warning, 3 is all;
 
 	var <>osc;
 
@@ -34,10 +34,12 @@ SWDataNetwork{
 	}
 
 	init{
+		verbose = Verbosity.new( 1, \swdatanetwork );
 		expectedNodes = Set.new;
 		//		expectedSize = IdentityDictionary.new;
 		nodes = IdentityDictionary.new;
 		hooks = SWHookSet.new;
+		hooks.verbose = verbose;
 		spec = SWDataNetworkSpec.new( this );
 		watcher = SkipJack.new(
 			{
@@ -45,13 +47,18 @@ SWDataNetwork{
 				nodes.do{ |it,i| 
 					if ( it.elapsed > worrytime,
 						{
-							if ( verbose > 0, { "restarting network".postln; });
+							verbose.value( 2, "restarting network" );
+							//	if ( verbose > 0, { "restarting network".postln; });
 							it.restartAction.value;
 						});
 				};
 			}, worrytime/10, name: "DataNetwork-watcher", autostart: false );
 		recTask = Task.new( {} );
 		this.watch( false );
+	}
+
+	performHook{ |type,id|
+		hooks.perform( type, id, [ nodes[id] ] );
 	}
 
 	addHook{ |id,action, type=\newnode|
@@ -90,7 +97,8 @@ SWDataNetwork{
 		var returnCode; // success;
 		var lasttime;
 		var node,type;
-		if ( verbose > 1, { [id,data].postln; } );
+		verbose.value( 3, [id,data] );
+		//if ( verbose > 1, { [id,data].postln; } );
 		
 		if ( id.isKindOf( Integer ) ){
 			node = nodes[id];
@@ -98,7 +106,8 @@ SWDataNetwork{
 				type = this.checkDataType( data );
 				ret = this.registerNode( id, data.size, type );
 				node = nodes[id];
-				if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
+				verbose.value( 2, ("registering node"+id+ret) );
+				//	if ( verbose > 0 ) { ("registering node"+id+ret).postln; };
 			});
 		}{
 			node = this.at( id.asSymbol );
@@ -124,7 +133,8 @@ SWDataNetwork{
 				});
 			}{
 				returnCode = 2; // wrong number of slots;
-				if ( verbose > 1 ) { "wrong number of slots".postln; };
+				verbose.value( 3, "wrong number of slots" );
+				//	if ( verbose > 1 ) { "wrong number of slots".postln; };
 			}
 		}{
 			returnCode = 1; // error registering node;
@@ -357,6 +367,7 @@ SWDataNetwork{
 		}
 	}
 
+	// obsolete
 	mapHivePWM{ |nodeID, miniBee|
 		if ( hive.notNil ){
 			hive.mapBee( this.nodes[ nodeID ], miniBee, \pwm );
@@ -364,6 +375,7 @@ SWDataNetwork{
 		};
 	}
 
+	// obsolete
 	mapHiveDig{ |nodeID, miniBee|
 		if ( hive.notNil ){
 			hive.mapBee( this.nodes[ nodeID ], miniBee, \digital );
@@ -404,11 +416,13 @@ SWDataNetwork{
 					if ( key.notNil, {this.at( key ).key = key; });
 				};
 			}{
-				if ( verbose > 0 , {("node with id"+id+"has unknown type"+type ).postln;});
+				verbose.value( 2, ("node with id"+id+"has unknown type"+type ) );
+				//	if ( verbose > 0 , {("node with id"+id+"has unknown type"+type ).postln;});
 				ret = 13; // error code for wrong type
 			};
 		}{
-			if ( verbose > 0 , {("node with id"+id+"and size"+sz+"is not expected to be part of the network" ).postln;});
+			verbose.value( 1, ("node with id"+id+"and size"+sz+"is not expected to be part of the network" ) );
+			//	if ( verbose > 0 , {("node with id"+id+"and size"+sz+"is not expected to be part of the network" ).postln;});
 		};
 		^ret;
 	}
