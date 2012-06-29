@@ -479,7 +479,7 @@ SWDataNetworkGui{
 		key.mouseDownAction = { editKey = editKey.not; };
 
 		verb = GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
-			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ] ] ).action_( { |but| network.verbose = but.value } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
+			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ], [ "V3", Color.red ] ] ).value_( network.verbose.level ).action_( { |but| network.verbose.level = but.value } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
 
 		
 		debug = GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
