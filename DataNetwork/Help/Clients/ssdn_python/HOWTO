@@ -22,27 +22,45 @@ If it is lower than 2.6 you will need to get a version higher than 2.6.
 Install the dependencies:
 
 optparse_gui :
-extract archive and:
-  $ cd optparse_gui-0.2
-  $ sudo python setup.py install
-  
+
+
 NOTE: optparse_gui is depended on wxPython, so you will need that too, from http://www.wxpython.org/download.php.
 
 For Mac OSX 64bit there is unfortunately no package available at the moment, but you can change your system to use 32bit python instead for one session:
   $ export VERSIONER_PYTHON_PREFER_32_BIT=yes (see Apple's man 1 python)
 or set is as system default:
   $ defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
+
+To install optparse_gui you will also set the default for root:
+  $ sudo defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
+
+
+extract archive and:
+  $ cd optparse_gui-0.2
+  $ sudo python setup.py install
   
+
+
+
+Go back to the main folder:
+$ cd ..
+
 
 pyOSC :
 extract archive and:
   $ cd pyosc
   $ sudo ./setup.py install
 
+Go back to the main folder:
+$ cd ..
+
 XBee-2.0.0 :
 extract archive and:
   $ cd XBee-2.0.0
   $ sudo ./setup.py install
+
+Go back to the main folder:
+$ cd ..
 
 pydon:
  $ cd pydon
