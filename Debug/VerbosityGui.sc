@@ -21,7 +21,7 @@ VerbosityAllGui : JITGui {
 
 		global = EZSlider( zone,
 			Rect(0,0, bounds.width, lineheight),
-			\global, \verbosity.asSpec, { |ez| Verbosity.globalLevel = ez.value; }, labelWidth: 80, numberWidth: 30, gap: 4@4, margin: 4@4 )
+			\global, \verbosity.asSpec, { |ez| Verbosity.globalLevel = ez.value; }, labelWidth: 120, numberWidth: 30, unitWidth: 15, gap: 4@4, margin: 4@4 )
 		.font_(font);
 
 		edits = Array.fill(numItems, { 
@@ -80,14 +80,14 @@ VerbosityGui : JITGui {
 			skin.buttonHeight * numItems + skin.headHeight, 
 			zone.bounds.height)  - (skin.margin.y * 2); 
 		
-		nameView = DragBoth(zone, Rect(0,0, 80, lineheight))
+		nameView = DragBoth(zone, Rect(0,0, 120, lineheight))
 			.font_(font)
 			.align_(\center)
 			.receiveDragHandler_({ arg obj; this.object = View.currentDrag });
 
 		levelView = EZSlider( zone,
-			Rect(0,0, bounds.width - 85, lineheight),
-			nil, \verbosity.asSpec, { |ez| object.level = ez.value; }, numberWidth: 30 )
+			Rect(0,0, bounds.width - 125, lineheight),
+			nil, \verbosity.asSpec, { |ez| object.level = ez.value; }, numberWidth: 30, unitWidth: 15 )
 			.font_(font);
 	}
 
