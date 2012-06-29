@@ -1393,7 +1393,7 @@ SWDataNetworkOSC{
 		this.logMsg( "/query/all from client with IP"+addr.ip+"and port"+addr.port );
 		this.expectedQuery( addr, name );
 		this.nodeQuery( addr, name );
-		this.slotQuery( addr, name );
+		//this.slotQuery( addr, name );
 		this.clientQuery( addr, name );
 		this.subscriptionQuery( addr, name );
 		this.setterQuery( addr, name );
