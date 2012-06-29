@@ -23,11 +23,15 @@ Verbosity {
 
 	*initClass{
 		all = IdentityDictionary.new;
-		Spec.add( \verbosity, [0,10,\linear,1] );
+		Spec.add( \verbosity, [0,10,\linear,1,0,"V"] );
 	}
 
 	*add{ |key,inst|
 		all.put( key.asSymbol, inst );
+	}
+
+	*remove{ |key|
+		all.removeAt( key.asSymbol );
 	}
 
 	*new{ |level,key|
@@ -36,6 +40,10 @@ Verbosity {
 
 	*closedDoc{
 		doc = nil;
+	}
+
+	destroy{
+		this.class.remove( key );
 	}
 
 	init{
@@ -98,8 +106,12 @@ Verbosity {
 		};
 	}
 
+	*makeGui{
+		^VerbosityAllGui.new;
+	}
+
 	makeGui{
-		
+		^VerbosityGui.new( this );
 	}
 }
 
