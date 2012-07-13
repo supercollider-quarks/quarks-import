@@ -113,6 +113,7 @@ SWDataNetworkOSCClient{
 		});
 
 		nodeSubs.do{ |it|
+			this.newExpected( it );
 			addr.sendMsg( '/subscribed/node', addr.port, key.asString, it );
 		};
 		slotNodesSubs.do{ |it|
@@ -186,15 +187,21 @@ SWDataNetworkOSCClient{
 	}
 
 	newExpected{ |id,label|
-		addr.sendMsg( '/info/expected', id, label.asString );
+		if ( label.notNil ){
+			addr.sendMsg( '/info/expected', id, label.asString );
+		}{
+			addr.sendMsg( '/info/expected', id, "" );
+		}
 	}
 
 	newNode{ |node|
 		//	node.dump;
 		addr.sendMsg( '/info/node', node.id, node.key.asString, node.slots.size, node.type );
+		/*
 		node.slots.do{ |it,i|
 			this.newSlot( it );
 		};
+		*/
 	}
 
 	newSlot{ |slot|
