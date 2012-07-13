@@ -590,6 +590,9 @@ Proto({
 	~status = \idle;
 	~autoSync = true;	// passed into TLSequenceIterator
 	~clock = TempoClock.default;
+	// used to delay stopping the last iterator
+	// if the section item's 'dur' is a number especially
+	~leadTime = 0;
 
 	~isLoaded = false;
 
@@ -745,7 +748,7 @@ Proto({
 			{ dur.isNumber and: { dur >= 0.001 } } {
 				~clock.sched(dur - 0.001, {
 					iterator.removeDependant(currentEnvironment);
-					iterator.stop;
+					thisThread.clock.sched(~leadTime, { iterator.stop });
 				});
 				dur	// return value
 			}
@@ -768,7 +771,7 @@ Proto({
 				quant = quant.nextTimeOnGrid(~clock) - ~clock.beats;
 				~clock.sched(quant - 0.001, {
 					iterator.removeDependant(currentEnvironment);
-					iterator.stop;
+					thisThread.clock.sched(~leadTime, { iterator.stop });
 				});
 				quant
 			}
