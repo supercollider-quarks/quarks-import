@@ -18,10 +18,10 @@ SWDataSlotGui{
 	*initClass{
 		StartUp.add( {
 			if ( GUI.scheme.notNil ){
-		Platform.case( 
-				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
-				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
-				\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
+				Platform.case( 
+					\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
+					\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
+					\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
 			};
 		} );
