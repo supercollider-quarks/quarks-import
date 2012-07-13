@@ -36,6 +36,8 @@ MxApp : AbsApp {
 	units {
 		^MxQuery(model.allUnits(false).all.collect(this.prFind(_)),this)
 	}
+	outlets { ^this.units.outlets }
+	inlets { ^this.units.inlets }
 	channels {
 		^MxQuery(model.channels.collect(this.prFind(_)),this)
 	}
@@ -184,8 +186,12 @@ MxChannelApp : AbsApp {
 		ci = this.channelNumber;
 		apps = sources.collect { arg source,i;
 			var unit;
-			unit = this.mx.put( ci,start + i, source );
-			mxapp.prFind(unit)
+			if(source.notNil,{
+				unit = this.mx.put( ci,start + i, source );
+				mxapp.prFind(unit)
+			},{
+				nil
+			})
 		};
 		mxapp.commit;
 		if(apps.size == 1,{
@@ -203,8 +209,8 @@ MxChannelApp : AbsApp {
 		if(unit.isNil, { ^nil });
 		^mxapp.prFind( unit )
 	}
-	mute {
-		this.mx.mute(this.channelNumber,true);
+	mute { arg boo=true;
+		this.mx.mute(this.channelNumber,boo);
 		this.mx.changed('mixer');
 	}
 	muted {
@@ -218,8 +224,8 @@ MxChannelApp : AbsApp {
 		this.mx.mute(this.channelNumber,model.fader.mute.not);
 		this.mx.changed('mixer');
 	}
-	solo {
-		this.mx.solo(this.channelNumber,true);
+	solo { arg boo=true;
+		this.mx.solo(this.channelNumber,boo);
 		this.mx.changed('mixer');
 	}
 	unsolo {
@@ -362,6 +368,7 @@ MxUnitApp : AbsApp {
 	outlets {
 		^MxIOletsApp(model.outlets,mxapp,model)
 	}
+	cables { ^this.i.cables ++ this.o.cables }
 	out {
 		^this.outlets.out
 	}
@@ -371,8 +378,14 @@ MxUnitApp : AbsApp {
 	>> { arg that;
 		this.checkThat(that);
 		^mxapp.transaction({
-			^this.outlets >> that
+			this.outlets >> that
 		})
+	}
+	addInlet { arg name,spec,adapter;
+		model.addInlet(name,spec,adapter)
+	}
+	addOutlet { arg name,spec,adapter;
+		model.addOutlet(name,spec,adapter)
 	}
 	point { ^this.mx.pointForUnit(model) }
 	printOn { arg stream;
@@ -400,6 +413,13 @@ MxIOletsApp : AbsApp {
 	out {
 		// shortcut to the first output
 		^this.prFindIOlet('out') ?? {this.prFindIOlet(0,true)}
+	}
+	cables {
+		var cables = [];
+		model.do { arg io,i;
+			cables.addAll(io.cables)
+		};
+		^cables
 	}
 	>> { arg inlet;
 		var outlet;
@@ -488,7 +508,16 @@ MxInletApp : AbsApp {
 		stream << mxapp.prFind(model.unit) << "::";
 		model.printOn(stream)
 	}
-	// cables
+	cables {
+		^this.mx.cables.toInlet(model).collect({ arg cable;
+			mxapp.prFind(cable)
+		})
+	}
+
+	canGet { ^model.canGet }
+	canSet { ^model.canSet }
+	set { arg v; model.set(v) }
+	get { ^model.get }
 }
 
 
@@ -536,13 +565,28 @@ MxOutletApp : AbsApp {
 	unit {
 		^mxapp.prFind(model.unit)
 	}
-	to { // outlets that connect to me
-		^this.mx.cables.fromInlet(model).collect { arg cable;
+	to { // inlets that I connect to
+		^this.mx.cables.fromOutlet(model).collect { arg cable;
 			mxapp.prFind( cable.inlet )
 		}
 	}
+	cables {
+		^this.mx.cables.fromOutlet(model).collect({ arg cable;
+			mxapp.prFind(cable)
+		})
+	}
+
+	canGet { ^model.canGet }
+	canSet { ^model.canSet }
+	set { arg v; model.set(v) }
+	get { ^model.get }
+
 	printOn { arg stream;
-		stream << mxapp.prFind(model.unit) << "::";
+		if(model.unit.isNil,{ 
+			stream << "Nil unit::";
+		},{
+			stream << mxapp.prFind(model.unit) << "::";
+		});
 		model.printOn(stream)
 	}
 }

@@ -7,12 +7,17 @@ MxGui : AbstractPlayerGui {
 	writeName {}
 	saveConsole { arg layout;
 		super.saveConsole(layout);
+		layout.startRow;
 		ActionButton(layout,"Timeline",{
 			MxTimeGui(model).gui(nil,Rect(0,0,1000,800));
 		});
 		ActionButton(layout,"Mixer",{
 			MxMixerGui(model).gui(nil,Rect(0,0,1000,500));
 		});
+		ActionButton(layout,"SynthiX",{
+			SynthiX(model.app.outlets,model.app.inlets).gui(nil,Rect(0,0,1000,500))
+		});
+
 		ActionButton(layout,"respawn",{
 			boxes.selected.do { arg obj;
 				if(obj.isKindOf(MxUnit),{
@@ -118,9 +123,9 @@ MxGui : AbstractPlayerGui {
 
 	drawer { arg layout,bounds;
 		var d,doIt;
-		doIt = { arg obj;
+		doIt = { arg obj, placeIt;
 			// which puts to master or channels
-			boxes.put(boxes.focusedPoint.x,boxes.focusedPoint.y,obj);
+			placeIt.value(obj);
 			boxes.refresh;
 			if(model.isPlaying,{
 				model.update;
@@ -129,11 +134,16 @@ MxGui : AbstractPlayerGui {
 			});
 		};			
 		d = MxDrawer({ arg obj;
-			if(boxes.focusedPoint.notNil,{
+			var placeIt,fp;
+			fp = boxes.focusedPoint;
+			if(fp.notNil,{
+				placeIt = {
+					boxes.put(fp.x,fp.y,obj);
+				};
 				if(obj.isKindOf(MxDeferredDrawerAction),{
-					obj.func = doIt
+					obj.func = { arg obj; doIt.value(obj,placeIt) };
 				},{
-					doIt.value(obj)
+					doIt.value(obj,placeIt)
 				})
 			})
 		});
@@ -145,6 +155,10 @@ MxGui : AbstractPlayerGui {
 }
 
 
+/*
+	a deferred action has a dialog or something
+	so it doesn't activate immediately
+*/
 MxDeferredDrawerAction {
 	
 	var <>func;
