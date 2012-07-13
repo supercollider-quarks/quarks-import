@@ -1,6 +1,6 @@
 SWHookSet {
 
-	var collection;
+	var <collection;
 	var <verbose;
 
 	*new{
@@ -17,9 +17,9 @@ SWHookSet {
 		verbose = newveb;
 	}
 
-	add{ |type,id,action|
+	add{ |type,id,action,permanent=false|
 		//	"adding hook to HookSet".postln;
-		collection.put( (type++id).asSymbol, SWHook.new( type,id,action ) );
+		collection.put( (type++id).asSymbol, SWHook.new( type,id,action,permanent ) );
 	}
 
 	removeAt{ |id,type=\newnode|
@@ -35,7 +35,9 @@ SWHookSet {
 		if ( myhook.notNil ){
 			myhook.perform( *args );
 			verbose.value( 1, ("performing hook action" + type + id ) );
-			collection.removeAt( mykey ); // remove the hook after executing it
+			if ( myhook.permanent.not ){
+				collection.removeAt( mykey ); // remove the hook after executing it
+			};
 		}{
 			verbose.value( 2, ("no hooks for" + type + id ) );
 		};
@@ -45,7 +47,7 @@ SWHookSet {
 
 SWHook {
 
-	var <>type, <>id, <>action;
+	var <>type, <>id, <>action, <>permanent = false;
 
 	*new{ |...args|
 		^super.newCopyArgs( *args );
