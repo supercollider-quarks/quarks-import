@@ -71,6 +71,12 @@ SWDataNetworkOSC{
 		^SWDataNetworkOSCGui.new( this );
 	}
 
+	makeHiveGui{
+		^this.hiveDictionary.collect{ |it|
+			it.gui;
+		}
+	}
+
 	stop{
 		this.activeClientsDo( 'hostQuit', [ myhost ] );
 	//	clientDictionary.do{ |it| it.hostQuit( myhost ); };
@@ -1677,6 +1683,36 @@ SWDataNetworkOSC{
 	sendBeeStatus{ |client, id, status|
 		verbose.value( 1, [client.addr, id, status ].asCompileString );
 		client.addr.sendMsg( '/status/minibee', id, status );
+	}
+
+	runMiniBee{ |beeid,status|
+		hiveDictionary.do{ |it|
+			it.runMiniBee( beeid, status );
+		};		
+	}
+
+	saveIDMiniBee{ |beeid|
+		hiveDictionary.do{ |it|
+			it.saveIDMiniBee( beeid );
+		};		
+	}
+
+	announceMiniBee{ |beeid|
+		hiveDictionary.do{ |it|
+			it.announceMiniBee( beeid );
+		};		
+	}
+
+	loopMiniBee{ |beeid,status|
+		hiveDictionary.do{ |it|
+			it.loopMiniBee( beeid, status );
+		};
+	}
+
+	resetMiniBee{ |beeid|
+		hiveDictionary.do{ |it|
+			it.resetMiniBee( beeid );
+		};		
 	}
 
 	mapHiveOutputLocal{ |nodeid, beeid|

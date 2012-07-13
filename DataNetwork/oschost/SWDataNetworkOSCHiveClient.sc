@@ -1,11 +1,67 @@
 
 // minimal class holding info on a minibee
 SWMiniBeeOSC{
-	var <>id, <>inputs, <>outputs, <>configID, <>serialNumber, <>status;
+	var <id, <inputs, <outputs, <configID, <serialNumber, <status;
+	var <mappedToOutput;
+	var <mappedToCustom;
+
+	guiClass{
+		^SWMiniBeeOSCGui;
+	}
 
 	*new{ arg ...args;
-		^super.newCopyArgs( *args );
+		^super.newCopyArgs( *args ).init;
 	}
+
+	init{
+		mappedToOutput = Set.new;
+		mappedToCustom = Set.new;
+	}
+
+	addOutputMap{ |node|
+		mappedToOutput.add( node );
+	}
+
+	addCustomMap{ |node|
+		mappedToCustom.add( node );
+	}
+
+	removeOutputMap{ |node|
+		mappedToOutput.remove( node );
+	}
+
+	removeCustomMap{ |node|
+		mappedToCustom.remove( node );
+	}
+
+	id_{ |i|
+		id = i;
+		this.changed;
+	}
+	inputs_{ |i|
+		inputs = i;
+		this.changed;
+	}
+	outputs_{ |i|
+		outputs = i;
+		this.changed;
+	}
+
+	configID_{ |i|
+		configID = i;
+		this.changed;
+	}
+
+	serialNumber_{ |i|
+		serialNumber = i;
+		this.changed;
+	}
+
+	status_{ |i|
+		status = i;
+		this.changed;
+	}
+
 }
 
 // a hive client is like an OSC client, but with some extra methods:
@@ -17,6 +73,10 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 	var <configQueries;
 
 	//	var <hookSet;
+
+	guiClass{
+		^SWDataNetworkOSCHiveClientGui;
+	}
 
 	*new{ |addr,name,minNode,maxNode|
 		^super.new( addr, name ).myInit( minNode, maxNode );
@@ -104,22 +164,66 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 		}
 	}
 
-	statusBee{ |id, status|
-		if ( activeBees.at( id ).isNil ){
-			^false;
+	addBeeFromStatus{ |id|
+		if ( nodeRange[0] <= id and: ( nodeRange[1] >= id ) ){
+			activeBees.put( id, SWMiniBeeOSC.new( id ) );
+			^true;
 		};
-		activeBees.at( id ).status_( status );
-		^true;
+		^false
+	}
+
+	statusBee{ |id, status|
+		var beeExists = true;
+		if ( activeBees.at( id ).isNil ){
+			beeExists = this.addBeeFromStatus( id );
+		};
+		if ( beeExists ){
+			activeBees.at( id ).status_( status );
+			^true;
+		};
+		^false;
 	}
 
 	// currently we have no message to remove a bee from the network; maybe needed?
 	removeBee{ |id|
 		activeBees.removeAt( id );
 	}
+	
+	runMiniBee{ |beeid, status|
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/run/minibee', beeid, status );
+		}
+	}
+
+
+	loopMiniBee{ |beeid, status|
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/loopback/minibee', beeid, status );
+		}
+	}
+
+	resetMiniBee{ |beeid|
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/reset/minibee', beeid );
+		}
+	}
+
+	saveIDMiniBee{ |beeid|
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/saveid/minibee', beeid );
+		}
+	}
+
+	announceMiniBee{ |beeid|
+		if ( activeBees.at( beeid ).notNil ){
+			addr.sendMsg( '/announce/minibee', beeid );
+		}
+	}
 
 	mapHiveOutput{ |nodeid, beeid|
 		if ( activeBees.at( beeid ).notNil ){
 			addr.sendMsg( '/map/minibee/output', nodeid, beeid );
+			activeBees.at( beeid ).addOutputMap( nodeid );
 		};
 		// hive client should subscribe to nodeid, and map it to the output of the beeid
 	}
@@ -127,6 +231,7 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 	mapHiveCustom{ |nodeid, beeid|
 		if ( activeBees.at( beeid ).notNil ){
 			addr.sendMsg( '/map/minibee/custom', nodeid, beeid );
+			activeBees.at( beeid ).addCustomMap( nodeid );
 		};
 		// hive client should subscribe to nodeid, and map it to the custom output of the beeid
 	}
@@ -134,6 +239,7 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 	unmapHiveOutput{ |nodeid, beeid|
 		if ( activeBees.at( beeid ).notNil ){
 			addr.sendMsg( '/unmap/minibee/output', nodeid, beeid );
+			activeBees.at( beeid ).removeOutputMap( nodeid );
 		};
 		// hive client should unsubscribe from nodeid, and unmap it from the output of the beeid
 	}
@@ -141,6 +247,7 @@ SWDataNetworkOSCHiveClient : SWDataNetworkOSCClient {
 	unmapHiveCustom{ |nodeid, beeid|
 		if ( activeBees.at( beeid ).notNil ){
 			addr.sendMsg( '/unmap/minibee/custom', nodeid, beeid );
+			activeBees.at( beeid ).removeCustomMap( nodeid );
 		};
 		// hive client should unsubscribe from nodeid, and unmap it from the custom output of the beeid
 	}
