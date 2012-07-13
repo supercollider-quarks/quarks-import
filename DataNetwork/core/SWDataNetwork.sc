@@ -61,8 +61,8 @@ SWDataNetwork{
 		hooks.perform( type, id, [ nodes[id] ] );
 	}
 
-	addHook{ |id,action, type=\newnode|
-		hooks.add( type, id, action );
+	addHook{ |id,action, type=\newnode, permanent=false|
+		hooks.add( type, id, action, permanent );
 		if ( nodes.at(id).notNil and: type == \newnode ){ // perform the action rightaway if node is already there
 			hooks.perform( type, id, [nodes[id]] );
 			//		action.value( nodes.at(id) );
