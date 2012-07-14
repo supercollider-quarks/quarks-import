@@ -19,7 +19,6 @@ argument:: spec
 
 argument:: lag
 
-returns::
 
 
 
@@ -29,14 +28,12 @@ INSTANCEMETHODS::
 
 METHOD:: lag
 
-returns::
 
 
 
 
 METHOD:: storeArgs
 
-returns::
 
 
 
@@ -46,14 +43,12 @@ METHOD:: instrArgFromControl
 
 argument:: control
 
-returns::
 
 
 
 
 METHOD:: guiClass
 
-returns::
 
 
 

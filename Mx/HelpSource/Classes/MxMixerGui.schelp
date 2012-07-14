@@ -20,7 +20,6 @@ INSTANCEMETHODS::
 
 METHOD:: writeName
 
-returns::
 
 
 
@@ -36,21 +35,18 @@ argument:: bounds
 
 argument:: showScope
 
-returns::
 
 
 
 
 METHOD:: updateButtons
 
-returns::
 
 
 
 
 METHOD:: updateFaders
 
-returns::
 
 
 
@@ -63,14 +59,12 @@ argument:: mx
 
 argument:: what
 
-returns::
 
 
 
 
 METHOD:: remove
 
-returns::
 
 
 
