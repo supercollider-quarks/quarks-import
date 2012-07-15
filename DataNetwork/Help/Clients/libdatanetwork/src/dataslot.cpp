@@ -29,6 +29,8 @@ DataSlot::DataSlot( )
 	value = 0.0;
 	stringValue = string( "" );
 	subscribed = false;
+	floatCallback.Reset();
+	stringCallback.Reset();
 }
 
 DataSlot::DataSlot( int ident, int type, const char *myLabel )
@@ -39,6 +41,8 @@ DataSlot::DataSlot( int ident, int type, const char *myLabel )
 	subscribed = false;
 	value = 0.0;
 	stringValue = string( "" );
+	floatCallback.Reset();
+	stringCallback.Reset();
 }
 
 void DataSlot::setNode( DataNode * dn )
@@ -49,11 +53,17 @@ void DataSlot::setNode( DataNode * dn )
 void DataSlot::setValue( float v )
 {
     value = v;
+    if ( floatCallback.IsSet() ){
+      floatCallback( value );
+    }
 }
 
 void DataSlot::setValue( string v )
 {
     stringValue = v;
+    if ( stringCallback.IsSet() ){
+      stringCallback( stringValue );
+    }
 }
 
 void DataSlot::set( int ident, int type, const char *myLabel )
