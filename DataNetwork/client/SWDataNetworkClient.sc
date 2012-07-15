@@ -89,11 +89,11 @@ SWDataNetworkClient : SWDataNetwork{
 	addResponders{
 		responders = [
 			OSCresponderNode( nil, '/datanetwork/announce', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.setHost( *(msg.copyToEnd( 1 )) );
 			}),
 			OSCresponderNode( host, '/datanetwork/quit', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				// could do checking of hostname and port!
 				this.lostHost( *(msg.copyToEnd( 1 )) );
 			}),
@@ -106,119 +106,120 @@ SWDataNetworkClient : SWDataNetwork{
 				if ( gui.notNil ){ gui.setInfo( msg )};
 			}),
 			OSCresponderNode( host, '/ping', { |t,r,msg,addr|
-				if ( verbose > 1, { msg.postln; });
+				//if ( verbose > 1, { msg.postln; });
+				verbose.value( 3, msg );
 				this.sendPong;
 			}),
 			OSCresponderNode( host, '/registered', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.registered_( true );				
 			}),
 			OSCresponderNode( host, '/unregistered', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.registered_( false );				
 			}),
 			OSCresponderNode( host, '/info/expected', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.addExpected( msg[1], msg[2], fromnw: true );				
 			}),
 			OSCresponderNode( host, '/info/node', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.nodeInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/info/slot', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.slotInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/info/client', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.clientInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/info/setter', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.setterInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/subscribed/node', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.subscribeNodeInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/subscribed/slot', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.subscribeSlotInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/unsubscribed/node', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.unsubscribeNodeInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/unsubscribed/slot', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.unsubscribeSlotInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/removed/node', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.removeNode( msg[1], true );
 			}),
 			OSCresponderNode( host, '/data/node', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.nodeData( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/data/slot', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.slotData( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/info/minibee', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.minibeeInfo( msg.copyToEnd( 1 ) );
 			}),
 			OSCresponderNode( host, '/mapped/minibee/output', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.mappedNode( msg[1], msg[2], 'output' );
 			}),
 			OSCresponderNode( host, '/mapped/minibee/custom', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.mappedNode( msg[1], msg[2], 'custom' );
 			}),
 			OSCresponderNode( host, '/unmapped/minibee/output', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.unmappedNode( msg[1], msg[2], 'output' );
 			}),
 			OSCresponderNode( host, '/unmapped/minibee/custom', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.unmappedNode( msg[1], msg[2], 'custom' );
 			}),
 			OSCresponderNode( host, '/mapped/minihive/output', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.mappedNode( msg[1], -1, 'output' );
 			}),
 			OSCresponderNode( host, '/mapped/minihive/custom', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.mappedNode( msg[1], -1, 'custom' );
 			}),
 			OSCresponderNode( host, '/unmapped/minihive/output', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.unmappedNode( msg[1], -1, 'output' );
 			}),
 			OSCresponderNode( host, '/unmapped/minihive/custom', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.unmappedNode( msg[1], -1, 'custom' );
 			}),
 			OSCresponderNode( host, '/configured/minibee', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.configuredBee( msg[1], msg[2] );
 			}),
 			OSCresponderNode( host, '/minihive/configuration/created', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.createdConfig( msg[1], msg.copyToEnd( 2 ) );
 			}),
 			OSCresponderNode( host, '/minihive/configuration/deleted', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.deletedConfig( msg[1], msg[2] );
 			}),
 			OSCresponderNode( host, '/minihive/configuration/saved', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.savedConfig( msg[1], msg[2] );
 			}),
 			OSCresponderNode( host, '/minihive/configuration/loaded', { |t,r,msg,addr|
-				if ( verbose > 0, { msg.postln; });
+				verbose.value( 2, msg );
 				this.loadedConfig( msg[1], msg[2] );
 			}),
 		];
