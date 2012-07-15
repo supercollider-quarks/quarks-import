@@ -106,7 +106,6 @@ SWDataNetworkClient : SWDataNetwork{
 				if ( gui.notNil ){ gui.setInfo( msg )};
 			}),
 			OSCresponderNode( host, '/ping', { |t,r,msg,addr|
-				//if ( verbose > 1, { msg.postln; });
 				verbose.value( 3, msg );
 				this.sendPong;
 			}),
@@ -309,7 +308,8 @@ SWDataNetworkClient : SWDataNetwork{
 	setData{ |id,data,fromnw=false|
 		//	var type;
 		var ret;
-		if ( verbose > 1, { [id,data].postln; } );
+		verbose.value( 2, [id,data] );
+		//	if ( verbose > 1, { [id,data].postln; } );
 		
 		ret = super.setData( id, data );
 		
@@ -347,7 +347,8 @@ SWDataNetworkClient : SWDataNetwork{
 
 	// overloaded from base class
 	removeNode{ |id,fromnw=false|
-		if ( verbose > 0, { ("remove" + id).postln; });
+		verbose.value( 2, ("remove" + id) );
+		//	if ( verbose > 0, { ("remove" + id).postln; });
 		if ( fromnw.not ){
 			this.sendMsgWithArgs( '/remove/node', [ id.asInteger] );
 		}{
