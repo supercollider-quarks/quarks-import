@@ -2,6 +2,9 @@
 Voicer {		// collect and manage voicer nodes
 			// H. James Harkins -- jamshark70@dewdrop-world.net
 
+// TEMPORARY, experimental
+	classvar <>parallelSynthGroup = false;
+
 	var	<nodes,
 		<voices,		// maximum number of voices
 		<target, <>addAction,
@@ -20,6 +23,9 @@ Voicer {		// collect and manage voicer nodes
 
 	var	<susPedalNodes, <susPedal = false;
 
+// TEMPORARY, experimental
+	var iMadeTarget = false;
+
 	*new { arg voices = 1, things, args, bus, target, addAction = \addToTail;
 			// things can be a single thing or an Array of things
 			// args can be an array of pairs [name, value, name, value...] or array of such arrays
@@ -32,6 +38,21 @@ Voicer {		// collect and manage voicer nodes
 		globalControls = IdentityDictionary.new;
 
 		target = targ.asTarget;
+		if(parallelSynthGroup) {
+			if(targ.isKindOfByName('MixerChannel')) {
+				// I need the object now
+				target = ParGroup.basicNew(targ.server, targ.server.nodeAllocator.allocPerm);
+				targ.doWhenReady {
+					// but can't add immediately
+					targ.server.sendMsg(*(target.newMsg(targ.synthgroup)));
+					iMadeTarget = true;
+				}
+			} {
+				target = ParGroup(target);
+				iMadeTarget = true;
+			};
+		};
+
 		NodeWatcher.newFrom(target.server);	// voicernodes need to watch synths on server
 
 			// using groupBusInfo might seem like a long way around,
@@ -81,7 +102,7 @@ Voicer {		// collect and manage voicer nodes
 			}
 
 				// default branch, error
-			{ "Invalid object to use as instrument. Can't build voicer.".die }
+			{ Error("%: Invalid object to use as instrument. Can't build voicer.".format(thing)).throw }
 	}
 	
 // SUPPORT METHODS FOR NODE LOCATORS:
@@ -333,7 +354,12 @@ Voicer {		// collect and manage voicer nodes
 			var synthDesc, argList, controls, cname, value,
 					// why? I want VoicerNode's initargs to override parent event defaults
 					// but keys set in the local event should take precedence
-				eventWithoutParent = currentEnvironment.copy.parent_(nil);
+				eventWithoutParent = currentEnvironment.copy.parent_(nil),
+				argsDict = IdentityDictionary.new;
+			~args = ~args.asArray;
+			~args.tryPerform(\pairsDo) { |key, value|
+				argsDict.put(key, value);
+			};
 			~args = ~nodes.collect({ |node, i|
 					// if synthdesc is available
 					// we can't assume the same synthdesc for every node
@@ -350,6 +376,8 @@ Voicer {		// collect and manage voicer nodes
 								eventWithoutParent[cname] = eventWithoutParent[cname].asArray;
 							});
 							value = eventWithoutParent[cname].wrapAt(i)
+								// ~args will not be replaced until 'collect' is over
+								?? { argsDict[cname] }
 								?? { node.initArgAt(cname) };
 								// add value: environment overrides node's initarg,
 								// which overrides the SynthDef's default
@@ -366,7 +394,8 @@ Voicer {		// collect and manage voicer nodes
 					argList = Array(~argKeys.size * 2);
 					~argKeys.do({ |c|
 						c = c.asSymbol;
-						(c.envirGet.size == 0).if({ c.envirPut(c.envirGet.asArray) });
+						if(c.envirGet.isNil) { c.envirPut(argsDict[c]) };
+						if(c.envirGet.size == 0) { c.envirPut(c.envirGet.asArray) };
 						argList.add(c).add(c.envirGet.wrapAt(i));
 					});
 					argList
@@ -470,6 +499,14 @@ Voicer {		// collect and manage voicer nodes
 		globalControls.do({ arg gc; gc.free });
 		globalControls = IdentityDictionary.new;
 		voices = nil;
+		if(iMadeTarget) {
+			target.server.nodeAllocator.freePerm(target.nodeID);
+			target.server.sendBundle(nil,
+				#[error, -1],
+				target.freeMsg,
+				#[error, -2]
+			);
+		};
 			// asClass b/c you might not have MIDI Suite installed
 			// nil.update is OK (no-op)
 		'MIDIPort'.asClass.update;	// clears VoicerMIDISocket associated with me
@@ -716,7 +753,7 @@ MonoPortaVoicer : Voicer {
 			}
 
 				// default branch, error
-			{ "Invalid object to use as instrument. Can't build voicer.".die }
+			{ Error("%: Invalid object to use as instrument. Can't build voicer.".format(thing)).throw }
 	}
 	
 	releaseNode { |node, freq, releaseGate = 0, lat = -1|
