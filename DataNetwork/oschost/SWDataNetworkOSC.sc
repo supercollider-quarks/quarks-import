@@ -536,7 +536,7 @@ SWDataNetworkOSC{
 		};
 
 		if ( ports.isNil, {
-			ports = (6000..6011) ++ (57120..57129) ++ 57000 ++ 57600;
+			ports = (6000..6011) ++ (57120..57129) ++ 57000 ++ 57600 ++ 7000;
 		});
 
 		ports = ports ++ clientPorts;
