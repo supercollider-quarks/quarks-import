@@ -25,8 +25,11 @@
 
 #include <cstdlib>
 #include <string>
+#include <cassert>
 
 #include "dataslot.h"
+
+#include "callback.hpp"
 
 using namespace std;
 
@@ -80,8 +83,11 @@ public:
 
 	DataNetwork * datanetwork;
 
+	cb::Callback2<void, int, float *> floatCallback;
+	cb::Callback2<void, int, string *> stringCallback;
 
   private:
+
 	bool subscribed;
 	bool setter;
 	int id;

@@ -24,6 +24,9 @@
 #define DATANETWORKDATASLOT_H
 
 #include <string>
+#include <cassert>
+
+#include "callback.hpp"
 
 using namespace std;
 
@@ -61,6 +64,9 @@ public:
 
 	int getID();
 	bool isSubscribed();
+      
+	cb::Callback1<void, float> floatCallback;
+	cb::Callback1<void, string> stringCallback;
 
   private:
 	int id;

@@ -20,15 +20,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/// TODO: access data in datanode/dataslot!
-
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <iostream>
 #include <cstdlib>
+
+
 
 /// this is the only file we need to include to interact with the datanetwork
 #include "datanetwork.h"
@@ -37,6 +36,23 @@ using namespace std;
 
 /// this is the namespace used by the datanetwork classes
 using namespace SWDataNetwork;
+
+void printMyData( int size, float * data ){
+  printf( "callback function: " );
+  for( int i=0; i<size; i++ ){
+      printf( "%f, ", data[i] );
+  }
+  printf( "\n" );
+}
+
+void printMyFloat( float data ){
+  printf( "callback function: " );
+  printf( "%f", data );
+//   for( int i=0; i<size; i++ ){
+//       printf( "%f, ", data[i] );
+//   }
+  printf( "\n" );
+}
 
 int main(int argc, char *argv[])
 {
@@ -87,7 +103,7 @@ int main(int argc, char *argv[])
 // subscribe to a node, so data is always received when it is changed:
   dn->subscribeNode( 5, true );
 // subscribe to a slot, so data is always received when it is changed (doesn't really make sense if you are already subscribed to the full node, you should only use it when you only need one specific slot of a node):
-  dn->subscribeSlot( 5, 1, true );
+//   dn->subscribeSlot( 5, 1, true );
 
     sleep( 1 );
   
@@ -95,6 +111,10 @@ int main(int argc, char *argv[])
    node2 = dn->getNode( 5 );
    if ( node2 != NULL ){
     float * nodeData = node2->getData(); // use getStringData() if the node's type is a string
+    
+    node2->floatCallback = printMyData;
+    node2->getSlot( 1 )->floatCallback = printMyFloat;
+
     for ( int i=0; i<node2->size(); i++ ){
 	printf( "Node 5, slot %i, value %f\n", i, nodeData[i] );
     }
@@ -120,10 +140,22 @@ float dummydata[] =  {0.1, 0.3, 0.4, 0.5, 0.6};
 
 	// get a reference to the node:
    node = dn->getNode( 4 );
+      
 	// set data to the node:
    node->setData( 5, dummydata);
 	// send the data to the network:
 	node->send( true );
+
+		sleep( 3 );
+float dummydata2[] =  {0.4, 0.34, 0.4, 0.2, 0.6};
+   node->setData( 5, dummydata2);
+	node->send( true );
+
+  sleep( 5 );
+  printf( "removing the node\n" );
+
+// remove a node from the network
+  dn->removeNode( 4, true );
 
 /// mapping a datanode to a minibee
 		// create a node:
@@ -140,16 +172,6 @@ float dummydata8[] =  {1};
    node->send( true );
 /// end mapping datanode to minibee
 
-	sleep( 3 );
-float dummydata2[] =  {0.4, 0.34, 0.4, 0.2, 0.6};
-   node->setData( 5, dummydata2);
-	node->send( true );
-
-  sleep( 5 );
-  printf( "removing the node\n" );
-
-// remove a node from the network
-  dn->removeNode( 4, true );
 
   sleep( 5 );
 

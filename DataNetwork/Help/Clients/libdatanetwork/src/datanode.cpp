@@ -39,7 +39,10 @@ DataNode::DataNode( int ident, const char *myLabel )
 	data = NULL;
 	stringData = NULL;
 	dataSlots = NULL;
+	floatCallback.Reset();
+	stringCallback.Reset();
 }
+
 
 /**
   Get a pointer to the data of the node. Copy this if you need to process it further in another thread.
@@ -68,6 +71,9 @@ void DataNode::setData( int size, float * indata )
 		dataSlots[i].setValue( indata[i] );
 // 		printf( "setData %i, %f\n", i, data[i] );
 	}
+	if ( floatCallback.IsSet() ){
+  	  floatCallback( size, data );
+  	}
 }
 
 /**
@@ -80,6 +86,9 @@ void DataNode::setData( int size, string * indata )
 		stringData[i] = indata[i];
 		dataSlots[i].setValue( indata[i] );
 	}
+ 	if ( stringCallback.IsSet() ){
+ 	  stringCallback( size, stringData );
+ 	}
 }
 
 /**
