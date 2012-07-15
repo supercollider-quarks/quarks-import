@@ -114,6 +114,24 @@ int main(int argc, char *argv[])
     
     node2->floatCallback = printMyData;
     node2->getSlot( 1 )->floatCallback = printMyFloat;
+    
+    /**
+    If you want to call a method of a class, do the following:
+    
+    struct MyClass
+    {
+      void DataNodeCallback(int size, float * data){};
+      void DataSlotCallback(float data){};
+      
+      void DataNodeCallbackString(int size, string * data){};
+      void DataSlotCallbackString(string data){};
+    };
+    
+    MyClass myInstance
+    
+    node2->floatCallback.Reset(&myInstance, &MyClass::DataNodeCallback);
+    node2->getSlot( 1 )->floatCallback.Reset(&myInstance, &MyClass::DataSlotCallback);
+    **/
 
     for ( int i=0; i<node2->size(); i++ ){
 	printf( "Node 5, slot %i, value %f\n", i, nodeData[i] );
