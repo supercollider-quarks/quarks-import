@@ -64,9 +64,8 @@ public:
 
 	int getID();
 	bool isSubscribed();
-      
-	cb::Callback1<void, float> floatCallback;
-	cb::Callback1<void, string> stringCallback;
+
+	cb::Callback1<void, DataSlot*> slotCallback;
 
   private:
 	int id;

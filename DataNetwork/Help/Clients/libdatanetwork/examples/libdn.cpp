@@ -37,10 +37,10 @@ using namespace std;
 /// this is the namespace used by the datanetwork classes
 using namespace SWDataNetwork;
 
-void printMyData( int size, float * data ){
+void printMyData( DataNode * dn ){
   printf( "callback function: " );
-  for( int i=0; i<size; i++ ){
-      printf( "%f, ", data[i] );
+  for( int i=0; i<dn->size(); i++ ){
+      printf( "%f, ", dn->getData()[i] );
   }
   printf( "\n" );
 }
@@ -112,8 +112,8 @@ int main(int argc, char *argv[])
    if ( node2 != NULL ){
     float * nodeData = node2->getData(); // use getStringData() if the node's type is a string
     
-    node2->floatCallback = printMyData;
-    node2->getSlot( 1 )->floatCallback = printMyFloat;
+    node2->nodeCallback = printMyData;
+//     node2->getSlot( 1 )->floatCallback = printMyFloat;
     
     /**
     If you want to call a method of a class, do the following:
@@ -193,6 +193,9 @@ float dummydata8[] =  {1};
 
   sleep( 5 );
 
+//  dn>osc->removeAll();
+//   dn>osc->unsubscribeAll();
+  
   printf( "unregistering\n" );
 // unregister from the host:
   dn->unregisterMe();

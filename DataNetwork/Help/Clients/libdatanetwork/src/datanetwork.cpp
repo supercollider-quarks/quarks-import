@@ -227,8 +227,11 @@ void DataNetwork::labelSlot( int id, int sid, const char *label, bool waitForReg
 */
 void DataNetwork::subscribeNode( int id, bool waitForRegister )
 {
+	if ( !nodeExists( id ) ){
+		addNode( id, "" );
+	}
 	if ( waitForRegister ){
-		checkRegistered();	
+		checkRegistered();
 	}
 	osc->subscribeNode( id );
 }
@@ -238,8 +241,11 @@ void DataNetwork::subscribeNode( int id, bool waitForRegister )
 */
 void DataNetwork::subscribeSlot( int id, int sid, bool waitForRegister )
 {
+	if ( !nodeExists( id ) ){
+		addNode( id, "" );
+	}
 	if ( waitForRegister ){
-		checkRegistered();	
+		checkRegistered();
 	}
 	osc->subscribeSlot( id, sid );
 }
@@ -250,7 +256,7 @@ void DataNetwork::subscribeSlot( int id, int sid, bool waitForRegister )
 void DataNetwork::unSubscribeNode( int id, bool waitForRegister )
 {
 	if ( waitForRegister ){
-		checkRegistered();	
+		checkRegistered();
 	}
 	osc->unSubscribeNode( id );
 }
@@ -261,7 +267,7 @@ void DataNetwork::unSubscribeNode( int id, bool waitForRegister )
 void DataNetwork::unSubscribeSlot( int id, int sid, bool waitForRegister )
 {
 	if ( waitForRegister ){
-		checkRegistered();	
+		checkRegistered();
 	}
 	osc->unSubscribeSlot( id, sid );
 }
@@ -412,7 +418,7 @@ void DataNetwork::refreshNodeSettings()
 void DataNetwork::sendData( int id, int size, float data[], bool waitForRegister )
 {
 	if ( waitForRegister ){
-		checkRegistered();	
+		checkRegistered();
 	}
 	osc->setData( id, size, data );
 }

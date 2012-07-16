@@ -83,8 +83,7 @@ public:
 
 	DataNetwork * datanetwork;
 
-	cb::Callback2<void, int, float *> floatCallback;
-	cb::Callback2<void, int, string *> stringCallback;
+  cb::Callback1<void, DataNode*> nodeCallback;
 
   private:
 
