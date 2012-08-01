@@ -97,16 +97,17 @@ a.valueAction_(['bass', 'unhip', 'umpahTuba'])
 (
 var w= Window("popuptreemenu - state", Rect(400, 400, 300, 100)).front;
 a= PopUpTreeMenu.new(w, Rect(10, 20, 200, 34))
-	.tree_(('aaa': (), 'bbb': (), 'ccc': ('123': (), '456': (), '789': ('hier': ()))))
-	.font_(Font("Arial", 24))
-	.background_(Color.red(1))
-	.hiliteColor_(Color.red(0.75))
-	.stringColor_(Color.red(0.5));
-Routine.run{while({w.isClosed.not}, {{
-	("path:"++a.currentPath).post;
-	(" leaf:"++a.currentLeaf).post;
-	(" value:"++a.value).postln;
-}.defer; 0.4.wait})}
+    .tree_(('aaa': (), 'bbb': (), 'ccc': ('123': (), '456': (), '789': ('hier': ()))))
+    .font_(Font("Arial", 24))
+    .background_(Color.red(1))
+    .hiliteColor_(Color.red(0.75))
+    .stringColor_(Color.red(0.5));
+Routine({while({w.isClosed.not}, {
+    ("path:"++a.currentPath).post;
+    (" leaf:"++a.currentLeaf).post;
+    (" value:"++a.value).postln;
+	0.4.wait;
+})}).play(AppClock);
 )
 //--changing position and font while active
 a.value_(['aaa'])

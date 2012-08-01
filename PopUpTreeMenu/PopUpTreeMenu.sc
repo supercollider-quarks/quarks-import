@@ -1,5 +1,7 @@
 //redFrik
 
+//--changes120801
+//qt fix by wouter snoei
 //--changes110923
 //bugfix for osx 10.6: make sure no windows hidden behind another
 //--changes100727
@@ -193,7 +195,14 @@ PopUpTreeMenu : SCViewHolder {
 				});
 				z;
 			};
-			hgt= "".bounds(font).height+3;
+			hgt= "".bounds(font).height;
+			if(GUI.id!==\qt, {
+				hgt= hgt+3;
+			}, {
+				if(font.size==9 and:{font.name=="Monaco" or:{font.name=="Geneva"}}, {
+					hgt= hgt+1;
+				});
+			});
 			if(addy.size==0, {
 				newWidth= bounds.width;				//force root level width to listview
 			}, {
@@ -201,6 +210,7 @@ PopUpTreeMenu : SCViewHolder {
 				bounds= bounds.moveBy(bounds.width, listView.value*hgt)
 			});
 			bounds= bounds.resizeTo(newWidth, keys.size*hgt);
+			if(GUI.id===\qt, {bounds= bounds.resizeBy(0, 4)});
 			screenBounds= this.prToScreen(bounds);
 			if(screenBounds.top<0, {				//check if submenu below screen bottom
 				bounds= bounds.moveBy(0, screenBounds.top);
