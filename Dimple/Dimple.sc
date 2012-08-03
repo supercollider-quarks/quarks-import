@@ -101,7 +101,7 @@ DimpleThing {
 	}
 
 	oscPath{ |property|
-		^("/world"+/+name+/+property.asString)
+		^("/world" ++ "/" ++ name ++ "/" ++ property.asString)
 	}
 
 	set{ |property,val|
@@ -114,7 +114,7 @@ DimpleThing {
 	}
 
 	get{ |property,interval|
-		var msg = [this.oscPath(property) +/+ "get"] ++ interval;
+		var msg = [this.oscPath(property) ++ "/" ++ "get"] ++ interval;
 		dimple.addr.sendMsg( *msg );
 		this.addOSCresponder( property );
 	}
@@ -173,7 +173,7 @@ DimpleWorld : DimpleThing{
 	}
 
 	oscPath{ |property|
-		^("/world"+/+property.asString)
+		^("/world" ++ "/" ++ property.asString)
 	}
 
 	drop{ 
@@ -238,7 +238,7 @@ DimpleConstraint : DimpleThing {
 		this.initProps;
 		name = type.asString++lastid;
 		lastid = lastid + 1;
-		msg = [ "/world" +/+ type +/+ "create", name, objectA.name, objectB.name  ] ++ argVector;
+		msg = [ "/world" ++ "/" ++ type ++ "/" ++ "create", name, objectA.name, objectB.name  ] ++ argVector;
 		dimple.addr.sendMsg( *msg );
 		//		this.dump;
 		objectA.addConstraint( this );
@@ -252,7 +252,7 @@ DimpleConstraint : DimpleThing {
 
 	destroy{ |osc=true|
 		if ( osc ){
-			dimple.addr.sendMsg( "/world"+/+name+/+"destroy" );
+			dimple.addr.sendMsg( "/world" ++ "/" ++ name ++ "/" ++ "destroy" );
 		};
 		this.removeResponders;
 		dimple.world.removeConstraint( this );
@@ -287,12 +287,12 @@ DimpleObject : DimpleThing {
 	}
 
 	grab{
-		addr.sendMsg( "/world"+/+name+/+"grab" );
+		addr.sendMsg( "/world" ++ "/" ++ name ++ "/" ++ "grab" );
 	}
 
 	destroy{ |osc=true|
 		if ( osc ){
-			addr.sendMsg( "/world"+/+name+/+"destroy" );
+			addr.sendMsg( "/world" ++ "/" ++ name ++ "/" ++ "destroy" );
 		};
 		this.removeResponders;
 		dimple.world.removeObject( this );
