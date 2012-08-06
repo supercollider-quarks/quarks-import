@@ -69,6 +69,7 @@ SWPlotterMonitor{
 	}
 
 	start{
+		if( plotter.parent.isNil ) { plotter.makeWindow };
 		monitor.start;
 	}
 
