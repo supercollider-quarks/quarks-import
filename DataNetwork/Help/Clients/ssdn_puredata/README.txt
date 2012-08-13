@@ -1,3 +1,6 @@
+For detailed installation information, look at http://docs.sensestage.eu/puredata-installation-and-general-usage
+
+
 Sense Stage Documentation: Pure Data client
 2009-12-15
 Joseph Thibodeau
@@ -16,3 +19,12 @@ Here is what you need to know in order to use the Pure Data patches for interact
 
 3. Going further
 - Using "dn.makenode" and "dn.node" objects in a custom patch, you can get data from any node for which you know the ID number, and you can publish any data you like by making your own node. You can even take data from a node, process it using your Pd skills, and publish the output using a "dn.makenode" object --- then other clients in any of the supported languages (max/MSP, processing, C++, Pd, SuperCollider) can use your processed data for further processing. Have fun and be safe!
+
+
+-------------
+MiniHiveOsc pd patch
+
+This patch shows a simple example of how to interact with minihiveosc.py for interaction with a Sense/Stage MiniBee network, without using the SenseWorld DataNetwork.
+
+---
+(c) 2012 - Marije Baalman
