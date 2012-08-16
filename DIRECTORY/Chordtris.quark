@@ -1,0 +1,25 @@
+(
+// required:
+    \name:           "Chordtris",
+Ê Ê \path: Ê Ê Ê Ê Ê "Chordtris", // almost always the same as the quark name
+Ê Ê \summary: Ê Ê Ê Ê"Musical Tetris Clone",
+Ê Ê \author: Ê Ê Ê Ê "David Hofmann",
+
+// optional:
+Ê Ê \version: Ê Ê Ê Ê1.0, // must be a float
+Ê Ê \organization: Ê "HfM Karlsruhe",
+Ê Ê \country: Ê Ê Ê Ê"Germany",
+Ê Ê \since: Ê Ê Ê Ê Ê"2012",
+Ê Ê \schelp: Ê Ê Ê Ê "Other/Chordtris",
+Ê Ê \ext_dependancy: "Requires the wslib Quark.",
+Ê Ê \url: Ê Ê Ê Ê Ê Ê"http://www.davehofmann.de/",
+
+// If the quark depends on other quarks, you can specify it as a list containing:
+// (1) strings (just the quark name)
+Ê Ê \dependencies: Ê ["wslib"]
+// (2) key->value pairs (name->version)
+// Ê\dependencies: Ê [("nameOfDependantQuark" -> 1.0)]
+// or (3) arrays with info in this order: [name, version, repositoryBaseUrl]
+// Ê\dependencies: Ê [["nameOfDependantQuark", 1.0, "https://svn.weirdserver.be/trunk/weirdquarks"]]
+
+)
