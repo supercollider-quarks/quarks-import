@@ -361,16 +361,16 @@ ChordtrisEngine
 			if(isPaused.not)
 			{
 				case
-				{ unicode == 63235} { // cursor right
+				{ keycode == 124} { // cursor right
 					this.goRight;
 				}
-				{ unicode == 63234} { // cursor left
+				{ keycode == 123} { // cursor left
 					this.goLeft;
 				}
-				{ unicode == 63232} { // cursor up
+				{ keycode == 126} { // cursor up
 					this.rotateRight;
 				}
-				{ unicode == 63233} { // cursor down
+				{ keycode == 125} { // cursor down
 					this.fall;
 				}
 			};
