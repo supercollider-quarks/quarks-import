@@ -6,6 +6,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+120820 - bugfix memory leak in RedParticleSystem - thanks d. kolokol
 111004 - added examples 013, 017, 046, 161
 	changed envelope in ex 004 from kr to ar
 	changed example 160 to animate instead of play

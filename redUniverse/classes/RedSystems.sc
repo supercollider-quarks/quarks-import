@@ -33,7 +33,11 @@ RedParticleSystem : RedObjectSystem {
 		objects= objects.select{|o|
 			o.update;
 			o.world.contain(o);
-			if(o.alive.not, {this.removeAction.value(o); false}, {true});
+			if(o.alive.not, {
+				this.removeAction.value(o);
+				o.world.remove(o);
+				false;
+			}, {true});
 		};
 	}
 	alive {^objects.size>0}
