@@ -92,7 +92,10 @@ Chordtris
 	
 	*newGame {
 		if(instance.isNil) {
-			instance = Chordtris.new;
+			// boot server if not booted already and create new game instance
+			Server.default.waitForBoot({
+				instance = Chordtris.new;
+			});
 		} {
 			instance.newGame;
 		}
