@@ -4,14 +4,15 @@ ChordtrisPreferences {
 	classvar preferences;
 	
 	// the Chordtris library folder
-	classvar libraryFolder;
+	classvar preferenceFolder;
 	
 	// the path to the file
 	classvar preferenceFile;
 	
 	*initClass {
-		libraryFolder = "~/Library/Application\ Support/Chordtris".standardizePath;
-		preferenceFile = libraryFolder ++ "/preferences.ct";
+		//libraryFolder = "~/Library/Application\ Support/Chordtris".standardizePath;
+		preferenceFolder = Platform.userAppSupportDir;
+		preferenceFile = preferenceFolder +/+ "Chordtris.preferences";
 	}
 		
 	*getPreferences {
@@ -30,7 +31,7 @@ ChordtrisPreferences {
 		var valueMap;
 		
 		// check if the application support folder exists
-		if(File.exists(libraryFolder).not) {
+		if(File.exists(preferenceFolder).not) {
 			^loadedPreferences;
 		};
 		
@@ -58,8 +59,8 @@ ChordtrisPreferences {
 	*savePreferences {
 		var file;
 		var mapToSave = Dictionary.new;
-		if(File.exists(libraryFolder).not) {
-			File.mkdir(libraryFolder);
+		if(File.exists(preferenceFolder).not) {
+			File.mkdir(preferenceFolder);
 		};
 		
 		file = File.open(preferenceFile, "w");
