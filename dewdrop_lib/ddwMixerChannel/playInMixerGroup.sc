@@ -93,9 +93,20 @@
 	}
 	
 	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
-		^this.asSynthDef.play((target ?? { gc.server }).asTarget,
+		var result, def, updateFunc;
+		def = this.asSynthDef;
+		result = def.play((target ?? { gc.server }).asTarget,
 			args ++ [\i_out, gc.bus.index, \out, gc.bus.index, \outbus, gc.bus.index],
 			addAction);
+		updateFunc = { |node, msg|
+			if(msg == \n_end) {
+				node.removeDependant(updateFunc);
+				target.server.sendMsg(\d_free, def.name);
+			};
+		};
+		NodeWatcher.register(result);
+		result.addDependant(updateFunc);
+		^result
 	}
 }
 
