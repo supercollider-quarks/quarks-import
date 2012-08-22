@@ -69,6 +69,8 @@ GlobalControlBase : AbstractFunction {
 	silentValue_ { |val|
 		value = val;
 	}
+
+	unmappedValue { ^spec.unmap(value) }
 	
 	free { arg updateGUI = true;
 		var	oldAutoNode = autoSynth, updater,
@@ -82,6 +84,7 @@ GlobalControlBase : AbstractFunction {
 					};
 				};
 				bus = nil;
+				server = nil;
 			};
 		server !? {
 			this.stopWatching.stopAuto;
@@ -99,7 +102,6 @@ GlobalControlBase : AbstractFunction {
 			} {
 				freeBusFunc.value
 			};
-			server = nil;
 			this.changed((what: \modelWasFreed, resync: true));
 		}
 	}
