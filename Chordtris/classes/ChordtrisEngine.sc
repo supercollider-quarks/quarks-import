@@ -137,15 +137,15 @@ ChordtrisEngine
 		chordtris.window.onClose_{
 			updateTask.stop;
 			soundModule.stopMusic;
-			chordtris.pauseItem.enabled_(false);
-			chordtris.resumeItem.enabled_(false);
+			chordtris.setPauseMenuItemEnabled(false);
+			chordtris.setResumeMenuItemEnabled(false);
 			chordtris.unregisterInstance;
 		};
 	}
 	
 	resetMenu {
-		chordtris.pauseItem.enabled_(true);
-		chordtris.resumeItem.enabled_(false);
+		chordtris.setPauseMenuItemEnabled(true);
+		chordtris.setResumeMenuItemEnabled(false);
 	}
 	
 	
@@ -189,8 +189,8 @@ ChordtrisEngine
 	pause {
 		updateTask.pause;
 		isPaused = true;
-		chordtris.pauseItem.enabled_(false);
-		chordtris.resumeItem.enabled_(true);
+		chordtris.setPauseMenuItemEnabled(false);
+		chordtris.setResumeMenuItemEnabled(true);
 		soundModule.pauseMusic;
 		soundModule.playPauseSound;
 	}
@@ -198,8 +198,8 @@ ChordtrisEngine
 	resume { |playSound = true|
 		updateTask.resume;
 		isPaused = false;
-		chordtris.pauseItem.enabled_(true);
-		chordtris.resumeItem.enabled_(false);
+		chordtris.setPauseMenuItemEnabled(true);
+		chordtris.setResumeMenuItemEnabled(false);
 		if(playSound) { soundModule.playPauseSound; };
 		soundModule.resumeMusic;
 	}
@@ -272,7 +272,7 @@ ChordtrisEngine
 		soundModule.stopMusic;
 		soundModule.playGameOverSound;
 		currentBrick = nil;
-		{ chordtris.pauseItem.enabled_(false); }.defer;
+		chordtris.setPauseMenuItemEnabled(false);
 		gameOver = true;
 	}
 	

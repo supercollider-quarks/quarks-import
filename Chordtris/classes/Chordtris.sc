@@ -57,7 +57,11 @@ Chordtris
 	
 	*new { ^super.new.init }
 	
-	*initClass { StartUp.add { this.createMenu } }
+	*initClass {
+		if(Platform.ideName == "scapp") {
+			StartUp.add { this.createMenu }
+		}
+	}
 	
 	*createMenu {
 		var menuGroup, startItem, preferencesItem, helpItem;
@@ -82,10 +86,7 @@ Chordtris
 		
 		//var menuGroup = SCMenuGroup(nil, "Help", 14);
 		helpItem = SCMenuItem(menuGroup, "Help");
-		helpItem.action_ {
-			//HelpBrowser.goTo(Platform.helpDir +/+ "Help.html");
-			HelpBrowser.goTo(SCDoc.helpTargetDir +/+ "Other" +/+ "Chordtris.html");
-		};
+		helpItem.action_ { this.help };
 		helpItem.setShortCut("D");
 		
 	}
@@ -113,6 +114,11 @@ Chordtris
 		ChordtrisPreferenceDialog.new;
 	}
 	
+	*help {
+		//HelpBrowser.goTo(Platform.helpDir +/+ "Help.html");
+		HelpBrowser.goTo(SCDoc.helpTargetDir +/+ "Other" +/+ "Chordtris.html");
+	}
+	
 	init
 	{
 		this.initWindow;
@@ -124,12 +130,12 @@ Chordtris
 		instance = nil;
 	}
 	
-	pauseItem {
-		^pauseItem;
+	setPauseMenuItemEnabled { |enabled|
+		if(pauseItem.notNil) { { pauseItem.enabled_(enabled) }.defer };
 	}
 	
-	resumeItem {
-		^resumeItem;
+	setResumeMenuItemEnabled { |enabled|
+		if(resumeItem.notNil) { { resumeItem.enabled_(enabled) }.defer };
 	}
 	
 	newGame {
