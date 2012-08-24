@@ -41,7 +41,7 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 	}
 	
 	release { |gate = 0, latency, freq|
-		voicer.lastFreqs.remove(freq);
+		voicer.lastFreqs.remove(freq ?? { frequency });
 		super.release(gate, latency, freq);
 	}
 }
@@ -93,7 +93,7 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 	}
 
 	release { |gate = 0, latency, freq|
-		voicer.lastFreqs.remove(freq);
+		voicer.lastFreqs.remove(freq ?? { frequency });
 		super.release(gate, latency, freq);
 	}
 }
