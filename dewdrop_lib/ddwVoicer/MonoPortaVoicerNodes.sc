@@ -27,7 +27,7 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 			});
 			target.server.listSendBundle(myLastLatency = latency, bundle);
 			frequency = freq;	// save frequency for Voicer.release
-//			lastTrigger = Main.elapsedTime;	// save time
+			voicer.lastFreqs.add(freq);
 			lastTrigger = thisThread.seconds;  // clock.beats2secs(thisThread.clock.beats);
 			isPlaying = true;
 			isReleasing = false;
