@@ -154,8 +154,10 @@ RedToolsMenu {
 	//--add tools to Library menu (osx only) to open with cmd+r shortcut
 	*listToMenuLibrary {
 		Platform.case(\osx, {
-			list.pairsDo{|x, y| CocoaMenuItem.add(([\redTools]++x).collect{|x| x.asString}, y)};
-			CocoaMenuItem.add(["redToolsMenu"], {RedToolsMenu.makeWindow}).setShortCut("r", false, false);
+			if(GUI.id==\cocoa, {
+				list.pairsDo{|x, y| CocoaMenuItem.add(([\redTools]++x).collect{|x| x.asString}, y)};
+				CocoaMenuItem.add(["redToolsMenu"], {RedToolsMenu.makeWindow}).setShortCut("r", false, false);
+			});
 		});
 	}
 	
