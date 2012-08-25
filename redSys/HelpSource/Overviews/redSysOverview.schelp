@@ -168,6 +168,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 120825:
+//fix crashing bug in RedToolsMenu under qt
 //--changes 120608:
 //many gui windows did not show under sc3.5 cocoa osx due to alpha channel bug.  now fixed
 //--changes 120317:
