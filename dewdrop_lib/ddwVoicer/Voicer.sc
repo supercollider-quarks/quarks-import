@@ -18,7 +18,7 @@ Voicer {		// collect and manage voicer nodes
 		<proxy,				// my proxy for voicer processes
 
 		<>latency = nil,	// node latency; can be overridden at trigger time
-		
+
 		<>clock;
 
 	var	<susPedalNodes, <susPedal = false;
@@ -31,7 +31,7 @@ Voicer {		// collect and manage voicer nodes
 			// args can be an array of pairs [name, value, name, value...] or array of such arrays
 		^super.new.init(voices, things, args, bus, target, addAction);
 	}
-	
+
 	init { arg v, th, ar, b, targ, addAct;
 		var args, lcm;		// for initializing nodes
 
@@ -63,9 +63,9 @@ Voicer {		// collect and manage voicer nodes
 		}, {
 			bus = b ? Bus.new(\audio, 0, 1, target.server);
 		});
-		
+
 		addAction = addAct;
-		
+
 		voices = (v ? 1).max(1);		// must have at least one node
 			// convert initial args to array of arrays
 		ar.isNil.if({ ar = [] });
@@ -89,37 +89,37 @@ Voicer {		// collect and manage voicer nodes
 
 		susPedalNodes = IdentitySet.new;
 	}
-	
+
 	makeNode { arg thing, args, defname;
 			// strings/symbols: treat as defname
 		case
 			{ thing.isString or: { thing.isSymbol } } {
 				^SynthVoicerNode.new(thing, args, bus, target, addAction, this, defname);
 			}
-			
-			{ thing.isKindOf(Instr) } {
+
+			{ thing.isKindOf(Instr) or: { thing.class.name == 'WrapInstr' } } {
 				^InstrVoicerNode.new(thing, args, bus, target, addAction, this, defname);
 			}
 
 				// default branch, error
 			{ Error("%: Invalid object to use as instrument. Can't build voicer.".format(thing)).throw }
 	}
-	
+
 // SUPPORT METHODS FOR NODE LOCATORS:
 	nonplaying {	// returns all nonplaying nodes, (or if none, an array containing earliest node)
 		var n;
 		n = nodes.select({ arg n; n.reserved.not });
 		(n.size > 0).if({ ^n }, { ^[ this.earliest ] });
 	}
-	
+
 	playingNodes {
 		^nodes.select(_.isPlaying)
 	}
-	
+
 	earliest {	// earliest triggered node
 		^nodes.copy.sort({ arg a, b; a.lastTrigger < b.lastTrigger }).at(0)
 	}
-	
+
 	latest {
 		^nodes.copy.sort({ arg a, b; a.lastTrigger > b.lastTrigger }).at(0)
 	}
@@ -148,8 +148,8 @@ Voicer {		// collect and manage voicer nodes
 			node = this.perform(stealer).reserved_(true);
 		});
 	}
-		
-	
+
+
 // NODE LOCATORS:
 // to choose one, do yourVoicer.stealer_( a symbol == the method name )
 	strictCycle {
@@ -161,7 +161,7 @@ Voicer {		// collect and manage voicer nodes
 		});
 		^strictCycRout.next
 	}
-	
+
 	cycle {
 			// returns next non-playing item in nodes
 			// if all nodes playing, returns earliest triggered
@@ -181,7 +181,7 @@ Voicer {		// collect and manage voicer nodes
 		});
 		^cycleRout.next
 	}
-	
+
 	random {
 			// returns a random non-playing node
 		var n;
@@ -191,17 +191,17 @@ Voicer {		// collect and manage voicer nodes
 			{ ^this.earliest }		// otherwise, give earliest triggered node
 		);
 	}
-	
+
 	preferEarly {
 			// find first non-playing node -- THE DEFAULT METHOD
 		^this.nonplaying.sort({ arg a, b; a.lastTrigger < b.lastTrigger }).at(0)
 	}
-	
+
 	preferLate {
 			// find last non-playing node
 		^this.nonplaying.sort({ arg a, b; a.lastTrigger > b.lastTrigger }).at(0)
 	}
-	
+
 // PLAYING/RELEASING METHODS:
 // trigger plays, release kills a node by frequency, gate starts and schedules the release
 		// lat -1 means use value defined in the voicer
@@ -220,12 +220,12 @@ Voicer {		// collect and manage voicer nodes
 			^nil
 		});
 	}
-	
+
 		// trigger one or many
 	trigger { arg freq, gate = 1, args, lat = -1;
 		var bundle, node, nodecoll;
 		(lat ? 0).isNegative.if({ lat = latency });
-		(freq.size > 0).if({ 
+		(freq.size > 0).if({
 				// if many freqs, convert args to array of arrays if it's not already
 			args.isNil.if({ args = [] });
 			args.at(0).respondsTo(\wrapAt).not.if({ args = [args] });
@@ -241,20 +241,20 @@ Voicer {		// collect and manage voicer nodes
 		}, {
 			^this.trigger1(freq, gate, args, lat);
 		});
-	}		
-	
+	}
+
 	gate1 { arg freq, dur, gate = 1, args, lat = -1;
 			// play & schedule release for 1 note
 		var node, synth;
 		(lat ? 0).isNegative.if({ lat = latency });
 		node = this.trigger1(freq, gate, args, lat);
 		synth = node.synth;
-		(clock ? thisThread.clock).sched(dur, { 
+		(clock ? thisThread.clock).sched(dur, {
 			node.release(0, lat, freq)
 		});
 		^node
 	}
-	
+
 		// gate one or many
 	gate { arg freq, dur, gate = 1, args, lat = -1;
 		var nodecoll;
@@ -274,7 +274,7 @@ Voicer {		// collect and manage voicer nodes
 			^this.gate1(freq, dur, gate, args, lat)
 		});
 	}
-	
+
 		// release a specific VoicerNode object
 		// especially useful in Events
 	releaseNode { |node, freq, releaseGate = 0, lat = -1|
@@ -291,7 +291,7 @@ Voicer {		// collect and manage voicer nodes
 			this.releaseNode(node, freq, 0, lat);
 		});
 	}
-	
+
 	release { arg freq, lat = -1;
 		var node, nodecoll;
 		(freq.size > 0).not.if({
@@ -300,17 +300,17 @@ Voicer {		// collect and manage voicer nodes
 			freq.do({ arg f; this.release1(f, lat) });
 		});
 	}
-	
+
 	releaseAll { |lat|
 		nodes.do({ arg n; n.release(latency: lat) });
 		susPedalNodes = IdentitySet.new;
 	}
-	
+
 // suspednodes?
 	releaseNow1 { arg freq, sec;
 		^this.firstNodeFreq(freq).releaseNow(sec);
 	}
-	
+
 	releaseNow { arg freq, sec;
 		var node;
 		(freq.size > 0).not.if({
@@ -319,11 +319,11 @@ Voicer {		// collect and manage voicer nodes
 			^freq.collect({ arg f; this.release1(f, sec) });
 		});
 	}
-	
+
 // CONVENIENCE: Apply methods to many nodes
 	set { arg args, lat;
 		var bus, ar;	// bus holder used in loops, argument sub-collection
-		
+
 		(lat ? 0).isNegative.if({ lat = latency });
 
 		args = args.clump(2);	// group in pairs
@@ -331,7 +331,7 @@ Voicer {		// collect and manage voicer nodes
 			// do global-mapped controls
 			// if globalControls dict returns non-nil for this name, then it's mapped
 		ar = args.select({ arg a; globalControls.at(a.at(0).asSymbol).notNil });
-		
+
 			// set the buses to the associated values
 		ar.do({ arg a; globalControls.at(a.at(0).asSymbol).set(a.at(1), true, lat); });
 
@@ -342,13 +342,13 @@ Voicer {		// collect and manage voicer nodes
 			// node's responsibility to check if it's loaded
 		nodes.do({ arg n; n.set(ar, lat); });
 	}
-	
+
 		// apply to initArgs within nodes
 		// does not affect currently playing nodes, only new ones
 	setArgDefaults { arg args;
 		nodes.do({ |n| n.setArgDefaults(args); });
 	}
-	
+
 	setArgsInEvent { |event|
 		var	build = {
 			var synthDesc, argList, controls, cname, value,
@@ -376,7 +376,6 @@ Voicer {		// collect and manage voicer nodes
 								eventWithoutParent[cname] = eventWithoutParent[cname].asArray;
 							});
 							value = eventWithoutParent[cname].wrapAt(i)
-								// ~args will not be replaced until 'collect' is over
 								?? { argsDict[cname] }
 								?? { node.initArgAt(cname) };
 								// add value: environment overrides node's initarg,
@@ -409,7 +408,7 @@ Voicer {		// collect and manage voicer nodes
 		});
 		^event
 	}
-	
+
 	target_ { |targ|
 		var	groupbus;
 			// check for mixerchannel
@@ -424,7 +423,7 @@ Voicer {		// collect and manage voicer nodes
 			n.bus = bus;
 		})
 	}
-	
+
 	sustainPedal { |sustain|
 		susPedal = sustain ?? { susPedal.not };
 			// do I need to fix the array here?
@@ -436,11 +435,15 @@ Voicer {		// collect and manage voicer nodes
 
 	mapGlobal { arg name, bus, value, spec, allowGUI = true; // maps name to a kr bus in every node
 		var	gc;
-		globalControls.put(name, gc = VoicerGlobalControl.new(name, bus, this,
-			value ? 0, spec, allowGUI));
-		^gc		// so user can reference this gc directly
+		if(globalControls[name].isNil) {
+			globalControls.put(name, gc = VoicerGlobalControl.new(name, bus, this,
+				value ? 0, spec, allowGUI));
+			^gc		// so user can reference this gc directly
+		} {
+			^globalControls[name]
+		}
 	}
-	
+
 	unmapGlobal { arg name;
 		var gc;
 		name = name.asSymbol;
@@ -450,36 +453,36 @@ Voicer {		// collect and manage voicer nodes
 			gc.free;
 		});
 	}
-	
+
 	maxControlNum {	// for indexing in VoicerGlobalControl
 		^globalControls.collect({ |gc, key| gc.voicerIndex }).maxItem ? 0
 	}
-	
+
 	globalControlsByCreation {
 		^globalControls.values.select({ |gc| gc.allowGUI })
 			.asArray.sort({ |a,b| a.voicerIndex < b.voicerIndex })
 	}
-	
+
 	proxify {
 		proxy.isNil.if({
 			proxy = VoicerProxy.new(this);
 		});
 		^proxy
 	}
-	
+
 	addProcess { arg states, type;
 		this.proxify;
 		^proxy.addProcess(states, type);
 	}
-	
+
 	removeProcess { arg p;
 		^proxy.tryPerform(\removeProcess, p)
 	}
-	
+
 	removeProcessAt { arg i;
 		^proxy.tryPerform(\removeProcessAt, i)
 	}
-	
+
 	processes { ^proxy.tryPerform(\processes) }
 
 		// if the voicer's target is a MC, assign it to the gui
@@ -512,9 +515,9 @@ Voicer {		// collect and manage voicer nodes
 		'MIDIPort'.asClass.update;	// clears VoicerMIDISocket associated with me
 						// if socket is pointing to proxy, the socket will stay put
 	}
-	
+
 	active { ^voices.notNil }
-	
+
 	run { arg bool = true;
 		var mixer;
 		(mixer = this.asMixer).notNil.if({
@@ -532,13 +535,13 @@ Voicer {		// collect and manage voicer nodes
 			target.tryPerform(\isRunning) ? true;
 		});
 	}
-	
+
 	asMixer { ^bus.asMixer }
-	
+
 	panic {		// free all nodes
 		nodes.do({ arg n; n.releaseNow });
 	}
-	
+
 	cleanup {		// free non-playing nodes; kind of superfluous now
 		this.nonplaying.do({ arg n; n.free });
 	}
@@ -546,33 +549,39 @@ Voicer {		// collect and manage voicer nodes
 	steal_ { |bool = true|
 		nodes.do(_.steal = bool);
 	}
-	
+
 		// trace all playing nodes
 		// no need to check here b/c VoicerNode tests isPlaying before issuing n_trace
 	trace {
 		nodes.do({ |node| node.trace });
 	}
-	
+
 // GUI support
 	guiClass { ^VoicerGUI }
-	
-	asString { ^("Voicer : " ++ nodes.at(0).displayName) }
-	
+
+	asString {
+		if(nodes.size == 0) {
+			^"Voicer : failed to init"
+		} {
+			^("Voicer : " ++ nodes.at(0).displayName)
+		}
+	}
+
 	editor { proxy.isNil.if({ ^nil }, { ^proxy.editor }) }
-	
+
 	draggedIntoVoicerGUI { arg dest;		// drag a voicer into a gui switches the gui to this vcr
 		var oldProxy;
 		oldProxy = proxy;		// must clear from old gui if there was one
 		dest.model.voicer_(this);	// set new gui's proxy to this voicer
 		oldProxy.notNil.if({ oldProxy.voicer_(nil) });	// clear old proxy
 	}
-	
+
 	proxy_ { arg pr;	// set my proxy and fix my gc's proxies
 		pr.isNil.if({ proxy.clearControlProxies });
 		proxy = pr;
 		proxy.notNil.if({ proxy.switchControlProxies });
 	}
-	
+
 // chucklib support
 	bindClassName { ^Voicer }
 
@@ -580,12 +589,12 @@ Voicer {		// collect and manage voicer nodes
 	*initClass {
 		StartUp.add {
 			Event.parentEvents.put(\voicerMIDI, (args: [],
-				
+
 					// maybe you want to use non-equal-temperament. write it here
 				midiNoteToFreq: #{ |notenum|
 					notenum.midicps
 				},
-				
+
 				prepNote: #{
 					var i;
 					~freq = ~freq ?? { ~note.freq };
@@ -607,11 +616,11 @@ Voicer {		// collect and manage voicer nodes
 						(i = ~args.detectIndex({ |item| item == \gate })).notNil
 							.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
 					}).asArray;
-	
+
 					~nodes = ~voicer.prGetNodes(max(~freq.size, max(~length.size, ~gate.size)));
 					~voicer.setArgsInEvent(currentEnvironment);
 				},
-				
+
 				play: #{
 					var	lag, timingOffset = ~timingOffset ? 0, releaseGate,
 						voicer = ~voicer;
@@ -620,7 +629,7 @@ Voicer {		// collect and manage voicer nodes
 						~prepNote.value;
 						~finish.value;	// user-definable
 						releaseGate = (~releaseGate ? 0).asArray;
-	
+
 						~nodes.do({ |node, i|
 							var	freq = ~freq.wrapAt(i), length = ~length.wrapAt(i);
 							~schedBundleArray.(~lag ? 0, timingOffset,
@@ -642,13 +651,13 @@ Voicer {		// collect and manage voicer nodes
 					// you could override this
 				adjustLengthToRealDelta: { ~voicer.isKindOfByName(\MonoPortaVoicer) }
 			));
-	
+
 			Event.addEventType(\voicerNote, #{|server|
 				var	lag, strum, sustain, i, timingOffset = ~timingOffset ? 0, releaseGate,
 					voicer = ~voicer;
-				
+
 				~freq = (~freq.value + ~detune).asArray;
-	
+
 				if (~freq.isSymbol.not) {
 					~amp = ~amp.value.asArray;
 					lag = ~lag;
@@ -659,7 +668,7 @@ Voicer {		// collect and manage voicer nodes
 					and: { ~dur != currentEnvironment.delta }) {
 						~sustain = max(0.01, ~sustain * currentEnvironment.delta / ~dur);
 					};
-						
+
 					~gate = (~gate ?? {
 							// identify the \gate, xxx pair in the args array
 							// 2nd removeAt should return the value *wink*
@@ -667,13 +676,13 @@ Voicer {		// collect and manage voicer nodes
 							.if({ ~args.removeAt(i); ~args.removeAt(i); }, { 0.5 });
 					}).asArray;
 					releaseGate = (~releaseGate ? 0).asArray;
-					
+
 					~nodes = voicer.prGetNodes(max(~freq.size, max(~sustain.size, ~gate.size)));
 					voicer.setArgsInEvent(currentEnvironment);
-					
+
 					~nodes.do({ |node, i|
 						var latency, freq, length;
-						
+
 						latency = i * strum + lag;
 							// backward compatibility: I should NOT add server latency
 							// for newer versions with Julian's schedbundle method
@@ -682,7 +691,7 @@ Voicer {		// collect and manage voicer nodes
 						};
 						freq = ~freq.wrapAt(i);
 						length = ~sustain.wrapAt(i);
-	
+
 						~schedBundleArray.(latency, ~timingOffset,
 							node.server,
 							node.server.makeBundle(false, {
@@ -706,7 +715,7 @@ MonoPortaVoicer : Voicer {
 
 	var	<>portaTime = 0,	// portamento time
 		<lastFreqs;		// last triggered frequencies (for portamento)
-		
+
 	init { arg v, th, ar, b, targ, addAct, preAlloc;
 		var args;		// for initializing nodes
 
@@ -721,7 +730,7 @@ MonoPortaVoicer : Voicer {
 		}, {
 			bus = b ? Bus.new(\audio, 0, 1, target.server);
 		});
-		
+
 		addAction = addAct;
 
 		voices = 1;		// may have only one node for a mono voicer
@@ -740,22 +749,22 @@ MonoPortaVoicer : Voicer {
 			})
 		});
 	}
-	
+
 	makeNode { arg thing, args, preAlloc;
 			// strings/symbols: treat as defname
 		case
 			{ thing.isString or: { thing.isSymbol } } {
 				^MonoPortaSynthVoicerNode.new(thing, args, bus, target, addAction, this);
 			}
-			
-			{ thing.isKindOf(Instr) } {
+
+			{ thing.isKindOf(Instr) or: { thing.class.name == 'WrapInstr' } } {
 				^MonoPortaInstrVoicerNode.new(thing, args, bus, target, addAction, this);
 			}
 
 				// default branch, error
 			{ Error("%: Invalid object to use as instrument. Can't build voicer.".format(thing)).throw }
 	}
-	
+
 	releaseNode { |node, freq, releaseGate = 0, lat = -1|
 		(lat ? 0).isNegative.if({ lat = latency });
 		lastFreqs.remove(freq);
@@ -770,13 +779,13 @@ MonoPortaVoicer : Voicer {
 			^this.firstNodeFreq(freq).release(releaseGate, lat)
 		});
 	}
-	
+
 	release1 { arg freq, lat = -1;
 			// because this is MonoPortaVoicer, with only one node,
 			// dispatch to releaseNode directly
 		this.releaseNode(nodes.first, freq, 0, lat);
 	}
-	
+
 	gate1 { arg freq, dur, gate = 1, args, lat = -1;
 			// play & schedule release for 1 note
 		var node;
@@ -785,7 +794,7 @@ MonoPortaVoicer : Voicer {
 		(clock ? thisThread.clock).sched(dur, { this.release(freq, lat) });
 		^node
 	}
-	
+
 		// gate one or many
 	gate { arg freq, dur, gate = 1, args, lat = -1;
 		var node, nodecoll;
@@ -799,12 +808,12 @@ MonoPortaVoicer : Voicer {
 			^this.gate1(freq, dur, gate, args, lat)
 		});
 	}
-	
+
 	panic {	// panic button needs to clear lastFreqs list in additiion to other activities
 		super.panic;
 		lastFreqs = List.new;
 	}
-	
+
 }
 
 
@@ -822,7 +831,7 @@ VoicerNoGate : Voicer {	// just like Voicer, except synthdefs should use fixed-l
 		node.isPlaying = false;
 		^node
 	}
-	
+
 		// gate one or many
 	gate { arg freq, dur, gate = 1, args, lat = -1;
 		var node, nodecoll;
@@ -833,6 +842,6 @@ VoicerNoGate : Voicer {	// just like Voicer, except synthdefs should use fixed-l
 		}, {
 			^this.gate1(freq, dur, gate, args, lat)
 		});
-	}		
-	
+	}
+
 }
