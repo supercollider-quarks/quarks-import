@@ -109,7 +109,7 @@ SequenceNote : AbstractFunction {
 		var i;
 		if(args.isArray) {
 			if((i = args.indexOf(key)).notNil) {
-				args[i+1] = value;
+				args = args.copy.put(i+1, value);
 			} {
 				args = args ++ [key, value];
 			}
