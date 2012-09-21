@@ -177,7 +177,7 @@ CVWidgetEditor {
 			;
 			
 			if(editorEnv.specsListSpecs.isNil, { 
-				specsListSpecs = List() 
+				specsListSpecs = List();
 			}, {
 				specsListSpecs = editorEnv.specsListSpecs;
 			});
@@ -185,10 +185,10 @@ CVWidgetEditor {
 			if(editorEnv.specsListItems.notNil, {
 				specsList.items_(editorEnv.specsListItems);
 			}, {
-				Spec.specs.pairsDo({ |k, v|
-					if(v.isKindOf(ControlSpec), {
-						specsList.items_(specsList.items.add(k++":"+v));
-						specsListSpecs.add(v);
+				Spec.specs.asSortedArray.do({ |spec|
+					if(spec[1].isKindOf(ControlSpec), {
+						specsList.items_(specsList.items.add(spec[0]++":"+spec[1]));
+						specsListSpecs.add(spec[1]);
 					})
 				})
 			});
@@ -349,7 +349,7 @@ CVWidgetEditor {
 							src: tf.string,
 							chan: wcmHiLo.midiDisplay.model.value.chan,
 							ctrl: wcmHiLo.midiDisplay.model.value.ctrl
-						)).changed(\value)
+						)).changedKeys(widget.synchKeys)
 					})
 				})
 				.mouseDownAction_({ |tf|
@@ -375,7 +375,7 @@ CVWidgetEditor {
 							src: wcmHiLo.midiDisplay.model.value.src,
 							chan: tf.string,
 							ctrl: wcmHiLo.midiDisplay.model.value.ctrl
-						)).changed(\value)
+						)).changedKeys(widget.synchKeys)
 					})
 				})
 				.mouseDownAction_({ |tf|
@@ -401,7 +401,7 @@ CVWidgetEditor {
 							src: wcmHiLo.midiDisplay.model.value.src,
 							chan: wcmHiLo.midiDisplay.model.value.chan,
 							ctrl: tf.string
-						)).changed(\value)
+						)).changedKeys(widget.synchKeys)
 					})
 				})
 				.mouseDownAction_({ |tf|
@@ -629,11 +629,11 @@ CVWidgetEditor {
 				but.value.switch(
 					0, { 
 						widget.setCalibrate(true, slot);
-						wcmHiLo.calibration.model.value_(true).changed(\value);
+						wcmHiLo.calibration.model.value_(true).changedKeys(widget.synchKeys);
 					},
 					1, { 
 						widget.setCalibrate(false, slot);
-						wcmHiLo.calibration.model.value_(false).changed(\value);
+						wcmHiLo.calibration.model.value_(false).changedKeys(widget.synchKeys);
 					}
 				)
 			});
@@ -659,7 +659,7 @@ CVWidgetEditor {
 					if(actionName.string != "action-name" and:{
 						enterAction.string != "{ |cv| /* do something */ }"
 					}, {
-						widget.addAction(actionName.string.asSymbol, enterAction.string, slot.asSymbol);
+						widget.addAction(actionName.string.asSymbol, enterAction.string.replace("\t", "    "), slot.asSymbol);
 					})
 				})
 			;
@@ -671,6 +671,7 @@ CVWidgetEditor {
 				.font_(textFieldFont)
 				.string_("{ |cv| /* do something */ }")
 				.syntaxColorize
+//				.keyDownAction_({ |v| v.string_(v.string.copy.replace("\t", "    ")) })
 			;
 			
 			if(slot.notNil, {
@@ -733,7 +734,7 @@ CVWidgetEditor {
 				actionsList[name].actionView = TextView(thisEditor.tabs.views[3], flow3.bounds.width-35@50)
 					.background_(Color(1.0, 1.0, 1.0, 0.5))
 					.font_(textFieldFont)
-					.string_(action.asArray[0][0])
+					.string_(action.asArray[0][0].replace("\t", "    "))
 					.syntaxColorize
 					.editable_(false)
 				;
