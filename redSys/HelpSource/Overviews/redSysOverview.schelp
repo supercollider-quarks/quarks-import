@@ -113,6 +113,7 @@ SECTION:: redTapTempo (tap tempo)
 
 TABLE::
 ## link::Classes/RedTapTempoGUI:: || average tempo of the last n taps/clicks
+## link::Classes/RedTempoClockGUI:: || list and edit active tempo clocks
 ::
 
 SECTION:: redTest (test signals)
@@ -168,6 +169,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 121001:
+//added RedTempoClockGUI
 //--changes 120825:
 //fix crashing bug in RedToolsMenu under qt
 //--changes 120608:
