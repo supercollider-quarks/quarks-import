@@ -56,6 +56,9 @@ RedToolsMenu {
 				['redSys', 'RedTapTempoGUI'], {
 					RedTapTempoGUI(TempoClock(1));		//or which clock to use?
 				},
+				['redSys', 'RedTempoClockGUI'], {
+					RedTempoClockGUI.new;
+				},
 				['redSys', 'RedTest'], {
 					RedTest.openHelpFile;
 				},
