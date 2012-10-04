@@ -4,7 +4,7 @@
 // out of date: done notification needs to send resume time
 // see proto cmds
 
-TLAbstractCommand : Model {
+TLAbstractCommand {
 	var	<>isRunning = false, <>id, <>dur;
 	var	<>shouldSync = true;
 	*new { |parms|
