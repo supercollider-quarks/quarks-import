@@ -169,6 +169,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 121005:
+//RedMixer: improved helpfile with more examples, bugfix for when only one stereo input, changes for save&recall
 //--changes 121001:
 //added RedTempoClockGUI
 //--changes 120825:
