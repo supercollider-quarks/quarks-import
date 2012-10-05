@@ -13,12 +13,9 @@ RedMixerChannel {
 		osc, oscCVS,
 		<args;
 	*new {|outputChannels= #[0, 1], group, lag= 0.05|
-		^super.new.initRedMixerChannel(outputChannels, group, lag);
+		^super.new.initRedMixerChannel(outputChannels, lag).init(group);
 	}
-	initRedMixerChannel {|outputChannels, argGroup, lag|
-		var server;
-		group= argGroup ?? {Server.default.defaultGroup};
-		server= group.server;
+	initRedMixerChannel {|outputChannels, lag|
 		
 		//--create cvs and argument array
 		cvs= (
@@ -49,6 +46,12 @@ RedMixerChannel {
 			\bal, cvs.bal,
 			\amp, [cvs.vol, cvs.vol.dbamp]
 		];
+	}
+	init {|argGroup|
+		var server;
+		synthEq= nil;
+		group= argGroup ?? {Server.default.defaultGroup};
+		server= group.server;
 		
 		forkIfNeeded{
 			server.bootSync;
@@ -73,6 +76,7 @@ RedMixerChannel {
 			cvs.eqHi.action= {|cv| this.prEqAction};
 			cvs.eqMi.action= {|cv| this.prEqAction};
 			cvs.eqLo.action= {|cv| this.prEqAction};
+			this.prEqAction;
 			
 			inserts= [];
 			//isReady= true;
@@ -193,7 +197,7 @@ RedMixerChannel {
 					)
 				));
 			},
-			{("different num channels todo"+channels).postln}
+			{(this.class.name++": different num channels todo"+channels).warn}
 		);
 	}
 	defEq {|channels= 2|

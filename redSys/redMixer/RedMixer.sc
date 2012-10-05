@@ -9,20 +9,37 @@
 //multichannel, generalise - now RedMixerChannel only stereo, remake as mono-quad channels
 
 RedMixer {
-	var <group, <cvs, <isReady= false, groupPassedIn,
+	var <group, <cvs, <isReady, groupPassedIn,
 		<channels, <mixers,
-		internalSynths;
+		internalSynths, internalInputChannels, internalOutputChannels,
+		synthDef;
 	*new {|inputChannels= #[[2, 3], [4, 5], [6, 7], [8, 9]], outputChannels= #[[0, 1]], group, lag= 0.05|
-		^super.new.initRedMixer(inputChannels, outputChannels, group, lag);
+		^super.new.initRedMixer(inputChannels, outputChannels, lag).init(group);
 	}
-	initRedMixer {|argInputChannels, argOutputChannels, argGroup, lag|
+	initRedMixer {|argInputChannels, argOutputChannels, lag|
+		
+		//--create cvs
+		cvs= (
+			\lag: CV.new.spec_(ControlSpec(0, 99, 'lin', 0, lag))
+		);
+		cvs.lag.action= {|v|
+			mixers.do{|x| x.cvs.lag.value= v.value};
+			channels.do{|x| x.cvs.lag.value= v.value};
+		};
+		
+		//--temp storage to avoid channel arguments for init
+		internalInputChannels= argInputChannels;
+		internalOutputChannels= argOutputChannels;
+	}
+	init {|argGroup|
 		var server;
-		if(argGroup.notNil, {
-			server= argGroup.server;
-			groupPassedIn= true;
-		}, {
+		isReady= false;
+		if(argGroup.isNil, {
 			server= Server.default;
 			groupPassedIn= false;
+		}, {
+			server= argGroup.server;
+			groupPassedIn= true;
 		});
 		
 		Routine.run{
@@ -35,31 +52,39 @@ RedMixer {
 				group= argGroup;
 			});
 			
-			//--create cvs
-			cvs= (
-				\lag: CV.new.spec_(ControlSpec(0, 99, 'lin', 0, lag))
-			);
-			cvs.lag.action= {|v|
-				mixers.do{|x| x.cvs.lag.value= v.value};
-				channels.do{|x| x.cvs.lag.value= v.value};
-			};
-			
 			//--create mixers
-			mixers= argOutputChannels.collect{|x, i|
-				RedMixerChannel(x, group, cvs.lag.value);
-			};
+			if(mixers.isNil, {		//when new
+				mixers= internalOutputChannels.collect{|x|
+					RedMixerChannel(x, group, cvs.lag.value);
+				};
+			}, {	//when recreating from written archive
+				mixers.do{|x| x.init(group)};
+			});
 			
 			//--internal synth for routing from channels to mixers
-			this.def(argInputChannels).send(server);
+			if(synthDef.isNil, {	//when new
+				synthDef= this.def(internalInputChannels);
+			});
+			synthDef.send(server);
 			server.sync;
-			internalSynths= argOutputChannels.collect{|x|
-				Synth(\redMixerInternalRouting, [\out, x[0]], group);
-			};
+			if(internalSynths.isNil, {	//when new
+				internalSynths= internalOutputChannels.postln.collect{|x|
+					Synth(\redMixerInternalRouting, [\out, x[0]], group);
+				};
+			}, {	//when recreating from written archive
+				internalSynths= this.outputChannels.collect{|x|
+					Synth(\redMixerInternalRouting, [\out, x], group);
+				};
+			});
 			
 			//--create channels
-			channels= argInputChannels.collect{|x, i|
-				RedMixerChannel(x, group, cvs.lag.value);
-			};
+			if(channels.isNil, {	//when new
+				channels= internalInputChannels.collect{|x|
+					RedMixerChannel(x, group, cvs.lag.value);
+				};
+			}, {	//when recreating from written archive
+				channels.do{|x| x.init(group)};
+			});
 //			while({channels.any{|x| x.isReady.not}}, {0.02.wait});
 			isReady= true;
 		};
@@ -131,7 +156,7 @@ RedMixer {
 	def {|inputChannels= #[[2, 3], [4, 5], [6, 7], [8, 9]]|
 		^SynthDef(\redMixerInternalRouting, {|out= 0|
 			var c= Control.names(\inputs).kr(inputChannels.collect{|x| x[0]});
-			var z= inputChannels.collect{|x, i| In.ar(c[i], x.size)};
+			var z= inputChannels.collect{|x, i| In.ar(c.asArray[i], x.size)};
 			Out.ar(out, Mix(z));
 		});
 	}
