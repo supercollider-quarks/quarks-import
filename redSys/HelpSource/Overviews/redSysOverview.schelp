@@ -169,6 +169,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 121007:
+//RedMixer: thanks to Roberto Lombardo .store now also saves effect inserts and their settings
 //--changes 121005:
 //RedMixer: improved helpfile with more examples, bugfix for when only one stereo input, changes for save&recall
 //--changes 121001:

@@ -13,9 +13,9 @@ p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #0000ee}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #723b2a; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1c00}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {text-decoration: underline ; color: #4a67bc}
 span.s3 {color: #000000}
@@ -53,6 +53,11 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note: passed in groups are not freed when this RedMixer instance is freed.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note: boot the server before passing in a group</p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lag - for eq settings, balance and volume.<span class="Apple-converted-space">  </span>in seconds.<span class="Apple-converted-space">  </span>default= 0.05.</p>
+<p class="p1"><span class="Apple-tab-span">	</span>*<b>restoreFile(path)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>reads back a redMixer with all settings from an archived instance.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>note: call .init after this to initialize server side objects.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>see .store below.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>path - a file path as a string</p>
 <p class="p2"><br></p>
 <p class="p1"><span class="s6">instance methods:</span></p>
 <p class="p2"><br></p>
@@ -81,6 +86,10 @@ span.Apple-tab-span {white-space:pre}
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>channel - index to solo.</p>
 <p class="p1"><span class="Apple-tab-span">	</span><b>def(inputChannels)</b></p>
 <p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>should probably be private</p>
+<p class="p1"><span class="Apple-tab-span">	</span><b>store(path)</b></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>saves an instance as an archive to disk.<span class="Apple-converted-space">  </span>all settings and inserts are stored.</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>see *restoreFile above</p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>path - a file path as a string</p>
 <p class="p2"><br></p>
 <p class="p1"><span class="s6">instance variables:</span></p>
 <p class="p2"><br></p>
@@ -100,17 +109,17 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, 10, <span class="s10">\pan</span>, <span class="s9">Pseq</span>([-1, 1], <span class="s11">inf</span>), <span class="s10">\amp</span>, 0.6).play<span class="Apple-tab-span">	</span><span class="s12">//src1</span></p>
 <p class="p7">c= {<span class="s9">BPF</span>.ar(<span class="s9">Saw</span>.ar(<span class="s9">LFNoise2</span>.kr(1).exprange(100, 1000)*[1, 1.01]))}.play(outbus: 14);<span class="Apple-tab-span">	</span><span class="s12">//src2</span></p>
 <p class="p8"><span class="s3">a= </span><span class="s9">RedMixer</span><span class="s3">(#[[10, 11], [14, 15]], #[[0, 1]]);<span class="Apple-tab-span">	</span></span>//take stereo input from [10, 11] and [14, 15]</p>
-<p class="p9">a.channels<span class="Apple-tab-span">	</span>//two stereo channel objects</p>
-<p class="p9">a.mixers<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//one stereo mixer</p>
-<p class="p9">a.cvs<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//possible global setting</p>
-<p class="p9">a.mixer.cvs<span class="Apple-tab-span">	</span>//possible mixer settings</p>
-<p class="p9">a.mixer.cvs.bal.value= -0.9<span class="Apple-tab-span">	</span>//balance mixer output left</p>
-<p class="p9">a.cvs.lag.value= 2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//global lag time</p>
-<p class="p9">a.mixer.cvs.bal.value= 0.9<span class="Apple-tab-span">	</span>//balance mixer output right (note the lag)</p>
+<p class="p7">a.channels<span class="Apple-tab-span">	</span>//two stereo channel objects</p>
+<p class="p7">a.mixers<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//one stereo mixer</p>
+<p class="p7">a.cvs<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//possible global setting</p>
+<p class="p7">a.mixer.cvs<span class="Apple-tab-span">	</span>//possible mixer settings</p>
+<p class="p7">a.mixer.cvs.bal.value= -0.9<span class="Apple-tab-span">	</span>//balance mixer output left</p>
+<p class="p7">a.cvs.lag.value= 2<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//global lag time</p>
+<p class="p7">a.mixer.cvs.bal.value= 0.9<span class="Apple-tab-span">	</span>//balance mixer output right (note the lag)</p>
 <p class="p6"><span class="s3">a.mixer.cvs.vol.value= -6<span class="Apple-tab-span">	</span></span>//minus 6 db (note the lag)</p>
-<p class="p9">b.stop</p>
-<p class="p9">c.free</p>
-<p class="p9">a.free</p>
+<p class="p7">b.stop</p>
+<p class="p7">c.free</p>
+<p class="p7">a.free</p>
 <p class="p4"><br></p>
 <p class="p8">//--mixing 6 stereo channels</p>
 <p class="p7">a= <span class="s9">RedMixer</span>(#[[0, 1], [2, 3], [4, 5], [6, 7], [10, 11], [12, 13]], #[[0, 1]]);</p>
@@ -141,35 +150,35 @@ span.Apple-tab-span {white-space:pre}
 <p class="p7">b.stop</p>
 <p class="p4"><br></p>
 <p class="p6">//--dynamic routing</p>
-<p class="p9">a= <span class="s13">RedMixer</span>(#[[2, 3], [4, 5], [6, 7], [10, 11]], #[[0, 1], [12, 13]]);</p>
-<p class="p9">b= <span class="s13">Pbind</span>(<span class="s14">\out</span>, <span class="s13">Pseq</span>([2, 4, 6, 10], <span class="s13">inf</span>), <span class="s14">\degree</span>, <span class="s13">Pkey</span>(<span class="s14">\out</span>)).play;</p>
+<p class="p7">a= <span class="s13">RedMixer</span>(#[[2, 3], [4, 5], [6, 7], [10, 11]], #[[0, 1], [12, 13]]);</p>
+<p class="p7">b= <span class="s13">Pbind</span>(<span class="s14">\out</span>, <span class="s13">Pseq</span>([2, 4, 6, 10], <span class="s13">inf</span>), <span class="s14">\degree</span>, <span class="s13">Pkey</span>(<span class="s14">\out</span>)).play;</p>
 <p class="p8"><span class="s3">a.channels[1].cvs.vol.input= 0.6<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//turn down second input (in percent - not db)</p>
 <p class="p7">a.inputChannels= #[[20, 21], [4, 5], [6, 7], [10, 11]]<span class="Apple-tab-span">	</span><span class="s12">//dynamically set input channels - silence on 20&amp;21</span></p>
-<p class="p9">a.inputChannels= [[4, 5], [2, 3], [6, 7], [10, 11]]<span class="Apple-tab-span">	</span>//now first note with 60% volume because of channel routing</p>
-<p class="p9">a.inputChannels</p>
-<p class="p9">a.outputChannels= [[1, 2], [14, 15]]<span class="Apple-tab-span">	</span>//also set output channels dynamically</p>
-<p class="p9">a.outputChannels= [[0, 1], [6, 7]]</p>
-<p class="p9">a.outputChannels</p>
-<p class="p9">a.defaults</p>
-<p class="p9">a.free</p>
-<p class="p9">b.stop</p>
+<p class="p7">a.inputChannels= [[4, 5], [2, 3], [6, 7], [10, 11]]<span class="Apple-tab-span">	</span>//now first note with 60% volume because of channel routing</p>
+<p class="p7">a.inputChannels</p>
+<p class="p7">a.outputChannels= [[1, 2], [14, 15]]<span class="Apple-tab-span">	</span>//also set output channels dynamically</p>
+<p class="p7">a.outputChannels= [[0, 1], [6, 7]]</p>
+<p class="p7">a.outputChannels</p>
+<p class="p7">a.defaults</p>
+<p class="p7">a.free</p>
+<p class="p7">b.stop</p>
 <p class="p4"><br></p>
 <p class="p6">//--mute and solo</p>
-<p class="p9">a= <span class="s9">RedMixer</span>(#[[2, 3], [4, 5], [6, 7]], #[[0, 1], [12, 13]]);</p>
-<p class="p9">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, <span class="s9">Pseq</span>([2, 4, 6], <span class="s11">inf</span>), <span class="s10">\degree</span>, <span class="s9">Pkey</span>(<span class="s10">\out</span>)).play;</p>
+<p class="p7">a= <span class="s9">RedMixer</span>(#[[2, 3], [4, 5], [6, 7]], #[[0, 1], [12, 13]]);</p>
+<p class="p7">b= <span class="s9">Pbind</span>(<span class="s10">\out</span>, <span class="s9">Pseq</span>([2, 4, 6], <span class="s11">inf</span>), <span class="s10">\degree</span>, <span class="s9">Pkey</span>(<span class="s10">\out</span>)).play;</p>
 <p class="p8"><span class="s3">s.meter<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//visual feedback</p>
 <p class="p8"><span class="s3">a.solo(0)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//solo first channel</p>
-<p class="p9">a.solo(1)</p>
-<p class="p9">a.solo(2)</p>
-<p class="p9">a.solo(<span class="s11">false</span>)</p>
+<p class="p7">a.solo(1)</p>
+<p class="p7">a.solo(2)</p>
+<p class="p7">a.solo(<span class="s11">false</span>)</p>
 <p class="p8"><span class="s3">a.mute(0)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>//mute first channel</p>
-<p class="p9">a.mute(1)</p>
-<p class="p9">a.mute(2)</p>
-<p class="p9">a.mute(<span class="s11">false</span>)</p>
+<p class="p7">a.mute(1)</p>
+<p class="p7">a.mute(2)</p>
+<p class="p7">a.mute(<span class="s11">false</span>)</p>
 <p class="p8"><span class="s3">a.mute(</span><span class="s11">true</span><span class="s3">)<span class="Apple-tab-span">	</span></span>//mute all</p>
-<p class="p9">a.mute(<span class="s11">false</span>)<span class="Apple-tab-span">	</span><span class="s12">//mute no</span></p>
-<p class="p9">a.free</p>
-<p class="p9">b.stop</p>
+<p class="p7">a.mute(<span class="s11">false</span>)<span class="Apple-tab-span">	</span><span class="s12">//mute no</span></p>
+<p class="p7">a.free</p>
+<p class="p7">b.stop</p>
 <p class="p4"><br></p>
 <p class="p8">//--mono inputs (balance will not work)</p>
 <p class="p7">b= {<span class="s9">WhiteNoise</span>.ar(0.5)*<span class="s9">LFPulse</span>.kr(6)}.play(outbus: 2)</p>
@@ -201,25 +210,32 @@ span.Apple-tab-span {white-space:pre}
 <p class="p8"><span class="s3">a.channels[0].cvs.vol.value= -20<span class="Apple-tab-span">	</span></span>//lower beating sines volume a lot</p>
 <p class="p7">a.channels[1].cvs.eqLo.value= 1<span class="Apple-tab-span">	</span><span class="s12">//turn on channel specific eq</span></p>
 <p class="p8"><span class="s3">a.channels[1].cvs.loFreq.value= 1000<span class="Apple-tab-span">	</span></span>//frequency sweep from 70 (defalut) up to 1000hz</p>
-<p class="p7">a.writeArchive(<span class="s15">"~/redMixer-test.txt"</span>.standardizePath)<span class="Apple-tab-span">	</span><span class="s12">//save</span></p>
-<p class="p7">b.free</p>
-<p class="p7">c.free</p>
-<p class="p7">d.free</p>
-<p class="p7">a.free</p>
+<p class="p9">a.channels[0].insertClass(<span class="s9">RedEfxRing</span>, <span class="s10">\addToHead</span>);</p>
+<p class="p9">a.channels[0].inserts[0].cvs.ringMix.input= 0.5;</p>
+<p class="p9">a.channels[0].inserts[0].cvs.ringMul.input= 0.4;</p>
+<p class="p9">a.channels[0].inserts[0].cvs.ringRate.input= 0.3;</p>
+<p class="p9">a.store(<span class="s15">"~/redMixer-test.txt"</span>.standardizePath)<span class="Apple-tab-span">	</span><span class="s12">//same as .writeArchive</span></p>
+<p class="p9">b.free</p>
+<p class="p9">c.free</p>
+<p class="p9">d.free</p>
+<p class="p9">a.free</p>
 <p class="p8">//recompile</p>
-<p class="p7">a= <span class="s9">Object</span>.readArchive(<span class="s15">"~/redMixer-test.txt"</span>.standardizePath)<span class="Apple-tab-span">	</span><span class="s12">//load</span></p>
+<p class="p9">a= <span class="s9">RedMixer</span>.restoreFile(<span class="s15">"~/redMixer-test.txt"</span>.standardizePath)<span class="Apple-tab-span">	</span><span class="s12">//same as readArchive</span></p>
 <p class="p8"><span class="s3">a.init<span class="Apple-tab-span">	</span></span>//reinitialize and activate all server side stuff again</p>
-<p class="p7">a.cvs.lag.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be 2</span></p>
-<p class="p7">a.mixer.cvs.bal.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be 0.75</span></p>
-<p class="p7">a.mixer.cvs.vol.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be -6</span></p>
-<p class="p7">a.mixer.cvs.miFreq.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be 100</span></p>
+<p class="p9">a.cvs.lag.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be 2</span></p>
+<p class="p9">a.mixer.cvs.bal.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be 0.75</span></p>
+<p class="p9">a.mixer.cvs.vol.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be -6</span></p>
+<p class="p9">a.mixer.cvs.miFreq.value<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//should be 100</span></p>
 <p class="p9">a.channels[1].cvs.loFreq.value<span class="Apple-tab-span">	</span><span class="s12">//should be 1000</span></p>
-<p class="p7">b= {<span class="s9">SinOsc</span>.ar([400, 404])!2}.play(outbus: 2)</p>
-<p class="p7">c= {<span class="s9">PinkNoise</span>.ar(0.5)!2}.play(outbus: 4)</p>
-<p class="p7">d= {<span class="s9">WhiteNoise</span>.ar(0.1)!2}.play(outbus: 6)</p>
+<p class="p9">a.channels[0].inserts[0].cvs.ringMix.input<span class="Apple-tab-span">	</span><span class="s12">//should be 0.5</span></p>
+<p class="p9">a.channels[0].inserts[0].cvs.ringMul.input<span class="Apple-tab-span">	</span><span class="s12">//should be 0.4</span></p>
+<p class="p9">a.channels[0].inserts[0].cvs.ringRate.input<span class="Apple-tab-span">	</span><span class="s12">//should be 0.3</span></p>
+<p class="p9">b= {<span class="s9">SinOsc</span>.ar([400, 404])!2}.play(outbus: 2)</p>
+<p class="p9">c= {<span class="s9">PinkNoise</span>.ar(0.5)!2}.play(outbus: 4)</p>
+<p class="p9">d= {<span class="s9">WhiteNoise</span>.ar(0.1)!2}.play(outbus: 6)</p>
 <p class="p8">//back to same sound</p>
 <p class="p9">a.channels[1].cvs.eqLo.value= 0<span class="Apple-tab-span">	</span><span class="s12">//turn off channel eq</span></p>
-<p class="p7">a.mixer.cvs.eqMi.value= 0<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//turn off master eq</span></p>
+<p class="p9">a.mixer.cvs.eqMi.value= 0<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s12">//turn off master eq</span></p>
 <p class="p9">b.free</p>
 <p class="p9">c.free</p>
 <p class="p9">d.free</p>

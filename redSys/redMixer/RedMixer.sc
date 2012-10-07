@@ -68,7 +68,7 @@ RedMixer {
 			synthDef.send(server);
 			server.sync;
 			if(internalSynths.isNil, {	//when new
-				internalSynths= internalOutputChannels.postln.collect{|x|
+				internalSynths= internalOutputChannels.collect{|x|
 					Synth(\redMixerInternalRouting, [\out, x[0]], group);
 				};
 			}, {	//when recreating from written archive
@@ -83,7 +83,22 @@ RedMixer {
 					RedMixerChannel(x, group, cvs.lag.value);
 				};
 			}, {	//when recreating from written archive
-				channels.do{|x| x.init(group)};
+				channels.do{|ch|
+					var inserts= ch.inserts.deepCopy;
+					ch.init(group);
+					inserts.do{|efx|
+						// note: the fxs are added in the same order they were stored,
+						// (independently of \addToHead or \addToTail)
+						// reading them in the order they appear in redMixer.channel[i]
+						// and adding them to the channel with \addToTail !
+						ch.insertClass(efx.class, \addToTail);
+					};
+					ch.inserts.do{|efx, i|
+						inserts[i].cvs.keysValuesDo{|k, v|
+							efx.cvs[k].value= v.value;
+						};
+					};
+				};
 			});
 //			while({channels.any{|x| x.isReady.not}}, {0.02.wait});
 			isReady= true;
@@ -159,5 +174,14 @@ RedMixer {
 			var z= inputChannels.collect{|x, i| In.ar(c.asArray[i], x.size)};
 			Out.ar(out, Mix(z));
 		});
+	}
+	
+	// RL 2012
+	store {|path|
+		this.writeArchive(path);
+	}
+	// RL 2012
+	*restoreFile {|path|	//should call .init afterwards to initialize server side
+		^Object.readArchive(path);
 	}
 }
