@@ -34,6 +34,16 @@ Boot the server before passing in a group.
 ARGUMENT:: lag
 For eq settings, balance and volume. In seconds.
 
+METHOD::restoreFile
+Reads back a redMixer with all settings from an archived instance. Also see LINK::#-store::.
+
+NOTE::
+Call .init after this to initialize server side objects.
+::
+
+ARGUMENT::path
+A file path as a string.
+
 INSTANCEMETHODS::
 
 PRIVATE:: initRedMixer
@@ -71,6 +81,12 @@ Index to solo.
 
 METHOD:: def
 Should probably be private.
+
+METHOD::store
+Saves an instance as an archive to disk. All settings and effect inserts are stored. Also see LINK::#-restoreFile::.
+
+ARGUMENT::path
+A file path as a string.
 
 METHOD:: group
 The link::Classes/Group:: in use.
@@ -197,19 +213,26 @@ a.mixer.cvs.miFreq.value= 100	//frequency sweep from 700 (default) down to 100hz
 a.channels[0].cvs.vol.value= -20	//lower beating sines volume a lot
 a.channels[1].cvs.eqLo.value= 1	//turn on channel specific eq
 a.channels[1].cvs.loFreq.value= 1000	//frequency sweep from 70 (defalut) up to 1000hz
-a.writeArchive("~/redMixer-test.txt".standardizePath)	//save
+a.channels[0].insertClass(RedEfxRing, \addToHead);
+a.channels[0].inserts[0].cvs.ringMix.input= 0.5;
+a.channels[0].inserts[0].cvs.ringMul.input= 0.4;
+a.channels[0].inserts[0].cvs.ringRate.input= 0.3;
+a.store("~/redMixer-test.txt".standardizePath)	//same as .writeArchive
 b.free
 c.free
 d.free
 a.free
 //recompile
-a= Object.readArchive("~/redMixer-test.txt".standardizePath)	//load
+a= RedMixer.restoreFile("~/redMixer-test.txt".standardizePath)	//same as readArchive
 a.init	//reinitialize and activate all server side stuff again
 a.cvs.lag.value				//should be 2
 a.mixer.cvs.bal.value			//should be 0.75
 a.mixer.cvs.vol.value			//should be -6
 a.mixer.cvs.miFreq.value		//should be 100
 a.channels[1].cvs.loFreq.value	//should be 1000
+a.channels[0].inserts[0].cvs.ringMix.input	//should be 0.5
+a.channels[0].inserts[0].cvs.ringMul.input	//should be 0.4
+a.channels[0].inserts[0].cvs.ringRate.input	//should be 0.3
 b= {SinOsc.ar([400, 404])!2}.play(outbus: 2)
 c= {PinkNoise.ar(0.5)!2}.play(outbus: 4)
 d= {WhiteNoise.ar(0.1)!2}.play(outbus: 6)
