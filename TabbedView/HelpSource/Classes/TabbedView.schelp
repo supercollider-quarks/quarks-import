@@ -1,6 +1,6 @@
 TITLE:: TabbedView
 summary:: an array of CompositeViews (or ScrollViews) with tabs for switching
-categories:: GUI
+categories:: GUI>Views
 related:: Classes/CompositeView, Classes/ScrollView, etc.
 
 DESCRIPTION::
