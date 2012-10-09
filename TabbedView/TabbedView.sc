@@ -1,4 +1,4 @@
-/******* by jostM Aug 01, 2009 version 1.28 *******/
+/******* by jostM Oct 09, 2012 version 1.29 *******/
 /** thanks to sciss for cross platform bug fixes **/
 
 TabbedView {
@@ -67,7 +67,7 @@ TabbedView {
 		stringColor = Color.black;
 		stringFocusedColor = Color.white;
 		swingFactor=Point(0.52146,1.25); 		
-		if( GUI.id === \cocoa)  {
+		if( GUI.id === \cocoa || GUI.id === \qt)  {
 			labelColors = colors ? [Color.grey.alpha_(0.2)];
 			}{
 			labelColors = colors ? [Color(0.85,0.85,0.85)];
@@ -76,7 +76,7 @@ TabbedView {
 		unfocusedColors = Array.fill(labelColors.size,{arg i;
 			var col;
 			col = labelColors[i%labelColors.size].asArray;
-			if( GUI.id === \cocoa)  
+			if( GUI.id === \cocoa || GUI.id === \qt)  
 				{col = col*[0.7,0.7,0.7,1];}
 				{col = col*[0.9,0.9,0.9,1];};
 			col = Color(*col);
@@ -572,12 +572,6 @@ TabbedView {
 		this.updateViewSizes;	
 	}
 	
-	focus_{arg index;
-		activeTab = index;
-		"focus_(index) deprecated. please use focus(index)".postln;
-		this.updateFocus();
-		this.doActions;
-	}
 	focus{arg index;
 		activeTab = index;
 		this.updateFocus();
@@ -669,7 +663,7 @@ TabbedView {
 	*newBasic{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(parent, bounds, labels, colors, name, scroll);
-		if( GUI.id === \cocoa)  {
+		if( GUI.id === \cocoa || GUI.id === \qt)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 			q.backgrounds_([Color.white.alpha_(0.3)]);
 		}{
@@ -680,16 +674,12 @@ TabbedView {
 		^q;
 	}
 	
-	*newRGBLabels{ arg parent, bounds, labels, colors, name=" ", scroll=false;
-		"\nWarning: TabbedView.newRGBLabels deprecated. Use .newColorLabels instead".postln;
-		^this.newColorLabels(parent, bounds, labels, colors, name, scroll);
-		}
 		
 	*newColorLabels{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.newBasic(parent, bounds, labels, colors, name, scroll);
 		q.labelColors_([Color.red,Color.blue,Color.yellow]);
-		if( GUI.id === \cocoa)  {
+		if( GUI.id === \cocoa || GUI.id === \qt)  {
 			q.backgrounds_([Color.white.alpha_(0.3)]);
 		}{
 			q.backgrounds_([Color(0.9,0.9,0.9)]);
@@ -700,16 +690,12 @@ TabbedView {
 		^q;
 	}
 	
-	*newRGB{ arg parent, bounds, labels, colors, name=" ", scroll=false;
-		"\nWarning: TabbedView.newRGB  deprecated. Use .newColor instead".postln;
-		^this.newColor(parent, bounds, labels, colors, name, scroll);
-		}
 		
 	*newColor{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(parent, bounds, labels, colors, name, scroll);
 		q.labelColors_([Color.red,Color.blue,Color.yellow]);
-		if( GUI.id === \cocoa)  {
+		if( GUI.id === \cocoa || GUI.id === \qt)  {
 			q.backgrounds_([Color.red.alpha_(0.1),
 								Color.blue.alpha_(0.1),
 								Color.yellow.alpha_(0.1)]);
@@ -749,7 +735,7 @@ TabbedView {
 	*newTransparent{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(parent, bounds, labels, colors, name, scroll);
-		if( GUI.id === \cocoa)  {
+		if( GUI.id === \cocoa || GUI.id === \qt)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 		}{	
 			q.labelColors_([Color(0.9,0.9,0.9)]);
@@ -762,7 +748,7 @@ TabbedView {
 	*newPacked{ arg parent, bounds, labels, colors, name=" ", scroll=false;
 		var q;
 		q=this.new(parent, bounds, labels, colors, name, scroll);
-		if( GUI.id === \cocoa)  {
+		if( GUI.id === \cocoa || GUI.id === \qt)  {
 			q.labelColors_([Color.white.alpha_(0.3)]);
 			q.backgrounds_([Color.white.alpha_(0.3)]);
 			}{
