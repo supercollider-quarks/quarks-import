@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title></title>
 <meta name="Generator" content="Cocoa HTML Writer">
-<meta name="CocoaVersion" content="949.46">
+<meta name="CocoaVersion" content="1187.34">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
 p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
@@ -14,18 +14,18 @@ p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0p
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #606060}
-p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #a41c14}
-p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0018b8}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #bf0000}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0000bf}
 span.s1 {font: 18.0px Helvetica}
 span.s2 {font: 12.0px Helvetica}
 span.s3 {font: 14.0px Helvetica}
 span.s4 {font: 11.0px Monaco}
 span.s5 {color: #000000}
-span.s6 {color: #0018b8}
+span.s6 {color: #0000bf}
 span.s7 {color: #606060}
-span.s8 {color: #a41c14}
-span.s9 {color: #356f14}
-span.s10 {font: 10.0px Monaco; color: #0018b8}
+span.s8 {color: #bf0000}
+span.s9 {color: #007300}
+span.s10 {font: 10.0px Monaco; color: #0000bf}
 span.s11 {font: 10.0px Monaco}
 span.Apple-tab-span {white-space:pre}
 </style>
@@ -33,7 +33,7 @@ span.Apple-tab-span {white-space:pre}
 <body>
 <p class="p1"><span class="s1"><b>TabbedView<span class="Apple-converted-space">  </span></b></span><b>an array of CompositeViews (or ScrollViews) with tabs for switching<span class="Apple-converted-space"> </span></b></p>
 <p class="p2"><br></p>
-<p class="p3">by jostM, <span class="Apple-converted-space">  </span>Aug 01, 2009 version 1.28</p>
+<p class="p3">by Jost Muxfeldt, <span class="Apple-converted-space">  </span>Oct 09, 2012 version 1.29</p>
 <p class="p3">Change history at bottom.</p>
 <p class="p4"><span class="Apple-converted-space">  </span></p>
 <p class="p1"><b>Class Methods</b></p>
@@ -174,7 +174,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6"><span class="s6">TabbedView</span>.newTall(<span class="s6">nil</span>,<span class="s6">Rect</span>(100,500,400,100),<span class="s6">Array</span>.fill(5,{<span class="s6">|i|</span> <span class="s7">"tab"</span>++i.asString})).tabPosition_(<span class="s9">\bottom</span>);</p>
 <p class="p5"><br></p>
 <p class="p5"><br></p>
-<p class="p3"><b>Drag objects from one tab to another (</b><span class="s8"><b>under cocoa only</b></span><b> at the moment):</b></p>
+<p class="p3"><b>Drag objects from one tab to another (</b><span class="s8"><b>under cocoa and qt only</b></span><b> at the moment):</b></p>
 <p class="p4"><br></p>
 <p class="p6">(</p>
 <p class="p6">v=<span class="s6">TabbedView</span>.newColorLabels;</p>
@@ -217,7 +217,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
 <p class="p6">q.views[0].flow({ <span class="s6">arg</span> w;</p>
 <p class="p6"><span class="Apple-tab-span">	</span>78.do({ <span class="s6">arg</span> i;</p>
-<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = <span class="s6">GUI</span>.button.new(w, <span class="s6">Rect</span>(rrand(20,300),rrand(20,300), 75, 24));</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b = <span class="s6">Button</span>(w, <span class="s6">Rect</span>(rrand(20,300),rrand(20,300), 75, 24));</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>b.states = [[<span class="s7">"Start "</span>++i, <span class="s6">Color</span>.black, <span class="s6">Color</span>.rand],</p>
 <p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>[<span class="s7">"Stop "</span>++i, <span class="s6">Color</span>.white, <span class="s6">Color</span>.red]];</p>
 <p class="p6"><span class="Apple-tab-span">	</span>});</p>
@@ -238,7 +238,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p6">)</p>
 <p class="p5"><br></p>
 <p class="p3"><b>focusFrameColor_(color) and unfocusTabs_(bool)</b></p>
-<p class="p3">The tabs are drawn with user view which have a clear focus frame on Cocoa. On Swing, the frame cannot be made clear, so vy default the tabs are unfocused after clicking. You can change this if it interferes with you tabbing scheme.</p>
+<p class="p3">The tabs are drawn with user view which have a clear focus frame on Cocoa. On Swing, the frame cannot be made clear, so by default the tabs are unfocused after clicking. You can change this if it interferes with your tabbing scheme.</p>
 <p class="p4"><span class="Apple-converted-space">     </span></p>
 <p class="p6">(<span class="Apple-converted-space"> </span></p>
 <p class="p9"><span class="s5">v=</span>TabbedView<span class="s5">.new();</span></p>
@@ -394,6 +394,7 @@ span.Apple-tab-span {white-space:pre}
 <p class="p3">July 26, 2009: Version 1.27; removed AppClock and returned to factored font calculation for swing. AppClock causes<span class="Apple-converted-space"> </span></p>
 <p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>flow layout problems</p>
 <p class="p3">Aug 01, 2009: Version 1.28;<span class="Apple-converted-space">  </span>small fix to Help file</p>
+<p class="p3">Oct 09, 2012: Version 1.29; Removed deprecated methods. QT support. SCDoc Support.</p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
 <p class="p4"><br></p>
