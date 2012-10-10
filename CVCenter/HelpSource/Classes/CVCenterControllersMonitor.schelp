@@ -4,7 +4,7 @@ categories:: External Control>OSC, External Control>MIDI, Conductor
 related:: Classes/CVCenter, Classes/CCResponder, Classes/OSCresponderNode
 
 DESCRIPTION::
-A simple monitor, displaying all link::Classes/OSCresponder::s and link::Classes/CCResponder::s currently in use within link::Classes/CVCenter::.
+A simple monitor, displaying all code::OSCresponder::s and code::CCResponder::s currently in use within code::CVCenter::.
 
 CLASSMETHODS::
 
@@ -12,28 +12,28 @@ METHOD:: new
 Create the GUI and focus the given tab.
 
 argument:: focus
-an link::Classes/Integer::
+an code::Integer::
 
 returns:: this (CVCenterControllersMonitor)
 
 METHOD:: window
 The GUI window.
 
-returns:: a link::Classes/Window::
+returns:: a code::Window::
 
 METHOD:: tabs
 2 tabs: "MIDI-responders" and "OSC-responders"
 
-returns:: a link::Classes/TabbedView::
+returns:: a code::TabbedView::
 
 METHOD:: getControllersList
-get an link::Classes/Event:: containing all current controllers in link::Classes/CVCenter::.
+get an code::Event:: containing all current controllers in code::CVCenter::.
 
 returns:: this (CVCenterControllersMonitor)
 
 section:: Shortcuts
 definitionList::
-## o || focus the "OSC-controllers" tab
-## m || focus the "MIDI-controllers" tab
-## x || close the window
+## "o" || focus the "OSC-controllers" tab
+## "m" || focus the "MIDI-controllers" tab
+## "x" || close the window
 ::
