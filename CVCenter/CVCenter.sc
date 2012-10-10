@@ -927,7 +927,7 @@ CVCenter {
 									);
 									cvWidgets[key].wdgtControllersAndModels[hilo].oscInputRange.model.value_(
 										[v[hilo].osc.calibConstraints.lo, v[hilo].osc.calibConstraints.hi]
-									).changedKeys(cvWidgets[key].synchKeys);
+									).changed(\value);
 									cvWidgets[key].setOscMapping(v[hilo].osc.oscMapping, hilo)
 								})
 							});
@@ -971,7 +971,7 @@ CVCenter {
 								);
 								cvWidgets[key].wdgtControllersAndModels.oscInputRange.model.value_(
 									[v.osc.calibConstraints.lo, v.osc.calibConstraints.hi]
-								).changedKeys(cvWidgets[key].synchKeys);
+								).changed(\value);
 								cvWidgets[key].setOscMapping(v.osc.oscMapping)
 							}
 						});
