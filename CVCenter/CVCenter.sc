@@ -133,7 +133,8 @@ CVCenter {
 			tabs.view.resize_(5);
 			
 			tabs.labelColors_(labelColors);
-			tabs.labelPadding_(5);
+			tabs.labelPadding_(7);
+			tabs.tabHeight_(15);
 			tabs.unfocusedColors_(unfocusedColors);
 			tabs.font_(GUI.font.new("Helvetica", 10, true));
 			tabs.tabCurve_(3);
@@ -926,7 +927,7 @@ CVCenter {
 									);
 									cvWidgets[key].wdgtControllersAndModels[hilo].oscInputRange.model.value_(
 										[v[hilo].osc.calibConstraints.lo, v[hilo].osc.calibConstraints.hi]
-									).changed(\value);
+									).changedKeys(cvWidgets[key].synchKeys);
 									cvWidgets[key].setOscMapping(v[hilo].osc.oscMapping, hilo)
 								})
 							});
@@ -970,7 +971,7 @@ CVCenter {
 								);
 								cvWidgets[key].wdgtControllersAndModels.oscInputRange.model.value_(
 									[v.osc.calibConstraints.lo, v.osc.calibConstraints.hi]
-								).changed(\value);
+								).changedKeys(cvWidgets[key].synchKeys);
 								cvWidgets[key].setOscMapping(v.osc.oscMapping)
 							}
 						});
