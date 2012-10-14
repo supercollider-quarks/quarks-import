@@ -94,7 +94,7 @@ CVCenter {
 
 		if(window.isNil or:{ window.isClosed }, {
 			window = Window("CVCenter", Rect(this.guix, this.guiy, this.guiwidth, this.guiheight));
-			if(Quarks.isInstalled("wslib") and:{ GUI.scheme !== SwingGUI }, { window.background_(Color.black) });
+			if(Quarks.isInstalled("wslib") and:{ GUI.id !== \swing }, { window.background_(Color.black) });
 			window.view.background_(Color.black);
 			flow = FlowLayout(window.bounds.insetBy(4));
 			window.view.decorator = flow;
@@ -239,9 +239,15 @@ CVCenter {
 				.font_(Font("Helvetica", 10))
 				.states_([["load setup", Color.white, Color(0.15, 0.15, 0.15)]])
 				.action_({ |pb|
-					if(loadActionsRadio.value == 0, { loadFlag = true }, { loadFlag = false });
-					if(autoConnectMIDIRadio.value == 0, { midiFlag = true }, { midiFlag = false });
-					if(autoConnectOSCRadio.value == 0, { oscFlag = true }, { oscFlag = false });
+					if(loadActionsRadio.value == 0 or:{
+						loadActionsRadio.value == false
+					}, { loadFlag = true }, { loadFlag = false });
+					if(autoConnectMIDIRadio.value == 0 or:{
+						autoConnectMIDIRadio.value == false
+					}, { midiFlag = true }, { midiFlag = false });
+					if(autoConnectOSCRadio.value == 0 or:{
+						autoConnectOSCRadio.value == false
+					}, { oscFlag = true }, { oscFlag = false });
 					this.loadSetup(autoConnectMIDI: midiFlag, autoConnectOSC: oscFlag, loadActions: loadFlag);
 				})
 			;
@@ -257,13 +263,17 @@ CVCenter {
 
 			swFlow.shift(5, 2);
 
-			loadActionsRadio = Button(prefPane, Rect(0, 0, 15, 15))
-				.font_(Font("Helvetica", 10))
-				.states_([
-					["X", Color.red, Color.white],
-					["", Color.red, Color.white]
-				])
-			;
+			if(GUI.scheme === CocoaGUI, {
+				loadActionsRadio = Button(prefPane, Rect(0, 0, 15, 15))
+					.font_(Font("Helvetica", 10))
+					.states_([
+						["X", Color.red, Color.white],
+						["", Color.red, Color.white]
+					])
+				;
+			}, {
+				loadActionsRadio = CheckBox(prefPane, Rect(0, 0, 15, 15)).value_(true)
+			});
 
 			swFlow.shift(5, -2);
 
@@ -276,13 +286,17 @@ CVCenter {
 
 			swFlow.shift(5, 2);
 
-			autoConnectMIDIRadio = Button(prefPane, Rect(0, 0, 15, 15))
-				.font_(Font("Helvetica", 10))
-				.states_([
-					["X", Color.red, Color.white],
-					["", Color.red, Color.white]
-				])
-			;
+			if(GUI.scheme === CocoaGUI, {
+				autoConnectMIDIRadio = Button(prefPane, Rect(0, 0, 15, 15))
+					.font_(Font("Helvetica", 10))
+					.states_([
+						["X", Color.red, Color.white],
+						["", Color.red, Color.white]
+					])
+				;
+			}, {
+				autoConnectMIDIRadio = CheckBox(prefPane, Rect(0, 0, 15, 15)).value_(true)
+			});
 
 			swFlow.shift(5, -2);
 
@@ -295,13 +309,17 @@ CVCenter {
 
 			swFlow.shift(5, 2);
 
-			autoConnectOSCRadio = Button(prefPane, Rect(0, 0, 15, 15))
-				.font_(Font("Helvetica", 10))
-				.states_([
-					["X", Color.red, Color.white],
-					["", Color.red, Color.white]
-				])
-			;
+			if(GUI.scheme === CocoaGUI, {
+				autoConnectOSCRadio = Button(prefPane, Rect(0, 0, 15, 15))
+					.font_(Font("Helvetica", 10))
+					.states_([
+						["X", Color.red, Color.white],
+						["", Color.red, Color.white]
+					])
+				;
+			}, {
+				autoConnectOSCRadio = CheckBox(prefPane, Rect(0, 0, 15, 15)).value_(true)
+			});
 
 			window.onClose_({
 				CVWidgetEditor.allEditors.pairsDo({ |editor, val|
