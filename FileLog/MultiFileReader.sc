@@ -38,12 +38,17 @@ MultiFileReader{
 		pathDir = PathName(path.asAbsolutePath).pathOnly;
 		//		pathDir = pathDir ;
 		if ( tarBundle ){
+			// not sure whether fileName is the right thing to do?
 			indexfn = fileName +/+ fileName ++ "_index";
 			("tar -f" + fn + "-x" + indexfn ).systemCmd;
 			this.openIndexFile;
 			//.unixCmdThen( {this.openIndexFile} );
 		}{
-			indexfn = pathDir +/+ fileName ++ "_index";
+			if ( path.isFolder ){
+				indexfn = pathDir +/+ fileName +/+ fileName ++ "_index";
+			}{
+				indexfn = pathDir +/+ fileName ++ "_index";
+			};
 			this.openIndexFile;
 		};
 	}
