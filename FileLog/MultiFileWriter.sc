@@ -30,6 +30,8 @@ MultiFileWriter{
 	var <curfn;
 	var <index = 0;
 
+	//	var <tempfn;
+
 	var <>fileClass;
 	var <>stringMethod = \asString;
 
@@ -47,30 +49,30 @@ MultiFileWriter{
 			("mkdir"+pathDir+/+fileName).systemCmd;
 			pathDir = pathDir +/+ fileName;
 		};
-		pathDir = pathDir +/+ "/";
+		//pathDir = pathDir +/+ "/";
 	}
 
 	createPosixFn{ |fn,app,ext|
 		var newfn = fn ++ app;
-		if ( newfn.size < maxFileLength ){
-			^(newfn++ext);
-		}{
+		//	if ( newfn.size < maxFileLength ){
+		^(newfn++ext);
+		/*	
+			}{
 			newfn = ( fn ++ app ).keep( maxFileLength - app.size );
 			newfn = newfn ++ app ++ ext;
 			^newfn;
 		};
+		*/
 	}
 
 	open{
 		var indexFile;
 		var indexfn = pathDir +/+ fileName ++ "_index";
-		curfn = PathName(pathDir).pathOnly +/+ this.createPosixFn( fileName, "_" ++ index ++ "_" ++ Date.localtime.stamp, "." ++ extension );
+		curfn = pathDir +/+ this.createPosixFn( fileName, "_" ++ index ++ "_" ++ Date.localtime.stamp, "." ++ extension );
+		//	tempfn = pathDir +/+ this.createPosixFn( fileName, "_" ++ index ++ "_temp_" ++ Date.localtime.stamp, "." ++ extension );
+		//"opening".postln;
 		indexFile = TabFileWriter.new( indexfn, "a", true );
-		//	indexFile.dump;
-		//	indexfn.postcs;
 		curFile = fileClass.new( curfn, "w" );
-		//	curFile.dump;
-		//	curfn.postcs;
 		if ( fileClass.isKindOf( FileWriter ) ){
 			curFile.stringMethod = stringMethod;
 		};
@@ -80,33 +82,39 @@ MultiFileWriter{
 			indexFile.writeLine( [ index, PathName(curfn).fileName ]);
 		};
 		indexFile.close;
+		//	[curfn, tempfn, curFile.isOpen].postln;
 	}
 
 	close{
 		var newf;
 		if ( curFile.notNil ){
-		if ( curFile.isOpen ){
-			newf= pathDir +/+ PathName(curfn).fileName;
-			curFile.close;
-			index = index + 1;
-			fork{
-				//		Task({
-				if ( zipSingle ){
-					( 
-						"mv" + curfn + pathDir ++ ";" +
-						"gzip" + newf ++ ";"
-						// + "rm" + newf // file is removed automagically
-					).systemCmd;
-					newf = newf ++ ".gz";
-				}{
-					(
-						"mv" + curfn + pathDir ++ ";"
-					).systemCmd;
+			if ( curFile.isOpen ){
+				//	newf= pathDir +/+ PathName(curfn).fileName;
+				curFile.close;
+				fork{
+					//"closing".postln;
+					//		Task({
+					if ( zipSingle ){
+						( 
+							//"mv" + tempfn + curfn ++ ";" +
+							"gzip" + curfn ++ ";"
+							// + "rm" + newf // file is removed automagically
+						).systemCmd;
+						newf = curfn ++ ".gz";
+					}{
+						//(
+						//	"mv" + tempfn + curfn ++ ";"
+						//).systemCmd;
+						newf = curfn;
+					};
+					if ( tarBundle ){
+						0.1.wait;
+						//	1.0.wait;
+						this.createTarBundle( newf.copy );
+					};
 				};
-				//	1.0.wait;
-				this.createTarBundle( newf );
+				index = index + 1;
 			};
-		};
 		}
 		//		}).play(AppClock);
 	}
@@ -123,7 +131,7 @@ MultiFileWriter{
 					+ "tar -uf"
 					+ tarName + 
 					PathName(pathDir).fileName ++ ";"
-					+ "rm" + newf
+					//+ "rm" + newf
 				).unixCmd;
 			}{
 				//	"new tar".postln;
@@ -132,7 +140,7 @@ MultiFileWriter{
 					+ "tar -cf"
 					+ tarName 
 					+ PathName(pathDir).fileName ++ ";"
-					+ "rm" + newf
+					//+ "rm" + newf
 				).unixCmd;
 			};
 		};
