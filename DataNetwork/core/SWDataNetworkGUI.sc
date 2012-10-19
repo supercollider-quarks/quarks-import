@@ -119,7 +119,8 @@ SWDataSlotGui{
 				|but| if ( but.value == 1, {
 					slot.createBus
 				}, { 
-					slot.freeBus; }); 
+					slot.freeBus; 
+				}); 
 			}).font_( font );
 
 		this.addSubButton;
@@ -157,6 +158,10 @@ SWDataSlotGui{
 			val.string_( slot.value );
 		};
 		if ( editKey.not ){ key.string_( slot.key.asString ); };
+		debug.value_( slot.debug.binaryValue );
+		mon.value_( slot.isMonitored.binaryValue );
+		bus.value_( slot.bus.notNil.binaryValue );
+
 			//	}.defer;
 	}
 
@@ -196,8 +201,8 @@ SWDataSlotGui{
 
 SWDataNodeGui{
 	classvar <>xposScreen=0, <>yposScreen=20, <>font;
-	classvar <>xsize = 254;
-	classvar <>xsizeBig = 212;
+	classvar <>xsize = 270;
+	classvar <>xsizeBig = 230;
 	classvar <slottype;
 
 
@@ -205,7 +210,7 @@ SWDataNodeGui{
 	var <>w, <>node, <watcher;
 	var <>cw;
 
-	var <key,<elaps,<bus,<debug,<mon;
+	var <key,<elaps,<bus,<debug,<mon,<rec;
 	var <expandBut,<nslots;
 
 	var <slots;
@@ -272,6 +277,10 @@ SWDataNodeGui{
 		//		decorator.nextLine;
 
 		elaps = GUI.numberBox.new( cw, Rect( 0, 0, 35, 16 )).value_( node.elapsed.round( 0.001 ) ).font_( font );
+
+		rec = GUI.button.new( cw, Rect( 0, 0, 15, 16 )).states_(
+			[ [ "R", Color.blue, Color.gray ], ["R", Color.black, Color.red ] ] ).action_( {
+				|but| if ( but.value == 1, { node.record_( true ) }, { node.record_( false ) } ); } ).font_( font );
 		
 		debug = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Db", Color.blue ], ["Db", Color.red ] ] ).action_( {
@@ -294,13 +303,16 @@ SWDataNodeGui{
 					|but| if ( but.value == 1, {
 						node.createBus
 					}, { 
-						node.freeBus; });
+						node.freeBus; 
+					});
 				} ).font_( font );
 		};
 
 		this.addSubGetButtons;
 
 		watcher = SkipJack.new({ defer{this.updateVals} }, 1.0, { w.isClosed }, (\datanodegui ++ node.id).asSymbol, autostart: false );
+
+		this.updateVals;
 
 		//	watcher.start;		
 		w.refresh;
@@ -314,6 +326,7 @@ SWDataNodeGui{
 		parent = p;
 		elaps.mouseOverAction = { parent.setInfo( "time elapsed since last update" ) };
 		debug.mouseOverAction = { parent.setInfo( "turn on debugging" ) };
+		rec.mouseOverAction = { parent.setInfo( "turn on recording mode" ) };
 		if ( node.type == 0 ){
 			mon.mouseOverAction = { parent.setInfo( "monitor data of this node" ) };
 			bus.mouseOverAction = { parent.setInfo( "create bus for this node" ) };
@@ -393,6 +406,10 @@ SWDataNodeGui{
 	updateVals { 
 		//	{ 
 		elaps.value_( node.elapsed.round(0.001) );
+		rec.value_( node.record.binaryValue );
+		debug.value_( node.debug.binaryValue );
+		mon.value_( node.isMonitored.binaryValue );
+		bus.value_( node.bus.notNil.binaryValue );
 		if ( node.elapsed < watcher.dt ){
 			if ( editKey.not ){ key.string_( node.key.asString ); };
 			slots.do{ |it| it.updateVals };
