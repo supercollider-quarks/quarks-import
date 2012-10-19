@@ -168,10 +168,10 @@ SWDataNetworkLog{
 		var dt,line,data,nd;
 		var oldid;
 		if ( hasExtraTab ){
-			line = reader.nextInterpretTry.drop(-1);
+			line = reader.nextInterpret.drop(-1);
 		}{
 			oldid = reader.curid;
-			line = reader.nextInterpretTry;
+			line = reader.nextInterpret;
 			//	line.postcs;
 			// header may have changed:
 			if ( oldid != reader.curid ){

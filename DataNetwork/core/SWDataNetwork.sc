@@ -16,6 +16,8 @@ SWDataNetwork{
 	var <>gui;
 	var <>baseGui;
 
+	var <debug = false;
+
 	var <>recTask;
 	var <logfile;
 	var <reclines = 0;
@@ -560,6 +562,9 @@ SWDataNetwork{
 		};
 
 		logfile = MultiFileWriter.new( fn ++ ".txt" );
+		// FIXME: zipping and tarring seems to give some problems:
+		logfile.zipSingle = false;
+		logfile.tarBundle = false;
 		logfile.stringMethod = \asCompileString;
 		//	logfile =  File(fn++"_"++Date.localtime.stamp++".txt", "w");
 				//		recnodes = this.writeHeader;
@@ -607,7 +612,7 @@ SWDataNetwork{
 		//		logfile.write( "\n" );
 		//		logfile.write( "time\t" );
 
-		recnodes = nodes.collect{ |node|
+		recnodes = nodes.select{ |node| node.record }.collect{ |node|
 			//			node.slots.do{ |it| logfile.write( it.id.asCompileString ); logfile.write( "\t" ); };
 			node.id;
 		}.asArray;
@@ -675,6 +680,7 @@ SWDataNetwork{
 	// ------------ Debugging -------------
 
 	debug_{ |onoff|
+		debug = onoff;
 		nodes.do{ |sl|
 			sl.do{ |slt| slt.debug_( onoff ) } };
 	}
@@ -729,6 +735,8 @@ SWDataNode{
 	var >bus;
 	var <>databus;
 
+	var <debug = false;
+	var <>record = false;
 	//	var <>trigger;
 
 	// monitoring support
@@ -832,6 +840,7 @@ SWDataNode{
 	// ---------- debugging and monitoring -------
 
 	debug_{ |onoff|
+		debug = onoff;
 		slots.do{ |sl|
 			sl.do{ |slt| slt.debug_( onoff ) } };
 	}
@@ -848,6 +857,15 @@ SWDataNode{
 			});
 			datamonitor.start;
 		}, { datamonitor.stop; });
+	}
+
+	isMonitored{
+		if ( datamonitor.notNil ){
+			if ( datamonitor.isPlaying ){
+				^true
+			}
+		};
+		^false;
 	}
 
 	monitorClose{
@@ -872,6 +890,7 @@ SWDataSlot{
 
 	var <bus;
 	var debugAction;
+	var <debug = false;
 
 	var <>scale=1;
 	var <map;
@@ -903,7 +922,9 @@ SWDataSlot{
 		if ( oldval.equalWithPrecision( value, actionSensitivity ).not ){
 			action.value( value );
 		};
-		debugAction.value( value );
+		if ( debug ){
+			debugAction.value( value );
+		};
 		if ( bus.notNil, { bus.set( value ) } );
 	}
 
@@ -973,6 +994,7 @@ SWDataSlot{
 	/// ------- debugging and monitoring ------
 
 	debug_{ |onoff|
+		debug = onoff;
 		if ( onoff, {
 			debugAction = { |val| [ id, value, key ].postln; };
 		},{
@@ -993,6 +1015,15 @@ SWDataSlot{
 			});
 			datamonitor.start;
 		}, { datamonitor.stop; });
+	}
+
+	isMonitored{
+		if ( datamonitor.notNil ){
+			if ( datamonitor.isPlaying ){
+				^true
+			}
+		};
+		^false;
 	}
 
 	monitorClose{
