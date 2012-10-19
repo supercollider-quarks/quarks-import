@@ -41,6 +41,10 @@ SWDataMonitor {
 		watcher.start;
 	}
 
+	isPlaying{
+		^watcher.task.isPlaying;
+	}
+
 	stop{
 		watcher.stop;
 	}
@@ -71,6 +75,10 @@ SWPlotterMonitor{
 	start{
 		if( plotter.parent.isNil ) { plotter.makeWindow };
 		monitor.start;
+	}
+
+	isPlaying{
+		^monitor.isPlaying;
 	}
 
 	stop{
