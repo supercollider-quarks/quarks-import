@@ -1,42 +1,43 @@
-// Jost Muxfeldt, 2012.
+/******* by jostM http://www.glyph.de *******/
 
+FancySlider : SCViewHolder {
 
-FancySlider : ViewRedirect { *key { ^\fancySlider }}
-
-
-SCFancySlider : SCUserView {
-
-	var <>step, <value=0, <>sliderColor,<>knobColor, 
-		<orientation=\horizontal,<>frameColor,<>widgetFunction,
+	var <>step, <value=0, <>sliderColor,<>knobColor, <>orientation=\horizontal,<>frameColor,<>widgetFunction,
 		<>thumbSize=7;	var <>shift_scale = 100.0, <>ctrl_scale = 10.0, <>alt_scale = 0.1;  
-	
-	*viewClass { 
-			^SCUserView;
-		} 
-	
+		
+	*new { arg parent, bounds;
+		^super.new.init(parent, bounds);
+		
+		
+	}		
 	init { |argParent, argBounds|
 	
-		super.init(argParent, argBounds);  
-				
+		this.view = UserView(argParent, argBounds);  
+		this.view.beginDragAction = {this.value} ;
+		this.view.canReceiveDragHandler = {GUI.view.currentDrag.isNumber} ;
+		this.view.receiveDragHandler = {this.valueAction_( GUI.view.currentDrag)} ;
+		this.view.mouseDownAction={ arg v, x, y, modifiers, buttonNumber, clickCount;
+			this.mouseDown(x, y, modifiers, buttonNumber, clickCount)};
+		this.view.mouseMoveAction={ arg v,  x, y, modifiers, buttonNumber, clickCount;
+			this.mouseMove(x, y, modifiers, buttonNumber, clickCount)};
+		(GUI.current.name == \CocoaGUI).if{	
+		this.keyDownAction = {arg v,char, modifiers, unicode, keycode, key;
+			this.defaultKeyDownAction(  char, modifiers, unicode, keycode, key) };
+		};
+		(GUI.current.name == \QtGUI).if{	
+		this.keyDownAction = {arg v,char, modifiers, unicode, keycode, key;
+			this.q_defaultKeyDownAction(  char, modifiers, unicode, keycode, key) };
+		};
 		sliderColor=Color.grey(0.6);
 		knobColor=Color.red;
 		frameColor=Color.grey;
 		step=this.pixelStep;
-		
 		widgetFunction = {arg uview; this.drawwidget(uview)};
 		if( argBounds.width<argBounds.height){orientation=\vertical};
-		this.drawFunc = {arg uview; widgetFunction.value(uview)}; 
-
+		view.drawFunc= {arg uview; widgetFunction.value(uview)}; 
 	}
 	
-	bounds_{arg rect;
-		if( rect.width<rect.height){orientation=\vertical}{orientation=\horizontal};
-		^super.bounds_(rect);
-	}
 	
-
-		
-		
 	getScale { |modifiers|
 		^case
 			 { modifiers & 131072 == 131072 } { shift_scale }
@@ -46,6 +47,7 @@ SCFancySlider : SCUserView {
 	}
 
 	drawwidget{|uview|
+		
 		var thumbwidth=thumbSize*2.sqrt.reciprocal;
 		(orientation==\horizontal).if{
 			// Draw the fill
@@ -82,38 +84,40 @@ SCFancySlider : SCUserView {
 	}
 		
 		
-	valueAction_{ arg val; 		this.value=val;
+	valueAction_{ arg val; 		
+		this.value=val;
 		this.doAction;
 	}
 	value_{ |val|  	  
 		value=val;
-		this.refresh;
+		view.refresh;
 	}
-
 	
 	
 	mouseDown{ arg x, y, modifiers, buttonNumber, clickCount;
 		var newVal;
-		mouseDownAction.value(this, x, y, modifiers, buttonNumber, clickCount); 
+		//view.mouseDownAction.value(this, x, y, modifiers, buttonNumber, clickCount); 
+				([256, 0].includes(modifiers)).if{ // restrict to no modifier
 
-		([256, 0].includes(modifiers)).if{ // restrict to no modifier
 			if (orientation==\horizontal)
-				{newVal= x.linlin(0,this.bounds.width,0,1); }
-				{newVal= (this.bounds.height-y).linlin(0,this.bounds.height,0,1); };
+				{newVal= x.linlin(0,view.bounds.width,0,1); }
+				{newVal= (view.bounds.height-y).linlin(0,view.bounds.height,0,1); };
 			
 			if (newVal != value) {this.valueAction_(newVal)}; 		};
 	}
 	
 	mouseMove{ arg x, y, modifiers, buttonNumber, clickCount;
 		var newVal;  
-		mouseMoveAction.value(this, x, y, modifiers, buttonNumber, clickCount);
+		//view.mouseMoveAction.value(this, x, y, modifiers, buttonNumber, clickCount);
 		
+		([256, 0].includes(modifiers)).if{ 
 			if (orientation==\horizontal){
-				newVal= x.linlin(0,this.bounds.width,0,1);}{
-			    newVal= (this.bounds.height-y).linlin(0,this.bounds.height,0,1);};
+				newVal= x.linlin(0,view.bounds.width,0,1);}{
+			    newVal= (view.bounds.height-y).linlin(0,view.bounds.height,0,1);};
 			 
 			
 			if (newVal != value) {this.valueAction_(newVal)}; 
+		};
 		
 	}
 	
@@ -137,138 +141,7 @@ SCFancySlider : SCUserView {
 		^nil		// bubble if it's an invalid key
 	}
 	
-	defaultGetDrag {^value} 
-	
-	defaultCanReceiveDrag  {^currentDrag.isNumber} 
-	defaultReceiveDrag { this.valueAction = currentDrag;} 
-	
-	increment { |zoom=1| ^this.valueAction = this.value + (max(this.step, this.pixelStep) * zoom) }
-	decrement { |zoom=1| ^this.valueAction = this.value - (max(this.step, this.pixelStep) * zoom) }
-
-	pixelStep {  // like in SCSlider
-		var bounds = this.bounds; 
-		^(bounds.width-1).reciprocal;
-	}
-	
-	*paletteExample { arg parent, bounds;
-		^this.new(parent, bounds);
-	}
-
-}
-
-
-QFancySlider : QUserView {
-
-	var <>step, <value=0, <>sliderColor,<>knobColor, <orientation=\horizontal,
-		<>frameColor, <>thumbSize=7;	var <>shift_scale = 100.0, <>widgetFunction,
-		<>ctrl_scale = 10.0, <>alt_scale = 0.1;  
-	
-	  *new { arg parent, bounds;
-	    var me = super.new(parent, bounds ?? {this.sizeHint} ).init;
-	    me.canFocus = true;
-	    ^me;
-	  }
-	
-	init { |argParent, argBounds|
-	
-		argBounds=argBounds.asRect();		
-		sliderColor=Color.grey(0.6);
-		knobColor=Color.red;
-		frameColor=Color.grey;
-		step=this.pixelStep;
-		
-		widgetFunction = {arg uview; this.drawwidget(uview)};
-		if( argBounds.width<argBounds.height){orientation=\vertical};
-		this.drawFunc = {arg uview; widgetFunction.value(uview)}; 
-
-	}
-	bounds_{arg rect;
-		if( rect.width<rect.height){orientation=\vertical}{orientation=\horizontal};
-		^super.bounds_(rect);
-	}
-
-	getScale { |modifiers|
-		^case
-			 { modifiers & 131072 == 131072 } { shift_scale }
-			 { modifiers & 262144 == 262144 } { ctrl_scale }
-			 { modifiers & 524288 == 524288 } { alt_scale }
-			 { 1 };
-	}
-
-	
-	drawwidget{|uview|
-		
-		var thumbwidth=thumbSize*2.sqrt.reciprocal;
-		(orientation==\horizontal).if{
-			// Draw the fill
-			Pen.fillColor =sliderColor;
-			Pen.addRect(Rect(0,0, this.bounds.width*value,this.bounds.height));
-			Pen.fill;
-			// Draw the triangle
-			Pen.fillColor = knobColor;
-			Pen.moveTo(((this.bounds.width*value)-thumbwidth) @ this.bounds.height);
-			Pen.lineTo(((this.bounds.width*value)+thumbwidth) @ this.bounds.height);
-			Pen.lineTo(((this.bounds.width*value)) @ (this.bounds.height-thumbSize));
-			Pen.lineTo(((this.bounds.width*value)-thumbwidth) @ this.bounds.height);
-			Pen.fill;
-		}{	
-			Pen.fillColor =sliderColor;
-			Pen.addRect(Rect(0,this.bounds.height, this.bounds.width,this.bounds.height*value.neg));
-			Pen.fill;
-			// Draw the triangle
-			Pen.fillColor = knobColor;
-			Pen.moveTo((this.bounds.width	
-				@((this.bounds.height*value.neg)+thumbwidth + this.bounds.height))  );
-			Pen.lineTo(((this.bounds.width-thumbSize)   
-				@((this.bounds.height*value.neg) + this.bounds.height)) );
-			Pen.lineTo((this.bounds.width	
-				@((this.bounds.height*value.neg)-thumbwidth + this.bounds.height))  );
-			Pen.lineTo((this.bounds.width	
-				@((this.bounds.height*value.neg)+thumbwidth)+ this.bounds.height)  );
-			Pen.fill;		};
-		// Draw the frame
-		Pen.strokeColor = frameColor;
-		Pen.addRect(Rect(0,0, this.bounds.width,this.bounds.height+1));
-		Pen.stroke;
-	
-	}
-		
-		
-	valueAction_{ arg val; 		this.value=val;
-		this.doAction;
-	}
-	value_{ |val|  	  
-		value=val;
-		this.refresh;
-	}
-	
-	mouseDown{ arg x, y, modifiers, buttonNumber, clickCount;
-		var newVal;
-		mouseDownAction.value(this, x, y, modifiers, buttonNumber, clickCount); 
-
-			if (orientation==\horizontal)
-				{newVal= x.linlin(0,this.bounds.width,0,1); }
-				{newVal= (this.bounds.height-y).linlin(0,this.bounds.height,0,1); };
-			
-			if (newVal != value) {this.valueAction_(newVal)};
-	}
-	
-	mouseMove{ arg x, y, modifiers, buttonNumber, clickCount;
-		var newVal;  
-		mouseMoveAction.value(this, x, y, modifiers, buttonNumber, clickCount);
-		
-		([256, 0].includes(modifiers)).if{ 
-			if (orientation==\horizontal){
-				newVal= x.linlin(0,this.bounds.width,0,1);}{
-			    newVal= (this.bounds.height-y).linlin(0,this.bounds.height,0,1);};
-			 
-			
-			if (newVal != value) {this.valueAction_(newVal)}; 
-		};
-		
-	}
-	
-	  defaultKeyDownAction {  arg char, modifiers, unicode, keycode, key;
+	q_defaultKeyDownAction {  arg char, modifiers, unicode, keycode, key;
 	    var scale = this.getScale( modifiers );
 	    switch( char,
 	      $r, { this.valueAction = 1.0.rand },
@@ -289,19 +162,14 @@ QFancySlider : QUserView {
 	      }
 	    );
 	    ^true; // accept the event and stop its processing
-	  }
-	
-	defaultGetDrag {^value} 
-	
-	defaultCanReceiveDrag  {^currentDrag.isNumber} 
-	defaultReceiveDrag { this.valueAction = currentDrag;} 
+	 }
 	
 	increment { |zoom=1| ^this.valueAction = this.value + (max(this.step, this.pixelStep) * zoom) }
 	decrement { |zoom=1| ^this.valueAction = this.value - (max(this.step, this.pixelStep) * zoom) }
 
 	pixelStep {  // like in SCSlider
-		var bounds = this.bounds; 
-		^(bounds.width-1).reciprocal
+		var bounds = view.bounds; 
+		^(bounds.width-1).reciprocal;
 	}
 
 }
