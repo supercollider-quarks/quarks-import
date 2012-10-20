@@ -19,7 +19,7 @@ EZFancySlider : EZSlider {
 
 
 		// if no parent, then pop up window
-		# view,bounds = this.prMakeView( parentView,bounds.asRect);
+		# view,bounds = this.prMakeView( parentView,bounds);
 
 
 		labelSize=labelWidth@labelHeight;
