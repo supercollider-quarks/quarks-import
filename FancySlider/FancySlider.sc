@@ -11,7 +11,7 @@ FancySlider : SCViewHolder {
 		
 	}		
 	init { |argParent, argBounds|
-	
+	    argBounds=argBounds.asRect;
 		this.view = UserView(argParent, argBounds);  
 		this.view.beginDragAction = {this.value} ;
 		this.view.canReceiveDragHandler = {GUI.view.currentDrag.isNumber} ;
