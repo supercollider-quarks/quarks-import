@@ -43,14 +43,14 @@ code::
   g.setColors(Color.grey,Color.white);
 );
 g.view.enabled=false
-// lots of sliders on on view
+// lots of sliders on on view. nice tight fit.
 (
 w=Window.new.front;
 w.view.decorator=FlowLayout(w.view.bounds);
-w.view.decorator.gap=2@2;
+w.view.decorator.gap=0@0;
 
 20.do{
-  EZFancySlider(w, 392@16," Freq ", \freq,unitWidth:30,initVal:6000.rand, numberWidth:60,layout:\horz)
+  EZFancySlider(w, 392@14," Freq ", \freq,unitWidth:30,initVal:6000.rand, numberWidth:60,layout:\horz)
   .setColors(Color.grey,Color.white)
   .font_(Font("Helvetica",11));
 

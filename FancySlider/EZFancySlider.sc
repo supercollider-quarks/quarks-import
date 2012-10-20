@@ -8,8 +8,7 @@ EZFancySlider : EZSlider {
 
 		var labelBounds, numBounds, unitBounds,sliderBounds;
 		var numberStep;
-		
-
+		//try{SwingGUI.put(\fancySlider, JSCFancySlider);};
 		// Set Margin and Gap
 		this.prMakeMarginGap(parentView, argMargin, argGap);
 
@@ -20,7 +19,7 @@ EZFancySlider : EZSlider {
 
 
 		// if no parent, then pop up window
-		# view,bounds = this.prMakeView( parentView,bounds);
+		# view,bounds = this.prMakeView( parentView,bounds.asRect);
 
 
 		labelSize=labelWidth@labelHeight;
@@ -39,7 +38,6 @@ EZFancySlider : EZSlider {
 		(unitWidth>0).if{ //only add a unitLabel if desired
 			unitView = GUI.staticText.new(view, unitBounds);
 		};
-
 		sliderView = FancySlider.new(view, sliderBounds);
 		numberView = GUI.numberBox.new(view, numBounds);
 
@@ -57,11 +55,11 @@ EZFancySlider : EZSlider {
 		};
 
 		sliderView.receiveDragHandler = { arg slider;
-			slider.valueAction = controlSpec.unmap(GUI.view.currentDrag);
+			sliderView.valueAction = controlSpec.unmap(GUI.view.currentDrag);
 		};
 
 		sliderView.beginDragAction = { arg slider;
-			controlSpec.map(slider.value)
+			controlSpec.map(sliderView.value);
 		};
 
 		numberView.action = { this.valueAction_(numberView.value) };
