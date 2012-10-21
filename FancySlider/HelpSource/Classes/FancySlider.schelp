@@ -5,7 +5,7 @@ categories:: GUI>Views
 related:: Classes/Slider, Classes/EZFancySlider, Classes/EZSlider
 
 DESCRIPTION::
-This should respond just like a slider. See the documentation for Slider. You can also customize the colors of the slider, and you can even customize the draw function. See widgetFunction below. EZFancySlider will Wrapp thsi slider just like and EZSlider.
+This should respond just like a slider. See the documentation for Slider. You can also customize the colors of the slider, and you can even customize the draw function. See drawFunc below. EZFancySlider will wrap a FancySlider just like  EZSlider does with a Slider.
 
 
 CLASSMETHODS::
@@ -16,14 +16,14 @@ PRIVATE:: key
 
 INSTANCEMETHODS::
 
-METHOD:: widgetFunction
+METHOD:: drawFunc
 A user definable function for drawing the widget. You can also add a Function in order to enhance the existing function:
 CODE::
 (
 w=Window.new.front;
 v = FancySlider(w, Rect (20,90,300,20)).action_{"test".postln};
 
-v.widgetFunction=v.widgetFunction.addFunc({arg uview; 
+v.drawFunc=v.drawFunc.addFunc({arg uview; 
 	var value_string = v.value.round(0.01).asString;
 	var string_x;
 	Pen.font = Font("Helvetica",11);
@@ -92,7 +92,7 @@ w=Window.new.front;
 
 v = FancySlider(w, Rect (0,i*20,400,20)).action_{"test".postln};
 
-v.widgetFunction=v.widgetFunction.addFunc({arg uview; 
+v.drawFunc=v.drawFunc.addFunc({arg uview; 
 	var value_string = v.value.round(0.01).asString;
 	var string_x;
 	Pen.font = Font("Helvetica",11);
