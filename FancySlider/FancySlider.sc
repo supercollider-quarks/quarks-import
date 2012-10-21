@@ -2,7 +2,7 @@
 
 FancySlider : SCViewHolder {
 
-	var <>step, <value=0, <>sliderColor,<>knobColor, <>orientation=\horizontal,<>frameColor,<>widgetFunction,
+	var <>step, <value=0, <>sliderColor,<>knobColor, <>orientation=\horizontal,<>frameColor,<>drawFunc,
 		<>thumbSize=7;	var <>shift_scale = 100.0, <>ctrl_scale = 10.0, <>alt_scale = 0.1;  
 		
 	*new { arg parent, bounds;
@@ -32,9 +32,9 @@ FancySlider : SCViewHolder {
 		knobColor=Color.red;
 		frameColor=Color.grey;
 		step=this.pixelStep;
-		widgetFunction = {arg uview; this.drawwidget(uview)};
+		drawFunc = {arg uview; this.drawwidget(uview)};
 		if( argBounds.width<argBounds.height){orientation=\vertical};
-		view.drawFunc= {arg uview; widgetFunction.value(uview)}; 
+		view.drawFunc= {arg uview; drawFunc.value(uview)}; 
 	}
 	
 	
