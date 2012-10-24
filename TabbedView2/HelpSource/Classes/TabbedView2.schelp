@@ -17,6 +17,8 @@ LIST::
 ##Tabs are draggable, both for their order and view position.
 ##Under GuiQT, tabs can be dragged (using cmd/ctrl-drag) to other TabbedView2s, even between windows.
 ##Under GuiQT tabs can be detached.
+##Double-clicking tabs changes their orientation.
+##Tabs can be set to be closable.
 ##Tabs are individually configurable, not just globally, though global defaults are settable.
 ::
 NOTE::
