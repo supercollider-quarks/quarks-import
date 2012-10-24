@@ -1,0 +1,11 @@
+(
+	\name: 		"TabbedView2",
+	\path: 		"TabbedView2",
+	\summary:	"1.0.beta Improved Tabbed Composite/Scroll views with lots of cool methods. \nCross GUI Platform\nfor SC >=3.3",
+	\author: 		"Jost Muxfeldt",
+
+	\version:		1.0,  // must be a float
+	\helpdoc: 		"TabbedView2.schelp",
+	\url:           "http://www.glyph.de"
+	
+)
