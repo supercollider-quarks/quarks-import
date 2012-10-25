@@ -10,7 +10,7 @@ You never instantiate a TabbedViewTab directly, but rather use TabbedView2.add t
 ::
 
 SUBSECTION:: Version and Author
-version: 1.00.beta1 , OCT 24, 2012
+version: 1.00.beta2 , OCT 25, 2012
 author: Jost Muxfeldt
 
 CLASSMETHODS::
@@ -45,6 +45,11 @@ METHOD:: focus
 focus this tab
 METHOD:: remove
 delete this tab from parent
+METHOD::onDelete_
+a Function to be performed on delet: {arg thisView; do stuff…}
+METHOD::onChangeParent_
+a Function to be performed on detach or on dragging to anther view: {arg thisView; do stuff...}
+
 
 SUBSECTION:: Customize Colors
 NOTE::
@@ -71,10 +76,14 @@ adds your function to the user draw function. Add an icon if something is happen
 
 SUBSECTION:: Customize Behavior
 METHOD:: rightClickDetach
+Boolean or Function:  {arg thisView;   return boolean}.
 to disable:set to false
 
 METHOD:: closable
-add a close icon by setting this to true. If tabWidth is \aut, the width will adjust automatically, but you might have to play with TabbedView2's  labelPadding, depending on other settings, like the TabbedView2's  Font, or tabHeight, etc.
+Boolean or Function:  {arg thisView; return boolean}-
+add a close icon by setting this to true. If tabWidth is \auto, the width will adjust automatically, but you might have to play with TabbedView2's  labelPadding, depending on other settings, like the TabbedView2's  Font, or tabHeight, etc.
+
+
 METHOD:: focusAction
 add a focus action to the tab. For example enable a scope you are showing in the tab.
 METHOD:: unfocusAction 
