@@ -682,16 +682,16 @@ SUBSECTION::All Features and Parameters
 CODE::
 
 (
-w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,950,700));
+w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,1050,700));
 w.view.background_(Color.grey(0.9));
 // setup views
-~t1v=TabbedView2.newTall(w.view, Rect(50,50,400,600));
+~t1v=TabbedView2.newTall(w.view, Rect(50,50,450,600));
 ~t1t1= ~t1v.add("Tab 1.1");
 ~t1t2= ~t1v.add("Tab 1.2").closable_(true);
 ~t1t3= ~t1v.add("Tab 1.3").useDetachIcon_(true);
 
 
-~t2v=TabbedView2.newTall(w.view, Rect(500,50,400,600));
+~t2v=TabbedView2.newTall(w.view, Rect(550,50,450,600));
 ~t2t1= ~t2v.add("Tab 2.1");
 ~t2t2= ~t2v.add("Tab 2.2").closable_(true);
 ~t2t3= ~t2v.add("Tab 2.3").closable_(true).onChangeParent_{"closeAction prevents closing".postln; false};
@@ -706,8 +706,7 @@ StaticText(w,Rect(0,0,360,130)).string_("
 - Drag the top,left,botom,right postion of the tabs.
 - Double-click on tabs to change followEdges option
 - Under QT, right-click on tab to detach it.
-- Under QT, Cmd/ctrl-drag tabs between tab views, even between windows.
-	");
+- Under QT, Cmd/ctrl-drag tabs between tab views, even between windows.");
 StaticText(w,Rect(0,0,360,22)).string_(" TabbedViewTab color variables:").background_(Color.grey(0.85));
 Button(w,Rect(0,0,360,22))
 	.states_([["background_ of this tab Color.blue.alpha_(0.1)"]])
