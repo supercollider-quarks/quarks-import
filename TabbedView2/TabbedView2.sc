@@ -326,7 +326,7 @@ TabbedView2{
 						closable = tab.closable;
 						useDetachIcon = tab.useDetachIcon;
 						closable.if{closepadding = clickbox};
-						useDetachIcon.if{detachpadding = clickbox};						if(useDetachIcon ||closable ){padding = closepadding + detachpadding + clickbox};
+						useDetachIcon.if{detachpadding = clickbox};						if(useDetachIcon ||closable ){padding = closepadding + detachpadding + (0.5*(closepadding + detachpadding))};
 				
 				if ( tab.tabWidth.asSymbol == \auto )
 					{ 
