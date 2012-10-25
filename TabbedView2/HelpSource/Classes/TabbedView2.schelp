@@ -680,13 +680,14 @@ SECTION::Demo
 Execute the code below to test all the features and parameters.
 SUBSECTION::All Features and Parameters
 CODE::
+
 (
 w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,950,700));
 w.view.background_(Color.grey(0.9));
 // setup views
 ~t1v=TabbedView2.newTall(w.view, Rect(50,50,400,600));
 ~t1t1= ~t1v.add("Tab 1.1");
-~t1t2= ~t1v.add("Tab 1.2").closable_(true).tabWidth_(\auto);
+~t1t2= ~t1v.add("Tab 1.2").closable_(true);
 ~t1t3= ~t1v.add("Tab 1.3").useDetachIcon_(true);
 
 
