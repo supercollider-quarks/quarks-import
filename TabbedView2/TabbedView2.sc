@@ -320,13 +320,13 @@ TabbedView2{
 
 		
 		
-			if ( tabHeight == \auto ){ tbht = (this.stringBounds("A",font).height+1 )}{tbht=tabHeight};
+			if ( tabHeight == \auto ){ tbht = (this.stringBounds("A",font).height+6 )}{tbht=tabHeight};
 			tabViews.do{ arg tab, i; 
 						var closable, useDetachIcon, closepadding=0, detachpadding=0, padding= 0 ;
 						closable = tab.closable;
 						useDetachIcon = tab.useDetachIcon;
 						closable.if{closepadding = clickbox};
-						useDetachIcon.if{detachpadding = clickbox};						if(useDetachIcon ||closable ){padding = closepadding + detachpadding + clickbox/2};
+						useDetachIcon.if{detachpadding = clickbox};						if(useDetachIcon ||closable ){padding = closepadding + detachpadding + clickbox};
 				
 				if ( tab.tabWidth.asSymbol == \auto )
 					{ 
@@ -896,11 +896,21 @@ TabbedView2{
 	}
 	 
 	pr_setHandlers{
-		view.canReceiveDragHandler_({GUI.view.currentDrag.class==TabbedViewTab});
+		view.canReceiveDragHandler_({arg view;
+			var parents, currentDrag, ret=false;
+			currentDrag = GUI.view.currentDrag;
+			
+			// Current drag must be a TabbedViewTab, 
+			// and the reciever may not be a child of the current drag
+			if(currentDrag.class==TabbedViewTab){
+				parents = view.getParents();
+				((parents.indexOf(currentDrag.view)).isNil && (view!=currentDrag.view.parent)).if{ret=true};
+			};
+			ret;
+		});
 		//widget.canReceiveDragHandler.addFunc({true});
 		view.receiveDragHandler_({
 			View.currentDrag.setParent(this);
-			
 		});
 
 	}

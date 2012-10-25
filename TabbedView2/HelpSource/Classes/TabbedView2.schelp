@@ -7,7 +7,7 @@ DESCRIPTION::
 There are extensive explanations in the LINK::#Examples:: section on how to use TabbedView2 with its many configuration options .
 
 SUBSECTION:: Version and Author
-version: 1.00.beta1, OCT 22, 2012
+version: 1.00.beta2, OCT 25, 2012
 
 author: Jost Muxfeldt 
 
@@ -218,6 +218,7 @@ Boolean,  default false. Must be set before creation of tab.
 returns::  the new TabbedViewTab 
 
 METHOD::dragTabs
+Boolean or Function:  {arg thisView;   return boolean}.
 default: true; Set to false to disable regular tab dragging (position or order changing by drag);
 
 
@@ -266,12 +267,10 @@ Lockes the  \left, \top, \right, or \bottom position of the tabs. You still can 
 ARGUMENT:: bool
 default false.
 
-
 METHOD:: followEdges
+Boolean or Function:  {arg thisView;   return boolean}.
 Set tabs parallel or perpendicular to container edges.
-
-ARGUMENT:: bool
-default true. (Set tabs parallel)
+default true. (Set tabs parallel);
 
 METHOD:: lockEdges
 Prevents Double-Click changing of followEdges.
@@ -569,7 +568,7 @@ v.focusFrameColor_(Color.red); //cocoa only
 )
 ::
 
-SUBSECTION: Fixed tab widths and \auto tab widths 
+SUBSECTION:: Fixed tab widths and \auto tab widths 
 
 tabWidth defaults to \auto on *new, but other themes use fixed widths:
 
@@ -682,32 +681,33 @@ Execute the code below to test all the features and parameters.
 SUBSECTION::All Features and Parameters
 CODE::
 (
-w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,950,500));
+w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,950,700));
 w.view.background_(Color.grey(0.9));
 // setup views
-~t1v=TabbedView2.newTall(w.view, Rect(50,50,400,400));
+~t1v=TabbedView2.newTall(w.view, Rect(50,50,400,600));
 ~t1t1= ~t1v.add("Tab 1.1");
 ~t1t2= ~t1v.add("Tab 1.2").closable_(true).tabWidth_(\auto);
 ~t1t3= ~t1v.add("Tab 1.3").useDetachIcon_(true);
 
 
-~t2v=TabbedView2.newTall(w.view, Rect(500,50,400,400));
+~t2v=TabbedView2.newTall(w.view, Rect(500,50,400,600));
 ~t2t1= ~t2v.add("Tab 2.1");
 ~t2t2= ~t2v.add("Tab 2.2").closable_(true);
-~t2t3= ~t2v.add("Tab 2.3").closable_(true);
+~t2t3= ~t2v.add("Tab 2.3").closable_(true).onChangeParent_{"closeAction prevents closing".postln; false};
 
 // populate
 ~t1t1.flow({arg w;
 	
 Button(w,Rect(0,0,360,22)).states_([["Add Tab"]]).action_({~t1t1.tabbedView.add("extra"+~t1t1.tabbedView.tabViews.size).closable_(true)});
 
-StaticText(w,Rect(0,0,360,120)).string_("
+StaticText(w,Rect(0,0,360,130)).string_("
 - Drag the index position of the tags (no cmd key needed).
 - Drag the top,left,botom,right postion of the tabs.
 - Double-click on tabs to change followEdges option
 - Under QT, right-click on tab to detach it.
 - Under QT, Cmd/ctrl-drag tabs between tab views, even between windows.
 	");
+StaticText(w,Rect(0,0,360,22)).string_(" TabbedViewTab color variables:").background_(Color.grey(0.85));
 Button(w,Rect(0,0,360,22))
 	.states_([["background_ of this tab Color.blue.alpha_(0.1)"]])
 	.action_({~t1t1.background_(Color.blue.alpha_(0.1));~t1t1.focus});
@@ -716,25 +716,77 @@ Button(w,Rect(0,0,360,22))
 	.action_({~t1t1.labelColor_(Color.blue.alpha_(0.1));~t1t1.focus});
 Button(w,Rect(0,0,360,22))
 	.states_([["unfocusedColor_ of this tab Color.blue"]])
-	.action_({~t1t1.unfocusedColor_(Color.blue);~t1t2.focus;{{~t1t1.focus}.defer(0.6)}.fork});
+	.action_({~t1t1.unfocusedColor_(Color.blue);~t1t2.focus;{{~t1t1.focus}.defer(1)}.fork});
 Button(w,Rect(0,0,360,22))
 	.states_([["stringFocusedColor_ of this tab Color.red"]])
 	.action_({~t1t1.stringFocusedColor_(Color.red);~t1t1.focus});
 Button(w,Rect(0,0,360,22))
 	.states_([["stringColor_ of this tab Color.green"]])
-	.action_({~t1t1.stringColor_(Color.green);~t1t2.focus;{{~t1t1.focus}.defer(0.6)}.fork});
+	.action_({~t1t1.stringColor_(Color.green);~t1t2.focus;{{~t1t1.focus}.defer(1)}.fork});
 Button(w,Rect(0,0,360,22))
 	.states_([[".resetColors"]])
 	.action_({~t1t1.tabbedView.resetColors;~t1t2.focus;~t1t1.focus});
-	
-},~t1t1.bounds.insetBy(15,15));
+StaticText(w,Rect(0,0,360,22)).string_(" TabbedView2 color variables:").background_(Color.grey(0.85));
+
+StaticText(w,Rect(0,0,360,88)).string_("Use the same variable names as above, but in plural, to set defaults before adding tabs. All default colors are set as arrays of colors, and tabs cylcle though the colors upon being created.");	
+},~t1t1.bounds.insetBy(15,0));
 
   
 ~t2t1.flow({arg w;
 	Button(w,Rect(0,0,360,22))
 		.states_([["Add Tab"]])
 		.action_({~t2t1.tabbedView.add("extra"+ ~t2t1.tabbedView.tabViews.size).closable_(true)});
-},~t2t1.bounds.insetBy(15,15));
+	StaticText(w,Rect(0,0,360,22)).string_(" TabbedView2 instance variables").background_(Color.grey(0.85));
+	//CheckBox(w,Rect(0,0,179,22)).string_("followEdges_").action_{|b| ~t2v.followEdges=b.value}.value_(true);
+	EZPopUpMenu(w,Rect(0,0,177,22),"followEdges_:",[ \true ->{~t2v.followEdges=true}, \false ->{~t2v.followEdges=false}],labelWidth:100)
+	 	.labelView.align_(\left);
+
+	
+	EZPopUpMenu(w,Rect(0,0,177,22),"tabPosition_:",
+		 [
+   		  \top ->{~t2v. tabPosition_(\top)},
+   			 \right ->{~t2v. tabPosition_(\right)},
+   			 \bottom ->{~t2v. tabPosition_(\bottom)},
+   			 \left ->{~t2v. tabPosition_(\left)},
+ 		],labelWidth:100);
+	StaticText(w,Rect(0,0,360,22)).string_("Prevent dragging:");
+	EZPopUpMenu(w,Rect(0,0,177,22),"lockEdges_:",[ \false ->{~t2v.lockEdges=false}, \true ->{~t2v.lockEdges=true}],labelWidth:100)
+	 	.labelView.align_(\left);
+	EZPopUpMenu(w,Rect(0,0,177,22),"dragTabs_:",[ \true ->{~t2v.dragTabs=true}, \false ->{~t2v.dragTabs=false}],labelWidth:100);
+	
+	EZPopUpMenu(w,Rect(0,0,177,22),"tabHeight_:",[
+		 \30 ->{~t2v.tabHeight=30;~t2v.refresh},
+		 \40 ->{~t2v.tabHeight=40;~t2v.refresh}, 
+		 \20 ->{~t2v.tabHeight=20;~t2v.refresh},
+		 \auto ->{~t2v.tabHeight=\auto;~t2v.refresh}],
+		labelWidth:100).labelView.align_(\left);
+	EZPopUpMenu(w,Rect(0,0,177,22),"labelPadding_:",[
+		 \20 ->{~t2v.labelPadding=20;~t2v.refresh}, 
+		 \40 ->{~t2v.labelPadding=40;~t2v.refresh},
+		 \60 ->{~t2v.labelPadding=60;~t2v.refresh}],
+		labelWidth:100);
+	EZPopUpMenu(w,Rect(0,0,360,22),"font_:",[
+		 'Helvetica 12' ->{~t2v.font=Font("Helvetica",12);~t2v.refresh},
+		 'Helvetica 14' ->{~t2v.font=Font("Helvetica",14);~t2v.refresh}, 
+		 'Helvetica 18' ->{~t2v.font=Font("Helvetica",18);~t2v.refresh}, 
+		 'Helvetica 24' ->{~t2v.font=Font("Helvetica",24);~t2v.refresh}],
+		labelWidth:100).labelView.align_(\left);
+	
+	StaticText(w,Rect(0,0,360,22)).string_(" labelPadding_ only effects tabWidth:\\auto .");
+	
+	StaticText(w,Rect(0,0,360,22)).string_(" TabbedViewTab instance variables").background_(Color.grey(0.85));
+	EZPopUpMenu(w,Rect(0,0,177,22),"closable_:",[ \false ->{~t2t1.closable=false;~t2v.refresh}, \true ->{~t2t1.closable=true;~t2v.refresh}],
+		labelWidth:100).labelView.align_(\left);
+	EZPopUpMenu(w,Rect(0,0,177,22),"useDetachIcon_:",[ \false ->{~t2t1.useDetachIcon=false;~t2v.refresh}, \true ->{~t2t1.useDetachIcon=true;~t2v.refresh}],
+		labelWidth:100).labelView.align_(\left);
+	EZPopUpMenu(w,Rect(0,0,177,22),"tabWidth_:",[
+		 \70 ->{~t2t1.tabWidth=70;~t2v.refresh}, 
+		 \100 ->{~t2t1.tabWidth=100;~t2v.refresh},
+		 \120 ->{~t2t1.tabWidth=120;~t2v.refresh},
+		 \auto ->{~t2t1.tabWidth=\auto;~t2v.refresh}],
+		labelWidth:100).labelView.align_(\left);
+
+},~t2t1.bounds.insetBy(15,0));
 
 
 StaticText(~t1t2,Rect(20,60,360,40))
@@ -743,8 +795,6 @@ StaticText(~t1t2,Rect(20,60,360,40))
 StaticText(~t1t3,Rect(20,60,360,40))
 	.string_("- Under QT, I have a detach icon: .useDetachIcon_(true)");
 )
-
-
 ::
 
 
