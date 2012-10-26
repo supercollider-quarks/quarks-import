@@ -5,8 +5,9 @@
 TabbedViewTab : SCViewHolder{
 	
 	var  <>tabbedView,<index,context, <>label, <>closable=false, <>widget, <oldParent,
-		<>focusAction,<>unfocusAction,<tabWidth=\auto, <>tbwdth=10, <useDetachIcon=false,<>rightClickDetach=true,
-	 	<>labelColor,  <>unfocusedColor, <>stringColor,tempView, <>stringFocusedColor,tempedges,<>onDelete,<>onChangeParent,
+		<>focusAction,<>unfocusAction,<tabWidth=\auto, <>tbwdth=10,<useDetachIcon=false,
+		<>rightClickDetach=true, <>labelColor,  <>unfocusedColor, <>stringColor,tempView,
+		<>stringFocusedColor,tempedges,<>onDelete,<>onChangeParent,
 	 	<>userDrawFunction,downtmp,<>closeRect,<>detRect,<lock=false,clicks=0,deletelock=true;
 	
 	*new {  arg tabbedView,label="label",index,scroll=false;
@@ -16,7 +17,9 @@ TabbedViewTab : SCViewHolder{
 	init{arg ...args;
 		var tab, calcTabWidth,scroll,rotateRect;
 		#tabbedView,label,index,scroll = args;
-		context = tabbedView.context; // the GUI kit. you need to define this on creation in case of kit switching.
+		
+		// the GUI kit. you need to define this on creation in case of kit switching.
+		context = tabbedView.context; 		
 		widget = context.userView.new(tabbedView.view, Rect(10,10,10,10)); //real bounds are set later
 		widget.enabled = true;
 		widget.focusColor=tabbedView.focusFrameColor;
@@ -33,6 +36,7 @@ TabbedViewTab : SCViewHolder{
 		
 		^this;
 	}
+	
 	tabWidth_{arg int;
 		tabWidth=int;
 		tabbedView.refresh;
@@ -41,22 +45,21 @@ TabbedViewTab : SCViewHolder{
 	refreshEventHandlers{
 		var rotateRect;
 		
-		
 		widget.mouseUpAction_({arg view, x, y, modifiers;
 			if(clicks>1){
 				tabbedView.followEdges_(tempedges.not);
 				clicks=0;
 			};
-			//var rect=Rect(widget.bounds.width-12,0,12,12);
+			
 			closable.value(this).if{ 
-				if (closeRect.containsPoint(Point(x,y) )&& lock.not){
-					deletelock.not.if{
+				if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
+					deletelock.not.if{ // deletelock prevents accidental deletion after right cklick detach
 				  		{{this.remove}.defer}.fork;
 					}
 			 	};
 			};
-			deletelock=true; 			
-			lock=false;
+			deletelock=true; // deletelock prevents accidental deletion after right cklick detach
+			lock=false; // lock prevents accidental deletion after regular drag
 			tempView.notNil.if{tempView.remove;tempView=nil;tabbedView.refresh};
 		});
 		
@@ -67,11 +70,11 @@ TabbedViewTab : SCViewHolder{
 			clicks=clicks+1;				
 			downtmp=x@y;
 			this.focus;
-			tabbedView.unfocusTabs.if{widget.focus(false)}; // this is only for swing, in order to prevent ugly frame.
-			
-			closable.value(this).if{  // prpare for deleting
-				if (closeRect.containsPoint(Point(x,y) )&& lock.not){
-				  deletelock=false;
+			// this is only for swing, in order to prevent ugly frame.
+			tabbedView.unfocusTabs.if{widget.focus(false)}; 			
+			closable.value(this).if{  // prepare for deleting
+				if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
+				  deletelock=false; // deletelock prevents accidental deletion after right cklick detach
 			 	};
 			};
 			
@@ -91,7 +94,7 @@ TabbedViewTab : SCViewHolder{
 			
 			// icon Detach
 			useDetachIcon.if{
-				if (detRect.containsPoint(Point(x,y) )&& lock.not){
+				if (detRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
 				  this.detachTab;
 			  	};
 			};
@@ -108,54 +111,59 @@ TabbedViewTab : SCViewHolder{
 		
 		widget.mouseMoveAction=({ |v,x,y,modifiers|
 			var tempTabs=[],  receivingindex,f_edges,temprect,tempbounds,center,rect;
-			tabbedView.dragTabs.value(tabbedView).if{
+			
+			tabbedView.dragTabs.value(tabbedView).if{ // is draggable?
+				// create a temporary view as a drag indicator.
 				tempView.visible_(true);
-				tempView.bounds_(tempView.bounds.moveTo(x-downtmp.x+widget.bounds.left, y-downtmp.y+widget.bounds.top) );
-				if(tabbedView.dragTabs){
-					receivingindex = tabbedView.closestIndexOf(widget.bounds.left+x,widget.bounds.top+y);
-					if(receivingindex[0].notNil && (receivingindex[0]!=this.index)){
-						tabbedView.tabViews.do{arg tab, i;
-							
-							if(tab.index != this.index){
-								tempTabs=tempTabs.add(tab);
-								lock=true;};
-						};
-						
-						tabbedView.tabViews=tempTabs.insert(receivingindex.sum,this);
-						tabbedView.tabViews.do{arg tab,i;
-							tab.pr_setIndex(i);
-						};
-						this.focus(this.index);
-						tabbedView.refresh;
+				tempView.bounds_(tempView.bounds.moveTo(x-downtmp.x+widget.bounds.left, 
+						y-downtmp.y+widget.bounds.top) );
+				// find a the index to drop the tab
+				receivingindex = tabbedView.closestIndexOf(widget.bounds.left+x,widget.bounds.top+y);
+				// if you found an index
+				if(receivingindex[0].notNil && (receivingindex[0]!=this.index)){
+					// first make a new array without the tab
+					tabbedView.tabViews.do{arg tab, i;
+						if(tab.index != this.index){
+							tempTabs=tempTabs.add(tab);
+							lock=true;}; // lock for regular dragging (prevents accidental deletion)
 					};
-					tabbedView.lockEdges.value(tabbedView).not.if{
-						center = tempView.bounds.center;
-						rect=view.bounds;
-						switch (true)
-						{Rect(rect.width-20,rect.top-10,60,rect.height-20).contains(center)}{
-							((tabbedView.tabPosition != \left) 
-								&& (tabbedView.tabPosition != \right))
-									.if{tempView.bounds=rotateRect.value(tempView.bounds)};
-							tabbedView.tabPosition_(\right);
-							}
-						{Rect(rect.left+10,rect.top-40,rect.width-20,60).contains(center)}{
-							((tabbedView.tabPosition != \top) 
-								&& (tabbedView.tabPosition != \bottom))
-									.if{tempView.bounds=rotateRect.value(tempView.bounds)};
-							tabbedView.tabPosition_(\top);
-							}
-						{Rect(rect.left+10,rect.height-20,rect.width-20,60).contains(center)}{
-							((tabbedView.tabPosition != \top) 
-								&& (tabbedView.tabPosition != \bottom))
-									.if{tempView.bounds=rotateRect.value(tempView.bounds)};
-							tabbedView.tabPosition_(\bottom);
-							}
-						{Rect(rect.left-40,rect.top-10,60,rect.height-20).contains(center)}{
-							((tabbedView.tabPosition != \left) 
-								&& (tabbedView.tabPosition != \right))
-									.if{tempView.bounds=rotateRect.value(tempView.bounds)};
-							tabbedView.tabPosition_(\left)
-						};
+					// then insert the tab in the right place
+					tabbedView.tabViews=tempTabs.insert(receivingindex.sum,this);
+					tabbedView.tabViews.do{arg tab,i; // re-index the tabs
+						tab.pr_setIndex(i);
+					};
+					this.focus(this.index);
+					tabbedView.refresh;
+				};
+				
+				// tab position switching
+				tabbedView.lockEdges.value(tabbedView).not.if{
+					center = tempView.bounds.center;
+					rect=view.bounds;
+					switch (true)
+					{Rect(rect.width-20,rect.top-10,60,rect.height-20).contains(center)}{
+						((tabbedView.tabPosition != \left) 
+							&& (tabbedView.tabPosition != \right))
+								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						tabbedView.tabPosition_(\right);
+						}
+					{Rect(rect.left+10,rect.top-40,rect.width-20,60).contains(center)}{
+						((tabbedView.tabPosition != \top) 
+							&& (tabbedView.tabPosition != \bottom))
+								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						tabbedView.tabPosition_(\top);
+						}
+					{Rect(rect.left+10,rect.height-20,rect.width-20,60).contains(center)}{
+						((tabbedView.tabPosition != \top) 
+							&& (tabbedView.tabPosition != \bottom))
+								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						tabbedView.tabPosition_(\bottom);
+						}
+					{Rect(rect.left-40,rect.top-10,60,rect.height-20).contains(center)}{
+						((tabbedView.tabPosition != \left) 
+							&& (tabbedView.tabPosition != \right))
+								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						tabbedView.tabPosition_(\left)
 					};
 				};
 			};
@@ -165,11 +173,13 @@ TabbedViewTab : SCViewHolder{
 			var parents, currentDrag, ret=true;
 			currentDrag = GUI.view.currentDrag;
 			this.focus(index);
-			tabbedView.unfocusTabs.if{widget.focus(false);true;}; // this is only for swing, in order to prevent ugly frame.
+			// this is only for swing, in order to prevent ugly frame.
+			tabbedView.unfocusTabs.if{widget.focus(false);true;}; 
 				// Drag between tabs if the GUI Kit allows it
 				
 			// If a TabbedViewTab, 
-			// then reciever may not be a child of the current drag, nor may the the TabbedViews be the same
+			// then reciever may not be a child of the current drag, nor may the the TabbedViews be the same.
+			// !important, since this would cause a serious crash
 			if(currentDrag.class==TabbedViewTab){
 				parents = view.getParents();
 				((parents.indexOf(currentDrag.view)).notNil || (view.parent==currentDrag.view.parent)).if{ret=false};

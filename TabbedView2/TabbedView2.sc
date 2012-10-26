@@ -1,15 +1,11 @@
 /******* by jostM http://www.glyph.de *******/
 /******* Part of TabbedView2 Quark *******/
 /******* Uses TabbedViewTab  *******/
-/***
-TODO: fix color behavior
-
-****/
 
 TabbedView2{
 	var 
 		<view,
-		<>alwaysOnTop=true,
+		<>alwaysOnTop=true, // for the popup window
 		<tabPosition = \top,
 		<>lockPosition = false,  // disables position changing
 		<followEdges=true, 
@@ -20,11 +16,11 @@ TabbedView2{
 		backgrounds,  // default array of Colors. can be overriden by individual tabs
 		stringColors,  // default array of Colors. can be overriden by individual tabs
 		stringFocusedColors,  // default array of Colors. can be overriden by individual tabs
-		<focusFrameColor, 
+		<focusFrameColor,  // normally Color.clear
 		<labelPadding = 20,
 		>clickbox=15,
-		>swingFactor,
-		<>unfocusTabs=false,
+		>swingFactor, // for swing only
+		<>unfocusTabs=false, // for swing only
 		tabWidth = \auto, // default scheme. cviewan be overriden by individual tabs
 		<tabHeight=\auto, // cannot be overriden by individual tabs
 		tbht, // the calculated  or set tab height
@@ -35,12 +31,12 @@ TabbedView2{
 		<activeTab,
 		focusHistory,
 		<window,
-		<context, 
+		<context, // thu GUI COntext
 		<pen,
 		>closeIcon,
 		>detachIcon,
-		left = 0,
-		top  = 0
+		left = 0, // probably obsolete
+		top  = 0 // probably obsolete
 		;
 		
 	*new{ arg parent, bounds;
@@ -48,7 +44,7 @@ TabbedView2{
 	}
 	
 	init{ arg parent, bounds ;
-		var w;
+		var w, col;
 		context = GUI.current; // The context is set globally, in case you change gui kits and
 		pen     = context.pen;
 		
@@ -73,48 +69,46 @@ TabbedView2{
 		stringFocusedColors=[Color.black]	;	
 		stringColors=[Color.grey(0.5)]	;	
 		
-		if( GUI.id !== \swing)  {
+		if( GUI.id == \swing)  {
 			labelColors = [Color(0.85,0.85,0.85)];
 			unfocusTabs=true; // unfocus Tabs if not Cocoa;
 			}{
 			labelColors =  [Color.grey.alpha_(0.2)];
 			};
 			
-		unfocusedColors = Array.fill(labelColors.size,{arg i;
-			var col;
-			col = labelColors[i%labelColors.size].asArray;
-			if( GUI.id !== \swing)  
-				{col = col*[0.9,0.9,0.9,1];}
-				{col = col*[0.7,0.7,0.7,1];};
-			col = Color(*col);
-				});
+		col = labelColors[0].asArray;
+		if( GUI.id !== \swing)  
+			{col = col*[0.9,0.9,0.9,1];}
+			{col = col*[0.7,0.7,0.7,1];};
+		col = Color(*col);
+		
+		unfocusedColors = [col];
 		backgrounds = labelColors.deepCopy;
-		
-		this.defineIcons;
-				
-		this.pr_setHandlers;
-		
 		tabViews = [];
+		
+		this.defineIcons;	
+		this.pr_setHandlers;
 		^this;
 	}
 	
 	
-	// Factory Method
+	// Tab Factory 
 	add { arg label,index, scroll=false; //actually this is an insert method with args backwards
 		var tab, container, calcTabWidth, i;
 		index = index ? tabViews.size; //if index is nil, add it to the end
 		tab = TabbedViewTab.new(this,label,index,scroll); //bounds are set later
 		
 		tabViews = tabViews.insert(index, tab);
-					tab.labelColor=labelColors[ index%labelColors.size ];
-					tab.background=backgrounds[ index%backgrounds.size ];
-					tab.stringColor=stringColors[ index%stringColors.size ];
-					tab.stringFocusedColor=stringFocusedColors[ index%stringFocusedColors.size ];
-					tab.unfocusedColor=unfocusedColors[ index%unfocusedColors.size ];
+		// Set defaults
+		tab.labelColor=labelColors[ index%labelColors.size ];
+		tab.background=backgrounds[ index%backgrounds.size ];
+		tab.stringColor=stringColors[ index%stringColors.size ];
+		tab.stringFocusedColor=stringFocusedColors[ index%stringFocusedColors.size ];
+		tab.unfocusedColor=unfocusedColors[ index%unfocusedColors.size ];
 
 		tab.tabWidth = tabWidth; // this also refreshes the view
-		if(tabViews.size==1){
-			activeTab=tab;
+		if(tabViews.size==1){ // you want to do this to initially set the history, etc.
+			activeTab=tab;	// in other cases, it's up to the user what to focus.
 			tab.focus;
 		}
 		^tab;
@@ -125,11 +119,11 @@ TabbedView2{
 	
 	resetColors{
 		tabViews.do{|tab,index|
-					tab.labelColor=labelColors[ index%labelColors.size ];
-					tab.background=backgrounds[ index%backgrounds.size ];
-					tab.unfocusedColor=unfocusedColors[ index%unfocusedColors.size ];
-					tab.stringColor=stringColors[ index%stringColors.size ];
-					tab.stringFocusedColor=stringFocusedColors[ index%stringFocusedColors.size ];
+		tab.labelColor=labelColors[ index%labelColors.size ];
+		tab.background=backgrounds[ index%backgrounds.size ];
+		tab.unfocusedColor=unfocusedColors[ index%unfocusedColors.size ];
+		tab.stringColor=stringColors[ index%stringColors.size ];
+		tab.stringFocusedColor=stringFocusedColors[ index%stringFocusedColors.size ];
 
 		};
 		this.refresh
@@ -143,9 +137,9 @@ TabbedView2{
 	
 	/** this paints the tabs with rounded edges **/
 	paintTab{ arg tab, labelColor, strColor;
-			var drawCenter,drawLeft,drawTop,drawRect,drawRight,
-					drawBottom,rotPoint,moveBy,rotPointText,drawRectText,
-					drawRectText2,rot1=pi/2,rot2=0, tabLabelView=tab.widget, label=tab.label;
+		var drawCenter,drawLeft,drawTop,drawRect,drawRight,
+			drawBottom,rotPoint,moveBy,rotPointText,drawRectText,
+			drawRectText2,rot1=pi/2,rot2=0, tabLabelView=tab.widget, label=tab.label;
 					
 		followEdges.if{
 			switch(tabPosition)
@@ -153,44 +147,46 @@ TabbedView2{
 				{\left}{rot1=pi;rot2=pi/2}
 				{\bottom}{rot1=pi;rot2=pi}
 				{\right}{rot1=0;rot2=pi/2};
-			}{
+		}{
 			switch(tabPosition)
 				{\top}{rot1=0;rot2=pi/2.neg}
 				{\left}{rot1=pi;rot2=pi}
 				{\bottom}{rot1=pi;rot2=pi/2}
 				{\right}{rot1=0;rot2=0};
-			};
+		};
 		
 		
 		tabLabelView.drawFunc = { arg tview;
 			var drawCenter,drawLeft,drawTop,drawRect,drawRight,
-					drawBottom,rotPoint,moveBy,rotPointText,
-					drawRectText,drawRectText2, closable,useDetachIcon,offset=0;
+				drawBottom,rotPoint,moveBy,rotPointText,
+				drawRectText,drawRectText2, closable,useDetachIcon,offset=0;
+				
 			closable= tab.closable;//tabLabelView.mouseUpAction.notNil;
 			useDetachIcon = tab.useDetachIcon;
+			
 			drawRect= tview.bounds.moveTo(0,0);
 			drawCenter=Point(drawRect.left+(drawRect.width/2),drawRect.top+(drawRect.height/2));
 			
-			([\top,\bottom].occurrencesOf(tabPosition)>0).if{
-				drawRectText=Rect(drawRect.left-((drawRect.height-drawRect.width)/2),
-					drawRect.top+((drawRect.height-drawRect.width)/2),drawRect.height,drawRect.width);
-			}{drawRectText=drawRect};
+			if ([\top,\bottom].occurrencesOf(tabPosition)>0)
+				{drawRectText=Rect(drawRect.left-((drawRect.height-drawRect.width)/2),
+					drawRect.top+((drawRect.height-drawRect.width)/2),drawRect.height,drawRect.width);}
+				{drawRectText=drawRect};
 			
-			([\right,\left].occurrencesOf(tabPosition)>0).if{
-				drawRectText2=Rect(drawRect.left-((drawRect.height-drawRect.width)/2),
-					drawRect.top+((drawRect.height-drawRect.width)/2),drawRect.height,drawRect.width);
-			}{drawRectText2=drawRect};
+			if ([\right,\left].occurrencesOf(tabPosition)>0)
+				{drawRectText2=Rect(drawRect.left-((drawRect.height-drawRect.width)/2),
+					drawRect.top+((drawRect.height-drawRect.width)/2),drawRect.height,drawRect.width);}
+				{drawRectText2=drawRect};
 			
-			drawLeft=drawCenter.x-(drawRect.width/2);
-			drawTop=drawCenter.y-(drawRect.height/2);
-			drawRight=drawCenter.x+(drawRect.width/2);
+			drawLeft  =drawCenter.x-(drawRect.width/2);
+			drawTop   =drawCenter.y-(drawRect.height/2);
+			drawRight =drawCenter.x+(drawRect.width/2);
 			drawBottom=drawCenter.y+(drawRect.height/2);
+			
 			pen.use{
 				pen.rotate(rot1,drawCenter.x,drawCenter.y);
-					pen.width_(1);
-					
+				pen.width_(1);
 				pen.color_(labelColor);
-				([\top,\bottom].occurrencesOf(tabPosition)>0).if{
+				if ([\top,\bottom].occurrencesOf(tabPosition)>0){
 					pen.addWedge( (drawLeft + tabCurve)@(drawTop + tabCurve),
 						tabCurve, pi, pi/2);
 					pen.addWedge( (drawRight - tabCurve)@(drawTop + tabCurve),
@@ -231,19 +227,18 @@ TabbedView2{
 				pen.font_(font);
 				pen.color_ (strColor);
 				
-				//pen.setShadow(2@2.neg, 5, Color.white.alpha_(1));
-				
-				
 				followEdges.if{
  					pen.stringCenteredIn(label, 
  						drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
  						tab.userDrawFunction.value(pen,drawRectText2,tabPosition,followEdges);
 		 				closable.if{
-			 				closeIcon.value(pen, Rect(drawRectText2.right-clickbox,drawRectText2.top,clickbox,clickbox));
+			 				closeIcon.value(pen, Rect(drawRectText2.right-clickbox,
+			 					drawRectText2.top,clickbox,clickbox));
 			 				offset=(clickbox).neg;
 		 				};
 		 				useDetachIcon.if{
-			 				detachIcon.value(pen, Rect(drawRectText2.right-clickbox+offset,drawRectText2.top,clickbox,clickbox));
+			 				detachIcon.value(pen, Rect(drawRectText2.right-clickbox+offset,
+			 					drawRectText2.top,clickbox,clickbox));
 		 				};
  					}{
  					pen.stringLeftJustIn(label, 
@@ -256,21 +251,17 @@ TabbedView2{
 		 				};
 		 				useDetachIcon.if{
 		 					detachIcon.value( pen,
-		 					  Rect(drawRectText.right-clickbox+offset,drawRectText.top,clickbox,clickbox));
+		 					  Rect(drawRectText.right-clickbox+offset,
+		 					  	drawRectText.top,clickbox,clickbox));
 		 				};
  				};
- 				
- 				
 			};
-		
 		};
 		tabLabelView.refresh;
 	}
 	
-	
 
 	updateFocus{
-		
 		tabViews.do{ arg tab,i;
 			if (activeTab == tab){
 				this.paintTab( tab, 
@@ -288,22 +279,18 @@ TabbedView2{
 		};
 	}
 	
-	demo{arg i=3, string="tab";
-		i.do{|i| this.add(string++(i+1).asString)};
-		}
 	
 	doActions{
-		
 		tabViews.do{ arg tab,i;
 			if (activeTab == tab){
 				if (focusHistory!= tab){ tab.focusAction.value(tab); };
 			}{
-				if (focusHistory == tab)
-					//do the user unfocusAction only on unfocus
-					{ tabViews[ focusHistory.index ].unfocusAction.value(tabViews[ focusHistory.index  ]) };
+				if (focusHistory == tab) //do the user unfocusAction only on unfocus
+				{ tabViews[ focusHistory.index ]
+					.unfocusAction.value(tabViews[ focusHistory.index  ]) };
 			};
 		};
-		focusHistory = activeTab;
+		
 	}
 	
 	stringBounds { |string, font|
@@ -318,29 +305,26 @@ TabbedView2{
 	
 	refresh{
 
-		
-		
-			if ( tabHeight == \auto ){ tbht = (this.stringBounds("A",font).height+6 )}{tbht=tabHeight};
-			tabViews.do{ arg tab, i; 
-						var closable, useDetachIcon, closepadding=0, detachpadding=0, padding= 0 ;
-						closable = tab.closable;
-						useDetachIcon = tab.useDetachIcon;
-						closable.if{closepadding = clickbox};
-						useDetachIcon.if{detachpadding = clickbox};						if(useDetachIcon ||closable ){padding = closepadding + detachpadding + (0.5*(closepadding + detachpadding))};
+		if ( tabHeight == \auto ){ tbht = (this.stringBounds("A",font).height+6 )}{tbht=tabHeight};
+		tabViews.do{ arg tab, i; 
+			var closable, useDetachIcon, closepadding=0, detachpadding=0, padding= 0 ;
+			closable = tab.closable;
+			useDetachIcon = tab.useDetachIcon;
+			closable.if{closepadding = clickbox};
+			useDetachIcon.if{detachpadding = clickbox};
+			// calculate space for icons
+			if(useDetachIcon ||closable ){padding = closepadding + detachpadding + (0.5*(closepadding + detachpadding))};
+			if ( tab.tabWidth.asSymbol == \auto )
+				{tab.tbwdth = this.stringBounds(tab.label.asString,font).width + labelPadding+padding;}
+				{tab.tbwdth=tab.tabWidth};
 				
-				if ( tab.tabWidth.asSymbol == \auto )
-					{ 
-					tab.tbwdth = this.stringBounds(tab.label.asString,font).width + labelPadding+padding;}{tab.tbwdth=tab.tabWidth};
-					
-			};
-
+		};
 		
 		switch(tabPosition)
 		{\top}{this.updateViewRectsTop}
 		{\left}{this.updateViewRectsLeft}
 		{\bottom}{this.updateViewRectsBottom}
 		{\right}{this.updateViewRectsRight};
-		
 		
 		tabViews.do{arg tab;
 			tab.view.children.notNil.if{
@@ -351,9 +335,6 @@ TabbedView2{
 					tab.view.children[0].reflowAll;
 				};
 			};
-			
-			
-
 		};
 	}
 	
@@ -362,7 +343,6 @@ TabbedView2{
 		
 	
 	updateViewRectsTop{
-		
 		tabViews.do{ arg tab, i; 
 			followEdges.if{
 				tab.widget.bounds_( Rect(
@@ -419,7 +399,6 @@ TabbedView2{
 	}
 	
 	updateViewRectsLeft{
-		
 		tabViews.do{ arg tab, i; 
 			followEdges.not.if{
 				tab.widget.bounds_( Rect(
@@ -448,6 +427,7 @@ TabbedView2{
 				{8}{7}
 				{9}{9};
 		};
+		
 		followEdges.not.if{
 			tabViews.do{arg tab, i; 
 				tab.view.bounds = Rect(
@@ -476,7 +456,6 @@ TabbedView2{
 	}	
 	
 	updateViewRectsBottom{
-	
 		tabViews.do{ arg tab, i; 
 			followEdges.if{
 
@@ -536,8 +515,8 @@ TabbedView2{
 	}	
 	
 	updateViewRectsRight{
-			tabViews.do{ arg tab, i;
-		followEdges.not.if{
+		tabViews.do{ arg tab, i;
+			followEdges.not.if{
 				tab.widget.bounds_( Rect(
 						view.bounds.width + left - this.tabWidths.maxItem,
 						top + (i*tbht) + i,
@@ -598,8 +577,6 @@ TabbedView2{
 	tabWidths{
 		^tabViews.collect{|tab| tab.tbwdth};
 	}
-		
-
 	
 	tabPosition_{arg symbol; // \left, \top, \right, or \bottom
 	 	tabPosition=symbol;
@@ -622,8 +599,9 @@ TabbedView2{
 	
 	focus{arg index;
 		activeTab = tabViews[index];
-		this.updateFocus();
+		this.updateFocus;
 		this.doActions;
+		focusHistory = activeTab;
 	}
 	
 	labelColors_{arg colorArray; 
@@ -697,15 +675,36 @@ TabbedView2{
 		view.refresh;
 
 	}
+	
 	pr_refreshIndex{
 		
 		tabViews.do{arg tab, i;
 			tab.pr_setIndex(i);
 		};
 
+	}	
+	 
+	pr_setHandlers{
+		view.canReceiveDragHandler_({arg view;
+			var parents, currentDrag, ret=false;
+			currentDrag = GUI.view.currentDrag;
+			
+			// Current drag must be a TabbedViewTab, 
+			// and the reciever may not be a child of the current drag
+			if(currentDrag.class==TabbedViewTab){
+				parents = view.getParents();
+				((parents.indexOf(currentDrag.view)).isNil && (view!=currentDrag.view.parent)).if{ret=true};
+			};
+			ret;
+		});
+		//widget.canReceiveDragHandler.addFunc({true});
+		view.receiveDragHandler_({
+			View.currentDrag.setParent(this);
+		});
+
 	}
 	
-	// private utility
+	// private utility. gets the closest tab index of a given xy position
 	closestIndexOf{arg x, y;
 		var dropindex,pos=0;
 		
@@ -731,6 +730,7 @@ TabbedView2{
 		^[dropindex,pos];
 	}
 	
+	// this makes icons easier to overide 
 	defineIcons{
 		 detachIcon = {|pen,bounds|
 			var rect=Rect.fromRect(bounds).insetBy(2,2);
@@ -786,133 +786,9 @@ TabbedView2{
 		t.dragTabs = dragTabs;
 		^t;
 	}
-		
-
-	// use these as examples to make your own class extentions according to your needs
-	*newBasic{ arg parent, bounds;
-		var q;
-		q=this.new(parent, bounds);
-		if( GUI.id !== \swing)  {
-			q.labelColors_([Color.white.alpha_(0.3)]);
-			q.backgrounds_([Color.white.alpha_(0.3)]);
-		}{
-			q.labelColors_([Color(0.9,0.9,0.9)]);
-			q.backgrounds_([Color(0.9,0.9,0.9)]);
-			q.unfocusedColors_([Color(0.8,0.8,0.8)]);
-		};
-		^q;
-	}
-	
-		
-	*newColorLabels{ arg parent, bounds;
-		var q;
-		q=this.newBasic(parent, bounds);
-		q.labelColors_([Color.red,Color.blue,Color.yellow]);
-		if( GUI.id !== \swing)  {
-			q.backgrounds_([Color.white.alpha_(0.3)]);
-		}{
-			q.backgrounds_([Color(0.9,0.9,0.9)]);
-			q.unfocusedColors_([Color(0.9,0.75,0.75),
-							Color(0.75,0.75,0.9),
-							Color(0.9,0.9,0.75)]);
-		};
-		^q;
-	}
-	
-		
-	*newColor{ arg parent, bounds;
-		var q;
-		q=this.new(parent, bounds);
-		
-		if( GUI.id !== \swing)  {
-			q.backgrounds_([Color.red.alpha_(0.1),
-								Color.blue.alpha_(0.1),
-								Color.yellow.alpha_(0.1)]);
-			q.unfocusedColors_([Color.red.alpha_(0.2),
-								Color.blue.alpha_(0.2),
-								Color.yellow.alpha_(0.2)]);
-		}{
-			q.backgrounds_([Color(0.9,0.85,0.85),
-								Color(0.85,0.85,0.9),
-								Color(0.9,0.9,0.85)]);
-			q.unfocusedColors_([Color(0.9,0.75,0.75),
-								Color(0.75,0.75,0.9),
-								Color(0.9,0.9,0.75)]);
-		};
-		q.labelColors_([Color.red,Color.blue,Color.yellow]);
-		^q;
-	}
-	
-	*newFlat{ arg parent, bounds;
-		var q;
-		q=this.newBasic(parent, bounds);
-		q.tabHeight=14;
-		q.tabWidth= 70;
-		q.tabCurve=3;
-		^q;
-	}
-	
-	*newTall{ arg parent, bounds;
-		var q;
-		q=this.newBasic(parent, bounds);
-		q.tabHeight= 30;
-		q.tabWidth= 70;
-		q.tabCurve=3;
-	^q;
-	}
-	
-	*newTransparent{ arg parent, bounds;
-		var q;
-		q=this.new(parent, bounds);
-		if( GUI.id !== \swing)  {
-			q.labelColors_([Color.white.alpha_(0.3)]);
-		}{	
-			q.labelColors_([Color(0.9,0.9,0.9)]);
-			q.unfocusedColors_([Color(0.8,0.8,0.8)]);
-		};
-		q.backgrounds_([Color.clear]);
-		^q;
-	}
-	
-	*newPacked{ arg parent, bounds;
-		var q;
-		q=this.new(parent, bounds);
-		if( GUI.id !== \swing)  {
-			q.labelColors_([Color.white.alpha_(0.3)]);
-			q.backgrounds_([Color.white.alpha_(0.3)]);
-			}{
-			q.labelColors_([Color(0.85,0.85,0.85)]);
-			q.backgrounds_([Color(0.85,0.85,0.85)]);
-			q.unfocusedColors_([Color(0.8,0.8,0.8)]);
-		};
-		q.tabCurve=3;
-		q.labelPadding=8;
-		q.tabHeight=14;
-		^q;
-	}
 	
 	views{
 		^tabViews;
-	}
-	 
-	pr_setHandlers{
-		view.canReceiveDragHandler_({arg view;
-			var parents, currentDrag, ret=false;
-			currentDrag = GUI.view.currentDrag;
-			
-			// Current drag must be a TabbedViewTab, 
-			// and the reciever may not be a child of the current drag
-			if(currentDrag.class==TabbedViewTab){
-				parents = view.getParents();
-				((parents.indexOf(currentDrag.view)).isNil && (view!=currentDrag.view.parent)).if{ret=true};
-			};
-			ret;
-		});
-		//widget.canReceiveDragHandler.addFunc({true});
-		view.receiveDragHandler_({
-			View.currentDrag.setParent(this);
-		});
-
 	}
 
 }
