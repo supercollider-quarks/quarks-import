@@ -63,9 +63,9 @@ TabbedViewTab : SCViewHolder{
 			tempView.notNil.if{tempView.remove;tempView=nil;tabbedView.refresh};
 		});
 		
-			
 		widget.mouseDownAction_({ |v,x,y,modifiers,clickCount|
 			// rightClick Detach
+			(context.name==\SwingGUI).if{clickCount=clickCount-1};
 			(clickCount.booleanValue && rightClickDetach.value(this)).if{
 				this.detachTab;
 			}{
@@ -187,7 +187,14 @@ TabbedViewTab : SCViewHolder{
 			// All other drag accepted (but a handler must be defined
 			ret;
 		});
-		(context.name==\QtGUI).if{this.pr_interTabDragActions};
+		(context.name==\QtGUI).if
+			{this.pr_interTabDragActions}
+			{
+				widget.beginDragAction_({ this
+				});
+				widget.receiveDragHandler_({arg v, x,y;
+				});
+			};
 
 	}
 	
