@@ -65,6 +65,10 @@ TabbedViewTab : SCViewHolder{
 		
 			
 		widget.mouseDownAction_({ |v,x,y,modifiers,clickCount|
+			// rightClick Detach
+			(clickCount.booleanValue && rightClickDetach.value(this)).if{
+				this.detachTab;
+			}{
 		
 			tempedges = tabbedView.followEdges;
 			clicks=clicks+1;				
@@ -87,10 +91,6 @@ TabbedViewTab : SCViewHolder{
 			// clickCount
 			if(clicks<2){{{clicks=0;}.defer(0.6);}.fork;};
 			
-			// rightClick Detach
-			(clickCount.booleanValue && rightClickDetach.value(this)).if{
-				this.detachTab;
-			};
 			
 			// icon Detach
 			useDetachIcon.if{
@@ -98,7 +98,7 @@ TabbedViewTab : SCViewHolder{
 				  this.detachTab;
 			  	};
 			};
-			
+			};
 		});
 		
 		
@@ -209,7 +209,7 @@ TabbedViewTab : SCViewHolder{
 		
 		index = index ? tabbedView.tabViews.size;
 		(context.name==\QtGUI).if{ // Only if kit allows setting parents
-		
+			tempView.notNil.if{tempView.remove;tempView=nil;tabbedView.refresh};
 			if(newparent !=tabbedView){
 					onChangeParent.value(this);
 					unfocusAction = nil;
