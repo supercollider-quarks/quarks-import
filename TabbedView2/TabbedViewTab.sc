@@ -237,6 +237,8 @@ TabbedViewTab : SCViewHolder{
 					tabbedView.pr_refreshIndex;
 					tabbedView.refresh;
 					unfocusAction=tempunfocus;
+					this.view.visible=true;
+					this.widget.visible=true;
 					this.refreshEventHandlers;
 					this.focus;
 				
