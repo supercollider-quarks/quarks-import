@@ -46,7 +46,7 @@ TabbedViewTab : SCViewHolder{
 		var rotateRect;
 		
 		widget.mouseUpAction_({arg view, x, y, modifiers;
-			if(clicks>1){
+			if(clicks>1 && tabbedView.lockEdges.not){
 				tabbedView.followEdges_(tempedges.not);
 				clicks=0;
 			};
@@ -137,7 +137,7 @@ TabbedViewTab : SCViewHolder{
 				};
 				
 				// tab position switching
-				tabbedView.lockEdges.value(tabbedView).not.if{
+				tabbedView.lockPosition.value(tabbedView).not.if{
 					center = tempView.bounds.center;
 					rect=view.bounds;
 					switch (true)

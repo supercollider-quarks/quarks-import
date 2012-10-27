@@ -758,6 +758,10 @@ StaticText(w,Rect(0,0,360,88)).string_("Use the same variable names as above, bu
 	 	.labelView.align_(\left);
 	EZPopUpMenu(w,Rect(0,0,177,22),"dragTabs_:",[ \true ->{~t2v.dragTabs=true}, \false ->{~t2v.dragTabs=false}],labelWidth:100);
 	
+	EZPopUpMenu(w,Rect(0,0,177,22),"lockPosition_:",[ \false ->{~t2v.lockPosition=false}, \true ->{~t2v.lockPosition=true}],labelWidth:100)
+		.labelView.align_(\left);
+	CompositeView(w,Rect(0,0,177,22));
+	
 	EZPopUpMenu(w,Rect(0,0,177,22),"tabHeight_:",[
 		 \30 ->{~t2v.tabHeight=30;~t2v.refresh},
 		 \40 ->{~t2v.tabHeight=40;~t2v.refresh}, 
