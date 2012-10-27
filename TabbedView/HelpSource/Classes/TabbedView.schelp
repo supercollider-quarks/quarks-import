@@ -8,6 +8,9 @@ There are extensive explanations in the LINK::#Examples:: section on how to use 
 SUBSECTION:: Author
 by Jost Muxfeldt, OCT 09, 2012 version 1.29. LINK::#Change History:: at bottom.
 
+Warning::
+TabbedView is maintained only for backward compatabiity!. Please use LINK::Classes/TabbedView2:: for new code. (you may have to activate the TabbedView2 Quark).
+::
 CLASSMETHODS::
 METHOD:: new
 create a Tabbed View
