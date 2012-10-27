@@ -70,21 +70,12 @@ TabbedView2{
 		stringFocusedColors=[Color.black]	;	
 		stringColors=[Color.grey(0.5)]	;	
 		
-		if( GUI.id == \swing)  {
-			labelColors = [Color(0.85,0.85,0.85)];
-			unfocusTabs=true; // unfocus Tabs if not Cocoa;
-			}{
-			labelColors =  [Color.grey.alpha_(0.2)];
-			};
-			
-		col = labelColors[0].asArray;
-		if( GUI.id !== \swing)  
-			{col = col*[0.9,0.9,0.9,1];}
-			{col = col*[0.7,0.7,0.7,1];};
-		col = Color(*col);
-		
-		unfocusedColors = [col];
+		labelColors = [Color(0.85,0.85,0.85)];
+		unfocusedColors = [Color(0.9,0.9,0.9,1)];
 		backgrounds = labelColors.deepCopy;
+		if( GUI.id == \swing)  {
+			unfocusTabs=true; // unfocus Tabs if not Cocoa;
+			};
 		tabViews = [];
 		
 		this.defineIcons;	

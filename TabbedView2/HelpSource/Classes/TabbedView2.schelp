@@ -72,8 +72,10 @@ CODE::
 t=TabbedView2.new; 
 
 //add defaults, before creating tabs
-t.backgrounds_( 
-	[Color.red.alpha_(0.05), Color.blue.alpha_(0.05),Color.green.alpha_(0.05)]); 
+t.backgrounds_([Color(0.9,0.85,0.85),Color(0.85,0.85,0.9),Color(0.9,0.9,0.85)]); 
+t.unfocusedColors_([Color(0.9,0.75,0.75),Color(0.75,0.75,0.9),Color(0.9,0.9,0.75)]); 
+t.labelColors_([Color.red,Color.blue,Color.yellow]); 
+
 t.tabHeight_(20);
 	
 // now add a tab and populate it with a slider;
@@ -87,8 +89,10 @@ t.add("test4", scroll:true).closable_(true);
 
 // override defaults in a custom tab
 m=t.add("Custom Configured Tab", scroll:true);
-m.labelColor=Color.yellow.alpha_(1);
-m.unfocusedColor=Color.yellow.alpha_(0.4);
+m.labelColor=Color.green.alpha_(1);
+m.unfocusedColor=Color.green.alpha_(0.4);
+m.background=Color.green.alpha_(0.1);
+
 t.refresh;
 )
 
