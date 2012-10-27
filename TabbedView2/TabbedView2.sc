@@ -28,6 +28,7 @@ TabbedView2{
 		<>tabViews, // array of TabbbedViewTab instances
 		<font, // default Font. cannot be overriden by individual tabs
 		<resize = 1,
+		<>detachedClosable=true,
 		<activeTab,
 		focusHistory,
 		<window,
@@ -765,6 +766,7 @@ TabbedView2{
 			t.window.setTopLeftBounds(Rect(view.absoluteBounds.left+20,view.absoluteBounds.top+20,
 			view.bounds.width,view.bounds.height).moveBy(x,y));
 			t.window.alwaysOnTop=alwaysOnTop;
+			t.window.userCanClose=detachedClosable;
 			};
 		t.labelColors = labelColors;
 		t.unfocusedColors = unfocusedColors;  

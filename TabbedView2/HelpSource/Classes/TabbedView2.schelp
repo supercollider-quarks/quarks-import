@@ -221,6 +221,10 @@ METHOD::dragTabs
 Boolean or Function:  {arg thisView;   return boolean}.
 default: true; Set to false to disable regular tab dragging (position or order changing by drag);
 
+METHOD::detachedClosable
+if tabs are detached, you can lose a tab if you close its window. so this allows you to prevent that by setting it to false.
+The window will still close when the last tab has been dragged out of it.
+
 
 METHOD::demo
 quickly creates a bunch of tabs. for texting TabbedView2 settings
