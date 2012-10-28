@@ -67,12 +67,12 @@ TabbedView2{
 		focusFrameColor=Color.clear;
 		font=Font.default;		
 		swingFactor = Point(0.52146, 1.25); 
-		stringFocusedColors=[Color.black]	;	
-		stringColors=[Color.grey(0.5)]	;	
+		stringFocusedColors=[Color.white]	;	
+		stringColors=[Color.black]	;	
 		
 		labelColors = [Color(0.85,0.85,0.85)];
-		unfocusedColors = [Color(0.9,0.9,0.9,1)];
-		backgrounds = labelColors.deepCopy;
+		unfocusedColors = [Color(0.75,0.75,0.75,1)];
+		backgrounds = [Color(0.85,0.85,0.85)];
 		if( GUI.id == \swing)  {
 			unfocusTabs=true; // unfocus Tabs if not Cocoa;
 			};
