@@ -451,7 +451,7 @@ STRONG::use FlowView style GUI ::
 
 CODE::
 (
-t=TabbedView2(); // use Flow Style
+t=TabbedView2.new; // use Flow Style
 
 	t.add("test1").flow({|w| 
 		GUI.button.new(w,Rect(50,50,250,50))
@@ -510,10 +510,10 @@ v.add("I am last")
 v.insert(2,"squeeze me in")
 
 v.removeAt(2)
+::
 
-
-resize_()
-
+SUBSECTION:: resize
+CODE::
 ( 
 w=GUI.window.new.front;
 v=TabbedView2.newTall(w,Rect(40,40,280,280)).demo(8)
@@ -568,9 +568,9 @@ The tabs are drawn with user view which have a clear focus frame on Cocoa. On Sw
  
 CODE::       
 ( 
-v=TabbedView2.new();
+v=TabbedView2.new.demo;
 
-v.unfocusTabs_(false);  // default is false on Cocoa, true otherwise;
+v.unfocusTabs_(false);  // default is false on Cocoa and QT, true otherwise;
 v.focusFrameColor_(Color.red); //cocoa only
 
 )
@@ -600,7 +600,7 @@ t.add("two");
 t.add("threeeeeeeeeeee").tabWidth_(110); // adjust width of this tab only
 t.add("four");
 t.add("5");
-v.tabWidth_(\auto);
+t.tabWidth_(\auto);
 )
 
 ::
@@ -691,7 +691,6 @@ CODE::
 
 (
 w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,1050,700));
-w.view.background_(Color.grey(0.9));
 // setup views
 ~t1v=TabbedView2.newTall(w.view, Rect(50,50,450,600));
 ~t1t1= ~t1v.add("Tab 1.1");
