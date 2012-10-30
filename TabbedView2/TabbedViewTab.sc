@@ -4,7 +4,7 @@
 
 TabbedViewTab : SCViewHolder{
 	
-	var  <>tabbedView,<index,context, <>label, <>closable=false, <>widget, <oldParent,
+	var  <>tabbedView,<index,context, <>label, <>closable=false, <>widget, <>homeView,
 		<>focusAction,<>unfocusAction,<tabWidth=\auto, <>tbwdth=10,<useDetachIcon=false,
 		<>rightClickDetach=true, <>labelColor,  <>unfocusedColor, <>stringColor,tempView,
 		<>stringFocusedColor,tempedges,<>onDelete,<>onChangeParent,
@@ -31,7 +31,7 @@ TabbedViewTab : SCViewHolder{
 				this.view = context.compositeView
 					.new(tabbedView.view,tabbedView.view.bounds).resize_(5)
 			}; //bounds are set later
-		
+		homeView=tabbedView;
 		this.refreshEventHandlers;
 		
 		^this;
@@ -212,7 +212,7 @@ TabbedViewTab : SCViewHolder{
 	
 	setParent{ arg newparent, index; 
 		var tempunfocus = unfocusAction ;
-		oldParent=tabbedView;
+		
 		
 		index = index ? tabbedView.tabViews.size;
 		(context.name==\QtGUI).if{ // Only if kit allows setting parents

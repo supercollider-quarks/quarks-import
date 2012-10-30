@@ -89,6 +89,11 @@ add a focus action to the tab. For example enable a scope you are showing in the
 METHOD:: unfocusAction 
 add an unfocus action to the tab. For example disable a scope you were showing in the tab.
 
+
+METHOD:: homeView
+The TabbedView2 instance to which a detached TabbedViewTab instance will return if its enclosing window is closed.
+This defaults to the TabbedView2 instnace which created the TabbedViewTab instance (using add).
+
 PRIVATE:: refreshEventHandlers
 PRIVATE:: pr_interTabDragActions
 PRIVATE:: lock
@@ -99,7 +104,7 @@ PRIVATE:: detRect
 PRIVATE:: closeRect
 PRIVATE:: tabbedView
 PRIVATE:: tbwdth
-PRIVATE:: oldParent
+
 PRIVATE::pr_removeWidgets
 PRIVATE::pr_setIndex
 

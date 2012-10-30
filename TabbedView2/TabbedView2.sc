@@ -61,8 +61,13 @@ TabbedView2{
 			bounds = w.asView.bounds.moveTo(0,0);
 		};
 		bounds=bounds.asRect; // allows you to use a Point for the bounds.
-		 view = context.compositeView.new(w,bounds).resize_(resize);
+		( \TabbedViewView.asClass.notNil && (GUI.id == \qt) ).if{
+			view = TabbedViewView(w,bounds).resize_(resize);
+		}{
+			view = context.compositeView.new(w,bounds).resize_(resize);
+		};
 		
+		 
 		/*** Set some defaults ***/ 
 		focusFrameColor=Color.clear;
 		font=Font.default;		
@@ -758,7 +763,27 @@ TabbedView2{
 			view.bounds.width,view.bounds.height).moveBy(x,y));
 			t.window.alwaysOnTop=alwaysOnTop;
 			t.window.userCanClose=detachedClosable;
+			( \TabbedViewView.asClass.notNil ).if{
+				t.view.onBeginClose={
+					var tempViews;
+					tempViews=t.tabViews.collect{|t| t}; 
+					tempViews.do{arg tab;
+						var tempFocus;
+						tab.label.postln;
+						tab.homeView.notNil.if{
+							tab.homeView.view.isClosed.not.if{
+								tempFocus = tab.homeView.activeTab;
+								tab.setParent(tab.homeView);
+								tempFocus.focus;
+							}
+						};
+						
+					};
+				};
+			}{
+				"Please Activate TabbedView2_QT Quark, to prevent losing tabs when closing a window.".warn;
 			};
+		};
 		t.labelColors = labelColors;
 		t.unfocusedColors = unfocusedColors;  
 		t.backgrounds = backgrounds;  
@@ -777,6 +802,8 @@ TabbedView2{
 		t.swingFactor = swingFactor;
 		t.clickbox = clickbox;
 		t.dragTabs = dragTabs;
+		
+		
 		^t;
 	}
 	
