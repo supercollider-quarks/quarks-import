@@ -108,6 +108,9 @@ PRIVATE:: tbwdth
 PRIVATE::pr_removeWidgets
 PRIVATE::pr_setIndex
 
+PRIVATE::clearEventHandlers
+PRIVATE::refreshMouseMoveHandler
+
 
 
 
