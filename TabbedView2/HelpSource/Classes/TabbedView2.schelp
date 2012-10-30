@@ -701,7 +701,7 @@ w=Window.new("TabbedView Examples").front.setTopLeftBounds(Rect(50,50,1050,700))
 ~t2v=TabbedView2.newTall(w.view, Rect(550,50,450,600));
 ~t2t1= ~t2v.add("Tab 2.1");
 ~t2t2= ~t2v.add("Tab 2.2").closable_(true);
-~t2t3= ~t2v.add("Tab 2.3").closable_(true).onChangeParent_{"closeAction prevents closing".postln; false};
+~t2t3= ~t2v.add("Tab 2.3").closable_(true);
 
 // populate
 ~t1t1.flow({arg w;
