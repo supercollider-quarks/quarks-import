@@ -223,7 +223,6 @@ TabbedView2{
 				pen.rotate(rot2,drawCenter.x,drawCenter.y);
 				pen.font_(font);
 				pen.color_ (strColor);
-				
 				followEdges.if{
  					pen.stringCenteredIn(label, 
  						drawRectText2.moveBy(0,if(tabPosition==\top){1}{0};));
@@ -769,11 +768,10 @@ TabbedView2{
 					tempViews=t.tabViews.collect{|t| t}; 
 					tempViews.do{arg tab;
 						var tempFocus;
-						tab.label.postln;
 						tab.homeView.notNil.if{
 							tab.homeView.view.isClosed.not.if{
 								tempFocus = tab.homeView.activeTab;
-								tab.setParent(tab.homeView);
+								tab.setParent(tab.homeView,tab.homeView.tabViews.size);
 								tempFocus.focus;
 							}
 						};

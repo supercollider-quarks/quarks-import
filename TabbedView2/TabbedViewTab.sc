@@ -46,6 +46,7 @@ TabbedViewTab : SCViewHolder{
 		var rotateRect;
 		
 		widget.mouseUpAction_({arg view, x, y, modifiers;
+			widget.mouseMoveAction=nil;
 			if(clicks>1 && tabbedView.lockEdges.not){
 				tabbedView.followEdges_(tempedges.not);
 				clicks=0;
@@ -54,7 +55,7 @@ TabbedViewTab : SCViewHolder{
 			closable.value(this).if{ 
 				if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
 					deletelock.not.if{ // deletelock prevents accidental deletion after right cklick detach
-				  		{{this.remove}.defer}.fork;
+				  		{this.remove}.defer;
 					}
 			 	};
 			};
@@ -63,8 +64,14 @@ TabbedViewTab : SCViewHolder{
 			tempView.notNil.if{tempView.remove;tempView=nil;tabbedView.refresh};
 		});
 		
+		
+		
+
 		widget.mouseDownAction_({ |v,x,y,modifiers,clickCount|
 			// rightClick Detach
+			widget.mouseMoveAction.isNil.if{
+				this.refreshMouseMoveHandler;
+			};
 			(context.name==\SwingGUI).if{clickCount=clickCount-1};
 			(clickCount.booleanValue && rightClickDetach.value(this)).if{
 				this.detachTab;
@@ -82,11 +89,6 @@ TabbedViewTab : SCViewHolder{
 			 	};
 			};
 			
-			// dummy view for draging tabs
-			tabbedView.dragTabs.value(tabbedView).if{
-				tempView = CompositeView.new(tabbedView.view,widget.bounds)
-				  .background_(labelColor.copy.alpha_(0.4)).visible_(false);
-			};
 			
 			// clickCount
 			if(clicks<2){{{clicks=0;}.defer(0.6);}.fork;};
@@ -101,7 +103,37 @@ TabbedViewTab : SCViewHolder{
 			};
 		});
 		
-		
+		widget.canReceiveDragHandler_({arg view;
+			var parents, currentDrag, ret=true;
+			currentDrag = GUI.view.currentDrag;
+			this.focus(index);
+			// this is only for swing, in order to prevent ugly frame.
+			tabbedView.unfocusTabs.if{widget.focus(false);true;}; 
+				// Drag between tabs if the GUI Kit allows it
+				
+			// If a TabbedViewTab, 
+			// then reciever may not be a child of the current drag, nor may the the TabbedViews be the same.
+			// !important, since this would cause a serious crash
+			if(currentDrag.class==TabbedViewTab){
+				parents = view.getParents();
+				((parents.indexOf(currentDrag.view)).notNil || (view.parent==currentDrag.view.parent)).if{ret=false};
+			};
+			// All other drag accepted (but a handler must be defined
+			ret;
+		});
+		(context.name==\QtGUI).if
+			{this.pr_interTabDragActions}
+			{
+				widget.beginDragAction_({ this
+				});
+				widget.receiveDragHandler_({arg v, x,y;
+				});
+			};
+
+	}
+	
+	refreshMouseMoveHandler{
+		var rotateRect;
 		rotateRect = {arg tempbounds; 
 			var rect= Rect(downtmp.x,downtmp.y,tempbounds.height,tempbounds.width);
 			downtmp=Point(downtmp.y,downtmp.x);
@@ -113,6 +145,13 @@ TabbedViewTab : SCViewHolder{
 			var tempTabs=[],  receivingindex,f_edges,temprect,tempbounds,center,rect;
 			
 			tabbedView.dragTabs.value(tabbedView).if{ // is draggable?
+				
+				// dummy view for draging tabs
+				tempView.isNil.if{
+					tempView = CompositeView.new(tabbedView.view, widget.bounds)
+					  .background_(labelColor.copy.alpha_(0.4)).visible_(false);
+				};
+				
 				// create a temporary view as a drag indicator.
 				tempView.visible_(true);
 				tempView.bounds_(tempView.bounds.moveTo(x-downtmp.x+widget.bounds.left, 
@@ -169,34 +208,8 @@ TabbedViewTab : SCViewHolder{
 			};
 		});
 		
-		widget.canReceiveDragHandler_({arg view;
-			var parents, currentDrag, ret=true;
-			currentDrag = GUI.view.currentDrag;
-			this.focus(index);
-			// this is only for swing, in order to prevent ugly frame.
-			tabbedView.unfocusTabs.if{widget.focus(false);true;}; 
-				// Drag between tabs if the GUI Kit allows it
-				
-			// If a TabbedViewTab, 
-			// then reciever may not be a child of the current drag, nor may the the TabbedViews be the same.
-			// !important, since this would cause a serious crash
-			if(currentDrag.class==TabbedViewTab){
-				parents = view.getParents();
-				((parents.indexOf(currentDrag.view)).notNil || (view.parent==currentDrag.view.parent)).if{ret=false};
-			};
-			// All other drag accepted (but a handler must be defined
-			ret;
-		});
-		(context.name==\QtGUI).if
-			{this.pr_interTabDragActions}
-			{
-				widget.beginDragAction_({ this
-				});
-				widget.receiveDragHandler_({arg v, x,y;
-				});
-			};
-
-	}
+		
+		}
 	
 	// Drag between tabs
 	pr_interTabDragActions{
@@ -208,15 +221,21 @@ TabbedViewTab : SCViewHolder{
 			View.currentDrag.setParent(tabbedView,ind.sum);
 		});
 	}
-	
+	clearEventHandlers{
+		//widget.mouseDownAction=nil;
+		widget.mouseUpAction=nil;
+		widget.mouseMoveAction=nil;
+		widget.canReceiveDragHandler=nil;
+		widget.receiveDragHandler=nil;
+	}
 	
 	setParent{ arg newparent, index; 
 		var tempunfocus = unfocusAction ;
 		
-		
+		//this.clearEventHandlers;
 		index = index ? tabbedView.tabViews.size;
 		(context.name==\QtGUI).if{ // Only if kit allows setting parents
-			tempView.notNil.if{tempView.remove;tempView=nil;tabbedView.refresh};
+			tempView.notNil.if{tempView.remove;tempView=nil};
 			if(newparent !=tabbedView){
 					onChangeParent.value(this);
 					unfocusAction = nil;
@@ -234,13 +253,14 @@ TabbedViewTab : SCViewHolder{
 					//switch takes place here
 					tabbedView=newparent;
 					tabbedView.tabViews=tabbedView.tabViews.insert(index,this);
+					
 					tabbedView.pr_refreshIndex;
 					tabbedView.refresh;
 					unfocusAction=tempunfocus;
 					this.view.visible=true;
 					this.widget.visible=true;
-					this.refreshEventHandlers;
 					this.focus;
+					this.refreshEventHandlers;
 				
 			};
 		};
@@ -254,7 +274,7 @@ TabbedViewTab : SCViewHolder{
 			// for some reason, this is necessary,  the cloned view does not recieve drags,
 			// unless its widget was clicked first. so I clickit once here after a defer.
 			
-			{{this.widget.mouseDown(4,4);}.defer(0.2)}.fork;
+			{this.widget.mouseDown(4,4);this.widget.mouseMove(0,0);this.widget.mouseUp(0,0)}.defer(0.2);
 
 		};
 		
