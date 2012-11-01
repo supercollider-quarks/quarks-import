@@ -17,7 +17,7 @@ MiniIDENodeTree : MiniIDETab{
 		//NODETREEVIEW
 		Server.default.plotTree;
 		Window.allWindows.do{|win|
-			if(win.name == "internal Node Tree" || win.name == "localhost Node Tree",
+			if((win.name == "internal Node Tree") || (win.name == "localhost Node Tree"),
 				{view = win.view}
 			)
 		};
