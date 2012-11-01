@@ -41,7 +41,8 @@ MiniIDE{
 				scroll:false)
 			.tabPosition_(\bottom)
 		    .stringColor_(Color.black)
-		    .stringFocusedColor_(Color.grey);
+		    .stringFocusedColor_(Color.grey)
+		    .labelPadding_(12);
 		tabs.do{|tabType, tabNum|
 			this.setTabType(tabNum, tabType)
 		};
