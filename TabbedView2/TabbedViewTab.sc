@@ -231,7 +231,7 @@ TabbedViewTab : SCViewHolder{
 	
 	setParent{ arg newparent, index; 
 		var tempunfocus = unfocusAction ;
-		
+		clicks=0;
 		//this.clearEventHandlers;
 		index = index ? tabbedView.tabViews.size;
 		(context.name==\QtGUI).if{ // Only if kit allows setting parents
