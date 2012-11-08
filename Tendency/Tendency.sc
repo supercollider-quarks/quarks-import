@@ -44,15 +44,15 @@ Tendency {
 		}
 		
 	lpRandAt {|time|
-		^min(this.at(time), this.at(time))
+		^min(this.at(time, \uniform), this.at(time, \uniform))
 		}
 		
 	hpRandAt {|time|
-		^max(this.at(time), this.at(time))
+		^max(this.at(time, \uniform), this.at(time, \uniform))
 		}
 		
 	meanRandAt {|time|
-		^(this.at(time) + this.at(time) * 0.5)
+		^(this.at(time, \uniform) + this.at(time, \uniform) * 0.5)
 		}
 		
 	betaRandAt {|time|
