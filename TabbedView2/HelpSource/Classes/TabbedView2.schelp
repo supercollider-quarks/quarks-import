@@ -15,8 +15,8 @@ SUBSECTION:: New Features
 TabbedView2 has a number of new features compared with TabbedView.
 LIST::
 ##Tabs are draggable, both for their order and view position.
-##Under GuiQT, tabs can be dragged (using cmd/ctrl-drag) to other TabbedView2s, even between windows.
-##Under GuiQT tabs can be detached.
+##Under QtGUI, tabs can be dragged (using cmd/ctrl-drag) to other TabbedView2s, even between windows.
+##Under QtGUI tabs can be detached.
 ##Double-clicking tabs changes their orientation.
 ##Tabs can be set to be closable.
 ##Tabs are individually configurable, not just globally, though global defaults are settable.
