@@ -55,7 +55,7 @@ TabbedViewTab : SCViewHolder{
 			closable.value(this).if{ 
 				if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
 					deletelock.not.if{ // deletelock prevents accidental deletion after right cklick detach
-				  		{this.remove}.defer;
+				  		{this.remove}.defer(0.05);
 					}
 			 	};
 			};
@@ -290,7 +290,7 @@ TabbedViewTab : SCViewHolder{
 	
 	
 	remove{
-		onDelete.value(this);
+		//onDelete.value(this);
 		tabbedView.removeAt(index);
 		
 	}
