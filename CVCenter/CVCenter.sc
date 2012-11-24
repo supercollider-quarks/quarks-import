@@ -203,9 +203,9 @@ CVCenter {
 							});
 							if(tDefWin.notNil and:{ tDefWin.isClosed.not }, { tDefWin.front });
 						}, // key "t"
-						97, { if(Quarks.isInstalled("AllGui"), {
+						97, { if(\AllGui.asClass.notNil, {
 								if(allWin.isNil or:{ allWin.isClosed }, {
-									allGui = AllGui(); allWin = allGui.parent;
+									allGui = \AllGui.asClass.new; allWin = allGui.parent;
 								});
 								if(allWin.notNil and:{ allWin.isClosed.not }, { allWin.front })
 							})
@@ -240,15 +240,9 @@ CVCenter {
 				.font_(Font("Helvetica", 10))
 				.states_([["load setup", Color.white, Color(0.15, 0.15, 0.15)]])
 				.action_({ |pb|
-					if(loadActionsRadio.value == 0 or:{
-						loadActionsRadio.value == false
-					}, { loadFlag = true }, { loadFlag = false });
-					if(autoConnectMIDIRadio.value == 0 or:{
-						autoConnectMIDIRadio.value == false
-					}, { midiFlag = true }, { midiFlag = false });
-					if(autoConnectOSCRadio.value == 0 or:{
-						autoConnectOSCRadio.value == false
-					}, { oscFlag = true }, { oscFlag = false });
+					if(loadActionsRadio.value.asBoolean, { loadFlag = true }, { loadFlag = false });
+					if(autoConnectMIDIRadio.value.asBoolean, { midiFlag = true }, { midiFlag = false });
+					if(autoConnectOSCRadio.value.asBoolean, { oscFlag = true }, { oscFlag = false });
 					this.loadSetup(autoConnectMIDI: midiFlag, autoConnectOSC: oscFlag, loadActions: loadFlag);
 				})
 			;
@@ -268,12 +262,13 @@ CVCenter {
 				loadActionsRadio = Button(prefPane, Rect(0, 0, 15, 15))
 					.font_(Font("Helvetica", 10))
 					.states_([
-						["X", Color.red, Color.white],
-						["", Color.red, Color.white]
+						["", Color.red, Color.white],
+						["X", Color.red, Color.white]
 					])
+					.value_(1)
 				;
 			}, {
-				loadActionsRadio = CheckBox(prefPane, Rect(0, 0, 15, 15)).value_(true)
+				loadActionsRadio = \CheckBox.asClass.new(prefPane, Rect(0, 0, 15, 15)).value_(true)
 			});
 
 			swFlow.shift(5, -2);
@@ -291,12 +286,13 @@ CVCenter {
 				autoConnectMIDIRadio = Button(prefPane, Rect(0, 0, 15, 15))
 					.font_(Font("Helvetica", 10))
 					.states_([
-						["X", Color.red, Color.white],
-						["", Color.red, Color.white]
+						["", Color.red, Color.white],
+						["X", Color.red, Color.white]
 					])
+					.value_(1)
 				;
 			}, {
-				autoConnectMIDIRadio = CheckBox(prefPane, Rect(0, 0, 15, 15)).value_(true)
+				autoConnectMIDIRadio = \CheckBox.asClass.new(prefPane, Rect(0, 0, 15, 15)).value_(true)
 			});
 
 			swFlow.shift(5, -2);
@@ -314,9 +310,10 @@ CVCenter {
 				autoConnectOSCRadio = Button(prefPane, Rect(0, 0, 15, 15))
 					.font_(Font("Helvetica", 10))
 					.states_([
-						["X", Color.red, Color.white],
-						["", Color.red, Color.white]
+						["", Color.red, Color.white],
+						["X", Color.red, Color.white]
 					])
+					.value_(1)
 				;
 			}, {
 				autoConnectOSCRadio = CheckBox(prefPane, Rect(0, 0, 15, 15)).value_(true)
@@ -910,9 +907,9 @@ CVCenter {
 				lib = Library.readTextArchive(f);
 			});
 			all !? {
-				if(addToExisting == true, {
+				if(addToExisting === false, {
 					this.removeAll;
-				});
+				})
 			};
 			lib[\all].pairsDo({ |key, v|
 				switch(v.wdgtClass,
@@ -952,12 +949,15 @@ CVCenter {
 							});
 							if(autoConnectMIDI, {
 								if(v[hilo].midi.notNil and:{ v[hilo].midi.num.notNil }, {
-									cvWidgets[key].midiConnect(
-										v[hilo].midi.src,
-										v[hilo].midi.chan,
-										v[hilo].midi.num,
-										hilo
-									)
+									try {
+										cvWidgets[key].midiConnect(
+											// v[hilo].midi.src,
+											nil,
+											v[hilo].midi.chan,
+											v[hilo].midi.num,
+											hilo
+										)
+									}
 								})
 							})
 						})
@@ -996,11 +996,14 @@ CVCenter {
 						});
 						if(autoConnectMIDI, {
 							v.midi.num !? {
-								cvWidgets[key].midiConnect(
-									v.midi.src,
-									v.midi.chan,
-									v.midi.num
-								)
+								try {
+									cvWidgets[key].midiConnect(
+										// v.midi.src,
+										nil,
+										v.midi.chan,
+										v.midi.num
+									)
+								}
 							}
 						})
 					}
@@ -1422,7 +1425,7 @@ CVCenter {
 			})
 		});
 
-
+		^obj;
 	}
 
 }
