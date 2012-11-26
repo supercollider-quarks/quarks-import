@@ -16,4 +16,8 @@ RedSpring {
 	update {
 		object.spring(target, stiffness, damping, length);
 	}
+	update2 {		//convenience method for interconnecting two objects with one spring
+		object.spring(target, stiffness, damping, length);
+		target.spring(object, stiffness, damping, length);
+	}
 }

@@ -6,6 +6,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+121126 - added update2 to RedSpring - thanks a. bartetzki
 120820 - bugfix memory leak in RedParticleSystem - thanks d. kolokol
 111004 - added examples 013, 017, 046, 161
 	changed envelope in ex 004 from kr to ar
