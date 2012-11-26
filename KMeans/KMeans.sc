@@ -111,6 +111,44 @@ TestKMeans : UnitTest {
 		
 		
 	}
+	test_rangesanity {
+		var k, p, c, range, rescaled;
+		
+		[1,2,3,4].do{|d|
+			[1,2,3,4].do{|numclust|
+				k = KMeans.new(numclust);
+				p = {100.0.rand}.dup(d);
+				1000.do{
+					k.add(p)
+				};
+				k.reset.update;
+				c = k.centroids;
+
+				c.do{|acent|
+					this.assertArrayFloatEquals(acent, p, 
+						"clustering %D constant data should give centroids at the constant value".format(d))
+				};
+
+				//////
+				k = KMeans.new(numclust);
+				range = {{100.0.rand}.dup.integrate}.dup(d).flop;
+				1000.do{
+					k.add(d.collect{|whichd| 1.0.rand.linlin(0,1,range[0][whichd], range[1][whichd])})
+				};
+				k.reset.update;
+				c = k.centroids;
+
+				c.do{|acent|
+					rescaled = (acent - range[0]) / (range[1] - range[0]);
+					this.assert(rescaled.every{|val| (val>=0) and: {val<=1}},
+						"clustering %D range-limited data should give centroids within that range".format(d))
+				};
+
+			};
+		};
+		
+		
+	}
 } // end class TestKMeans
 
 
