@@ -192,6 +192,6 @@ TestMcldUGens : UnitTest {
 		});
 		// Wait for async tests
 		this.wait{testsIncomplete==0};
-	}
+	} // end test_planetree2d
 
 } // end class
