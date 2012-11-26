@@ -30,7 +30,10 @@ INSTANCEMETHODS::
 
 METHOD:: update
 Calls the method spring on the object. See link::Classes/RedObject::.
-	
+
+METHOD:: update2
+Calls the method spring on strong::both:: the object and the target. Note that this is just a convenience method for interconnecting two objects with one spring.
+
 EXAMPLES::
 
 CODE::
