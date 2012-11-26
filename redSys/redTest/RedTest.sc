@@ -23,8 +23,16 @@ RedTest {
 	initRedTestSF {|out, group, channels|
 		sfGrp= group ? Server.default.defaultGroup;
 		Routine.run{
+			var files= ["sounds/a11wlk01.wav", Platform.resourceDir+/+"sounds/a11wlk01.wav"];
 			sfGrp.server.bootSync;
-			buf= Buffer.read(sfGrp.server, "sounds/a11wlk01.wav");
+			files.do{|x|
+				if(buf.isNil and:{File.exists(x)}, {
+					buf= Buffer.read(sfGrp.server, x);
+				});
+			};
+			if(buf.isNil, {
+				(this.class.name++": file not found").error;
+			});
 			sfGrp.server.sync;
 			if(channels==1, {
 				SynthDef(\RedTestSF, {|out, buf|
@@ -51,21 +59,29 @@ RedTest {
 	
 	//--speaker tests
 	*speaker {|channels|
-		channels= channels ? [0, 1];
-		SynthDef(\redTestPink, {|out= 0, gate= 1|
-			var e= EnvGen.kr(Env.perc, gate, doneAction:2);
-			var z= PinkNoise.ar(e);
-			Out.ar(out, z);
-		}).add;
-		^Pbind(\instrument, \redTestPink, \out, Pseq(channels, inf)).play
+		Routine.run{
+			Server.default.bootSync;
+			channels= channels ? [0, 1];
+			SynthDef(\redTestPink, {|out= 0, gate= 1|
+				var e= EnvGen.kr(Env.perc, gate, doneAction:2);
+				var z= PinkNoise.ar(e);
+				Out.ar(out, z);
+			}).add;
+			Server.default.sync;
+			Pbind(\instrument, \redTestPink, \out, Pseq(channels, inf)).play;
+		};
 	}
 	*speaker2 {|channels|
-		channels= channels ? [0, 1];
-		SynthDef(\redTestPing, {|out= 0, gate= 1, freq= 400|
-			var e= EnvGen.kr(Env.perc, gate, doneAction:2);
-			var z= SinOsc.ar(freq, 0, e);
-			Out.ar(out, z);
-		}).add;
-		^Pbind(\instrument, \redTestPing, \out, Pseq(channels, inf), \degree, Pseq(channels, inf)).play
+		Routine.run{
+			Server.default.bootSync;
+			channels= channels ? [0, 1];
+			SynthDef(\redTestPing, {|out= 0, gate= 1, freq= 400|
+				var e= EnvGen.kr(Env.perc, gate, doneAction:2);
+				var z= SinOsc.ar(freq, 0, e);
+				Out.ar(out, z);
+			}).add;
+			Server.default.sync;
+			Pbind(\instrument, \redTestPing, \out, Pseq(channels, inf), \degree, Pseq(channels, inf)).play;
+		};
 	}
 }
