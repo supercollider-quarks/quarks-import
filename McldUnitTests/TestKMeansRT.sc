@@ -47,14 +47,14 @@ TestKMeansRT : UnitTest {
 			testsIncomplete = testsIncomplete + 1;
 			this.dataFromLanguageTest(d, 2, { |thesynth|
 				p = [{-2}.dup(d), {2}.dup(d)];
-				"Sending fuzzybinary data to KMeansRT...".postln;
+				"Sending fuzzybinary data to KMeansRT (takes about 10 secs)...".postln;
 				1000.do{
 					thesynth.set('t_gate', 1, 'input', p.choose + {0.5.sum3rand}.dup(d));
 					0.01.wait;
 				};
 			}, { |c, subtots|
 				c.sortBy(0);
-				c = (p-c).flat.abs.postln;
+				c = (p-c).flat.abs;
 				this.assertArrayFloatEquals(c, 0.0, 
 					"clustering %D fuzzybinary data should approximately recover the true centroids".format(d), 0.1);
 				testsIncomplete = testsIncomplete - 1;
@@ -64,16 +64,13 @@ TestKMeansRT : UnitTest {
 				testsIncomplete = testsIncomplete + 1;
 				this.dataFromLanguageTest(d, numclust, { |thesynth|
 					p = {100.0.rand}.dup(d);
-					"Sending constants".postln;
 					100.do{
 						thesynth.set('t_gate', 1, 'input', p);
 						0.01.wait;
 					};
 				}, { |c, subtots|
-					c.do{|acent|
-						this.assertArrayFloatEquals(acent, p, 
-							"clustering %D constant data should give centroids at the constant value".format(d))
-					};
+					this.assertArrayFloatEquals(c.flat, p.dup(c.size).flat, 
+						"clustering constant data should give centroids at the constant value  (%D, k=%)".format(d, numclust));
 					testsIncomplete = testsIncomplete - 1;
 				});
 				//////
@@ -85,11 +82,9 @@ TestKMeansRT : UnitTest {
 						0.01.wait;
 					};
 				}, { |c, subtots|
-					c.do{|acent|
-						rescaled = (acent - range[0]) / (range[1] - range[0]);
-						this.assert(rescaled.every{|val| (val>=0) and: {val<=1}},
-							"clustering %D range-limited data should give centroids within that range".format(d))
-					};
+					rescaled = c.collect{ |acent| (acent - range[0]) / (range[1] - range[0]) }.flat;
+					this.assert(rescaled.every{|val| (val>=0) and: {val<=1}},
+						"clustering range-limited data should give centroids within that range (%D, k=%)".format(d, numclust));
 					testsIncomplete = testsIncomplete - 1;
 				});
 			};
