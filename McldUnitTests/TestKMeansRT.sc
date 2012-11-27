@@ -94,5 +94,32 @@ TestKMeansRT : UnitTest {
 		this.wait{testsIncomplete==0};
 	} // end test_kmeansrt
 
+	test_kmeansrt_nolearn {
+		var d=5, numclust=7, origdata, buf, s=Server.default, thesynth, testsIncomplete=1;
+		this.bootServer;
+
+		origdata = {100.0.rand}.dup(numclust * (d+1));
+		buf = Buffer.loadCollection(s, origdata, d+1);
+		0.2.wait;
+		s.sync;
+
+		thesynth = {
+			Line.kr(0,0,1,doneAction:2);
+			KMeansRT.kr(buf, {PinkNoise.kr}.dup(d), numclust, gate:1, reset:0, learn:0);
+		}.play(s);
+		0.2.wait;
+		s.sync;
+		1.0.wait;
+		
+		buf.loadToFloatArray(action: {|data|
+			this.assertArrayFloatEquals(data, origdata,
+				"data buffer should be unaffected by use of KMeansRT.kr(learn=0)");
+			testsIncomplete = testsIncomplete - 1;
+		});
+		
+		// Wait for async tests
+		this.wait{testsIncomplete==0};
+	} // end test_kmeansrt_nolearn
+
 } // end class TestKMeansRT
 
