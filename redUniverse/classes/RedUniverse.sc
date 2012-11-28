@@ -17,8 +17,8 @@ RedUniverse {
 	}
 	*interpolate {|aWorld, bWorld, percent= 0.5|		//return a new world
 		^[aWorld, bWorld][percent.clip(0, 1).round].species.new(
-			aWorld.dim.blend(bWorld.dim, percent),
-			aWorld.gravity.blend(bWorld.gravity, percent),
+			aWorld.dim.collect{|x, i| x.blend(bWorld.dim.clipAt(i), percent)},
+			aWorld.gravity.collect{|x, i| x.blend(bWorld.gravity.clipAt(i), percent)},
 			aWorld.maxVel.blend(bWorld.maxVel, percent),
 			aWorld.damping.blend(bWorld.damping, percent)
 		)
