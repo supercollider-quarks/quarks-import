@@ -9,6 +9,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 121128 - added qt (RedQWindow) and bumped up required sc version to 3.5
 	added helpfile for RedQWindow
 	added new example 210-patterns_and_particles.scd
+	bugfix for RedUniverse interpolate class method
 121126 - added update2 to RedSpring - thanks a. bartetzki
 120820 - bugfix memory leak in RedParticleSystem - thanks d. kolokol
 111004 - added examples 013, 017, 046, 161
