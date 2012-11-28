@@ -2,6 +2,9 @@
 
 //this class can also be used with osx-swing.  just copy it to the osx folder
 
+//TO USE REDUNIVERSE WITH SwingOSC, UNCOMMENT THIS CLASS AND CHANGE EXAMPLE CODE FROM RedWindow TO RedJWindow
+
+/*
 RedJWindow : JSCWindow {
 	var <>mouse, <isPlaying= false, <userView,
 		<frame= 0, <frameRate= 0, times;				//emulate SCUserView primitive
@@ -64,3 +67,4 @@ RedJWindow : JSCWindow {
 		});
 	}
 }
+*/

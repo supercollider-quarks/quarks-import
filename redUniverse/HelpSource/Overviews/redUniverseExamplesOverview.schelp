@@ -3,7 +3,8 @@ SUMMARY:: just a long list of examples to try out
 CATEGORIES:: Red
 
 NOTE::
-SwingOSC users (Linux and Windows) need to change in the examples from link::Classes/RedWindow:: to link::Classes/RedJWindow::
+for running these examples with qt, replace RedWindow with RedQWindow.
+if you see • ERROR: Qt: Usage of QPen is not allowed at this point!, then you need to change from RedWindow to RedQWindow
 ::
 
 list::
@@ -79,10 +80,11 @@ list::
 ## link::Quarks/redUniverse/Examples/190-kmeans.scd::
 ## link::Quarks/redUniverse/Examples/191-kmeans2.scd::
 ## link::Quarks/redUniverse/Examples/200-discrete_world_ca.scd::
+## link::Quarks/redUniverse/Examples/210-patterns_and_particles.scd::
 ::
 
 table::
-## link::Classes/RedWindow::, link::Classes/RedJWindow:: || wrappers for windows
+## link::Classes/RedWindow::, link::Classes/RedQWindow::, link::Classes/RedJWindow:: || wrappers for windows
 ## link::Classes/RedVector:: || vector of any dimension
 ## link::Classes/RedSpring:: || helper class for keeping track of springs
 ## link::Classes/RedUniverse::, link::Classes/RedWorld::, link::Classes/RedObject::, link::Classes/RedPendulum::, link::Classes/RedAgent::, link::Classes/RedHiddenObject::, link::Classes/RedFood::, link::Classes/RedRock::, link::Classes/RedBoid::, link::Classes/RedParticle:: || fundamental objects in the redUniverse toolkit

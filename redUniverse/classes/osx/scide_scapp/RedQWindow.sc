@@ -4,9 +4,8 @@
 //mouseDownAction etc.  now mouse is lost if setting userView.mouseDownAction
 //needs more work - just a temporary fix - resize broken
 
-//TO USE REDUNIVERSE WITH QT, UNCOMMENT THIS CLASS (for sc3.5 and up) AND CHANGE EXAMPLE CODE FROM RedWindow TO RedQWindow
+//TO USE REDUNIVERSE WITH QT CHANGE EXAMPLE CODE FROM RedWindow TO RedQWindow
 
-/*
 RedQWindow : QWindow {
 	var <>mouse, <isPlaying= false, <userView;
 	*new {|name= "redQWindow", bounds, resizable= false, border= true, server, scroll= false|
@@ -50,4 +49,3 @@ RedQWindow : QWindow {
 		^userView.frameRate;
 	}
 }
-*/
