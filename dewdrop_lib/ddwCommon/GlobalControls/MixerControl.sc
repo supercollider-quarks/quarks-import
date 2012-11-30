@@ -8,17 +8,17 @@ MixerControl : GlobalControlBase {
 			mixerGui.updateView(controlKey, value)
 		});
 	}
-	
-	watch { |key, gui|
+
+	watch { |key, gui, count = 0|
 		mixerGui = gui;
 		controlKey = key;
-		super.watch;
+		super.watch(count);
 	}
-	
-	stopWatching {
+
+	stopWatching { |count = 0|
 		mixerGui = controlKey = nil;
-		super.stopWatching;
+		super.stopWatching(count);
 	}
-	
+
 	makeGUI {}	// MixerChannelGUI class does this
 }
