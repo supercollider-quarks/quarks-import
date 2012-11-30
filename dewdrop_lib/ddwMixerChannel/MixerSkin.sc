@@ -248,7 +248,9 @@ MixerPresendWidget {
 	}
 
 	makeView { |layout, bounds|
-		slider = GUI.slider.new(layout, this.getSliderBounds(bounds))
+		var slbounds = this.getSliderBounds(bounds);
+		slider = GUI.slider.new(layout, slbounds)
+			.thumbSize_(min(16, slbounds.width * 0.2))
 			.action_({ |view| this.doSliderAction(view) });
 		menu = GUI.popUpMenu.new(layout, this.getMenuBounds(bounds))
 			.action_({ |view| this.doMenuAction(view) })
@@ -395,7 +397,8 @@ MixerPostsendWidget : MixerPresendWidget {
 
 MixerPanWidget : MixerWidgetBase {
 	makeView { |layout, bounds|
-		view = GUI.slider.new(layout, bounds);
+		view = GUI.slider.new(layout, bounds)
+		.thumbSize_(min(16, bounds.width * 0.2));
 		this.restoreView;
 		spec = try { mixer.controls[\pan].spec } ?? { \bipolar.asSpec };
 	}
@@ -423,6 +426,9 @@ MixerPanWidget : MixerWidgetBase {
 MixerLevelSlider : MixerWidgetBase {
 	makeView { |layout, bounds|
 		view = GUI.slider.new(layout, bounds);
+		if(bounds.width > bounds.height) {
+			view.thumbSize_(min(16, bounds.width * 0.2));
+		};
 		this.restoreView;
 		spec = try { mixer.controls[\level].spec } ?? { \amp.asSpec };
 	}
