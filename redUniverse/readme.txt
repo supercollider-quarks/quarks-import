@@ -6,6 +6,7 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+121130 - moved RedQWindow out of scide_scapp folder
 121128 - added qt (RedQWindow) and bumped up required sc version to 3.5
 	added helpfile for RedQWindow
 	added new example 210-patterns_and_particles.scd
