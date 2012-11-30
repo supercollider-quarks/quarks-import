@@ -2,9 +2,22 @@
 // extensions for playing things onto mixers
 
 + Symbol {
+	playInMixerGroup { |mixer, target, patchType, args|
+		^this.asString.playInMixerGroup(mixer, target, patchType, args)
+	}
+
+	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
+		^this.asString.playOnGlobalControl(gc, args, target, addAction)
+	}
+}
+
++ String {
 		// maybe refactor this later
 	playInMixerGroup { |mixer, target, patchType, args|
 		var result;
+		// this looks funny, but it's right:
+		// if you DON'T provide outbus, we assume you want the mixer's bus
+		// if you DO provide it, we assume you know what you're doing and want to override
 		(args.notNil and: { args.includes(\outbus) }).not.if({ args = args
 			++ [\outbus, mixer.inbus.index, \out, mixer.inbus.index,
 				\i_out, mixer.inbus.index] });
@@ -13,19 +26,9 @@
 	}
 
 	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
-		(args.notNil and: { args.includes(\outbus) }).not.if({ args = args 
+		(args.notNil and: { args.includes(\outbus) }).not.if({ args = args
 			++ [\outbus, gc.bus.index, \out, gc.bus.index, \i_out, gc.bus.index] });
 		^Synth(this, args, (target ?? { gc.server }).asTarget, addAction);
-	}
-}
-
-+ String {
-	playInMixerGroup { |mixer, target, patchType, args|
-		^this.asSymbol.playInMixerGroup(mixer, target, patchType, args)
-	}
-
-	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
-		^this.asSymbol.playOnGlobalControl(gc, args, target, addAction)
 	}
 }
 
@@ -38,7 +41,7 @@
 		mixer.queueBundle({ result = this.play(target, args, \addToTail) });
 		^result
 	}
-	
+
 	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
 		(args.notNil and: { args.includes(\outbus) }).not.if({
 			args = args ++ [\outbus, gc.index, \out, gc.index, \i_out, gc.index]
@@ -54,7 +57,7 @@
 			outClass: if(target === mixer.effectgroup) { ReplaceOut } { Out }));
 		^newPatch.playToMixer(mixer)
 	}
-	
+
 	playOnGlobalControl { |gc, args, target|
 		^Patch(this, args).playOnGlobalControl(gc, target)
 	}
@@ -91,11 +94,12 @@
 		});
 		^result
 	}
-	
+
 	playOnGlobalControl { |gc, args, target, addAction = \addToTail|
 		var result, def, updateFunc;
 		def = this.asSynthDef;
-		result = def.play((target ?? { gc.server }).asTarget,
+		target = (target ?? { gc.server }).asTarget;
+		result = def.play(target,
 			args ++ [\i_out, gc.bus.index, \out, gc.bus.index, \outbus, gc.bus.index],
 			addAction);
 		updateFunc = { |node, msg|
