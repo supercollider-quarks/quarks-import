@@ -214,32 +214,34 @@ MixingBoard {
 	
 	refresh {
 		var	origin,	// of this mixerchannel
-			sendItems,	// to build dest menu
-			send,		// to fill in send menu values
-			across = 0;	// to implement skin.maxAcross
-			
+		sendItems,	// to build dest menu
+		send,		// to fill in send menu values
+		across = 0;	// to implement skin.maxAcross
+
+		defer {
 			// start here for first channel's group of controls
-		origin = Point(skin.gap.x, skin.gap.y);
+			origin = Point(skin.gap.x, skin.gap.y);
 
 			// for each mixerchannel
-		mixers.do({ arg m, i;
-			m.origin = origin;		// reset origin
-			m.refresh;		// redraw
+			mixers.do({ arg m, i;
+				m.origin = origin;		// reset origin
+				m.refresh;		// redraw
 
 				// move to next origin
-			origin = origin + Point(m.guidef.channelSize.x + skin.gap.x);
-			across = across + 1;
+				origin = origin + Point(m.guidef.channelSize.x + skin.gap.x);
+				across = across + 1;
 
 				// within horizontal bounds?
 				// if not, wrap around
-			((across >= skin.maxAcross)
-				or: { origin.x + m.guidef.channelSize.x > w.bounds.width })
-			.if({
-				origin = Point(skin.gap.x,
-					origin.y + m.guidef.channelSize.y + skin.gap.y);
-				across = 0;
+				((across >= skin.maxAcross)
+					or: { origin.x + m.guidef.channelSize.x > w.bounds.width })
+				.if({
+					origin = Point(skin.gap.x,
+						origin.y + m.guidef.channelSize.y + skin.gap.y);
+					across = 0;
+				});
 			});
-		});
+		}
 	}
 	
 
