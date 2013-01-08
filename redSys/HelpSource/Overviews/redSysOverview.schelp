@@ -169,6 +169,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130108:
+//RedTest: added amp arguments
 //--changes 121126:
 //RedEfxKomp: postGain was in the wrong place.  changed default postGain from 0.25 to 1
 //RedTest: speaker and speaker2 classmethods also boot default server.  fix initRedTestSF to read correct sound
