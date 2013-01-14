@@ -1,9 +1,9 @@
 
 	// a gui for displaying status messages on a gui window
-	
+
 	// I added some hacks to String-post and -postln, which slows down things just slightly
 	// but it's worth it to have the flexibility of displaying main output on the gui
-	
+
 	// primitive output and server messaging is not displayed
 
 StatusBox : SCViewHolder {
@@ -19,11 +19,11 @@ StatusBox : SCViewHolder {
 			StatusBox.clearDefault;
 		}
 	}
-	
+
 	*new { arg argParent, argBounds;
 		^super.new.init(argParent, argBounds)
 	}
-	
+
 	init { |argParent, argBounds|
 		view = GUI.textView.new(argParent, argBounds)
 			.hasVerticalScroller_(true)
@@ -36,7 +36,7 @@ StatusBox : SCViewHolder {
 		(default === this).if({ default = nil });	// forget about me if I'm going away
 		view.notClosed.if({ super.remove; });
 	}
-	
+
 		// this is necessary to make sure lines post in the right order
 	startPostThread {
 		notScheduled.if({
@@ -44,6 +44,7 @@ StatusBox : SCViewHolder {
 				try {
 					view.notClosed.if({
 						view.string_(view.string ++ strToPost);
+						view.select(view.string.size - 2, 0);
 						strToPost = "";
 					});
 				} { |error|
@@ -65,21 +66,21 @@ StatusBox : SCViewHolder {
 		strToPost = strToPost ++ str.asString;
 		this.startPostThread;
 	}
-	
+
 	postln { arg str;
 		this.post(str.asString ++ "\n");
 	}
-	
+
 	makeDefault {
 		default = this;
 	}
-	
+
 	*clearDefault { default = nil; }
-	
+
 	*post { |str|
 		default.notNil.if({ default.post(str) });
 	}
-	
+
 	*postln { |str|
 		default.notNil.if({ default.postln(str) });
 	}
