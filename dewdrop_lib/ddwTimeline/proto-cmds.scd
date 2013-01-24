@@ -558,7 +558,7 @@ PR(\abstractTLCommand).clone({
 				// iterator can stop by a nil item
 				// but hardstop only if a stop is not scheduled by other means
 				if(~repeats <= 0 or: { ~dur.isNil and: { ~doneSignal.isNil } }) {
-					~stop.()
+					~stop.((activeCmds: activeCmds))
 				};
 			};
 		};
