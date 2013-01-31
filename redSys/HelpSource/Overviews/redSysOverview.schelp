@@ -169,6 +169,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130131:
+//RedTest: added dur arguments
 //--changes 130108:
 //RedTest: added amp arguments
 //--changes 121126:

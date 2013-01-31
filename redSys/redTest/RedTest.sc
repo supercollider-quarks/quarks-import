@@ -58,7 +58,7 @@ RedTest {
 	}
 	
 	//--speaker tests
-	*speaker {|channels, amp= 1|
+	*speaker {|channels, amp= 1, dur= 1|
 		Routine.run{
 			Server.default.bootSync;
 			channels= channels ? [0, 1];
@@ -68,10 +68,10 @@ RedTest {
 				Out.ar(out, z);
 			}).add;
 			Server.default.sync;
-			Pbind(\instrument, \redTestPink, \out, Pseq(channels, inf), \amp, amp).play;
+			Pbind(\instrument, \redTestPink, \dur, dur, \out, Pseq(channels, inf), \amp, amp).play;
 		};
 	}
-	*speaker2 {|channels, amp= 1|
+	*speaker2 {|channels, amp= 1, dur= 1|
 		Routine.run{
 			Server.default.bootSync;
 			channels= channels ? [0, 1];
@@ -81,7 +81,7 @@ RedTest {
 				Out.ar(out, z);
 			}).add;
 			Server.default.sync;
-			Pbind(\instrument, \redTestPing, \out, Pseq(channels, inf), \degree, Pseq(channels, inf), \amp, amp).play;
+			Pbind(\instrument, \redTestPing, \dur, dur, \out, Pseq(channels, inf), \degree, Pseq(channels, inf), \amp, amp).play;
 		};
 	}
 }

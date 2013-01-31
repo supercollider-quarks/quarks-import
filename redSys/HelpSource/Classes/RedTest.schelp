@@ -20,11 +20,23 @@ Pink noise speaker test.
 ARGUMENT:: channels
 Should be an array of output channel indices.
 
+ARGUMENT:: amp
+used to scale amplitude
+
+ARGUMENT:: dur
+used to change duration between notes
+
 METHOD:: speaker2
 Ping speaker test.
 
 ARGUMENT:: channels
 Should be an array of output channel indices.
+
+ARGUMENT:: amp
+used to scale amplitude
+
+ARGUMENT:: dur
+used to change duration between notes
 
 INSTANCEMETHODS::
 
