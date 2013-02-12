@@ -3,7 +3,7 @@
 ObjectInsp : ObjectGui {
 
 	classvar displayHooks;
-	
+
 	writeName { arg layout;
 		ClassNameLabel.newBig(model.class,layout);
 		GUI.dragSource.new(layout,Rect(0,0,500,30))
@@ -17,9 +17,9 @@ ObjectInsp : ObjectGui {
 		var vert,list,listItems,actions,val;
 		listItems = List.new;
 		actions = List.new;
-		
+
 		displayHooks.at(model.class).value(model,layout);
-	
+
 		layout.startRow;
 		this.instVarsGui(listItems,actions);
 
@@ -93,7 +93,7 @@ ObjectInsp : ObjectGui {
 			model.class.openCodeFile;
 		});
 	}
-	
+
 	*initClass {
 		displayHooks = IdentityDictionary.new;
 
@@ -112,12 +112,14 @@ ObjectInsp : ObjectGui {
 				InspButton(v,layout,300);
 			});
 		});
-		
+
 		this.registerHook(Synth,{ arg model,layout;
 			var sd;
 			layout.startRow;
 			ServerLog.guiMsgsForSynth(model,layout);
-			Annotations.guiFindNode(model.nodeID,layout);
+			if(\Annotations.asClass.notNil,{
+				Annotations.guiFindNode(model.nodeID,layout);
+			});
 			if(\InstrSynthDef.asClass.notNil,{
 				if(model.defName.notNil,{
 					sd = InstrSynthDef.cacheAt(model.defName,model.server);
@@ -129,10 +131,12 @@ ObjectInsp : ObjectGui {
 		});
 		this.registerHook(Bus,{ arg bus,layout;
 			layout.startRow;
-			ActionButton(layout,"log...",{
+			SimpleButton(layout,"log...",{
 				ServerLog.guiMsgsForBus(bus.index,bus.rate,nil,bus.server);
 			});
-			Annotations.guiFindBus(bus.index,bus.rate,layout)
+			if(\Annotations.asClass.notNil,{
+				Annotations.guiFindBus(bus.index,bus.rate,layout);
+			});
 		});
 		this.registerHook(SynthDef,{ arg def,layout;
 			def.allControlNames.do { arg cn,i;
@@ -141,11 +145,17 @@ ObjectInsp : ObjectGui {
 				SimpleLabel(layout,cn.defaultValue,300);
 			};
 			layout.startRow;
+			ArgName("Num UGens",layout);
+			SimpleLabel(layout,def.children.size.asString,100);
+			SimpleButton(layout,"graph...",{
+				SynthDefGraph(def)
+			},100);
+
 			if(\InstrSynthDef.asClass.notNil and: {def.isKindOf(InstrSynthDef)},{
-				InspButton(def.instrName.asInstr ? def.instrName,layout);
+				InspButton(def.instrName.asInstr ? def.instrName,layout.startRow);
 			});
 			if(def.name.notNil,{
-				SimpleButton(layout,nil,"search ServerLog...",{
+				SimpleButton(layout.startRow,"search ServerLog...",{
 					ServerLog.guiMsgsForSynthDef(def.name);
 				})
 			})
@@ -162,7 +172,7 @@ ObjectInsp : ObjectGui {
 			displayHooks[class] = displayFunction;// arg object, layout
 		})
 	}
-	
+
 	*sourceCodeGui { arg sourceCode, layout,width=700;
 		var f,height,tf;
 		f = GUI.font.new("Courier",12.0);
@@ -172,7 +182,7 @@ ObjectInsp : ObjectGui {
 		tf.font_(f);
 		tf.syntaxColorize;
 		^tf
-	}		
+	}
 }
 
 
@@ -201,7 +211,7 @@ ClassGui : ObjectInsp {
 					var path;
 					model.openHelpFile;
 				});
-				
+
 				if(model.superclass.notNil,{
 					SimpleLabel(layout.startRow,"superclasses:",layoutWidth).bold;
 					supers = model.superclasses;
@@ -210,7 +220,7 @@ ClassGui : ObjectInsp {
 						ClassNameLabel(sup,layout,width,30);
 					})
 				});
-		
+
 				// explicit references
 				/*
 				SimpleLabel(layout.startRow,"classes explicitly referenced in source:");
@@ -219,7 +229,7 @@ ClassGui : ObjectInsp {
 					ClassNameLabel(c.asClass,layout,200);
 				});
 				*/
-		
+
 				// classVarnames
 				if(model.classVarNames.size > 0,{
 					SimpleLabel(layout.startRow,"classvars:",layoutWidth).bold;
@@ -231,7 +241,7 @@ ClassGui : ObjectInsp {
 						InspButton(iv,layout);
 					});
 				});
-		
+
 				//instance vars
 				if(model.instVarNames.size > 0,{
 					SimpleLabel(layout.startRow,"vars:",layoutWidth).bold;
@@ -250,7 +260,7 @@ ClassGui : ObjectInsp {
 						MethodLabel.classMethod(model.class.methods.at(cmi),layout.startRow,minWidth:width);
 					});
 				});
-		
+
 				// cprototype
 				// filenameSymbol
 				// MethodBrowser(class)
