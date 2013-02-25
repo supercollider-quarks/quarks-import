@@ -19,6 +19,10 @@ RedVector2D[float] : RedVector {
 	manhattan {|redVec| ^(this[0]-redVec[0]).abs+(this[1]-redVec[1]).abs}
 	dot {|redVec| ^(this[0]*redVec[0])+(this[1]*redVec[1])}
 	asPoint{^Point(this[0], this[1])}
+	* {|item, adverb| if(item.isNumber, {^RedVector2D[this[0]*item, this[1]*item]}, {^this.performBinaryOp('*', item, adverb)})}
+	/ {|item, adverb| if(item.isNumber, {^RedVector2D[this[0]/item, this[1]/item]}, {^this.performBinaryOp('/', item, adverb)})}
+	+ {|item, adverb| if(item.isNumber, {^RedVector2D[this[0]+item, this[1]+item]}, {^this.performBinaryOp('+', item, adverb)})}
+	- {|item, adverb| if(item.isNumber, {^RedVector2D[this[0]-item, this[1]-item]}, {^this.performBinaryOp('-', item, adverb)})}
 }
 
 //--3d vector optimised for speed
@@ -33,4 +37,8 @@ RedVector3D[float] : RedVector {
 		#x2, y2, z2= redVec;
 		^RedVector3D[(y1*z2)-(z1*y2), (z1*x2)-(x1*z2), (x1*y2)-(y1*x2)];
 	}
+	* {|item, adverb| if(item.isNumber, {^RedVector3D[this[0]*item, this[1]*item, this[2]*item]}, {^this.performBinaryOp('*', item, adverb)})}
+	/ {|item, adverb| if(item.isNumber, {^RedVector3D[this[0]/item, this[1]/item, this[2]/item]}, {^this.performBinaryOp('/', item, adverb)})}
+	+ {|item, adverb| if(item.isNumber, {^RedVector3D[this[0]+item, this[1]+item, this[2]+item]}, {^this.performBinaryOp('+', item, adverb)})}
+	- {|item, adverb| if(item.isNumber, {^RedVector3D[this[0]-item, this[1]-item, this[2]-item]}, {^this.performBinaryOp('-', item, adverb)})}
 }
