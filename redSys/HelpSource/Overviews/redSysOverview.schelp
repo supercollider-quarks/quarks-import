@@ -127,6 +127,7 @@ SECTION:: redTools (various)
 TABLE::
 ## link::Classes/RedALF:: || ascii to list-of-floats conversion
 ## link::Classes/RedBase64:: || base64 encoding/decoding
+## link::Classes/RedBencode:: || bencode encoder and decoder
 ## link::Classes/RedBitStream:: || stream bits
 ## link::Classes/RedBMP:: || bitmap image
 ## link::Classes/RedGIF:: || gif image decoder
@@ -169,6 +170,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130226:
+//added RedBencode
 //--changes 130131:
 //RedTest: added dur arguments
 //--changes 130108:
