@@ -752,7 +752,8 @@ CVWidgetEditor {
 				.string_("{ |cv| /* do something */ }")
 				.syntaxColorize
 			;
-
+			if(GUI.id !== \cocoa, { enterAction.tabWidth_("    ".bounds.width) });
+				
 			if(GUI.id !== \cocoa, {
 				enterAction.toolTip_("The variable 'cv' holds the widget's CV resp.\n'cv.value' its current value. You may enter an\narbitrary function using this variable (or not).")
 			});
