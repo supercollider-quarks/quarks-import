@@ -16,7 +16,7 @@ RedBencode {
 				val.asSortedArray.do{|a| res= res++this.encode([a[0].asString, a[1]])};
 				res= res++$e;
 			}
-			{val.isCollection} {//list
+			{val.isSequenceableCollection} {//list
 				res= res++$l++this.encode(val)++$e;
 			}
 			{(this.class.name++": error encoding"+val+"at index"+i).error}
@@ -28,7 +28,7 @@ RedBencode {
 		^Int8Array.fill(str.size, {|i| str[i].ascii});
 	}
 	*decodeBytes {|array|
-		^this.decodeString(array.asAscii);
+		^this.decodeString(String.fill(array.size, {|i| array[i].asAscii}));
 	}
 	*decodeString {|string|
 		^this.decode(CollStream(string));
