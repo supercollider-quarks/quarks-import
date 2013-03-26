@@ -1,0 +1,210 @@
+title:: nxQuark			
+summary:: A Collection of Semideterministic pseudo-ugens.
+categories:: Quarks, Libraries>JITLib
+
+section:: Introduction
+
+Of course, you can use these pseudo-ugens as you like, but were originally programmed ​​for use within the context of an strong::livecoding improvisation::. Four of the concepts that concerned me was:
+
+list::
+	## Immediacy in coding.
+	## Exploration. 
+	## Experimentation with code & sound.
+	## Indeterminacy. 
+::
+Aesthetics and philosophically, for my is important the improvisation in the present moment and the uncertainty in the results. Over time I have come to these classes. I think, give a partial solution to these concerns. With an example I will better understand:
+
+section:: First example
+
+code::
+
+// Choose the class you like (this is the part of immediacy/exploration)
+
+p = ProxySpace.push(s.boot);
+
+~a.play;
+
+~a.fadeTime = 20;
+
+~a = { NX012.ar(1,0,12,0,0,12,0.3,0.3,0.3)};
+
+~a = { NX017.ar(1,0,12,0,0,12,0.3,0.3,0.3)};
+
+// Note that each time you launch a class, their sound has changed (this is the part on indeterminacy):
+ 
+~a = { NX017.ar(1,0,12,0,0,12,0.3,0.3,0.3)};
+
+// Copy the code printed on post-window in your working area and change wathever you like.
+
+// (this is the part of experimentation with code):  
+
+// In this case i changed only the rrand(60,200) for rrand(0.0001,0.001) and SinOsc for Pulse.
+
+~a = { var alpha;
+	alpha = rrand(0.0001,0.001);
+	Pan2.ar(LeakDC.ar(Normalizer.ar(
+		BPeakEQ.ar(BPeakEQ.ar(BPeakEQ.ar(BPeakEQ.ar(FreeVerb.ar(
+			LPF.ar(
+			RHPF.ar(
+			Pulse.ar(TRand.kr(alpha,alpha+10,Impulse.kr(Rand(33,100)))),
+				Rand(1000,10000),Rand(0.0001,0.01)),Rand(500,3000))
+				,0.1,0.1,0.1)
+		,100,6.0,6),1000,6.0,0),5000,6.0,0),10000,6.0,6)
+	,(1.33/0.999)*1.0,0.1)),0)
+};
+
+// That's all. The rest is up to your imagination.
+
+~a.end(1);
+
+~a.clear;
+
+::
+
+section:: Rapid reference
+
+table::
+## strong::Generator type:: || strong::Brief Description:: ||strong::Arguments::
+## NX000's || Electronic Semideterministic Drones || code::NX000.ar(vol,pan,q1,q2,q3,q4,v1,v2,v3)::
+## NX100's || Semideterministic Drones with Samples || code::NX100.ar(sample,vol,pan,q1,q2,q3,q4,v1,v2,v3)::
+## NX200's || Semideterministic Effects || code::NX200.ar(inlet,vol,pan,q1,q2,q3,q4,v1,v2,v3)::
+## NX300's || Electronic Semideterministic Events with Silences || code::NX300.ar(vol,pan,q1,q2,q3,q4,v1,v2,v3)::
+::
+
+section:: Arguments
+
+subsection:: NX000's
+
+(Electronic Semideterministic Drones)
+
+list::
+## strong::vol: :: volume range 0.0..1.0 (default:0.0)
+## strong::pan: :: panner. range -1(left) .. 1 (right) (default:0.0)
+## strong::q1: :: eq gain for 100Hz (default:6)
+## strong::q2: :: eq gain for 1000Hz (default:0)
+## strong::q3: :: eq gain for 5000Hz (default:0)
+## strong::q4: :: eq gain for 10000Hz (default:6)
+## strong::v1: :: freeverb mix dry/wet balance. range 0..1 (default:0.0)
+## strong::v2: :: freeverb room size. range 0..1 (default:0.0)
+## strong::v3: :: freeverb HF damp. range 0..1 (default:0.0)
+::
+
+subsection:: NX100's
+
+(Semideterministic Drones with Samples)
+
+list::
+## strong::sample: :: buffer number (default:1)
+## strong::vol: :: volume range 0.0..1.0 (default:0.0)
+## strong::pan: :: panner. range -1(left) .. 1 (right) (default:0.0)
+## strong::q1: :: eq gain for 100Hz (default:6)
+## strong::q2: :: eq gain for 1000Hz (default:0)
+## strong::q3: :: eq gain for 5000Hz (default:0)
+## strong::q4: :: eq gain for 10000Hz (default:6)
+## strong::v1: :: freeverb mix dry/wet balance. range 0..1 (default:0.0)
+## strong::v2: :: freeverb room size. range 0..1 (default:0.0)
+## strong::v3: :: freeverb HF damp. range 0..1 (default:0.0)
+::
+
+subsection:: NX200's
+
+(Semideterministic Effects)
+
+list::
+## strong::inlet: :: bus index (no default)
+## strong::vol: :: volume range 0.0..1.0 (default:0.0)
+## strong::pan: :: panner. range -1(left) .. 1 (right) (default:0.0)
+## strong::q1: :: eq gain for 100Hz (default:6)
+## strong::q2: :: eq gain for 1000Hz (default:0)
+## strong::q3: :: eq gain for 5000Hz (default:0)
+## strong::q4: :: eq gain for 10000Hz (default:6)
+## strong::v1: :: freeverb mix dry/wet balance. range 0..1 (default:0.0)
+## strong::v2: :: freeverb room size. range 0..1 (default:0.0)
+## strong::v3: :: freeverb HF damp. range 0..1 (default:0.0)
+::
+
+subsection:: NX300's
+
+(Electronic Semideterministic Events with Silences)
+
+list::
+## strong::vol: :: volume range 0.0..1.0 (default:0.0)
+## strong::pan: :: panner. range -1(left) .. 1 (right) (default:0.0)
+## strong::q1: :: eq gain for 100Hz (default:6)
+## strong::q2: :: eq gain for 1000Hz (default:0)
+## strong::q3: :: eq gain for 5000Hz (default:0)
+## strong::q4: :: eq gain for 10000Hz (default:6)
+## strong::v1: :: freeverb mix dry/wet balance. range 0..1 (default:0.0)
+## strong::v2: :: freeverb room size. range 0..1 (default:0.0)
+## strong::v3: :: freeverb HF damp. range 0..1 (default:0.0)
+::
+
+Examples::
+
+code::
+
+p = ProxySpace.push(s.boot);
+
+// NX000's
+
+~a.play;
+
+~a = { NX001.ar(1,0,12,0,0,12,0,0,0)};
+
+ // NX100's
+
+b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav", bufnum:1);
+
+~a = { NX101.ar(1,1,0,12,0,0,12,0,0,0)};
+
+// NX200's
+
+~b.play;
+
+~b = {NX201.ar(~a.index,1,0,12,0,0,12,0,0,0)}
+
+~a.vol = 0;
+
+~b.end(0.1);
+
+~a.vol = 1;
+
+// NX300's
+
+~a = { NX301.ar(1,0,12,0,0,12,0,0,0)};
+
+~a.end(1);
+
+b.free; ~a.clear; ~b.clear;
+
+::
+
+section::List of current pseudo-ugens
+
+table::
+## strong::NX000's:: || strong::NX100's:: ||strong::NX200's:: ||strong::NX300's::
+## link::Classes/NX001:: || link::Classes/NX101:: || link::Classes/NX201:: || link::Classes/NX301::
+## link::Classes/NX002:: || link::Classes/NX102:: || link::Classes/NX202:: || link::Classes/NX302::
+## link::Classes/NX003:: || link::Classes/NX103:: || link::Classes/NX203:: || link::Classes/NX303::
+## link::Classes/NX004:: || link::Classes/NX104:: || link::Classes/NX204:: || link::Classes/NX304::
+## link::Classes/NX005:: || link::Classes/NX105:: || link::Classes/NX205:: || link::Classes/NX305::
+## link::Classes/NX006:: ||               ||               		   || link::Classes/NX306::
+## link::Classes/NX007:: ||               ||               		   || link::Classes/NX307::
+## link::Classes/NX008:: ||               ||                ||
+## link::Classes/NX009:: ||                ||              ||
+## link::Classes/NX012:: ||               ||               ||
+## link::Classes/NX017:: ||               ||               ||
+::
+
+section::Feedback
+
+For suggestions / comments contact me:
+
+list::
+##Miquel Parera Jaques
+##computer.music.neix@gmail.com
+::
+
+Thanks a lot for all the feedback and ideas!
+
+March 2013.
