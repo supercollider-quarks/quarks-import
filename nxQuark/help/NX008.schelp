@@ -1,0 +1,32 @@
+title::NX008
+summary:: A pseudo-ugen.
+categories:: nxQuark,Quarks, Libraries>JITLib
+
+
+Electronic Semideterministic Drone.
+
+Part of link::nxQuark/nxQuark:: collection.
+
+classmethods::
+
+method::ar
+
+argument::vol
+ volume range 0.0..1.0 (default:0.0)
+argument::pan
+panner. range -1(left) .. 1 (right) (default:0.0)
+argument::q1
+eq gain for 100Hz (default:6)
+argument::q2
+eq gain for 1000Hz (default:0)
+argument::q3
+eq gain for 5000Hz (default:0)
+argument::q4
+eq gain for 10000Hz (default:6)
+argument::v1
+freeverb mix dry/wet balance. range 0..1 (default:0.0)
+argument::v2
+freeverb room size. range 0..1 (default:0.0)
+argument::v3
+freeverb HF damp. range 0..1 (default:0.0)
+
