@@ -1,11 +1,11 @@
 (
 // required:
 \name: "nxQuark",
-\path: "nxQuark", // almost always the same as the quark name
+\path: "nxQuark",
 \summary: "Semideterministic pseudo-ugens",
 \author: "Miquel Parera Jaques",
 // optional:
-\version: March-2013, // must be a float
+\version: 2013.05,
 \since: "2013",
 \schelp: "nxQuark/nxQuark",
 )
