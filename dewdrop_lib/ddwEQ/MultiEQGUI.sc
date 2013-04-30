@@ -1,22 +1,22 @@
 
 MultiEQGUI {
-	
+
 	var	<w,			// the window
 		addButton,	// command buttons
 		printButton,
 		<eq,			// the DynMultiEQ object I'm editing
 		<bandguis,	// array of EQBandGUI's
 		caller;		// who called me?
-	
+
 	*new { arg multieq, name = "EQ editor", caller;
 		^super.new.init(multieq, name, caller);
 	}
-	
+
 	init { arg multieq, name, call;
 		eq = multieq;
 		eq.editor = this;
 		caller = call;	// nil if instantiated by .new, \edit if called from DynMultiEQ-edit
-		
+
 		w.isNil.if({
 			w = GUI.window.new(name, Rect.new(10, 10, 10, 10)).onClose_(this.closeAction);
 			this.makeViews;
@@ -24,7 +24,7 @@ MultiEQGUI {
 			w.front;
 		});
 	}
-	
+
 	makeViews {
 		var origin, newgui;
 		addButton = GUI.button.new(w, Rect.new(200, 20, 100, 20))
@@ -44,13 +44,13 @@ MultiEQGUI {
 		});
 		this.resizeWindow
 	}
-	
+
 	resizeWindow {
 		w.bounds = Rect(w.bounds.left, w.bounds.top, EQBandGUI.bandSize.x + 40,
 			80 + (eq.spec.size * (EQBandGUI.bandSize.y + 20))
 		)
 	}
-	
+
 	refresh {
 		var origin;
 		this.resizeWindow;
@@ -69,7 +69,7 @@ MultiEQGUI {
 			this.refresh;
 		}
 	}
-	
+
 	closeAction {
 		^{	eq.postln;
 			eq.spec.do({ arg sp;	// let each band know it's no longer gui'ed
@@ -82,13 +82,13 @@ MultiEQGUI {
 			});
 		}
 	}
-	
+
 }
 
 EQBandGUI {
 	// graphic controls for one EQ band
 	// these should only be embedded in a MultiEQGUI
-	
+
 	classvar	<bandSize,	// size of 1 band altogether
 			<typeBounds,	// bounds relative to origin
 			<freqSlBounds,	// freqSlider
@@ -100,7 +100,7 @@ EQBandGUI {
 			<fontSpecs,
 			<typesArray,
 			<freqSpec, <kSpec, <rqSpec;
-	
+
 	var		<origin,		// supplied by MultiEQGUI
 			<typeMenu,		// menu for eq type
 			<freqSlider, <freqText,	// sliders & text displays for parameters
@@ -109,7 +109,7 @@ EQBandGUI {
 			<bypassButton,
 			<removeButton,
 			<band, <parent;	// points to EQBand and MultiEQGUI
-	
+
 	*initClass {
 		bandSize = Point(745, 50);
 		typeBounds = Rect(0, 0, 100, 20);
@@ -129,15 +129,15 @@ EQBandGUI {
 		rqSpec = [0.01, 2, \linear].asSpec;
 		fontSpecs = #["Helvetica", 10];
 	}
-	
+
 	*new { arg org, bnd, par;
 		^super.new.init(org, bnd, par)
 	}
-	
+
 	init { arg org, bnd, par;
 		band = bnd.gui_(this);
 		parent = par;
-		{ typeMenu = GUI.popUpMenu.new(parent.w, typeBounds)			.items_(typesArray)
+		{ typeMenu = GUI.popUpMenu.new(parent.w, typeBounds).items_(typesArray)
 			.font_(GUI.font.new(*fontSpecs))
 			.action_(this.typeMenuAction);
 		freqSlider = GUI.slider.new(parent.w, freqSlBounds)
@@ -159,7 +159,7 @@ EQBandGUI {
 			.action_(this.removeAction);
 		nil }.defer;
 	}
-	
+
 	origin_ { arg org;
 		{ origin = org;
 		typeMenu.bounds = typeBounds.moveBy(origin.x, origin.y);
@@ -173,60 +173,60 @@ EQBandGUI {
 		removeButton.bounds = removeBounds.moveBy(origin.x, origin.y);
 		nil }.defer;
 	}
-	
+
 	free { arg freeIt = true;
 		freeIt.if({ parent.eq.remove(band, false) });
-		
-		{	[typeMenu, freqSlider, freqText, kSlider, kText, rqSlider, rqText, 
+
+		{	[typeMenu, freqSlider, freqText, kSlider, kText, rqSlider, rqText,
 			bypassButton, removeButton].do(_.remove);
 		nil }.defer
 	}
-	
+
 	update {	// update view values
 		{
-			typeMenu.setProperty(\value, typesArray.indexOf(band.type));
-			freqSlider.setProperty(\value, freqSpec.unmap(band.freq));
+			typeMenu.value = typesArray.indexOf(band.type);
+			freqSlider.value = freqSpec.unmap(band.freq);
 			freqText.string_(band.freq.trunc(0.01));
-			kSlider.setProperty(\value, kSpec.unmap(band.k));
+			kSlider.value = kSpec.unmap(band.k);
 			kText.string_(
 				(band.k >= 1).if({"+"}, {""}) ++ band.k.ampdb.trunc(0.01) ++ " dB"
 			);
-			rqSlider.setProperty(\value, rqSpec.unmap(band.rq));
+			rqSlider.value = rqSpec.unmap(band.rq);
 			rqText.string_(band.rq.trunc(0.01));
 		nil }.defer;
 	}
-	
+
 	typeMenuAction {
 		^{ 	band.type_(typesArray.at(typeMenu.value), false);
 			this.update;
 		 }
 	}
-	
+
 	freqSlAction {
 		^{ 	band.freq_(freqSpec.map(freqSlider.value), false);
 			this.update;
 		 }
 	}
-	
+
 	kSlAction {
 		^{ 	band.k_(kSpec.map(kSlider.value), false);
 			this.update;
 		 }
 	}
-	
+
 	rqSlAction {
 		^{ 	band.rq_(rqSpec.map(rqSlider.value), false);
 			this.update;
 		 }
 	}
-	
+
 	bypassAction {
 		^{	band.run(bypassButton.value == 0)
 		}
 	}
 
 	removeAction {
-		^{ 	this.free; 
+		^{ 	this.free;
 			parent.bandguis.remove(this);
 			parent.refresh;
 		}
