@@ -22,6 +22,7 @@ Verbosity {
 	//	var <>target = \post;
 
 	*initClass{
+		Spec.initClass; ControlSpec.initClass;
 		all = IdentityDictionary.new;
 		Spec.add( \verbosity, [0,10,\linear,1,0,"V"] );
 	}
@@ -86,7 +87,7 @@ Verbosity {
 			\win, { this.createDoc; doc.view.children.first.string_( string ); doc.front; }
 		);
 	}
-	
+
 	*createDoc {
 		if (doc.isNil ){
 			switch( target,
