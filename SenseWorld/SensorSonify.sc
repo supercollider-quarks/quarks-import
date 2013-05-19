@@ -48,6 +48,7 @@ SensorSonificatorSynth{
 	var <argValues;
 
 	*initClass{
+		SynthDescLib.initClass;
 		synthDescLib = SynthDescLib.new( \SensorSonification );
 	}
 
@@ -64,7 +65,7 @@ SensorSonificatorSynth{
 				SinOsc.ar( min(freq + (fmmod*time),20000) )
 			);
 		}).memStore( \SensorSonification );
-		
+
 		// Sonify the value as frequency. As the rate of change is faster, the amplitude goes up (silent when no change, fade out is longer than fade in).
 		SynthDef( \valueSonify, { |inbus=0,outbus=0,bfreq=300,freqr=100,amp=0.001,slmul=0.1,lagt=0.3,lagdt=1,rq=0.1|
 			var input,slamp,sig,freq;
@@ -86,7 +87,7 @@ SensorSonificatorSynth{
 		}).memStore( \SensorSonification );
 	}
 
-	
+
 	*new{ |def,group,inbus,outbus|
 		^super.new.init( def, group, inbus,outbus );
 	}
