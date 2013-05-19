@@ -18,7 +18,7 @@ SWDataSlotGui{
 	*initClass{
 		StartUp.add( {
 			if ( GUI.scheme.notNil ){
-				Platform.case( 
+				Platform.case(
 					\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
 					\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
 					\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
@@ -27,17 +27,17 @@ SWDataSlotGui{
 		} );
 	}
 
-	*new { |slot, w| 
+	*new { |slot, w|
 		^super.new.w_(w).slot_(slot).init;
 	}
-	
+
 	init {
 		var xsize, ysize;
 
 		//	ysize = 80;
 
-		w = w ?? { 
-			w = GUI.window.new("SWDataSlot", Rect(xposScreen, yposScreen, xsize, ysize )).front; 
+		w = w ?? {
+			w = GUI.window.new("SWDataSlot", Rect(xposScreen, yposScreen, xsize, ysize )).front;
 			w.view.decorator = FlowLayout(Rect(0, 0, xsize, ysize), 2@2, 2@2);
 			decorator = w.view.decorator;
 			w;
@@ -48,7 +48,7 @@ SWDataSlotGui{
 			try { decorator = w.decorator };
 		});
 
-		
+
 		/*
 		cw = GUI.compositeView.new( w, Rect( decorator.left, decorator.top, xsize, ysize ) );
 		cw.decorator = FlowLayout(Rect(2, 2, xsize, ysize), 2@2, 2@2);
@@ -77,7 +77,7 @@ SWDataSlotGui{
 
 		this.updateVals;
 
-		//	watcher.start;		
+		//	watcher.start;
 		w.refresh;
 	}
 
@@ -95,16 +95,16 @@ SWDataSlotGui{
 		this.addGetButton;
 
 		decorator.nextLine;
-		
+
 		val = GUI.staticText.new( cw, Rect( 0, 0, 205, 16 )).font_( font ).background_( Color.white );
 
-		
+
 	}
 
 
 	buildNumberGui{
 		val = GUI.numberBox.new( cw, Rect( 0, 0, 35, 16 )).value_( slot.value ).font_( font );
-		
+
 		debug = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Db", Color.blue ], ["Db", Color.red ] ] ).action_( {
 				|but| if ( but.value == 1, { slot.debug_( true ) }, { slot.debug_( false ) } ); } ).font_( font );
@@ -118,19 +118,19 @@ SWDataSlotGui{
 			[ [ "Bus", Color.blue ], ["Bus", Color.red ] ] ).action_( {
 				|but| if ( but.value == 1, {
 					slot.createBus
-				}, { 
-					slot.freeBus; 
-				}); 
+				}, {
+					slot.freeBus;
+				});
 			}).font_( font );
 
 		this.addSubButton;
 
 		decorator.nextLine;
-		
+
 		slider = GUI.slider.new( cw, Rect( 0, 0, 210, 16 ) );
 
 		this.addGetButton;
-		
+
 	}
 
 	// overload in subclass
@@ -145,7 +145,7 @@ SWDataSlotGui{
 		watcher.dt = dt;
 	}
 
-	updateVals { 
+	updateVals {
 		//	{
 		if ( slot.type == 0 ){
 			val.value_( slot.value.round(0.001) );
@@ -159,9 +159,10 @@ SWDataSlotGui{
 		};
 		if ( editKey.not ){ key.string_( slot.key.asString ); };
 		debug.value_( slot.debug.binaryValue );
-		mon.value_( slot.isMonitored.binaryValue );
-		bus.value_( slot.bus.notNil.binaryValue );
-
+		if ( slot.type == 0 ){
+			mon.value_( slot.isMonitored.binaryValue );
+			bus.value_( slot.bus.notNil.binaryValue );
+		};
 			//	}.defer;
 	}
 
@@ -223,9 +224,9 @@ SWDataNodeGui{
 	var <editKey = false;
 
 	*initClass{
-		StartUp.add( { 
+		StartUp.add( {
 			if ( GUI.scheme.notNil ){
-				Platform.case( 
+				Platform.case(
 					\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
 					\osx, { this.font = GUI.font.new( "Helvetica", 9 ) },
 					\windows, { this.font = GUI.font.new( "Helvetica", 9 ) }
@@ -237,19 +238,19 @@ SWDataNodeGui{
 
 	//	var <monitor;
 
-	*new { |node, w,xpos=0,ypos=0| 
+	*new { |node, w,xpos=0,ypos=0|
 		^super.new.w_(w).node_(node).initBig(xpos,ypos);
 	}
 
-	*newSmall{ |node, w,xpos=0,ypos=0| 
+	*newSmall{ |node, w,xpos=0,ypos=0|
 		^super.new.w_(w).node_(node).initSmall(xpos,ypos);
 	}
-	
+
 	init { |xpos,ypos|
 		var decorator;
 
-		w = w ?? { 
-			w = GUI.window.new("SWDataNode", Rect(xposScreen, yposScreen, this.class.xsize, ysize )).front; 
+		w = w ?? {
+			w = GUI.window.new("SWDataNode", Rect(xposScreen, yposScreen, this.class.xsize, ysize )).front;
 			w.view.decorator = FlowLayout(Rect(0, 0, this.class.xsize, ysize), 2@2, 2@2);
 			decorator = w.view.decorator;
 			w;
@@ -264,7 +265,7 @@ SWDataNodeGui{
 		cw.decorator = FlowLayout(Rect( xpos, ypos, this.class.xsize, ysize), 2@2, 2@2);
 		cw.background = Color.white;
 		decorator = cw.decorator;
-		
+
 
 		GUI.staticText.new( cw, Rect( 0, 0, 25, 16 )).string_( node.id.asString ).font_( font ).align_( \right );
 
@@ -281,7 +282,7 @@ SWDataNodeGui{
 		rec = GUI.button.new( cw, Rect( 0, 0, 15, 16 )).states_(
 			[ [ "R", Color.blue, Color.gray ], ["R", Color.black, Color.red ] ] ).action_( {
 				|but| if ( but.value == 1, { node.record_( true ) }, { node.record_( false ) } ); } ).font_( font );
-		
+
 		debug = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Db", Color.blue ], ["Db", Color.red ] ] ).action_( {
 				|but| if ( but.value == 1, { node.debug_( true ) }, { node.debug_( false ) } ); } ).font_( font );
@@ -289,7 +290,7 @@ SWDataNodeGui{
 		if ( node.type == 0 ){
 			mon = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 				[ [ "Mon", Color.blue ], ["Mon", Color.red ] ] ).action_( {
-					|but| 
+					|but|
 					node.monitor( but.value.booleanValue );
 					/*
 					if ( but.value.booleanValue ){
@@ -297,13 +298,13 @@ SWDataNodeGui{
 					};
 					*/
 				} ).font_( font );
-			
+
 			bus = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 				[ [ "Bus", Color.blue ], ["Bus", Color.red ] ] ).action_( {
 					|but| if ( but.value == 1, {
 						node.createBus
-					}, { 
-						node.freeBus; 
+					}, {
+						node.freeBus;
 					});
 				} ).font_( font );
 		};
@@ -314,7 +315,7 @@ SWDataNodeGui{
 
 		this.updateVals;
 
-		//	watcher.start;		
+		//	watcher.start;
 		w.refresh;
 	}
 
@@ -388,14 +389,14 @@ SWDataNodeGui{
 
 		// decorator.nextLine;
 
-		slots = node.slots.collect{ |it,i|	
+		slots = node.slots.collect{ |it,i|
 			//			decorator.top.postln;
 			decorator.nextLine;
 			this.class.slottype.new( node.slots[i], cw );
 		};
 
 		//		decorator.top.postln;
-						
+
 	}
 
 	updateRate_{ |dt|
@@ -403,13 +404,15 @@ SWDataNodeGui{
 		slots.do{ |it| it.dt = dt };
 	}
 
-	updateVals { 
-		//	{ 
+	updateVals {
+		//	{
 		elaps.value_( node.elapsed.round(0.001) );
 		rec.value_( node.record.binaryValue );
 		debug.value_( node.debug.binaryValue );
-		mon.value_( node.isMonitored.binaryValue );
-		bus.value_( node.bus.notNil.binaryValue );
+		if ( node.type == 0 ){
+			mon.value_( node.isMonitored.binaryValue );
+			bus.value_( node.bus.notNil.binaryValue );
+		};
 		if ( node.elapsed < watcher.dt ){
 			if ( editKey.not ){ key.string_( node.key.asString ); };
 			slots.do{ |it| it.updateVals };
@@ -434,7 +437,7 @@ SWDataNodeGui{
 			});
 		//	watcher.start;
 	}
-	
+
 	start{
 		watcher.start;
 	}
@@ -461,9 +464,9 @@ SWDataNetworkGui{
 	var xpos, ypos;
 
 	*initClass{
-		StartUp.add( { 
+		StartUp.add( {
 			if ( GUI.scheme.notNil ){
-		Platform.case( 
+		Platform.case(
 				\linux, { this.font = GUI.font.new( "Lucida Sans", 9 ); },
 				\osx, { this.font = GUI.font.new( "Helvetica", 9 ) }
 				)
@@ -473,10 +476,10 @@ SWDataNetworkGui{
 		nodetype = SWDataNodeGui;
 	}
 
-	*new { |network, w| 
+	*new { |network, w|
 		^super.new.w_(w).network_(network).init;
 	}
-	
+
 	init {
 		var xsize, ysize;
 		var nvsize,svsize;
@@ -484,8 +487,8 @@ SWDataNetworkGui{
 		xsize = 800;
 		ysize = 500; // + (node.data.size*82);
 
-		w = w ?? { 
-			w = GUI.window.new("SWDataNetwork", Rect(xposScreen, yposScreen, xsize, ysize )).front; 
+		w = w ?? {
+			w = GUI.window.new("SWDataNetwork", Rect(xposScreen, yposScreen, xsize, ysize )).front;
 			w.view.decorator = FlowLayout(Rect(2, 2, xsize, ysize), 2@2, 2@2);
 			w;
 		};
@@ -498,7 +501,7 @@ SWDataNetworkGui{
 		verb = GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
 			[ [ "V0", Color.red ], ["V1", Color.red ], [ "V2", Color.red ], [ "V3", Color.red ] ] ).value_( network.verbose.level ).action_( { |but| network.verbose.level = but.value } ).mouseOverAction_({ this.setInfo( "set the verbosity level") });
 
-		
+
 		debug = GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
 			[ [ "Db", Color.blue ], ["Db", Color.red ] ] ).action_( {
 				|but| if ( but.value == 1, { network.debug_( true ) }, { network.debug_( false ) } ); } ).mouseOverAction_({ this.setInfo( "turn on debugging for the network") });
@@ -509,7 +512,7 @@ SWDataNetworkGui{
 
 		worry = GUI.numberBox.new( w, Rect( 0, 0, 50, 20 ) ).value_( network.worrytime ).mouseOverAction_({ this.setInfo( "worrytime of the network.") });
 
-		//clients = 
+		//clients =
 		GUI.button.new( w, Rect( 0, 0, 30, 20 )).states_(
 			[ [ "OSC", Color.blue ] ] ).action_( {
 				|but| if ( network.osc.notNil, { network.osc.makeGui } ); } ).mouseOverAction_({ this.setInfo( "create a window with the osc clients") });
@@ -549,16 +552,16 @@ SWDataNetworkGui{
 			nodes = network.nodes.asSortedArray.collect{ |it,key|
 				//				it.postln;
 				ypos = ypos + 2 + 20;
-				this.class.nodetype.newSmall( 
-					network.nodes.at( it[1].id ), nv2, 2, ypos 
+				this.class.nodetype.newSmall(
+					network.nodes.at( it[1].id ), nv2, 2, ypos
 				).parent_( this );
 
 			};
 		};
- 						
+
 		watcher = SkipJack.new({ defer{ this.updateVals} }, 1.0, { w.isClosed }, (\datanetworkgui_ ++ network.spec.name).asSymbol, autostart: false );
 
-		watcher.start;		
+		watcher.start;
 		w.refresh;
 
 		w.acceptsMouseOver = true;
@@ -588,7 +591,7 @@ SWDataNetworkGui{
 				ysize = 22 * network.nodes.size + 4;
 				ypos = ypos + 2 + 20;
 				nv2.bounds_( Rect( 0, 0, this.class.nodetype.xsize, ysize ) );
-				nodes = nodes.add( 
+				nodes = nodes.add(
 					this.class.nodetype.newSmall( node, nv2, 2, ypos )
 					.parent_( this );
 				);
@@ -648,8 +651,8 @@ SWDataNetworkGui{
 		nodes.do{ |it| it.dt = dt };
 	}
 
-	updateVals { 
-		//	{ 
+	updateVals {
+		//	{
 		worry.value_( network.worrytime );
 		if ( editKey.not ){key.string_( network.spec.name.asString );};
 		nodes.do{ |it| it.updateVals };
