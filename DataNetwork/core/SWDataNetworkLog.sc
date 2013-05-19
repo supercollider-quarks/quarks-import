@@ -50,16 +50,16 @@ SWDataNetworkLog{
 		if ( reader.notNil ){ reader.close; };
 
 		reader = fileClass.new( fn );
-
-		//		reader.dump;
+		//fn.postcs;
+		//reader.dump;
 
 		this.readHeader;
 
 		playTask = Task{
 			var dt = 0;
 			while( { dt.notNil }, {
-				dt = this.readLine;
 				dt.wait;
+				dt = this.readLine;
 			});
 		};
 		// timeMap maps the time elapsed to the line number in the file
@@ -128,13 +128,15 @@ SWDataNetworkLog{
 
 		header = reader.readHeader(hs:2);
 		spec = header[0].last;
-		if ( spec.notNil, { 
-			network.setSpec( spec );
+		if ( spec.notNil, {
+			// network.setSpec( spec );
 			// if spec was not local, it may be included in the tar-ball
-			if ( network.spec.isNil ){
+			// if ( network.spec.isNil ){
+			if ( reader.tarBundle ){
 				reader.extractFromTar( spec ++ ".spec" );
-				network.spec.fromFileName( reader.pathDir +/+ spec );
 			};
+			network.spec.fromFileName( reader.pathDir +/+ reader.fileName +/+ spec );
+			// };
 		});
 
 		playslots = header[1].drop(1).collect{ |it| it.interpret };
@@ -152,14 +154,14 @@ SWDataNetworkLog{
 		};
 
 		playset = Set.new;
-		playids = playslots.collect{ |it| it.first }.do{ 
+		playids = playslots.collect{ |it| it.first }.do{
 			|it,i| playset.add( it );
 		};
-		playset.do{ |it| 
+		playset.do{ |it|
 			network.addExpected( it );
 			playnodes.put( it, Array.new )
 		};
-		playids.do{ |it,i| 
+		playids.do{ |it,i|
 			playnodes.put( it, playnodes[it].add( i ) )
 		};
 	}
@@ -195,7 +197,7 @@ SWDataNetworkLog{
 				network.setData( key, line.at( it + nd ) );
 			};
 		};
-		if( dt.notNil ){ 
+		if( dt.notNil ){
 			deltaT = dt;
 			curTime = curTime + dt;
 		};

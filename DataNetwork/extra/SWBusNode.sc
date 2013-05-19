@@ -8,7 +8,7 @@ SWBusNode{
 	var <id;
 	var <network;
 
-	var <bus, <synth, <server;	
+	var <bus, <synth, <server;
 	var <inbus;
 	var <settings;
 	var <restartsettings;
@@ -59,7 +59,7 @@ SWBusNode{
 
 		network.addExpected( id );
 
-		watcher = SkipJack.new( { 
+		watcher = SkipJack.new( {
 			this.getn( { |v| network.setData( id, v ) } ) }, dt, false
 			//{ if ( synth.notNil, { synth.isRunning.not },
 			//	{ false } ) }
@@ -88,10 +88,10 @@ SWBusNode{
 	myInit{
 		if( network.isKindOf( SWDataNetworkClient ) ){
 			//		"adding setter hook".postln;
-			network.addHook( id, { 
+			network.addHook( id, {
 				network.setData( id, Array.fill( bus.numChannels, 0 ) );
 			}, \expected );
-			network.addHook( id, { 
+			network.addHook( id, {
 				this.setLabel;
 				this.setBus;
 			}, \setter );
@@ -115,18 +115,18 @@ SWBusNode{
 
 		NodeWatcher.register( synth );
 	}
-	
+
 	stop{
 		synth.free;
 		watcher.stop;
 	}
-	
+
 	release{ |releasetime|
 		synth.release( releasetime );
 		stopwatcher = true;
 		Task({releasetime.wait; if ( this.stopwatcher, { watcher.stop});}).play;
 	}
-	
+
 	inbus_{ |ibus|
 		if ( ibus.rate != inbus.rate ){
 			"new inbus rate not the same as the old inbus rate".error;
@@ -137,11 +137,11 @@ SWBusNode{
 			synth.set( \in, inbus );
 		});
 	}
-	
+
 	set{ arg ... args;
 		args.clump( 2 ).do{ |it|
 			settings.put( it[0], it[1] );
-			if ( synth.notNil, 
+			if ( synth.notNil,
 				{
 					if ( restartsettings.includes( it[0] ) ){
 						this.stop;
@@ -152,13 +152,13 @@ SWBusNode{
 				} );
 		};
 	}
-	
+
 	get{ |func| // get the value of the amplitude; you need to give a function as input to assign the value to your variable, as getting a value from a bus is asynchronous.
-		bus.get( func );	
+		bus.get( func );
 	}
 
 	getn{ |func| // get the value of the amplitude; you need to give a function as input to assign the value to your variable, as getting a value from a bus is asynchronous.
-		bus.getn( bus.numChannels, func );	
+		bus.getn( bus.numChannels, func );
 	}
 
 	node{
@@ -205,27 +205,28 @@ PitchTrackNode : SWBusNode{
 		settings.put( \minFreq, 100 );
 		settings.put( \maxFreq, 500 );
 		settings.put( \ampThreshold, 0.01 );
+		settings.put( \offset, 0.5 );
 
 		if ( inbus.rate == \audio ){
 			synthDef = (\PitchtrackNode_ar_++nc).asSymbol;
 
-			SynthDef( synthDef,{ 
-				|out=0,in=1,lag=0.5, mul=1, gate=1, 
-				lpfreq=500,hpfreq=100, initFreq=300, 
+			SynthDef( synthDef,{
+				|out=0,in=1,lag=0.5, mul=1, gate=1,
+				lpfreq=500,hpfreq=100, initFreq=300,
 				minFreq=100, maxFreq=500, ampThreshold=0.01|
-				
+
 				var input, freq, hasFreq;
 				var spec,output;
 				//			spec = [minFreq,maxFreq,\exponential].asSpec;
 				input = In.ar(in, nc ) * mul;
-				3.do{ 
+				3.do{
 					input = LPF.ar( HPF.ar( input, hpfreq ), lpfreq );
 				};
 				# freq, hasFreq = Pitch.kr(
 					input, initFreq, minFreq, maxFreq, median: 7, ampThreshold: ampThreshold ).flop;
-				
+
 				EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-				
+
 				output = Gate.kr( freq, hasFreq).lag(lag);
 				//			spec.unmap( output ).poll;
 				Out.kr( out,output  );
@@ -233,24 +234,26 @@ PitchTrackNode : SWBusNode{
 		}{
 			synthDef = (\PitchtrackNode_kr_++nc).asSymbol;
 
-			SynthDef( synthDef,{ 
-				|out=0,in=1,lag=0.5, mul=1, gate=1, 
-				lpfreq=2000,hpfreq=400, initFreq=440, 
-				minFreq=60, maxFreq=4000, ampThreshold=0.01|
-				
+			SynthDef( synthDef,{
+				|out=0,in=1,lag=0.5, mul=1, gate=1,
+				lpfreq=2000,hpfreq=400, initFreq=440,
+				minFreq=60, maxFreq=4000, ampThreshold=0.01,offset=0.5|
+
 				var input, freq, hasFreq;
 				var spec,output;
 				//			spec = [minFreq,maxFreq,\exponential].asSpec;
-				input = In.kr(in, nc ) * mul;
-				3.do{ 
+				input = In.kr(in, nc ) - DC.kr( offset );
+				/*
+				3.do{
 					input = LPF.ar( HPF.ar( input, hpfreq ), lpfreq );
 				};
+				*/
 				# freq, hasFreq = Pitch.kr(
 					input, initFreq, minFreq, maxFreq, median: 7, ampThreshold: ampThreshold ).flop;
-				
+
 				EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-				
-				output = Gate.kr( freq, hasFreq).lag(lag);
+
+				output = Gate.kr( freq, hasFreq);
 				//			spec.unmap( output ).poll;
 				Out.kr( out,output  );
 			}).send(s);
@@ -283,8 +286,8 @@ LeakyNode : SWBusNode{
 		synthDef = (\LeakyNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, posSlope1=1,posSlope2,negSlope=0.015, minValue=0.0;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-			
-			Out.kr( out, mul * Lag.kr( 
+
+			Out.kr( out, mul * Lag.kr(
 				FOS.kr( In.kr( in, nc ), posSlope1, posSlope2, -1*negSlope ).max( minValue );
 				//	Integrator.kr( In.kr( in, nc ), coef ) * (1-coef)
 				, lag) );
@@ -299,8 +302,8 @@ TimerNode : SWBusNode{
 		synthDef = (\TimerNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=0.05, mul=1, gate=1, posSlope1=1,posSlope2,negSlope=0.015, minValue=0.0;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-			
-			Out.kr( out, Lag.kr( 
+
+			Out.kr( out, Lag.kr(
 				Timer.kr( In.kr( in, nc )*mul );
 				, lag) );
 		}).send(s);
@@ -441,8 +444,8 @@ ASRNode : SWBusNode{
 			var input;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
-			Out.kr( out, 
-				EnvGen.kr( 
+			Out.kr( out,
+				EnvGen.kr(
 					Env.asr( attack,1,release,curve ),
 					input // gate
 				) * mul);
@@ -463,8 +466,8 @@ ASRMulNode : SWBusNode{
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
 			maxval = RunningMax.kr( input, input ); // assumes input is going from 0 to a value, like a trigger (use with a previous InRange)
-			Out.kr( out, 
-				EnvGen.kr( 
+			Out.kr( out,
+				EnvGen.kr(
 					Env.asr( attack,maxval,release,curve ),
 					input // gate
 				) * mul);
@@ -486,7 +489,7 @@ InRangeNode : SWBusNode{
 		synthDef = (\InRangeNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=1, mul=1, gate=1, low=0.1, hi=1;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-			Out.kr( out, 
+			Out.kr( out,
 				InRange.kr( In.kr( in,nc ), low, hi )
 				* mul);
 		}).send(s);
@@ -507,7 +510,7 @@ InRangeGateNode : SWBusNode{
 		SynthDef( synthDef, { arg out=0, in=1, lag=1, mul=1, gate=1, low=0.1, hi=1;
 			var input = In.kr( in,nc );
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-			Out.kr( out, 
+			Out.kr( out,
 				Gate.kr( input, InRange.kr(input, low, hi ) )
 				* mul);
 		}).send(s);
@@ -528,7 +531,7 @@ SchmidtNode : SWBusNode{
 		synthDef = (\SchmidtNode++nc).asSymbol;
 		SynthDef( synthDef, { arg out=0, in=1, lag=1, mul=1, gate=1, low=0.1, hi=0.5;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-			Out.kr( out, 
+			Out.kr( out,
 				Schmidt.kr( In.kr( in,nc ), low, hi )
 				* mul);
 		}).send(s);
@@ -549,7 +552,7 @@ SchmidtGateNode : SWBusNode{
 		SynthDef( synthDef, { arg out=0, in=1, lag=1, mul=1, gate=1, low=0.1, hi=0.5;
 			var input = In.kr( in, nc );
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
-			Out.kr( out, 
+			Out.kr( out,
 				Gate.kr( input, Schmidt.kr( input, low, hi ) )
 				* mul);
 		}).send(s);
@@ -567,7 +570,7 @@ ToggleFFNode : SWBusNode{
 			var input;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
-			Out.kr( out, 
+			Out.kr( out,
 				ToggleFF.kr( input )
 				* mul);
 		}).send(s);
@@ -585,7 +588,7 @@ ToggleFFGateNode : SWBusNode{
 			var input;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
-			Out.kr( out, 
+			Out.kr( out,
 				Gate.kr( input, ToggleFF.kr( input ) )
 				* mul);
 		}).send(s);
@@ -608,7 +611,7 @@ LagUDNode : SWBusNode{
 			var input;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
-			Out.kr( out, 
+			Out.kr( out,
 				LagUD.kr( input, lagup, lagdown )
 				* mul);
 		}).send(s);
@@ -626,7 +629,7 @@ SlopeNode : SWBusNode{
 			var input;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
-			Out.kr( out, 
+			Out.kr( out,
 				Slope.kr( input )
 				* mul);
 		}).send(s);
@@ -648,7 +651,7 @@ SlewNode : SWBusNode{
 			var input;
 			EnvGen.kr( Env.cutoff( 1 ), gate, doneAction: 2 );
 			input = In.kr( in,nc );
-			Out.kr( out, 
+			Out.kr( out,
 				Slew.kr( input, upSlope=1, downSlope=1 )
 				* mul);
 		}).send(s);
