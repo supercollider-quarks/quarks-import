@@ -170,6 +170,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130522:
+//removed all old html helpfiles and the redSys.html overview
 //--changes 130226:
 //added RedBencode
 //--changes 130131:
