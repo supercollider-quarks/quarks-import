@@ -130,6 +130,8 @@ TABLE::
 ## link::Classes/RedBencode:: || bencode encoder and decoder
 ## link::Classes/RedBitStream:: || stream bits
 ## link::Classes/RedBMP:: || bitmap image
+## link::Classes/RedDifferentialManchesterCode:: || differential manchester encoding
+## link::Classes/RedDifferentialManchesterCodeNegative:: || differential manchester encoding
 ## link::Classes/RedGIF:: || gif image decoder
 ## link::Classes/RedHarmonicTree:: || sorted harmonic tree
 ## link::Classes/RedHuffman:: || huffman coding
@@ -137,6 +139,7 @@ TABLE::
 ## link::Classes/RedLZ78:: || lz78 compression/decompression
 ## link::Classes/RedLZSS:: || lzss compression/decompression
 ## link::Classes/RedLZW:: || lzw compression/decompression
+## link::Classes/RedManchesterCode:: || manchester encoding
 ## link::Classes/Redraw:: || simple drawing with the mouse
 ## link::Classes/RedRLE:: || run-length compression/decompression
 ## link::Classes/RedTime:: || calculate with time
@@ -171,6 +174,7 @@ SECTION:: changeLog
 
 code::
 //--changes 130522:
+//added RedManchesterCode, RedDifferentialManchesterCode, RedDifferentialManchesterCodeNegative
 //removed all old html helpfiles and the redSys.html overview
 //--changes 130226:
 //added RedBencode
