@@ -135,6 +135,7 @@ TABLE::
 ## link::Classes/RedGIF:: || gif image decoder
 ## link::Classes/RedHarmonicTree:: || sorted harmonic tree
 ## link::Classes/RedHuffman:: || huffman coding
+## link::Classes/RedIntelHex:: || read and decode intel hex files
 ## link::Classes/RedLZ77:: || lz77 compression/decompression
 ## link::Classes/RedLZ78:: || lz78 compression/decompression
 ## link::Classes/RedLZSS:: || lzss compression/decompression
@@ -173,6 +174,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130524:
+//added RedIntelHex
 //--changes 130522:
 //added RedManchesterCode, RedDifferentialManchesterCode, RedDifferentialManchesterCodeNegative
 //removed all old html helpfiles and the redSys.html overview
