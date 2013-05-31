@@ -15,7 +15,7 @@ author: Jost Muxfeldt
 
 CLASSMETHODS::
 NOTE::
-Instantiate by using 
+Instantiate by using
 
 LINK::Classes/TabbedView2#-add::
 
@@ -45,15 +45,15 @@ METHOD:: focus
 focus this tab
 METHOD:: remove
 delete this tab from parent
-METHOD::onDelete_
-a Function to be performed on delet: {arg thisView; do stuff…}
+METHOD::onRemove_
+a Function to be performed on remove: {arg thisView; do stuff }
 METHOD::onChangeParent_
 a Function to be performed on detach or on dragging to anther view: {arg thisView; do stuff...}
 
 
 SUBSECTION:: Customize Colors
 NOTE::
-These methods override the defaults in TabbedView2. 
+These methods override the defaults in TabbedView2.
 
 See LINK::Classes/TabbedView2#Setting Colors::
 ::
@@ -86,7 +86,7 @@ add a close icon by setting this to true. If tabWidth is \auto, the width will a
 
 METHOD:: focusAction
 add a focus action to the tab. For example enable a scope you are showing in the tab.
-METHOD:: unfocusAction 
+METHOD:: unfocusAction
 add an unfocus action to the tab. For example disable a scope you were showing in the tab.
 
 
