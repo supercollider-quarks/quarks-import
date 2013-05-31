@@ -253,7 +253,7 @@ ARGUMENT:: index
 int, the index to focus
 
 METHOD:: activeTab
-returns:: returns the index of  the focused tab
+returns:: returns the  focused tab
 
 
 
