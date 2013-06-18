@@ -158,6 +158,8 @@ TABLE::
 ## link::Classes/RedFrik:: || noise socks!
 ## link::Classes/RedDirection:: || detects inc/dec of a signal
 ## link::Classes/RedImpulse:: || resettable impulse train
+## link::Classes/RedLFSR4:: || 4-bit linear feedback shift register
+## link::Classes/RedLFSR4BitStream:: || 4-bit linear feedback shift register
 ## link::Classes/RedLine:: || resettable line generator
 ## link::Classes/RedLive:: || sample and repeat
 ## link::Classes/RedOnePole:: || one pole filter with separate up and down coefficients
@@ -174,6 +176,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130612:
+//added RedLFSR4 and RedLFSR4BitStream
 //--changes 130524:
 //added RedIntelHex
 //--changes 130522:
