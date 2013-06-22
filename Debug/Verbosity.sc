@@ -22,7 +22,7 @@ Verbosity {
 	//	var <>target = \post;
 
 	*initClass{
-		Spec.initClass; ControlSpec.initClass;
+		Class.initClassTree(Spec);
 		all = IdentityDictionary.new;
 		Spec.add( \verbosity, [0,10,\linear,1,0,"V"] );
 	}
