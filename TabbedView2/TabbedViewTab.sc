@@ -5,10 +5,10 @@
 TabbedViewTab : SCViewHolder{
 
 	var  <>tabbedView,<index,context, <>label, <>closable=false, <>widget, <>homeView,
-		<>focusAction,<>unfocusAction,<tabWidth=\auto, <>tbwdth=10,<useDetachIcon=false,
-		<>rightClickDetach=true, <>labelColor,  <>unfocusedColor, <>stringColor,tempView,
-		<>stringFocusedColor,tempedges,<>onRemove,<>onChangeParent,
-	 	<>userDrawFunction,downtmp,<>closeRect,<>detRect,<lock=false,clicks=0,deletelock=true;
+	<>focusAction,<>unfocusAction,<tabWidth=\auto, <>tbwdth=10,<useDetachIcon=false,
+	<>rightClickDetach=true, <>labelColor,  <>unfocusedColor, <>stringColor,tempView,
+	<>stringFocusedColor,tempedges,<>onRemove,<>onChangeParent,<>onAfterChangeParent,
+	<>userDrawFunction,downtmp,<>closeRect,<>detRect,<lock=false,clicks=0,deletelock=true;
 
 	*new {  arg tabbedView,label="label",index,scroll=false;
 		^super.new.init(tabbedView,label.asString,index,scroll);
@@ -26,11 +26,11 @@ TabbedViewTab : SCViewHolder{
 		userDrawFunction = {|pen,drawRect,tabPosition,followEdges|};
 
 		scroll.if{
-				this.view = context.scrollView.new(tabbedView.view).resize_(5)
-			}{
-				this.view = context.compositeView
-					.new(tabbedView.view,tabbedView.view.bounds).resize_(5)
-			}; //bounds are set later
+			this.view = context.scrollView.new(tabbedView.view).resize_(5)
+		}{
+			this.view = context.compositeView
+			.new(tabbedView.view,tabbedView.view.bounds).resize_(5)
+		}; //bounds are set later
 		homeView=tabbedView;
 		this.refreshEventHandlers;
 
@@ -55,9 +55,9 @@ TabbedViewTab : SCViewHolder{
 			closable.value(this).if{
 				if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
 					deletelock.not.if{ // deletelock prevents accidental deletion after right cklick detach
-				  		{this.remove}.defer(0.05);
+						{this.remove}.defer(0.05);
 					}
-			 	};
+				};
 			};
 			deletelock=true; // deletelock prevents accidental deletion after right cklick detach
 			lock=false; // lock prevents accidental deletion after regular drag
@@ -77,29 +77,29 @@ TabbedViewTab : SCViewHolder{
 				this.detachTab;
 			}{
 
-			tempedges = tabbedView.followEdges;
-			clicks=clicks+1;
-			downtmp=x@y;
-			this.focus;
-			// this is only for swing, in order to prevent ugly frame.
-			tabbedView.unfocusTabs.if{widget.focus(false)};
-			closable.value(this).if{  // prepare for deleting
-				if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
-				  deletelock=false; // deletelock prevents accidental deletion after right cklick detach
-			 	};
-			};
+				tempedges = tabbedView.followEdges;
+				clicks=clicks+1;
+				downtmp=x@y;
+				this.focus;
+				// this is only for swing, in order to prevent ugly frame.
+				tabbedView.unfocusTabs.if{widget.focus(false)};
+				closable.value(this).if{  // prepare for deleting
+					if (closeRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
+						deletelock=false; // deletelock prevents accidental deletion after right cklick detach
+					};
+				};
 
 
-			// clickCount
-			if(clicks<2){{{clicks=0;}.defer(0.6);}.fork;};
+				// clickCount
+				if(clicks<2){{{clicks=0;}.defer(0.6);}.fork;};
 
 
-			// icon Detach
-			useDetachIcon.if{
-				if (detRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
-				  this.detachTab;
-			  	};
-			};
+				// icon Detach
+				useDetachIcon.if{
+					if (detRect.containsPoint(Point(x,y) )&& lock.not){ // lock prevents accidental deletion after regular drag
+						this.detachTab;
+					};
+				};
 			};
 		});
 
@@ -109,7 +109,7 @@ TabbedViewTab : SCViewHolder{
 			this.focus(index);
 			// this is only for swing, in order to prevent ugly frame.
 			tabbedView.unfocusTabs.if{widget.focus(false);true;};
-				// Drag between tabs if the GUI Kit allows it
+			// Drag between tabs if the GUI Kit allows it
 
 			// If a TabbedViewTab,
 			// then reciever may not be a child of the current drag, nor may the the TabbedViews be the same.
@@ -122,13 +122,13 @@ TabbedViewTab : SCViewHolder{
 			ret;
 		});
 		(context.name==\QtGUI).if
-			{this.pr_interTabDragActions}
-			{
-				widget.beginDragAction_({ this
-				});
-				widget.receiveDragHandler_({arg v, x,y;
-				});
-			};
+		{this.pr_interTabDragActions}
+		{
+			widget.beginDragAction_({ this
+			});
+			widget.receiveDragHandler_({arg v, x,y;
+			});
+		};
 
 	}
 
@@ -149,13 +149,13 @@ TabbedViewTab : SCViewHolder{
 				// dummy view for draging tabs
 				tempView.isNil.if{
 					tempView = CompositeView.new(tabbedView.view, widget.bounds)
-					  .background_(labelColor.copy.alpha_(0.4)).visible_(false);
+					.background_(labelColor.copy.alpha_(0.4)).visible_(false);
 				};
 
 				// create a temporary view as a drag indicator.
 				tempView.visible_(true);
 				tempView.bounds_(tempView.bounds.moveTo(x-downtmp.x+widget.bounds.left,
-						y-downtmp.y+widget.bounds.top) );
+					y-downtmp.y+widget.bounds.top) );
 				// find a the index to drop the tab
 				receivingindex = tabbedView.closestIndexOf(widget.bounds.left+x,widget.bounds.top+y);
 				// if you found an index
@@ -183,25 +183,25 @@ TabbedViewTab : SCViewHolder{
 					{Rect(rect.width-20,rect.top-10,60,rect.height-20).contains(center)}{
 						((tabbedView.tabPosition != \left)
 							&& (tabbedView.tabPosition != \right))
-								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						.if{tempView.bounds=rotateRect.value(tempView.bounds)};
 						tabbedView.tabPosition_(\right);
-						}
+					}
 					{Rect(rect.left+10,rect.top-40,rect.width-20,60).contains(center)}{
 						((tabbedView.tabPosition != \top)
 							&& (tabbedView.tabPosition != \bottom))
-								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						.if{tempView.bounds=rotateRect.value(tempView.bounds)};
 						tabbedView.tabPosition_(\top);
-						}
+					}
 					{Rect(rect.left+10,rect.height-20,rect.width-20,60).contains(center)}{
 						((tabbedView.tabPosition != \top)
 							&& (tabbedView.tabPosition != \bottom))
-								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						.if{tempView.bounds=rotateRect.value(tempView.bounds)};
 						tabbedView.tabPosition_(\bottom);
-						}
+					}
 					{Rect(rect.left-40,rect.top-10,60,rect.height-20).contains(center)}{
 						((tabbedView.tabPosition != \left)
 							&& (tabbedView.tabPosition != \right))
-								.if{tempView.bounds=rotateRect.value(tempView.bounds)};
+						.if{tempView.bounds=rotateRect.value(tempView.bounds)};
 						tabbedView.tabPosition_(\left)
 					};
 				};
@@ -209,7 +209,7 @@ TabbedViewTab : SCViewHolder{
 		});
 
 
-		}
+	}
 
 	// Drag between tabs
 	pr_interTabDragActions{
@@ -237,31 +237,31 @@ TabbedViewTab : SCViewHolder{
 		(context.name==\QtGUI).if{ // Only if kit allows setting parents
 			tempView.notNil.if{tempView.remove;tempView=nil};
 			if(newparent !=tabbedView){
-					onChangeParent.value(this);
-					unfocusAction = nil;
-					view.setParent(newparent.view);
-					widget.setParent(newparent.view);
-					tabbedView.pr_removeTab(this.index);
-					tabbedView.pr_refreshIndex;
-					tabbedView.refresh;
-					tabbedView.tabViews.size.booleanValue.not.if{
-						tabbedView.window.notNil.if{
-							tabbedView.window.close;
-						};
+				onChangeParent.value(this);
+				unfocusAction = nil;
+				view.setParent(newparent.view);
+				widget.setParent(newparent.view);
+				tabbedView.pr_removeTab(this.index);
+				tabbedView.pr_refreshIndex;
+				tabbedView.refresh;
+				tabbedView.tabViews.size.booleanValue.not.if{
+					tabbedView.window.notNil.if{
+						tabbedView.window.close;
 					};
+				};
 
-					//switch takes place here
-					tabbedView=newparent;
-					tabbedView.tabViews=tabbedView.tabViews.insert(index,this);
+				//switch takes place here
+				tabbedView=newparent;
+				tabbedView.tabViews=tabbedView.tabViews.insert(index,this);
 
-					tabbedView.pr_refreshIndex;
-					tabbedView.refresh;
-					unfocusAction=tempunfocus;
-					this.view.visible=true;
-					this.widget.visible=true;
-					this.focus;
-					this.refreshEventHandlers;
-
+				tabbedView.pr_refreshIndex;
+				tabbedView.refresh;
+				unfocusAction=tempunfocus;
+				this.view.visible=true;
+				this.widget.visible=true;
+				this.focus;
+				this.refreshEventHandlers;
+				this.onAfterChangeParent.value(this);
 			};
 		};
 	}
