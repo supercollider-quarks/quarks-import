@@ -64,7 +64,7 @@ Y rotation
 METHOD:: mRotateZ
 Create a matrix for rotating around Z axis.
 
-argument:: ay
+argument:: az
 Z rotation
 
 METHOD:: matrixMatrixMul
@@ -109,7 +109,7 @@ subsection:: Global settings and transforms
 METHOD:: background
 Set the background color.
 
-argument:: color
+argument:: b
 A link::Classes/Color::
 
 METHOD:: scale
@@ -262,5 +262,54 @@ code::
             Canvas3D.mRotateZ(t*rate*7 % 2pi)
         ];
     };
+)
+::
+
+subsection:: Drawing realtime sound
+Another more advanced example.
+code::
+//use mouse to rotate canvas
+//add your own sounds to x, y, z (maybe with InFeedback.ar)
+(
+//--settings
+var width= 640, height= 480;
+var fps= 60;
+var buffersize= 1024;
+var scale= 250;
+var perspective= 0.3;
+var distance= 2;
+
+//--
+var win= Window("3d soundwave canvas", Rect(128, 64, width, height), false).front;
+var can= Canvas3D(win, Rect(0, 0, width, height)).scale_(scale).perspective_(perspective).distance_(distance);
+var itemCube= Canvas3DItem.cube;
+var itemWave= Canvas3DItem.new;
+var path= [];
+var buffer;
+can.add(itemCube);
+can.add(itemWave);
+s.waitForBoot{
+	buffer= Buffer.alloc(s, buffersize, 3);
+	s.sync;
+	{
+		var x= SinOsc.ar(42);//sound x
+		var y= SinOsc.ar(83);//sound y
+		var z= SinOsc.ar(164);//sound z
+		RecordBuf.ar([x, y, z], buffer);
+		Silent.ar;
+	}.play;
+	s.sync;
+	can.animate(fps, {|frame|
+		buffer.getn(0, buffersize-1*3, {|data| path= data.clump(3)});
+		itemWave.paths= [path];
+	});
+	can.mouseMoveAction= {|v, x, y|
+		can.transforms= [
+			Canvas3D.mRotateY(x/scale.neg%2pi),
+			Canvas3D.mRotateX(y/scale%2pi)
+		];
+	};
+	CmdPeriod.doOnce({win.close; buffer.free});
+};
 )
 ::

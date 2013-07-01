@@ -46,6 +46,9 @@ Get/set the item link::Classes/Color::
 METHOD:: width
 Get/set the item line-width.
 
+METHOD:: fill
+Get/set the link::Classes/Boolean:: flag for stroking versus filling the item's path. See link::Classes/Pen#*stroke:: and link::Classes/Pen#*fill::.
+
 subsection:: Transformations
 
 METHOD:: transforms

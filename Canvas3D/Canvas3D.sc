@@ -19,7 +19,8 @@ Canvas3DItem {
     var <>color;
     var <>width;
     var <>transforms;
-    
+    var <>fill = false;
+
     *new {
         ^super.new.init;
     }
@@ -43,7 +44,7 @@ Canvas3DItem {
         color = Color.black;
         transforms = [];
     }
-    
+
     transform {|matrix|
         paths = paths.collect {|p| p.collect {|v| Canvas3D.vectorMatrixMul(v, matrix) }};
     }
@@ -88,8 +89,13 @@ Canvas3D : SCViewHolder {
                         };
                     };
                     Pen.width = item.width;
-                    Pen.strokeColor = item.color;
-                    Pen.stroke;
+                    if(item.fill, {
+                        Pen.fillColor = item.color;
+                        Pen.fill;
+                    }, {
+                        Pen.strokeColor = item.color;
+                        Pen.stroke;
+                    });
                 };
                 postDrawFunc.value;
             });
@@ -157,7 +163,7 @@ Canvas3D : SCViewHolder {
 			#[0, 0, 1, 0],
 			#[0, 0, 0, 1]];
 	}
-	
+
 	*matrixMatrixMul {|matrix1, matrix2|
 		var m0, m1, m2, m3;
 		#m0, m1, m2, m3= matrix2;
