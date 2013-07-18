@@ -37,6 +37,31 @@ Canvas3DItem {
         var i=(n-1)/2;
         ^this.new.paths_(n.collect {|x| x=x/i-1; [[-1,x,0],[1,x,0]]} ++ n.collect {|x| x=x/i-1; [[x,-1,0],[x,1,0]]})
     }
+    
+    // added TH
+    *regPrism { |sides=3|
+        var twosqrt = 2.sqrt;
+        var step = pi/(sides/2);
+        var a = twosqrt.neg/2, b = twosqrt/2;
+        var path = [
+            // top and bottom
+            (sides+1).collect {|i| [ sin(step*i), a, cos(step*i)]},
+            (sides+1).collect {|i| [ sin(step*i), b, cos(step*i)]}
+        ]
+        ++
+        // sides
+        sides.collect{|i|
+	        var c = sin(step*i), d = cos(step*i), e = sin(step*(i+1)), f = cos(step*(i+1));
+            [
+                [ c, a, d],
+                [ c, b, d],
+                [ e, b, f],
+                [ e, a, f],
+                [ c, a, d]
+            ]
+        };
+        ^this.new.paths_(path).transform(Canvas3D.mScale(twosqrt, twosqrt, twosqrt))
+    }
 
     init {
         paths = [];
@@ -72,6 +97,7 @@ Canvas3D : SCViewHolder {
             .drawFunc_({
                 preDrawFunc.value;
                 items.do {|item|
+                    Pen.width = item.width;
                     item.paths.do {|path|
                         path.do {|v,i|
 			                var x, y, z, p;
@@ -87,15 +113,14 @@ Canvas3D : SCViewHolder {
                     			Pen.lineTo(p);
                     		};
                         };
+                        if(item.fill, {
+                            Pen.fillColor = item.color;
+                            Pen.fill;
+                        }, {
+                            Pen.strokeColor = item.color;
+                            Pen.stroke;
+                        });
                     };
-                    Pen.width = item.width;
-                    if(item.fill, {
-                        Pen.fillColor = item.color;
-                        Pen.fill;
-                    }, {
-                        Pen.strokeColor = item.color;
-                        Pen.stroke;
-                    });
                 };
                 postDrawFunc.value;
             });
