@@ -126,6 +126,7 @@ SECTION:: redTools (various)
 
 TABLE::
 ## link::Classes/RedALF:: || ascii to list-of-floats conversion
+## link::Classes/RedArduino:: || for uploading sketches to arduino
 ## link::Classes/RedBase64:: || base64 encoding/decoding
 ## link::Classes/RedBencode:: || bencode encoder and decoder
 ## link::Classes/RedBitStream:: || stream bits
@@ -176,6 +177,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130807:
+//added RedArduino
 //--changes 130612:
 //added RedLFSR4 and RedLFSR4BitStream
 //--changes 130524:

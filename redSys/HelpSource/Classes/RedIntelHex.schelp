@@ -1,7 +1,7 @@
 CLASS:: RedIntelHex
 SUMMARY:: read and decode intel hex files
 CATEGORIES:: Red>redTools
-RELATED:: Classes/RedDifferentialManchesterCodeNegative
+RELATED:: Classes/RedDifferentialManchesterCodeNegative, Classes/RedArduino
 
 DESCRIPTION::
 See http://en.wikipedia.org/wiki/Intel_HEX and http://www.sbprojects.com/knowledge/fileformats/intelhex.php
