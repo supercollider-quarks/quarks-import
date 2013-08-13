@@ -1,4 +1,4 @@
-//--redFrik
+//redFrik
 
 RedEfxTanh : RedEffectModule {
 	*def {
