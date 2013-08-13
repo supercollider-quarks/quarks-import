@@ -1,4 +1,4 @@
-//--redFrik
+//redFrik
 
 RedArduino {
 	var <>intel;

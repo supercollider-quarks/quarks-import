@@ -30,6 +30,15 @@ NOTE::
 do not change the last three arguments if you want the upload to work with the AudioBoot_V2_0 bootloader. if you are only interested in the sound of serial data, you can of course try to change these arguments.
 ::
 
+ARGUMENT::server
+if nil then the Server.default will be used.
+
+ARGUMENT::out
+which audio bus to play to. note: can also be an link::Classes/Array::.
+
+ARGUMENT::amp
+amplitude
+
 METHOD::intel
 After a successful read, this holds an instance of link::Classes/RedIntelHex::.
 
