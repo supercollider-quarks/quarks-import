@@ -137,6 +137,7 @@ TABLE::
 ## link::Classes/RedHarmonicTree:: || sorted harmonic tree
 ## link::Classes/RedHuffman:: || huffman coding
 ## link::Classes/RedIntelHex:: || read and decode intel hex files
+## link::Classes/RedInterpolator:: || holds a value and interpolates to new target
 ## link::Classes/RedLZ77:: || lz77 compression/decompression
 ## link::Classes/RedLZ78:: || lz78 compression/decompression
 ## link::Classes/RedLZSS:: || lzss compression/decompression
@@ -146,6 +147,7 @@ TABLE::
 ## link::Classes/RedRLE:: || run-length compression/decompression
 ## link::Classes/RedTime:: || calculate with time
 ## link::Classes/RedToolsMenu:: || various tools
+## link::Classes/RedTween:: || tweening for sclang and scserver
 ::
 
 SECTION:: redUGens (pseudo ugens)
@@ -177,6 +179,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130902:
+//added RedTween and RedInterpolator
 //--changes 130807:
 //added RedArduino
 //--changes 130612:
