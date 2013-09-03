@@ -117,12 +117,13 @@ SynthVoicerNode {
 						// synth may have changed
 					(syn == synth).if({
 						reserved = isPlaying = isReleasing = false;
+						synth = nil;
 					});
 					syn.releaseDependants;	// remove node and Updater from dependants dictionary
 				});
 			});
 			frequency = freq;	// save frequency for Voicer.release
-			lastTrigger = Main.elapsedTime; // thisThread.seconds;	// save time
+			lastTrigger = thisThread.seconds;	// save time
 			this.isPlaying = true;
 			isReleasing = false;
 		} {
@@ -130,9 +131,13 @@ SynthVoicerNode {
 		}
 	}
 
+	// triggerByEvent { |freq, gate(1), args, latency|
+	// 	^this.trigger(freq, gate, args, latency);
+	// }
+
 	shouldSteal {
 		^steal and: { isPlaying or: { synth.notNil and: { synth.isPlaying } }
-		or: { Main.elapsedTime - lastTrigger < (myLastLatency ? 0) } }
+		or: { thisThread.seconds - lastTrigger < (myLastLatency ? 0) } }
 	}
 
 		// must pass in node because, when a node is stolen, my synth variable has changed
@@ -163,13 +168,17 @@ SynthVoicerNode {
 		});
 	}
 
+	// releaseByEvent { |gate(0), latency, freq|
+	// 	^this.release(gate, latency, freq);
+	// }
+
 	isPlaying { ^isPlaying or: { (synth.notNil and: { synth.isPlaying }) } }
 	isPlaying_ { |bool = false|
 		isPlaying = reserved = bool;
 	}
 	reserved_ { |bool = false|
 		reserved = bool;
-		if(bool) { lastTrigger = Main.elapsedTime };
+		if(bool) { lastTrigger = thisThread.seconds };
 	}
 
 	shouldRelease { arg freq;
@@ -331,7 +340,7 @@ InstrVoicerNode : SynthVoicerNode {
 			target.server.listSendBundle(myLastLatency = latency, bundle);
 
 			frequency = freq;
-			lastTrigger = Main.elapsedTime;
+			lastTrigger = thisThread.seconds;
 		} {
 			reserved = false;
 		}
@@ -351,6 +360,7 @@ InstrVoicerNode : SynthVoicerNode {
 			(msg == \n_end).if({
 				(syn == synth).if({
 					reserved = isPlaying = isReleasing = false;
+					synth = nil;
 				});
 				syn.releaseDependants;	// remove node and Updater from dependants dictionary
 			});
