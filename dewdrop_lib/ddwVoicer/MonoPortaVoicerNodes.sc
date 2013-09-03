@@ -1,5 +1,6 @@
 
 MonoPortaSynthVoicerNode : SynthVoicerNode {
+	var lastScheduledRelease;  // for event usage
 
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
@@ -20,6 +21,7 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 							// synth may have changed
 						(syn == synth).if({
 							isPlaying = isReleasing = false;
+							synth = nil;
 						});
 						syn.releaseDependants;
 					});
@@ -35,21 +37,51 @@ MonoPortaSynthVoicerNode : SynthVoicerNode {
 			reserved = false;
 		}
 	}
-	
+
+	// triggerByEvent { |freq, gate(1), args, latency, length|
+	// 	var result = this.trigger(freq, gate, args, latency);
+	// 	if(length.isNumber and: { length < inf }) {
+	// 		lastScheduledRelease = lastTrigger + (length / thisThread.clock.tempo);
+	// 	} {
+	// 		lastScheduledRelease = 0
+	// 	};
+	// 	^result
+	// }
+	//
+	// shouldSteal {
+	// 	^super.shouldSteal and: { isReleasing.not }
+	// }
+
 	shouldSteal {
-		^super.shouldSteal and: { isReleasing.not }
+		^steal and: {
+			isPlaying or: {
+				synth.notNil and: { synth.isPlaying }
+			}
+			// this condition seems wrong for mono voicers...???
+			// or: { Main.elapsedTime - lastTrigger < (myLastLatency ? 0) }
+			and: { isReleasing.not }
+		}
 	}
-	
+
 	release { |gate = 0, latency, freq|
 		voicer.lastFreqs.remove(freq ?? { frequency });
 		super.release(gate, latency, freq);
 	}
+
+	// releaseByEvent { |gate(0), latency, freq|
+	// 	if(thisThread.seconds >= lastScheduledRelease) {
+	// 		^this.release(gate, latency, freq);
+	// 	} {
+	// 		voicer.lastFreqs.remove(freq ?? { frequency });
+	// 	}
+	// }
 }
 
 
 // method defs are repeated between these 2 classes because of no multiple inheritance
 
 MonoPortaInstrVoicerNode : InstrVoicerNode {
+	var lastScheduledRelease;  // for event usage
 
 	trigger { arg freq, gate = 1, args, latency;
 		var bundle;
@@ -70,17 +102,18 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 							// synth may have changed
 						(syn == synth).if({
 							isPlaying = isReleasing = false;
+							synth = nil;
 						});
 						syn.releaseDependants;
 					});
 				});
 			});
-			
+
 			target.server.listSendBundle(myLastLatency = latency, bundle);
-			
+
 			frequency = freq;
 			voicer.lastFreqs.add(freq);
-			lastTrigger = Main.elapsedTime;
+			lastTrigger = thisThread.seconds;
 			isPlaying = true;
 			isReleasing = false;
 		} {
@@ -88,12 +121,42 @@ MonoPortaInstrVoicerNode : InstrVoicerNode {
 		}
 	}
 
+	// triggerByEvent { |freq, gate(1), args, latency, length|
+	// 	var result = this.trigger(freq, gate, args, latency);
+	// 	if(length.isNumber and: { length < inf }) {
+	// 		lastScheduledRelease = lastTrigger + (length / thisThread.clock.tempo);
+	// 	} {
+	// 		lastScheduledRelease = 0
+	// 	};
+	// 	^result
+	// }
+	//
+	// shouldSteal {
+	// 	^super.shouldSteal and: { isReleasing.not }
+	// }
+
 	shouldSteal {
-		^super.shouldSteal and: { isReleasing.not }
+		^steal and: {
+			isPlaying or: {
+				synth.notNil and: { synth.isPlaying }
+			}
+			// this condition seems wrong for mono voicers...???
+			// or: { Main.elapsedTime - lastTrigger < (myLastLatency ? 0) }
+			and: { isReleasing.not }
+		}
 	}
 
 	release { |gate = 0, latency, freq|
 		voicer.lastFreqs.remove(freq ?? { frequency });
 		super.release(gate, latency, freq);
 	}
+
+	// releaseByEvent { |gate(0), latency, freq|
+	// 	[thisThread.seconds, lastScheduledRelease].debug("releaseByEvent");
+	// 	if(thisThread.seconds >= lastScheduledRelease) {
+	// 		^this.release(gate, latency, freq);
+	// 	} {
+	// 		voicer.lastFreqs.remove(freq ?? { frequency });
+	// 	}
+	// }
 }
