@@ -26,7 +26,7 @@ MultiFileReader{
 
 	var <curFile;
 	var <curid = -1;
-	
+
 	*new{ |fn,fc|
 		^super.new.init(fn).fileClass_( fc ? TabFileReader );
 	}
@@ -104,7 +104,7 @@ MultiFileReader{
 			curFile = nil;
 			^nil;
 		};
-	
+
 		path = line.last;
 
 		if ( tarBundle ){
@@ -115,8 +115,9 @@ MultiFileReader{
 			("gzip -d" + fileName +/+ path ).systemCmd;
 			path = PathName( line.last ).fileNameWithoutExtension;
 		};
-		
-		curFile = fileClass.new( fileName +/+ path );
+
+		//[ pathDir, fileName, path ].postln;
+		curFile = fileClass.new( pathDir +/+ fileName +/+ path );
 		//		curFile.postln;
 		if ( curFile.isNil ){
 			("File with id"+ind+"does not exist").warn;
