@@ -76,7 +76,7 @@ RedIntelHex {
 				);
 				
 				//--checksum
-				if(256-(byteCount+(address%255)+recordType+dataBytes.sum&255)!=checksum, {
+				if(256-(byteCount+(address%255)+recordType+dataBytes.sum.bitAnd(255))!=checksum, {
 					(this.class.name++": checksum error").warn;
 				});
 				

@@ -53,7 +53,7 @@ RedGIF {
 			};
 		};
 		win.view.background= background ?? {Color.grey};
-		win.drawHook= {
+		win.drawFunc= {
 			Pen.smoothing= false;
 			img= images.wrapAt(index);
 			if(img.interlaced, {
@@ -90,7 +90,7 @@ RedGIF {
 		if(type=="GIF87a" or:{type=="GIF89a"}, {
 			this.prReadLogicalScreenDescriptor(file);
 			images= [];
-			while({separator= file.getInt8&0xff; separator!=0x3b}, {
+			while({separator= file.getInt8.bitAnd(0xff); separator!=0x3b}, {
 				switch(separator,
 					0x21, {this.prReadExtensionBlock(file)},
 					0x2c, {this.prReadImageDescriptor(file)},
@@ -125,16 +125,16 @@ RedGIF {
 		var flags;
 		width= file.getInt16LE;						//logical screen width
 		height= file.getInt16LE;					//logical screen height
-		flags= file.getInt8&0xff;					//packed fields
-		background= file.getInt8&0xff;				//background colour index
-		aspectRatio= file.getInt8&0xff;				//pixel aspect ratio
+		flags= file.getInt8.bitAnd(0xff);			//packed fields
+		background= file.getInt8.bitAnd(0xff);		//background colour index
+		aspectRatio= file.getInt8.bitAnd(0xff);		//pixel aspect ratio
 		if(aspectRatio!=0, {"aspectRatio not zero".warn});//debug
-		depth= flags&0x07+1;						//size of global colour table
-		//resolution= flags.rightShift(4)&0x07;		//colour resolution (unused)
+		depth= flags.bitAnd(0x07)+1;				//size of global colour table
+		//resolution= flags.rightShift(4).bitAnd(0x07);//colour resolution (unused)
 		globalColorMap= [];
 		if(flags.bitTest(7), {						//global colour map (3bytes*numColors)
 			globalColorMap= {
-				Color.new255(file.getInt8&0xff, file.getInt8&0xff, file.getInt8&0xff);
+				Color.new255(file.getInt8.bitAnd(0xff), file.getInt8.bitAnd(0xff), file.getInt8.bitAnd(0xff));
 			}.dup(2.pow(depth));
 			background= globalColorMap[background];
 		}, {
@@ -144,48 +144,48 @@ RedGIF {
 	}
 	prReadExtensionBlock {|file|					//extension block (?bytes)
 		var flags, blockSize, ctrl;
-		switch(file.getInt8&0xff,
+		switch(file.getInt8.bitAnd(0xff),
 			0x01, {
 				(this.class.name++": plain text not yet supported").warn;
-				blockSize= file.getInt8&0xff;
+				blockSize= file.getInt8.bitAnd(0xff);
 				if(blockSize!=12, {"blockSize in plaintext not 12".warn});//debug
-				("\ttextgrid left pos:"+file.getInt16&0xff).postln;
-				("\ttextgrid top pos :"+file.getInt16&0xff).postln;
-				("\ttextgrid width   :"+file.getInt16&0xff).postln;
-				("\ttextgrid height  :"+file.getInt16&0xff).postln;
-				("\tchar cell width  :"+file.getInt8&0xff).postln;
-				("\tchar cell height :"+file.getInt8&0xff).postln;
-				("\tforecolor index  :"+file.getInt8&0xff).postln;
-				("\tbackcolor index  :"+file.getInt8&0xff).postln;
-				while({blockSize= file.getInt8&0xff; blockSize!=0}, {
+				("\ttextgrid left pos:"+file.getInt16.bitAnd(0xff)).postln;
+				("\ttextgrid top pos :"+file.getInt16.bitAnd(0xff)).postln;
+				("\ttextgrid width   :"+file.getInt16.bitAnd(0xff)).postln;
+				("\ttextgrid height  :"+file.getInt16.bitAnd(0xff)).postln;
+				("\tchar cell width  :"+file.getInt8.bitAnd(0xff)).postln;
+				("\tchar cell height :"+file.getInt8.bitAnd(0xff)).postln;
+				("\tforecolor index  :"+file.getInt8.bitAnd(0xff)).postln;
+				("\tbackcolor index  :"+file.getInt8.bitAnd(0xff)).postln;
+				while({blockSize= file.getInt8.bitAnd(0xff); blockSize!=0}, {
 					"plaintext block...".postln;	//debug
-					{(file.getInt8&0xff).asAscii}.dup(blockSize).join.postln;
+					{(file.getInt8.bitAnd(0xff)).asAscii}.dup(blockSize).join.postln;
 				});
 			},
 			0xf9, {								//graphic control extension block
 				ctrl= RedGIFControl.new;
-				blockSize= file.getInt8&0xff;
-				flags= file.getInt8&0xff;			//packed field
+				blockSize= file.getInt8.bitAnd(0xff);
+				flags= file.getInt8.bitAnd(0xff);	//packed field
 				ctrl.duration= file.getInt16LE;		//delay time (1/100ths of a second)
-				ctrl.transparent= globalColorMap[file.getInt8&0xff];//transparent colour
-				ctrl.disposalMethod= (flags&2r00111000).rightShift(3);//undraw
+				ctrl.transparent= globalColorMap[file.getInt8.bitAnd(0xff)];//transparent colour
+				ctrl.disposalMethod= flags.bitAnd(2r00111000).rightShift(3);//undraw
 				ctrl.userInputFlag= flags.bitTest(1);	//wait for user input flag
 				ctrl.transparentFlag= flags.bitTest(0);//transparency flag
 				controls= controls.add(ctrl);
 			},
 			0xfe, {								//comment extension block
-				while({blockSize= file.getInt8&0xff; blockSize!=0}, {
+				while({blockSize= file.getInt8.bitAnd(0xff); blockSize!=0}, {
 					(this.class.name++": found comment block").postln;//debug
-					comments= comments.add({(file.getInt8&0xff).asAscii}.dup(blockSize).join);
+					comments= comments.add({(file.getInt8.bitAnd(0xff)).asAscii}.dup(blockSize).join);
 				});
 			},
 			0xff, {								//application extension block
-				blockSize= file.getInt8&0xff;
+				blockSize= file.getInt8.bitAnd(0xff);
 				//if(appData.notNil, {"already have application data!!!".postln});//debug
-				appId= {(file.getInt8&0xff).asAscii}.dup(8).join;
-				appCode= {(file.getInt8&0xff).asAscii}.dup(3).join;
-				while({blockSize= file.getInt8&0xff; blockSize!=0}, {
-					appData= {file.getInt8&0xff}.dup(blockSize);
+				appId= {(file.getInt8.bitAnd(0xff)).asAscii}.dup(8).join;
+				appCode= {(file.getInt8.bitAnd(0xff)).asAscii}.dup(3).join;
+				while({blockSize= file.getInt8.bitAnd(0xff); blockSize!=0}, {
+					appData= {file.getInt8.bitAnd(0xff)}.dup(blockSize);
 				});
 			},
 			{(this.class.name++": extensionblock - code not recognised").warn}
@@ -194,11 +194,11 @@ RedGIF {
 	prReadImageDescriptor {|file|					//local descriptor (10bytes)
 		var flags, bounds, image, data= [];
 		bounds= {file.getInt16LE}.dup(4).asRect;
-		flags= file.getInt8&0xff;
+		flags= file.getInt8.bitAnd(0xff);
 		image= RedGIFImage(bounds, flags);
 		if(image.hasColorMap, {
 			image.colorMap= {
-				Color.new255(file.getInt8&0xff, file.getInt8&0xff, file.getInt8&0xff);
+				Color.new255(file.getInt8.bitAnd(0xff), file.getInt8.bitAnd(0xff), file.getInt8.bitAnd(0xff));
 			}.dup(2.pow(image.depth));
 		}, {
 			//(this.class.name++": no local color map - using global").postln;//debug
@@ -206,7 +206,7 @@ RedGIF {
 		});
 		
 		//--read table based image data
-		codeSize= file.getInt8&0xff;
+		codeSize= file.getInt8.bitAnd(0xff);
 		this.prInitDict;
 		image.data= this.prReadData(file).collect{|x|
 			image.colorMap[x];
@@ -215,9 +215,9 @@ RedGIF {
 	}
 	prReadData {|file|
 		var blockSize, data= Int8Array[];
-		while({blockSize= file.getInt8&0xff; blockSize!=0}, {
+		while({blockSize= file.getInt8.bitAnd(0xff); blockSize!=0}, {
 			blockSize.do{
-				data= data++(file.getInt8&0xff);
+				data= data++(file.getInt8.bitAnd(0xff));
 			};
 		});
 		^this.prDecode(data);
@@ -232,7 +232,7 @@ RedGIF {
 		dict.put(endCode, [endCode]);
 	}
 	prDecode {|arr|								//lzw decompression
-		var str= Int8Array.fill(arr.size*8, {|i| arr[i.div(8)].rightShift(i%8)&1});
+		var str= Int8Array.fill(arr.size*8, {|i| arr[i.div(8)].rightShift(i%8).bitAnd(1)});
 		var old, out= [], val, sub, more= true;
 		var k, tempCodeSize= codeSize+1, index= 0;
 		var cnt= endCode+1;
@@ -283,7 +283,7 @@ RedGIF {
 RedGIFImage {
 	var <bounds, <flags, <>colorMap, <>data, <>control;
 	*new {|bounds, flags| ^super.newCopyArgs(bounds, flags)}
-	depth {^flags&0x07+1}
+	depth {^flags.bitAnd(0x07)+1}
 	hasColorMap {^flags.bitTest(7)}
 	interlaced {^flags.bitTest(6)}
 }

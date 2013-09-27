@@ -33,7 +33,7 @@ RedMixGUI {
 				cmp,
 				cmp.decorator.indentedRemaining.width@cmp.decorator.indentedRemaining.height
 			).mouseUpAction_{|view, x, y, mod|
-				if(mod&262144==262144, {
+				if(mod.bitAnd(262144)==262144, {
 					{redMix.cvs.mix.value= 0}.defer(0.1);
 				});
 			}

@@ -179,6 +179,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 130927:
+//minor speed up by replacing & with bitAnd, << with leftShift and >> with rightShift
 //--changes 130902:
 //added RedTween and RedInterpolator
 //--changes 130807:

@@ -183,7 +183,7 @@ b.makeWindow;
 	var win= Window("bmp", Rect(300, 300, a.width*scale, a.height*scale), false);
 	win.view.background= Color.red;
 	a.data= a.data.reverse;		//mess with the image pixel data
-	win.drawHook= {
+	win.drawFunc= {
 		Pen.smoothing= true;
 		a.data.do{|c, i|
 			Pen.fillColor= Color(c.blue, c.green, c.red, c.alpha);

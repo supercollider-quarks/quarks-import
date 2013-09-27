@@ -25,7 +25,7 @@ RedArduino {
 			if(frameCnt%pageSize==0, {
 				//--frame intro header
 				list.add(encoder.encode(pageHeader));
-				list.add(encoder.encodeArray(255-([2, pageIndex, pageIndex>>8, crc, crc>>8]&255)));//frameParameters
+				list.add(encoder.encodeArray(255-[2, pageIndex, pageIndex.rightShift(8), crc, crc.rightShift(8)].bitAnd(255)));//frameParameters
 				pageIndex= pageIndex+1;
 			});
 			//--frame data (8 bits)
@@ -43,7 +43,7 @@ RedArduino {
 			if(frameCnt%pageSize==0, {
 				//--frame intro header
 				list.add(encoder.encode(pageHeader));
-				list.add(encoder.encodeArray(255-([3, pageIndex, pageIndex>>8, crc, crc>>8]&255)));//frameParameters
+				list.add(encoder.encodeArray(255-[3, pageIndex, pageIndex.rightShift(8), crc, crc.rightShift(8)].bitAnd(255)));//frameParameters
 				pageIndex= pageIndex+1;
 			});
 			//--frame data (8 bits)
