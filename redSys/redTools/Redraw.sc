@@ -12,7 +12,7 @@ Redraw {
 		userView.clearOnRefresh= false;
 		userView.mouseDownAction= {|v, x, y, m|
 			mod= m;
-			if((mod&131072==131072).not, {			//if not shift
+			if((mod.bitAnd(131072)==131072).not, {	//if not shift
 				pmouse= nil;
 			});
 			mouse= Point(x, y);
@@ -34,10 +34,10 @@ Redraw {
 					Pen.addRect(Rect.aboutPoint(mouse, 0.5, 0.5));
 				}, {
 					case
-						{mod&262144==262144} {		//ctrl
+						{mod.bitAnd(262144)==262144} {//ctrl
 							Pen.addOval(Rect.fromPoints(mouse, pmouse));
 						}
-						{mod&524288==524288} {		//alt
+						{mod.bitAnd(524288)==524288} {//alt
 							Pen.addRect(Rect.fromPoints(mouse, pmouse));
 						}
 						{						//no mod

@@ -75,7 +75,7 @@ a.makeWindow;
 	a.background= Color.blue;					//overwrite background colour
 	a.images[0].data= a.images[0].data.reverse;	//mess with the image pixel data
 	win.view.background= a.background;
-	win.drawHook= {
+	win.drawFunc= {
 		Pen.smoothing= false;
 		a.images[0].data.do{|col, i|
 			if(a.controls[0].transparentFlag.not or:{a.controls[0].transparent!=col}, {
@@ -96,7 +96,7 @@ a.makeWindow;
 	var a= RedGIF.read("~/Desktop/dog-03.gif");
 	var win= Window("gif", Rect(300, 300, a.width*scale, a.height*scale), false);
 	var index= 0, img;
-	win.drawHook= {
+	win.drawFunc= {
 		Pen.smoothing= false;
 		img= a.images.wrapAt(index);
 		img.data.do{|col, i|

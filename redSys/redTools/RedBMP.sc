@@ -73,7 +73,7 @@ RedBMP {
 	makeWindow {|bounds|
 		var b= bounds ?? {Rect(300, 300, width, height)};
 		var win= Window(this.class.name, b, false);
-		win.drawHook= {
+		win.drawFunc= {
 			Pen.smoothing= false;
 			data.do{|c, i|
 				var x, y;
@@ -151,10 +151,10 @@ RedBMP {
 			numColors= (offset-54/4).asInteger;
 		});
 		palette= {
-			var b= file.getInt8&0xFF;
-			var g= file.getInt8&0xFF;
-			var r= file.getInt8&0xFF;
-			var a= file.getInt8&0xFF;
+			var b= file.getInt8.bitAnd(0xFF);
+			var g= file.getInt8.bitAnd(0xFF);
+			var r= file.getInt8.bitAnd(0xFF);
+			var a= file.getInt8.bitAnd(0xFF);
 			Color.new255(r, g, b);
 		}.dup(numColors);
 	}
@@ -169,7 +169,7 @@ RedBMP {
 					width.do{|x|
 						var index;
 						if(x%8==0, {
-							i= file.getInt8&0xFF;
+							i= file.getInt8.bitAnd(0xFF);
 						});
 						index= i.bitTest(7-(x%8)).binaryValue;
 						data[y*width+x]= palette[index];
@@ -187,13 +187,13 @@ RedBMP {
 					width.do{|x|
 						var index;
 						if(x%2==0, {
-							i= file.getInt8&0xFF;
+							i= file.getInt8.bitAnd(0xFF);
 							cnt= cnt+1;
 						});
 						if(x%2==0, {
-							index= (i&2r11110000)>>4;
+							index= i.bitAnd(2r11110000).rightShift(4);
 						}, {
-							index= (i&2r00001111);
+							index= i.bitAnd(2r00001111);
 						});
 						data[y*width+x]= palette[index];
 					};
@@ -207,7 +207,7 @@ RedBMP {
 				height.do{|y|
 					cnt= width;
 					width.do{|x|
-						var index= file.getInt8&0xFF;
+						var index= file.getInt8.bitAnd(0xFF);
 						data[y*width+x]= palette[index];
 					};
 					while({cnt%4>0}, {				//read padding bytes
@@ -220,11 +220,11 @@ RedBMP {
 				height.do{|y|
 					cnt= width;
 					width.do{|x|
-						var i= file.getInt16LE&0xFFFF;
-						var a= (i&2r1000000000000000)>>15;
-						var r= (i&2r0111110000000000)>>10;
-						var g= (i&2r0000001111100000)>>5;
-						var b= (i&2r0000000000011111);
+						var i= file.getInt16LE.bitAnd(0xFFFF);
+						var a= i.bitAnd(2r1000000000000000).rightShift(15);
+						var r= i.bitAnd(2r0111110000000000).rightShift(10);
+						var g= i.bitAnd(2r0000001111100000).rightShift(5);
+						var b= i.bitAnd(2r0000000000011111);
 						data[y*width+x]= Color(r/31, g/31, b/31, 1-a);
 					};
 					while({cnt%4>0}, {				//read padding bytes
@@ -237,9 +237,9 @@ RedBMP {
 				height.do{|y|
 					cnt= width*3;
 					width.do{|x|
-						var b= file.getInt8&0xFF;
-						var g= file.getInt8&0xFF;
-						var r= file.getInt8&0xFF;
+						var b= file.getInt8.bitAnd(0xFF);
+						var g= file.getInt8.bitAnd(0xFF);
+						var r= file.getInt8.bitAnd(0xFF);
 						data[y*width+x]= Color.new255(r, g, b);
 					};
 					while({cnt%4>0}, {				//read padding bytes
@@ -252,10 +252,10 @@ RedBMP {
 				cnt= 0;
 				height.do{|y|
 					width.do{|x|
-						var b= file.getInt8&0xFF;
-						var g= file.getInt8&0xFF;
-						var r= file.getInt8&0xFF;
-						var a= file.getInt8&0xFF;
+						var b= file.getInt8.bitAnd(0xFF);
+						var g= file.getInt8.bitAnd(0xFF);
+						var r= file.getInt8.bitAnd(0xFF);
+						var a= file.getInt8.bitAnd(0xFF);
 						data[y*width+x]= Color.new255(r, g, b, a);
 						if(a==0, {cnt= cnt+1});
 					};
@@ -366,14 +366,14 @@ RedBMP {
 						if(x%2==0, {
 							ii= i;
 						}, {
-							file.putInt8(ii<<4+i);
+							file.putInt8(ii.leftShift(4)+i);
 							cnt= cnt+1;
 							ii= 0;
 							wrote= true;
 						});
 					};
 					if(wrote.not, {
-						file.putInt8(ii<<4);
+						file.putInt8(ii.leftShift(4));
 						cnt= cnt+1;
 					});
 					while({cnt%4>0}, {				//write padding bytes
@@ -405,9 +405,9 @@ RedBMP {
 					cnt= width;
 					width.do{|x|
 						var c= data[y*width+x];
-						var a= (1-c.alpha).round.asInteger<<15;
-						var r= (c.red*31).round.asInteger<<10;
-						var g= (c.green*31).round.asInteger<<5;
+						var a= (1-c.alpha).round.asInteger.leftShift(15);
+						var r= (c.red*31).round.asInteger.leftShift(10);
+						var g= (c.green*31).round.asInteger.leftShift(5);
 						var b= (c.blue*31).round.asInteger;
 						file.putInt16LE(a+r+g+b);
 					};
