@@ -166,7 +166,13 @@ GlobalControlBase : AbstractFunction {
 	asMap { ^("c" ++ bus.index).asSymbol }
 	asMapArg { ^this.asMap }
 	asNodeArg { ^this.asMap }
-	asUGenInput { ^In.kr(bus.index, 1) }
+	asUGenInput {
+		if(lag.notNil) {
+			^Lag.kr(In.kr(bus.index, 1), lag)
+		} {
+			^In.kr(bus.index, 1)
+		}
+	}
 	asControlInput { ^this.asMap }
 
 	active { ^bus.notNil }
@@ -216,7 +222,7 @@ GlobalControlBase : AbstractFunction {
 		^something.perform(aSelector, value, adverb);
 	}
 	composeNAryOp { arg aSelector, anArgList;
-		^value.perform(aSelector, anArgList)
+		^value.performList(aSelector, anArgList)
 	}
 
 		// pattern support
@@ -290,7 +296,13 @@ GenericGlobalControl : GlobalControlBase {
 
 		// hardcode into a synthdef
 		// should be used only for quick and dirty testing! better to use .asMapArg
-	kr { ^In.kr(this.index, 1) }
+	kr {
+		^if(lag.notNil) {
+			Lag.kr(In.kr(this.index, 1), lag)
+		} {
+			In.kr(this.index, 1)
+		}
+	}
 
 	guiClass { ^NumberEditorGui }
 	activeValue_ { |v| this.set(v) }
