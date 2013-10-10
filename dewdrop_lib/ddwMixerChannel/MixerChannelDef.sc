@@ -33,7 +33,7 @@ MixerChannelDef {
 					// so that mixerchan bus can be used as postsendbus
 					ReplaceOut.ar(busin, in);
 					Out.ar(busout, in);
-				}),
+				}, [nil, nil, 0.08]),
 				controls: (level: (spec: \amp, value: 0.75))
 			);
 
@@ -50,7 +50,7 @@ MixerChannelDef {
 					// so that mixerchan bus can be used as postsendbus
 					ReplaceOut.ar(busin, out);
 					Out.ar(busout, out);
-				}),
+				}, [nil, nil, 0.08, 0.08]),
 				controls: (level: (spec: \amp, value: 0.75),
 					pan: \bipolar
 				)
@@ -70,7 +70,7 @@ MixerChannelDef {
 					out = Balance2.ar(l, r, pan);
 					ReplaceOut.ar(busin, out);
 					Out.ar(busout, out);
-				}),
+				}, [nil, nil, 0.08, 0.08]),
 				controls: (level: (spec: \amp, value: 0.75),
 					pan: \bipolar
 				)
@@ -184,7 +184,7 @@ MixerChannelDef {
 				bad = bad > 0;
 				in = in.asArray.collect { |chan| Select.ar(bad, [chan * badEG, silent]) };
 				Out.ar(busout, in * level);
-			}).send(server);
+			}, [nil, nil, 0.08]).send(server);
 
 			SynthDef("mixers/Rec" ++ outChannels, { arg i_in, i_bufNum = 0;
 				DiskOut.ar(i_bufNum, In.ar(i_in, outChannels));
