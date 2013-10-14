@@ -1,5 +1,5 @@
 
-// implementation and concept by Alberto de Campo, Rainer Schütz, Julian Rohrhuber
+// implementation and concept by Alberto de Campo, Rainer Sch√ºtz, Julian Rohrhuber
 // developed for the virtual gamelan graz 2007
 
 
@@ -12,13 +12,13 @@ SoftClock : TempoClock {
 	var fadeTask, fading=false, isPlaying=true;
 	var <rateOfChange = 1.0;
 	var <>minTempo = 0.01, <>maxTempo = 100;
-	
+
 	classvar <>all;
-	
+
 	add {
 		this.class.all = this.class.all.add(this);
 	}
-	
+
 	*stopAll {
 		this.all.do { |clock|
 			clock.permanent = false;
@@ -26,7 +26,7 @@ SoftClock : TempoClock {
 		};
 		this.all = nil;
 	}
-	
+
 	stop {
 		this.stopListen;
 		isPlaying = false;
@@ -34,24 +34,24 @@ SoftClock : TempoClock {
 		if(this.class.all.notNil) { this.class.all.take(this) };
 		if(verbose) { ("stopped clock:" + this).postln };
 	}
-	
+
 	tempo_ { arg newTempo;
 		newTempo = max(newTempo, 1e-256); // zero not allowed.
 		rateOfChange = newTempo / this.tempo;
 		super.tempo = newTempo;
 	}
-	
+
 	pause { arg dur = 0;
 		this.fadeTempo(0.0, dur)
 	}
-	
-	
+
+
 	fadeTempo { arg newTempo, dur = 1.0, warp = \cos, clock;
 		var start = this.tempo, interpol;
 		warp = warp.asWarp;
 		if (warp.isKindOf(ExponentialWarp)) { warp.spec.minval_(0.01) };
-		if (fading) { fadeTask.stop }; 
-		fadeTask = Task { 
+		if (fading) { fadeTask.stop };
+		fadeTask = Task {
 			fading = true;
 			"fadeTempo starts. going from: % to: %\n".postf(
 				start.round(0.001), newTempo.round(0.001));
@@ -65,28 +65,28 @@ SoftClock : TempoClock {
 			fading = false;
 			"fadeTempo done. tempo was: % new tempo is: %\n".postf(
 				start.round(0.001), interpol.round(0.001));
-		}; 
+		};
 		clock = clock ? SystemClock;
 		fadeTask.play(clock);
 	}
-	
+
 	warpTempo { arg frac, beats = 1.0, warp = \cos;
 		this.fadeTempo(frac * this.tempo, beats, warp, this)
 	}
-	
+
 }
 
 
 
 ListeningClock : SoftClock {
-	
+
 	var <listener;
 	var <>empathy = 0.5, <>confidence=0.5;
 	var <>others, <>weights;
 	var <>phaseWrap, phaseOffset = 0.0;
-	
+
 	classvar <>all;
-	
+
 	adjust {
 		var tempo = this.othersMeanTempo;
 		var beats = this.othersMeanBeats;
@@ -94,21 +94,21 @@ ListeningClock : SoftClock {
 			this.prAdjust(beats - this.elapsedBeats, tempo)
 		}
 	}
-	
+
 	startListen {
 		listener.stop;
 		listener = this.makeTask({ others !? { this.adjust }; });
 		listener.play;
 	}
-	
+
 	stopListen {
 		listener.stop;
 	}
-	
+
 	isListening {
 		^listener.isPlaying
 	}
-	
+
 	makeTask { arg func;
 		^if(this.allPermanent) {
 			SkipJack({ if(isPlaying, func) }, { dt })
@@ -116,9 +116,9 @@ ListeningClock : SoftClock {
 			Task { loop { dt.wait; if(isPlaying, func) } }
 		}
 	}
-	
+
 	allPermanent { ^if(others.isNil) { true } { others.every(_.permanent) && this.permanent } }
-	
+
 	addClock { arg clock, weight;
 		others = others.add(clock);
 		if(weight.notNil) {
@@ -126,7 +126,7 @@ ListeningClock : SoftClock {
 			// todo: make weights un-normalized!
 		};
 	}
-	
+
 	setClocks { arg clocks, argWeights, start=true;
 		var listening = start or: { this.isListening };
 		this.stopListen;
@@ -137,8 +137,8 @@ ListeningClock : SoftClock {
 		argWeights !? { weights = argWeights.normalizeSum };
 		if(listening) { this.startListen };
 	}
-	
-	
+
+
 	othersMeanTempo {
 		if(others.isNil or: { others.isEmpty }) { ^nil };
 		^if(weights.isNil) {
@@ -147,7 +147,7 @@ ListeningClock : SoftClock {
 			others.collect(_.tempo).mean {|x, i| x * weights[i] } * weights.size
 		}
 	}
-	
+
 	othersMeanBeats {
 		if(others.isNil or: { others.isEmpty }) { ^nil };
 		^if(weights.isNil) {
@@ -156,9 +156,9 @@ ListeningClock : SoftClock {
 			others.collect(_.elapsedBeats).mean {|x, i| x * weights[i] } * weights.size
 		}
 	}
-	
+
 	// private implementation
-	
+
 	prWrapPhase { |beats|
 		var wrapped;
 		if(phaseWrap.isNil) { ^beats };
@@ -167,17 +167,17 @@ ListeningClock : SoftClock {
 		//if(verbose) { [\beats, beats, \wrapped, wrapped, \phaseOffset, phaseOffset].postln; };
 		^wrapped.postln
 	}
-	
+
 	prAdjust { |deltaBeats, argTempo|
 		var phaseDiff = this.prWrapPhase(deltaBeats);
 		var myTempo = this.tempo;
-		var timeComp = (phaseDiff * this.empathy); 
+		var timeComp = (phaseDiff * this.empathy);
 		var newTempo = (blend(argTempo, myTempo, this.confidence) + timeComp)
 				.clip(minTempo, maxTempo);
-		if (verbose 
-			and: { (phaseDiff.abs > 0.001)  
-			or: { (newTempo - myTempo).abs > 0.001 } }) 
-		{ 
+		if (verbose
+			and: { (phaseDiff.abs > 0.001)
+			or: { (newTempo - myTempo).abs > 0.001 } })
+		{
 			"Clock - adjust - avgDeltaBeats: % 	avgTempo: % timeComp: % newTempo: %"
 			.format(*[deltaBeats, argTempo, timeComp, newTempo].round(0.0001)).postln;
 		};
