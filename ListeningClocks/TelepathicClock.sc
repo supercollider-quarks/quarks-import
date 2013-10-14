@@ -1,13 +1,34 @@
 
 ReferenceClock {
-	var clock;
-	
+	var clock, <>offset = 0;
+
 	*new { arg tempo, beats;
-		^super.new.update(tempo, beats)	
+		^super.new.init(tempo, beats)
 	}
-	
-	update { arg tempo, beats;
-		var clockBeats, beatDifference;
+
+	elapsedBeats {
+		^clock.elapsedBeats + offset
+	}
+
+	tempo {
+		^clock.tempo
+	}
+
+	elapsedBeats_ { |beats|
+		offset = beats - clock.elapsedBeats
+	}
+
+	tempo_ { |tempo|
+		clock.tempo = tempo
+	}
+
+	adjust { arg tempo, beats;
+		beats !? { offset = beats - clock.elapsedBeats };
+		tempo !? { clock.tempo = tempo };
+	}
+
+	init { arg tempo, beats;
+		var clockBeats;
 		clock !? {
 			clockBeats = clock.elapsedBeats;
 			beats = beats ? clockBeats;
@@ -16,15 +37,7 @@ ReferenceClock {
 		};
 		clock = TempoClock.new(tempo, beats).permanent_(true)
 	}
-	
-	elapsedBeats {
-		^clock.elapsedBeats
-	}
-	
-	tempo {
-		^clock.tempo	
-	}
-	
+
 	permanent { ^true }
 }
 
@@ -33,23 +46,25 @@ TelepathicReferenceClock : ReferenceClock {
 
 	var <>name;
 	var responder;
-	
+
 	classvar <cmd = \refClockSet;
-	
+
 	*new { arg tempo, beats, name;
 		^super.new(tempo, beats).name_(name ? \telepathicClock)
 	}
-	
+
 	startListen {
 		// cmd, name, tempo, beats, beatWrap
 		responder = OSCresponderNode(nil, cmd, { |t, r, msg|
+			var name, tempo, beats, beatWrap;
 			if(msg[1] == name) {
-					this.update(msg[2], msg[3], msg[4]);
+				#tempo, beats, beatWrap = msg[2..];
+				this.adjust(tempo, beats, beatWrap);
 			}
 		});
 		responder.add;
 	}
-	
+
 	stopListen {
 		responder.remove;
 	}
@@ -57,23 +72,23 @@ TelepathicReferenceClock : ReferenceClock {
 
 
 TelepathicClock : ListeningClock {
-	
+
 	var <>name = \telepathicClock, <responder;
-	
+
 	classvar <addClockSourceCmd = \addClockSource;
 
-	
+
 	addClockSource { |name|
 		var clock;
 		// allow other (local) clocks
-		if(others.isNil or: { others.any { |clock| try { clock.name == name } ? false }.not }) { 
+		if(others.isNil or: { others.any { |clock| try { clock.name == name } ? false }.not }) {
 			clock = TelepathicReferenceClock(this.tempo, this.elapsedBeats, name);
 			clock.startListen;
 			this.addClock(clock);
 			weights = nil; // for now.
 		}
 	}
-	
+
 	removeClockSource { |name|
 		var index, clock;
 		if(others.isNil) { ^this };
@@ -84,7 +99,7 @@ TelepathicClock : ListeningClock {
 			clock.stopListen;
 		};
 	}
-	
+
 	allowOthersToAdd { |flag = true|
 		if(flag) {
 			responder = OSCresponderNode(nil, addClockSourceCmd, { |t, r, msg, replyAddr|
@@ -98,44 +113,44 @@ TelepathicClock : ListeningClock {
 			});
 			responder.add;
 		} {
-			responder.remove;	
+			responder.remove;
 		}
 	}
-	
+
 	startListen {
 		super.startListen;
 		// cmd, name, flag (1= add, 0 = remove)
 		others.do { |clock| try { clock.startListen } };
 	}
-	
+
 	stopListen {
 		super.stopListen;
 		others.do { |clock| try { clock.stopListen } };
 		this.allowOthersToAdd(false);
 	}
-	
-	
-	
-		
+
+
+
+
 }
 
 
 + TempoClock {
-	
+
 	initTeleport { |addr, name = \telepathicClock|
 		addr.sendMsg(TelepathicClock.addClockSourceCmd, name, 1);
 	}
-	
+
 	endTeleport { |addr, name = \telepathicClock|
 		addr.sendMsg(TelepathicClock.addClockSourceCmd, name, 0);
 	}
-	
+
 	teleport { |addr, name = \telepathicClock, beatWrap|
 		addr.sendMsg(TelepathicReferenceClock.cmd, name, this.tempo, this.elapsedBeats, beatWrap)
 	}
-	
+
 	clearQueue {
-		queue.removeAllSuchThat(true);	
+		queue.removeAllSuchThat(true);
 	}
 }
 
@@ -175,7 +190,7 @@ Pbind(\freq, 2500, \sustain, 0.1, \dur, 1, \instrument, \x).play(TempoClock.defa
 );
 
 (
-TempoClock.default.tempo = rrand(1.0, 2.0);
+TempoClock.default.tempo = rrand(1.0, 4.0);
 TempoClock.default.teleport(n, \test, 4);
 )
 
