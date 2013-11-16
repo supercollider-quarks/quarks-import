@@ -8,6 +8,7 @@ MixerGUIDef {
 		<>color1, <>color2, <>clearColor;
 
 	*initClass {
+		Class.initClassTree(MixerChannelDef);
 		StartUp.add {
 				// generic mixer gui definition (vertical)
 			MixerChannelGUI.defaultDef = MixerGUIDef(Point(50, 290),
@@ -31,7 +32,7 @@ MixerGUIDef {
 	*new { |channelSize, viewProtos, /*viewKeys,*/ viewBounds|
 		^super.newCopyArgs(channelSize, viewProtos, /*viewKeys,*/ viewBounds).init
 	}
-	
+
 	init {
 		if(GUI.current.id == \cocoa) {
 				clearColor = Color.clear;
@@ -43,7 +44,7 @@ MixerGUIDef {
 				color2 = clearColor;  // Color.new255(230, 109, 225);
 		};
 	}
-	
+
 	makeViews { |layout, origin, mixer, mcgui|
 		var	views, preSendIndex = 0, postSendIndex = 0;
 		views = Array.new(viewProtos.size);
@@ -73,15 +74,15 @@ MixerSkin {
 	// holds display parameters for a MixingBoard
 	// currently allows changing sizes of controls
 	// will allow custom colors etc.
-	
+
 	// eventually this class will go away
-	
+
 	// H. James Harkins - jamshark70@dewdrop-world.net
 
 		// deprecated
 //	classvar <>screenHeight,	// if default height is wrong, you can change it for
 //			<>screenWidth;	// all skins
-	
+
 	var	<>gap,				// window margins
 		>maxSize,			// of whole window
 		<>maxAcross = inf;		// maximum channels across screen
@@ -89,11 +90,11 @@ MixerSkin {
 	*new {
 		^super.new.init;	// design your skin using setters
 	}
-	
+
 	init {
 		gap = Point(4, 4);
 	}
-	
+
 		// this is necessary for SwingOSC only environments
 		// screen bounds are not known until after SwingOSC is started
 		// so, wait until a MixingBoard asks for the bounds
@@ -103,12 +104,12 @@ MixerSkin {
 			maxSize = GUI.window.screenBounds.rightBottom;
 		}
 	}
-	
+
 	*screenWidth {
 		"MixerSkin.screenWidth is deprecated -- use aMixerSkin.maxSize.x instead.".warn;
 		^GUI.window.screenBounds.width
 	}
-	
+
 	*screenHeight {
 		"MixerSkin.screenHeight is deprecated -- use aMixerSkin.maxSize.y instead.".warn;
 		^GUI.window.screenBounds.height
@@ -125,7 +126,7 @@ MixerWidgetBase {
 //	*initClass {
 //		StartUp.add({ font = GUI.font.new("Helvetica", 9) });
 //	}
-	
+
 		// you might have switched to a different gui scheme since initializing the class library
 	*font {
 		(GUI.font === font.class).if({ ^font }, {
@@ -184,7 +185,7 @@ MixerMuteWidget : MixerWidgetBase {
 	updateView { |value|
 		view.value_(value ?? { mixer.muted.binaryValue });
 	}
-	clearView { 
+	clearView {
 		view.value_(0);
 	}
 	updateKeys { ^\mute }
@@ -205,7 +206,7 @@ MixerRecordWidget : MixerWidgetBase {
 	updateView { |value|
 		view.value_(value ?? { mixer.isRecording.binaryValue });
 	}
-	clearView { 
+	clearView {
 		view.value_(0);
 	}
 	updateKeys { ^\record }
@@ -259,7 +260,7 @@ MixerPresendWidget {
 			.font_(this.class.font);
 		oldValue = menu.value;
 	}
-	
+
 	getSliderBounds { |guiBounds|
 		^sliderBounds.moveBy(guiBounds.left, guiBounds.top)
 	}
@@ -269,7 +270,7 @@ MixerPresendWidget {
 
 	doSliderAction { |view|
 		mixer !? {
-			mixer.preSends[index].tryPerform('level_', 
+			mixer.preSends[index].tryPerform('level_',
 				spec.map(view.value), false)
 		}
 	}
@@ -289,7 +290,7 @@ MixerPresendWidget {
 						(mixer.preSends[index]).free;
 					}, {
 						("Repatching send from bus " ++
-							(mixer.preSends[index]).outbus.index ++ " to " ++ 
+							(mixer.preSends[index]).outbus.index ++ " to " ++
 							menu.value).postln;
 							// otherwise, just change the destination
 						(mixer.preSends[index]).outbus = menu.value;
@@ -301,7 +302,7 @@ MixerPresendWidget {
 		}
 	}
 
-	update { 
+	update {
 		slider.notClosed.if({
 			(mixer.notNil and: { mixer.preSends[index].notNil }).if({
 				slider.value_(spec.unmap(mixer.preSends[index].level));
@@ -311,7 +312,7 @@ MixerPresendWidget {
 		});
 	}
 
-	updateMenu { 
+	updateMenu {
 		menu.items_(gui.menuItems);
 		(mixer.notNil and: { mixer.preSends[index].notNil }).if({
 			menu.value_(oldValue = mixer.preSends[index].outbus.index)
@@ -320,11 +321,11 @@ MixerPresendWidget {
 		});
 	}
 
-	clearView { 
+	clearView {
 		slider.value_(0);
 		this.updateMenu;
 	}
-	
+
 	refresh { |bounds|
 		slider.bounds = this.getSliderBounds(bounds);
 		menu.bounds = this.getMenuBounds(bounds);
@@ -344,7 +345,7 @@ MixerPostsendWidget : MixerPresendWidget {
 	sendType { ^\post }
 	doSliderAction { |view|
 		mixer !? {
-			mixer.postSends[index].tryPerform('level_', 
+			mixer.postSends[index].tryPerform('level_',
 				spec.map(view.value), false)
 		}
 	}
@@ -364,7 +365,7 @@ MixerPostsendWidget : MixerPresendWidget {
 						(mixer.postSends[index]).free;
 					}, {
 						("Repatching send from bus " ++
-							(mixer.postSends[index]).outbus.index ++ " to " ++ 
+							(mixer.postSends[index]).outbus.index ++ " to " ++
 							menu.value).postln;
 							// otherwise, just change the destination
 						(mixer.postSends[index]).outbus = menu.value;
@@ -376,7 +377,7 @@ MixerPostsendWidget : MixerPresendWidget {
 		}
 	}
 
-	update { 
+	update {
 		slider.notClosed.if({
 			(mixer.notNil and: { mixer.postSends[index].notNil }).if({
 				slider.value_(spec.unmap(mixer.postSends[index].level));
@@ -385,7 +386,7 @@ MixerPostsendWidget : MixerPresendWidget {
 			});
 		});
 	}
-	updateMenu { 
+	updateMenu {
 		menu.items_(gui.menuItems);
 		(mixer.notNil and: { mixer.postSends[index].notNil }).if({
 			menu.value_(oldValue = mixer.postSends[index].outbus.index)
@@ -408,11 +409,11 @@ MixerPanWidget : MixerWidgetBase {
 	updateView { |value|
 		view.value_(spec.unmap(value ?? { mixer.getControl(\pan) }));
 	}
-	clearView { 
+	clearView {
 		view.background_(gui.guidef.clearColor);
 		view.value_(0.5);
 	}
-	restoreView { 
+	restoreView {
 		('SCView'.asClass.notNil and: { view.isKindOf(SCView) }).if({
 			view.background_(HiliteGradient(gui.color2, gui.color1, \h, 50, 0.5));
 		}, {
@@ -453,7 +454,7 @@ MixerLevelSlider : MixerWidgetBase {
 }
 
 MixerLevelSliderH : MixerLevelSlider {
-	restoreView { 
+	restoreView {
 		('SCView'.asClass.notNil and: { view.isKindOf(SCView) }).if({
 			view.background_(Gradient(gui.color1, gui.color2, \h, 50));
 		}, {
@@ -475,7 +476,7 @@ MixerLevelNumber : MixerWidgetBase {
 	updateView { |value|
 		view.value_((value ?? { mixer.getControl(\level) }).ampdb.round(0.001));
 	}
-	clearView { 
+	clearView {
 		view.value_(0);
 	}
 	updateKeys { ^\level }
@@ -500,7 +501,7 @@ MixerNameWidget : MixerWidgetBase {
 	updateView { |value|
 		view.string_(value ?? { mixer.name });
 	}
-	clearView { 
+	clearView {
 		view.string_("inactive");
 	}
 	updateKeys { ^\name }
@@ -525,7 +526,7 @@ MixerOutbusWidget : MixerWidgetBase {
 	}
 	restoreView {
 		view.items_(gui.menuItems);
-		
+
 	}
 	clearView {
 		view.items_(["none"]);
