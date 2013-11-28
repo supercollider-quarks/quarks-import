@@ -8,5 +8,5 @@
 	\country: 		"Germany",
 	\since: 		"2006",
 	\helpdoc: "help/NetLib.html",
-	\status: "experimental"
+	\status: "unmaintained"
 )
