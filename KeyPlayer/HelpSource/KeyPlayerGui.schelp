@@ -1,0 +1,81 @@
+TITLE:: KeyPlayerGui
+summary:: a simple gui for KeyPlayer
+categories:: Undocumented classes
+related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+
+DESCRIPTION::
+
+strong::To understand KeyPlayerGui, see KeyPlayer.help for examples!::
+
+Notes:
+
+Several aspects of this class could be made more flexible:
+supporting different display sizes, keyboard layouts,
+and ways of switching between several KeyPlayers may be useful.
+
+Dragging and dropping actions could also be supported;
+not sure how to do that consistently with keyUp actions,
+retriggering, putting things on shifted keys, etc.
+
+Also, KeyPlayerGui should be a JITGui.
+
+
+(Method doc will be completed when reworking KeyPlayerGui.)
+
+CLASSMETHODS::
+
+subsection:: Class Variables
+
+METHOD:: colors
+a list of colors used for the keys.
+
+METHOD:: keyboard
+the list of characters the physical keyboard shows.
+Default is a Macbook Pro with US Extended key caps.
+
+METHOD:: initClass
+
+METHOD:: keyboardNoShift
+the list of characters that will be printed when typed.
+
+METHOD:: keyboardShift
+the list of characters that will be printed when typed while the keyboard shift key is pressed.
+
+METHOD:: lineOffsets
+a list of offsets used for keyboard line layout/geometry.
+
+
+subsection:: Class Methods
+
+METHOD:: gui
+Make a KeyPlayerGui for up to 10 KeyPlayers.
+
+METHOD:: new
+make a new KeyPlayerGui for a keyplayer.
+
+METHOD:: initClass
+...
+
+
+INSTANCEMETHODS::
+
+subsection:: Instance Variables
+
+METHOD:: player
+the KeyPlayer displayed.
+
+strong::GUI elements, visual aspects: ::
+METHOD:: w, zone, buttons, drags, listview
+METHOD:: font, activeColor
+
+METHOD:: skipjack
+
+subsection:: Instance Methods
+METHOD:: front
+
+strong::GUI creation: ::
+METHOD:: makeWindow, makeButtons, makeDrags, makeListView, makeKey
+
+strong::GUI updating: ::
+
+METHOD:: updateAll, updateDrags, updateButtons, runUpdate, stopUpdate
