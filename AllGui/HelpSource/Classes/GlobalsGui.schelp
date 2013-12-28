@@ -52,3 +52,4 @@ the bounds within which to display it.
 
 INSTANCEMETHODS::
 
+private::setDefaults, textViews, cmdLineView, codeDumpView, editKeys, winName, getName, makeViews, getState, checkUpdate 
