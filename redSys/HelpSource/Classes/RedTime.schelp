@@ -50,3 +50,15 @@ c.asHours
 
 c.asArray
 ::
+
+CODE::
+//calculating the number of hours and minutes between two points in time
+RedTime(13, 30)-RedTime(12, 20)	//from 13:30 backwards to 12:20
+//-> 1h 10m difference
+
+RedTime(3, 30)-RedTime(12, 20)	//from 03:00 backwards to 12:20
+//-> 15h 10m difference
+
+RedTime(0, 0, 50)-RedTime(22, 10, 51)	//from 00:00:50 backwards to 22:10:51
+//-> 1h 49m 59s difference
+::

@@ -2,7 +2,7 @@
 
 RedTime {
 	var <>h, <>m, <>s;
-	*new {|h, m, s| ^super.newCopyArgs(h, m, s)}
+	*new {|h= 0, m= 0, s= 0| ^super.newCopyArgs(h, m, s)}
 	*newFromSeconds {|sec|
 		var sx, mx, my, hx;
 		sx= sec%60;

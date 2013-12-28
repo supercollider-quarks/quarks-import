@@ -167,7 +167,7 @@ TABLE::
 ## link::Classes/RedLive:: || sample and repeat
 ## link::Classes/RedOnePole:: || one pole filter with separate up and down coefficients
 ## link::Classes/RedOverdub:: || overdub recording
-## link::Classes/RedRamp:: resettable phasor with per period rate control|| 
+## link::Classes/RedRamp:: || resettable phasor with per period rate control
 ## link::Classes/RedSequencer:: || simple sequencer
 ## link::Classes/RedSequencer2:: || simple sequencer
 ## link::Classes/RedSlide:: || logarithmic lag
@@ -179,6 +179,8 @@ TABLE::
 SECTION:: changeLog
 
 code::
+//--changes 131228:
+//added default values for RedTime-new and some more examples
 //--changes 130927:
 //minor speed up by replacing & with bitAnd, << with leftShift and >> with rightShift
 //--changes 130902:
