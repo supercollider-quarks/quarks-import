@@ -5,17 +5,14 @@ related:: Classes/Interpreter, Overviews/JITLib, Classes/ProxySpace, Classes/Nde
 
 DESCRIPTION::
 AllGui shows many of the global storage locations in SC3:
-
-	global variables in the interpreter (a-z)
-
-	objects in the currentEnvironment
-
-	some classvars that keep all instances of that class:
-
-		Pdef.all, Tdef.all, Pdefn.all,
-		ProxySpace.all, Ndef.all,
-	
-	and potentially others, such as MKtl.
+list::
+##global variables in the interpreter (a-z)
+##objects in the currentEnvironment
+##some classvars that keep all instances of that class: 
+##link::Classes/Pdef::.all, link::Classes/Tdef::.all, link::Classes/Pdefn::.all,
+##link::Classes/ProxySpace::.all, link::Classes/Ndef::.all,
+##and potentially others, such as MKtl.
+:: 
 
 For each location, the number of items there is displayed, 
 and a gui can be opened to display it in more detail.
@@ -54,6 +51,8 @@ AllGui.openFuncs.do(_.value(12));
 ::
 
 CLASSMETHODS::
+
+private:: countGlobals, findProxySpace, inited
 
 METHOD:: globalNames
 the interpreter global variables as a list of symbols.
@@ -99,4 +98,8 @@ remove an item from the display
 
 argument:: name
 the name of the item to remove
+
+InstanceMethods:: 
+private:: winName, texts, setDefaults, makeViews, getState, checkUpdate
+
 
