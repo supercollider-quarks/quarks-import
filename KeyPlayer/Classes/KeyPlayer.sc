@@ -1,8 +1,15 @@
-	// KeyPlayer should be able to save/write and load as code
-	//
-	// KeyPlayerGui should be a JITGui
-	// should be put itself on any window
-	// etc
+/*
+- KeyPlayer should be able to save/write and load as code
+- KeyPlayerGui should be a JITGui - started, see KeyPlayerGui2
+- example for KeyPlayer with just buttons?
+
+- add simple gui for KeyPlayerRec
+- improve keys filtering
+  + maybe added mechanism for meta-keys?
+  + e.g. alt-r to record, alt-space to play, alt-. to stop;
+    would have to happen before going into the key funcs.
+
+*/
 
 KeyPlayer {
 	classvar <>verbose=false, <all, gui;
@@ -67,6 +74,7 @@ KeyPlayer {
 			this.putUni(char, func, where);
 		};
 	}
+
 	putUp { |char, func, both = false|
 		this.put(char, func, both, \up);
 	}
@@ -165,7 +173,7 @@ KeyPlayerGui {
 			Color(0.2, 1, 1, 1),		// alt shift	blue+green - cyan
 			Color(1, 1, 0.2, 1),		// ctl shift	red+green - yellow
 			Color(1, 0.2, 1, 1),		// ctl alt	red+blue - violet
-			Color(1, 1, 1, 1)		// ctl alt shift	red green blue - white
+			Color(1, 1, 1, 1)			// ctl alt shift	red green blue - white
 		];
 
 		// these describe the keyboard to show;
