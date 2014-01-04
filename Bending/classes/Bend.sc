@@ -94,12 +94,12 @@ Bend : AbstractUGenBend {
 		^res
 	}
 
-	*time { |factor, ugenFunc|
+	*time { |factor, ugenFunc, freqArgNames = #[\freq, \rate], durArgNames = #[\dur, \duration, \delaytime, \decaytime]|
 		^this.new({ |original, argName, ugen|
-			if(#[\freq, \rate].includes(argName)) {
+			if(freqArgNames.includes(argName)) {
 				original * factor.value(original, argName, ugen)
 			} {
-				if(#[\dur, \duration, \delaytime, \decaytime].includes(argName)) {
+				if(durArgNames.includes(argName)) {
 					original * factor.value(original, argName, ugen).reciprocal
 				} {
 					original
