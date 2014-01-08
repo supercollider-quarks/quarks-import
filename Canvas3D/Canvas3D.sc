@@ -37,7 +37,7 @@ Canvas3DItem {
         var i=(n-1)/2;
         ^this.new.paths_(n.collect {|x| x=x/i-1; [[-1,x,0],[1,x,0]]} ++ n.collect {|x| x=x/i-1; [[x,-1,0],[x,1,0]]})
     }
-    
+
     // added TH
     *regPrism { |sides=3|
         var twosqrt = 2.sqrt;
@@ -95,9 +95,10 @@ Canvas3D : SCViewHolder {
         this.view = UserView(parent, bounds)
             .background_(Color.white)
             .drawFunc_({
+                var penClass= try{if(\GUI.asClass.notNil, {GUI.pen})}?Pen;//avoids gui redirect
                 preDrawFunc.value;
                 items.do {|item|
-                    Pen.width = item.width;
+                    penClass.width = item.width;
                     item.paths.do {|path|
                         path.do {|v,i|
 			                var x, y, z, p;
@@ -108,17 +109,17 @@ Canvas3D : SCViewHolder {
 			                y = scale*(v[1]/z)+(this.bounds.height/2);
                             p = Point(x, y);
                             if(i==0) {
-                                Pen.moveTo(p);
+                                penClass.moveTo(p);
                             } {
-                    			Pen.lineTo(p);
+                    			penClass.lineTo(p);
                     		};
                         };
                         if(item.fill, {
-                            Pen.fillColor = item.color;
-                            Pen.fill;
+                            penClass.fillColor = item.color;
+                            penClass.fill;
                         }, {
-                            Pen.strokeColor = item.color;
-                            Pen.stroke;
+                            penClass.strokeColor = item.color;
+                            penClass.stroke;
                         });
                     };
                 };
