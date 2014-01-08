@@ -19,11 +19,12 @@ RedFingerprint {
 		});
 	}
 	draw {|length= 1|
-		Pen.moveTo(points[0]*length);
-		points.do{|x| Pen.lineTo(x*length)};
-		Pen.stroke;
+		var penClass= GUI.pen;
+		penClass.moveTo(points[0]*length);
+		points.do{|x| penClass.lineTo(x*length)};
+		penClass.stroke;
 	}
-	
+
 	makeWindow {|name, bounds, scale= 1, background, color, width= 1|
 		var win, usr, w, h, centerX, centerY;
 		name= name ?? {"fingerprint"+points.size+"points"};
