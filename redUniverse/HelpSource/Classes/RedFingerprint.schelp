@@ -40,12 +40,6 @@ Coordinates as points.
 EXAMPLES::
 
 CODE::
-/*
-//select your weapon of choice
-GUI.cocoa;
-GUI.swing;
-*/
-
 l= {1.0.rand}.dup(100)		//an array with random values
 a= RedFingerprint(l)		//a fingerprint object
 a.points			//coordinates
@@ -93,27 +87,29 @@ a.makeWindow(background: Color.red(0.5, 0.5), width: 5)
 a.makeWindow(scale: 0.75, background: Color.white, color: Color.red, width: 10)
 
 
-//--animation
+//--animation examples
 (
-var win, cnt= 0, width= 400, height= 400;
+var win, usr, cnt= 0, width= 400, height= 400;
 var rf= RedFingerprint(Env.perc(0.3, 0.3, 1, -2).asSignal);
-win= RedWindow("fingerprint", Rect(100, 100, width, height)).front;
-win.draw{
+win= Window("fingerprint", Rect(100, 100, width, height), false).front;
+usr= UserView(win, Rect(0, 0, width, height));
+usr.drawFunc= {
 	Pen.translate(width*0.5, height*0.5);
 	Pen.strokeColor= Color.white;
-	rf.array= rf.array.rotate(cnt);
+	rf.array= rf.array.rotate(cnt.div(20));
 	rf.calc;
 	rf.draw(width*0.25);
 	cnt= cnt+1;
 };
-win.animate= true;
-CmdPeriod.doOnce({if(win.isOpen, {win.close})});
+usr.animate= true;
+CmdPeriod.doOnce({win.close});
 )
 
 (
-var win, cnt= 0, width= 400, height= 400;
-win= RedWindow("fingerprint", Rect(100, 100, width, height)).front;
-win.draw{
+var win, usr, cnt= 0, width= 400, height= 400;
+win= Window("fingerprint", Rect(100, 100, width, height), false).front;
+usr= UserView(win, Rect(0, 0, width, height));
+usr.drawFunc= {
 	var a= sin(cnt.fold(0, 100)/2pi).linlin(-1, 1, 0.01, 1);
 	var b= sin(cnt.fold(0, 90)/2pi).linlin(-1, 1, 0.1, cnt.fold(0, 50)/25);
 	var rf= RedFingerprint(Wavetable.sineFill(256, 1/[1, 2, a, b]).asSignal);
@@ -122,58 +118,59 @@ win.draw{
 	rf.draw(width*0.5);
 	cnt= cnt+0.25;
 };
-win.animate= true;
-CmdPeriod.doOnce({if(win.isOpen, {win.close})});
+usr.animate= true;
+CmdPeriod.doOnce({win.close});
 )
 
 
-//--sound
+//--sound examples
 (
 s.waitForBoot{
 	var n= 5, scale= 190,
-		win, cnt= 200, wt0, wt1, syn, rf;
+		win, usr, cnt= 200, wt0, wt1, syn, rf;
 	var b= Buffer.alloc(s, 256, 1);
 	SynthDef(\wormsnd, {|out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|
 		Out.ar(out, Pan2.ar(Osc.ar(bufnum, freq, 0, amp), pan));
 	}).send(s);
 	s.sync;
-	
+
 	syn= Synth(\wormsnd, [\bufnum, b.bufnum, \amp, 1]);
 	s.sync;
-	
-	win= RedWindow("fingerprint", Rect(100, 100, 400, 400));
-	win.background= Color.white;
+
+	win= Window("fingerprint", Rect(100, 100, 400, 400), false);
+	usr= UserView(win, Rect(0, 0, 400, 400));
+	usr.background= Color.white;
 	win.front;
-	
-	wt1= Wavetable.chebyFill_old(b.numFrames, {10.0.rand2}.dup(n));
-	win.draw{
+
+	wt1= Signal.chebyFill(b.numFrames, {10.0.rand2}.dup(n));
+	usr.drawFunc= {
 		if(cnt==200, {
 			wt0= wt1;
 			n= 50.linrand+2;
-			wt1= Wavetable.chebyFill_old(b.numFrames, {10.0.rand2}.dup(n));
+			wt1= Signal.chebyFill(b.numFrames, {10.0.rand2}.dup(n));
 			cnt= 0;
 		});
 		wt0= wt0.blend(wt1, cnt/1000);
 		b.sine1(wt0);
 		syn.set(\freq, wt0.mean*100+100);
-		
-		rf= RedFingerprint(wt0.asSignal);
+
+		rf= RedFingerprint(wt0);
 		Pen.width= 2;
 		Pen.translate(win.bounds.width*0.5, win.bounds.height*0.5);
 		Pen.strokeColor= Color.blue(0.5, 0.5);
 		rf.draw(scale);
-		
+
 		cnt= cnt+1;
 	};
-	win.animate= true;
-	CmdPeriod.doOnce({if(win.isOpen, {win.close})});
+	usr.animate= true;
+	CmdPeriod.doOnce({win.close});
 };
 )
 
 (
 s.waitForBoot{
 	var n= 60, scale= 120,
-		win, cnt= 5, wt0, wt1, syn, rf;
+		win, usr, cnt= 5, wt0, wt1, syn, rf;
 	var b= Buffer.alloc(s, 256, 1);
 	SynthDef(\wormsnd, {|out= 0, bufnum, freq= 60, amp= 0.01, pan= 0|
 		Out.ar(out, Pan2.ar(Osc.ar(bufnum, freq, 0, amp), pan));
@@ -181,26 +178,26 @@ s.waitForBoot{
 	s.sync;
 	syn= Synth(\wormsnd, [\bufnum, b.bufnum]);
 	s.sync;
-	
-	win= RedWindow("fingerprint", Rect(100, 100, 320, 240));
-	win.background= Color.black;
+
+	win= Window("fingerprint", Rect(100, 100, 320, 240), false);
+	usr= UserView(win, Rect(0, 0, 320, 240));
+	usr.background= Color.black;
 	win.front;
-	
-	wt1= Wavetable.chebyFill_old(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));
-	win.draw{
+
+	wt1= Signal.chebyFill(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));
+	usr.drawFunc= {
 		if(cnt%8%6!=0, {
 			syn.set(\amp, 1);
 			if(cnt%5==(0), {
 				wt0= wt1;
 				n= 1.rrand(10);
-				wt1= Wavetable.chebyFill_old(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));
+				wt1= Signal.chebyFill(b.numFrames, {1.0.rand2.round(0.1)}.dup(n));
 				cnt= 0;
 			});
 			wt0= wt0.blend(wt1, cnt/(wt1[0]*3000+30));
 			b.sine1(wt0);
 			syn.set(\freq, wt0.mean*(wt0[0]*500)+80);
-			
-			rf= RedFingerprint(wt0.asSignal);
+			rf= RedFingerprint(wt0);
 			Pen.width= 2;
 			Pen.translate(win.bounds.width*0.5, win.bounds.height*0.5);
 			Pen.strokeColor= Color.white;
@@ -211,8 +208,8 @@ s.waitForBoot{
 		});
 		cnt= cnt+1;
 	};
-	win.animate= true;
-	CmdPeriod.doOnce({if(win.isOpen, {win.close})});
+	usr.animate= true;
+	CmdPeriod.doOnce({win.close});
 };
 )
 ::

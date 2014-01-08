@@ -6,6 +6,8 @@ note! some of the examples require additional classes like RedGA etc.  these are
 
 
 //--
+140108 - RedFingerprint optimized pen drawing, removed RedWindow and corrected examples
+	removed old html helpfiles
 130225 - RedVector2D and RedVector3D optimizations
 121130 - moved RedQWindow out of scide_scapp folder
 121128 - added qt (RedQWindow) and bumped up required sc version to 3.5
