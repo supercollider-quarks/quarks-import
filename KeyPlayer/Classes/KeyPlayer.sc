@@ -1,13 +1,8 @@
 /*
+
 - KeyPlayer should be able to save/write and load as code
 - KeyPlayerGui should be a JITGui - started, see KeyPlayerGui2
-- example for KeyPlayer with just buttons?
-
-- add simple gui for KeyPlayerRec
-- improve keys filtering
-  + maybe added mechanism for meta-keys?
-  + e.g. alt-r to record, alt-space to play, alt-. to stop;
-    would have to happen before going into the key funcs.
+- example for KeyPlayer with just single button?
 
 */
 
@@ -15,20 +10,22 @@ KeyPlayer {
 	classvar <>verbose=false, <all, gui;
 
 	var <key, <actions, <upActions, <bothActions, <pressed;
+	var <metaActions;
 	var <>rec;
 
 	*initClass {
 		all = ();
 	}
+
 	*at { |key| ^all.at(key); }
 
 	*new { arg key = \k, inDict, ignoreCase = true;
-		var kp = this.at(key);
-		if (kp.isNil) {
-			kp = super.newCopyArgs(key);
-			if (inDict.isNil, { kp.init(inDict, ignoreCase) });
+		var res = this.at(key);
+		if (res.isNil) {
+			res = super.newCopyArgs(key)
+			    .init(inDict, ignoreCase);
 		};
-		^kp
+		^res
 	}
 
 	init { arg inDict, ignoreCase = false;
@@ -40,7 +37,9 @@ KeyPlayer {
 		pressed = ();
 		bothActions = (down: actions, up: upActions);
 
-			// this needs reworking.
+		metaActions = ();
+
+			// this needs full rework.
 			// upactions/downactions, ignoreCase ? how?
 
 		inDict !? {
@@ -55,9 +54,13 @@ KeyPlayer {
 		};
 	}
 
+	storeArgs { ^[key] }
+
 	*gui { if (gui.isNil or: { gui.w.isClosed }){ gui = KeyPlayerGui() }; ^gui.front; }
 
 	gui { ^KeyPlayerGui(this) }
+
+	makeLoop { rec = KeyLoop(key, KeyLoop.keyPlayerFunc(this)); }
 
 	makeRec { rec = KeyPlayerRec(this); }
 
@@ -73,6 +76,11 @@ KeyPlayer {
 		} {
 			this.putUni(char, func, where);
 		};
+	}
+
+	// in 3.7.0, only alt mod is working...
+	putMeta { |uni, action|
+		metaActions.put(uni,action);
 	}
 
 	putUp { |char, func, both = false|
@@ -106,11 +114,16 @@ KeyPlayer {
 
 	keyAction { |char, modifiers, unicode, keycode, which=\down, press = true|
 
-		 var whichActions, action, result;
+		var whichActions, action, result;
 
-		 if (verbose) { [KeyPlayer, char, modifiers, unicode, keycode].postcs; };
+		if (verbose) { [KeyPlayer, char, modifiers, unicode, keycode].postcs; };
 
-		 if (rec.notNil) { rec.recordEvent(unicode, which) };
+		// early exit if meta key was pressed - only down
+		if (this.isMetaAction(modifiers, which)) {
+			^this.doMetaAction(char, modifiers, unicode, keycode, which);
+		};
+
+		if (rec.notNil) { rec.recordEvent(unicode, which) };
 
 				// call the function
 		unicode = unicode ?? { char.asUnicode };
@@ -126,9 +139,22 @@ KeyPlayer {
 			whichActions[char] = result;
 		};
 	}
+
+	isMetaAction { |modifiers, which|
+		^modifiers.notNil and: { (which == \down) and: { modifiers.isAlt } };
+	}
+
+	doMetaAction { |char, modifiers, unicode, keycode, which|
+
+		if (which == \down) {
+			metaActions[unicode].value(char, modifiers, unicode, keycode);
+		};
+	}
+
 	keyDown { |char, modifiers, unicode, keycode|
 		this.keyAction(char, modifiers, unicode, keycode, \down, true);
 	}
+
 	keyUp { |char, modifiers, unicode, keycode|
 		this.keyAction(char, modifiers, unicode, keycode, \up, false);
 	}

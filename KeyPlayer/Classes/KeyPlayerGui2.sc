@@ -27,11 +27,8 @@ l = h.listView;
 
 h.listView.bounds_( h.listView.bounds.height + 20)
 KeyPlayer[].dump;
+
 */
-
-KeyPlayerRecGui {
-
-}
 
 
 KeyPlayerGui2 : JITGui {
