@@ -23,6 +23,13 @@ Under Linux this will resolve to:
 
 	~/.local/share/SuperCollider/Extensions
 
+__Note:__ A newer version of CVCenter already exists, including a MultiSlider widget, editable shortcuts and lots of other improvements. However, this version is hosted on Github only (and will probably stay there for a little longer...): [https://github.com/nuss/CVCenter]. If you're interested in trying out that version I recommend to uninstall the quark (i.e. remove the symbolic links in your <user-app-support-dir>/quarks) and install CVCenter via git to user-app-support-dir:
+
+	$ cd /path/to/your/user-app-support-dir
+	$ git clone https://github.com/nuss/CVCenter.git
+
+Choosing this installation method will always allow you to switch between the old and new version easily. All fixes will first go into the github repository and then being ported to the quarks repository on sourceforge.
+
 Using Windows the mechanism should apply as well. However, the author of this document currently doesn't know what the result of the query will be...
 
 Note: if you're on Linux you will need to have installed SuperCollider >= 3.5 as CVCenter depends on QtGUI. Under MacOSX CVCenter *should* be compatible with SC >= 3.4 resp. QtGUI as well as Cocoa. 
