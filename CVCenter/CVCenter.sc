@@ -231,7 +231,7 @@ CVCenter {
 								historyGui = History.makeWin(
 									Window.screenBounds.width-300 @ Window.screenBounds.height
 								);
-								historyWin = historyGui.w;
+								historyWin = historyGui.parent;
 							});
 							if(historyWin.notNil and:{ historyWin.isClosed.not }, { historyWin.front })
 						},
@@ -281,7 +281,12 @@ CVCenter {
 					if(modifiers == 131072 and:{ unicode == 72 and:{ History.started }}, {
 						// keys <shift> + "h" -> end History and open History in a new document
 						History.end;
-						if(Platform.ideName != "scqt", { History.document });
+						if(Platform.ideName == "scapp" or:{
+							(Platform.ideName == "scqt").and(Main.versionAtLeast(3, 7))
+						}) { History.document };
+						if(CVCenter.scv.historyWin.notNil and:{
+							CVCenter.scv.historyWin.isClosed.not
+						}) { CVCenter.scv.historyWin.close }
 					})
 				})
 			});
