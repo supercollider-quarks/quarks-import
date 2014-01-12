@@ -1,13 +1,13 @@
 /*
 
 KeyPlayer.all.clear;
-g = KeyPlayerGui2();
-h = KeyPlayerGui2(options: [\useList]);
+g = KeyPlayerGui();
+h = KeyPlayerGui(options: [\useList]);
 
 "asdfg".do { |char| KeyPlayer(char.asSymbol) }
 "hjkl".do { |char| KeyPlayer(char.asSymbol) }
 
-g.object_(KeyPlayer(\x));
+g.object_(KeyPlayer(\f));
 h.object_(g.object);
 
 g.object.put($t, {"t!".postln });
@@ -17,21 +17,15 @@ g.object.putUp($x, {"x up!".postln }, both: true);
 
 g.object.putUp($y, {"y up only!".postln }, both: true);
 
-h.listView.action = { |l| "yo".postln; l.items.postln };
-h.listView.keyDownAction = { |l, char|
-if (char == $\r) { l.object_( KeyPlayer.all[l.items[l.value]]) };
-};
-
-l.items[l.value].postcs;
-l = h.listView;
-
-h.listView.bounds_( h.listView.bounds.height + 20)
-KeyPlayer[].dump;
+options:
+    attach little KeyLoopGui on the side?
+    future: make whole gui with Pen for elegant rescaling?
+   make window non-resizable?
 
 */
 
 
-KeyPlayerGui2 : JITGui {
+KeyPlayerGui : JITGui {
 
 	classvar <>colors;
 	classvar <>lineOffsets;
@@ -117,6 +111,21 @@ KeyPlayerGui2 : JITGui {
 		}
 	}
 
+	accepts { |obj| ^obj.isNil or: { obj.isKindOf(KeyPlayer) } }
+
+	object_ { |obj|
+		if(this.accepts(obj).not) { ^this };
+		object = obj;
+		if (obj.notNil) {
+			parent.asView.keyDownAction_(object.makeKeyDownAction);
+			parent.asView.keyUpAction_(object.makeKeyUpAction);
+			this.addAltFuncs;
+		};
+	}
+
+	// better in JITGui?
+	front { if (hasWindow) { parent.front } }
+
 	getState {
 		// get all the state I need to know of the object I am watching
 		var news = (
@@ -152,28 +161,9 @@ KeyPlayerGui2 : JITGui {
 			this.updateGlobal(news);
 		};
 
-		if (news[\object] != prevState[\object] or:
-			(news[\kpKeys] != prevState[\kpKeys])
-		) {
-			this.updateGlobal(news);
-		};
-
 		this.updateDrags(news); // does the checking
 
 		prevState = news;
-	}
-
-	accepts { |obj| ^obj.isNil or: { obj.isKindOf(KeyPlayer) } }
-
-	// better in JITGui?
-	front { if (hasWindow) { parent.front } }
-
-	updateAll {
-		this.updateButtons;
-		if (object.notNil) {
-			this.updateDrags;
-			zone.refresh;
-		}
 	}
 
 	updateGlobal { |news|
@@ -214,22 +204,13 @@ KeyPlayerGui2 : JITGui {
 		zone.refresh;
 	}
 
-	object_ { |obj|
-		if(this.accepts(obj).not) { ^this };
-		object = obj;
-		if (obj.notNil) {
-			parent.asView.keyDownAction_(object.makeKeyDownAction);
-			parent.asView.keyUpAction_(object.makeKeyUpAction);
-		};
-	}
-
 	///// make all the view elements: //////
 
 	makeViews { |options|
 		zone.addFlowLayout; // use a flat one
 		// seethru!
-		parent.asView.background_(Color(0.5, 0.5, 0.5, 0.1));
-		zone.background_(Color(0.5, 0.5, 0.5, 0.1));
+		parent.asView.background_(Color(0.5, 0.5, 0.5, 0.25));
+		zone.background_(Color(0.5, 0.5, 0.5, 0.25));
 
 		if (options.includes(\useList)) {
 			this.makeListView;
@@ -238,6 +219,8 @@ KeyPlayerGui2 : JITGui {
 			zone.decorator.top_(zone.bounds.top);
 		} {
 			this.makeButtons;
+			// this.miniLoopCtl;
+			// zone.decorator.nextLine;
 		};
 		this.makeDrags;
 	}
@@ -254,17 +237,32 @@ KeyPlayerGui2 : JITGui {
 	makeButtons {
 		var keys = KeyPlayer.all.keys.asArray.sort;
 		var navButL, navButR;
-		navButL = Button(zone, Rect(0, 0, 14, 16)).states_([[ "<" ]]);
+
+	//	navButL = Button(zone, Rect(0, 0, 14, 14)).states_([[ "<" ]]);
+
+	//	zone.decorator.shift(20, 0);
+
 		buttons = 10.collect { |i|
-			Button(zone, Rect(0, 0, 33, 16)).states_([[ keys[i] ? "-" ]])
+			Button(zone, Rect(0, 0, 34, 16)).states_([[ keys[i] ? "-" ]])
 				.action_({ |b|
 					var nuKP = KeyPlayer.all[b.states[0][0]];
 					if (nuKP.notNil) { this.object_(nuKP); };
 					this.checkUpdate;
 				})
 		};
-		navButR = Button(zone, Rect(0, 0, 14, 16)).states_([[ ">" ]]);
+
+		Button(zone, Rect(0, 0, 34, 18)).states_([[ "lgui" ]])
+		.action_({ if (object.notNil) { this.openLoopGui; } });
+
+	//	navButR = Button(zone, Rect(0, 0, 14, 14)).states_([[ ">" ]]);
 	}
+
+	// miniLoopCtl {
+	// 	Button(zone, Rect(0, 0, 18, 18)).states_([[\P], [\_], ['|']]);
+	// 	Button(zone, Rect(0, 0, 18, 18)).states_([[\R], [\_]]);
+	// 	Button(zone, Rect(0, 0, 18, 18)).states_([[\L], ['1']]);
+	// 	EZNumber(zone, 26@18, "", [0,99, \lin, 1].asSpec, labelWidth: 0);
+	// }
 
 
 	makeDrags {
@@ -281,14 +279,6 @@ KeyPlayerGui2 : JITGui {
 			zone.decorator.shift(lineOffsets[i]);
 		};
 
-//		zone.decorator.shift(lineOffsets.last.neg);
-//				// make the last row
-//		[\norm, \shift, \ctrl, \alt].do { |lab, i|
-//			Button(zone, Rect(0,0,36,18))
-//				.states_([[lab]])
-//				.action_{ ("not used yet:" + lab).postln };
-//		};
-
 		this.makeKey($ , "space", 150 @ 24);
 		this.makeKey(3.asAscii, "enter", 48 @ 24);
 
@@ -304,10 +294,43 @@ KeyPlayerGui2 : JITGui {
 		v.string = keyname;
 		v.align = \center;
 		v.setBoth = false;
-//		v.acceptDrag = {
-//			View.currentDrag.isKindOf(Function)
-//		};
 		drags.put(char.toLower.asUnicode, v);
-	//	v.action = { this.put(char.toLower, v.object, true) };
 	}
+
+	// extra functions
+
+	addAltFuncs {
+		object.putAlt($k.asUnicode, {
+			"go to curr player on listview or buttons".postln;
+			this.focusToPlayerName(object.name);
+		});
+		object.putAlt($g.asUnicode, {
+			"open TimeLoopGui next to main KeyPlayerGui.".postln;
+			this.openLoopGui;
+		});
+	}
+
+	focusToPlayerName { |name|
+		var index;
+		if (listView.notNil) {
+			index = listView.items.indexOf(name);
+			if (index.notNil) { listView.value_(index) };
+			listView.focus;
+		} {
+			index = buttons.detectIndex { |bt, i|
+				bt.states[0][0].postcs == name;
+			};
+			if (index.notNil) { buttons[index].focus; };
+		}
+	}
+
+	openLoopGui {
+		var loopgui = EventLoopGui(object.rec);
+		var coords;
+		if (parent.isClosed.not) {
+			coords = parent.bounds.rightTop;
+			loopgui.moveTo(coords.x, coords.y);
+		};
+	}
+
 }

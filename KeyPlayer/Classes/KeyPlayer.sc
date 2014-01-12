@@ -1,8 +1,8 @@
 /*
 
 - KeyPlayer should be able to save/write and load as code
-- KeyPlayerGui should be a JITGui - started, see KeyPlayerGui2
-- example for KeyPlayer with just single button?
+- can KeyPlayer be ut into a single button?
+
 
 */
 
@@ -10,7 +10,7 @@ KeyPlayer {
 	classvar <>verbose=false, <all, gui;
 
 	var <key, <actions, <upActions, <bothActions, <pressed;
-	var <metaActions;
+	var <altActions;
 	var <>rec;
 
 	*initClass {
@@ -37,7 +37,7 @@ KeyPlayer {
 		pressed = ();
 		bothActions = (down: actions, up: upActions);
 
-		metaActions = ();
+		altActions = ();
 
 			// this needs full rework.
 			// upactions/downactions, ignoreCase ? how?
@@ -52,17 +52,31 @@ KeyPlayer {
 				this.put(key, inDict[key], ignoreCase, \down);
 			}
 		};
+
+		this.makeDefaultMetaActions;
+	}
+
+	makeDefaultMetaActions {
+		// put in some alt-commands for the KeyLoop:
+		this.putAlt($r.asUnicode, { this.rec.toggleRec });
+		this.putAlt($p.asUnicode, { this.rec.togglePlay });
+		this.putAlt($l.asUnicode, { this.rec.toggleLooped });
+
+		this.putAlt($f.asUnicode, { this.rec.playOnce; });
 	}
 
 	storeArgs { ^[key] }
 
-	*gui { if (gui.isNil or: { gui.w.isClosed }){ gui = KeyPlayerGui() }; ^gui.front; }
+	*gui { if (gui.isNil or: { gui.parent.isClosed }){ gui = KeyPlayerGui() }; ^gui.front; }
 
 	gui { ^KeyPlayerGui(this) }
 
 	makeLoop { rec = KeyLoop(key, KeyLoop.keyPlayerFunc(this)); }
 
-	makeRec { rec = KeyPlayerRec(this); }
+	makeRec {
+		warn("KeyPlayer:makeRec will be deprecated; use KeyPlayer:makeLoop.");
+		rec = KeyPlayerRec(this);
+	}
 
 	putAll { |dict, both=false, where=\down|
 		dict.keysValuesDo{ |k, f| this.put(k, f, both, where) }
@@ -79,8 +93,8 @@ KeyPlayer {
 	}
 
 	// in 3.7.0, only alt mod is working...
-	putMeta { |uni, action|
-		metaActions.put(uni,action);
+	putAlt { |uni, action|
+		altActions.put(uni,action);
 	}
 
 	putUp { |char, func, both = false|
@@ -122,7 +136,8 @@ KeyPlayer {
 		if (this.isMetaAction(modifiers, which)) {
 			^this.doMetaAction(char, modifiers, unicode, keycode, which);
 		};
-
+		// maybe adapt whether KeyLoop or KeyPlayerRec?
+		// better remove KeyPlayerRec ASAP.
 		if (rec.notNil) { rec.recordEvent(unicode, which) };
 
 				// call the function
@@ -147,7 +162,7 @@ KeyPlayer {
 	doMetaAction { |char, modifiers, unicode, keycode, which|
 
 		if (which == \down) {
-			metaActions[unicode].value(char, modifiers, unicode, keycode);
+			altActions[unicode].value(char, modifiers, unicode, keycode);
 		};
 	}
 
@@ -178,194 +193,3 @@ KeyPlayer {
 	}
 }
 
-KeyPlayerGui {
-	classvar <>colors;
-	classvar <>lineOffsets;
-	classvar <>keyboard;
-	classvar <>keyboardNoShift;
-	classvar <>keyboardShift;
-
-	var <player;
-	var <w, <zone, <buttons, <drags, <font, <listview;
-	var <skipjack, <>activeColor;
-
-	*initClass {
-
-		colors = [
-			Color(0.8, 0.8, 0.8, 1),	// normal - 	grey
-			Color(0.8, 0.2, 0.2, 1),	// ctl		red
-			Color(0.2, 0.8, 0.2, 1),	// shift		green
-			Color(0.8, 0.8, 0.2, 1),	// alt		blue
-			Color(0.2, 1, 1, 1),		// alt shift	blue+green - cyan
-			Color(1, 1, 0.2, 1),		// ctl shift	red+green - yellow
-			Color(1, 0.2, 1, 1),		// ctl alt	red+blue - violet
-			Color(1, 1, 1, 1)			// ctl alt shift	red green blue - white
-		];
-
-		// these describe the keyboard to show;
-				// horizontal offsets for keys.
-		lineOffsets = #[42, 48, 57, 117];
-
-				// these are the keys you normally see (US, big keyb.)
-				// customise for german or other keyboard layouts.
-		keyboard = #["`1234567890-=", "QWERTYUIOP[]\\", "ASDFGHJKL;'", "ZXCVBNM,./"];
-
-			// NOT USED YET:
-				// the maps I get on my PB, US keyb., no shift
-		keyboardNoShift = #["1234567890-=", "qwertyuiop[]\\", "asdfghjkl;'", "`zxcvbnm,./"];
-				// and shifted	- /* double-quote */ only there for syntax colorize.
-		keyboardShift = #["!@#$%^&*()_+", "QWERTYUIOP{}", "ASDFGHJKL:\"|" /*"*/, "~ZXCVBNM<>?"];
-
-	}
-
-	*new { |kp, win, useList=false|
-		^super.new.init(kp, win, useList);
-	}
-
-	init { |kp, win, useList|
-		var zonebounds;
-		if (useList) {
-			zonebounds = Rect(0, 0, 480, 150);
-		} {
-			zonebounds = Rect(0, 0, 420, 170);
-		};
-
-		w = win ?? { this.makeWindow(try { kp.key } ? "KeyPlayerAll", zonebounds) };
-		zone = CompositeView(w, zonebounds);
-		zone.decorator = FlowLayout(zonebounds);
-
-		if (useList) {
-			this.makeListView;
-			zone.decorator.bounds = zonebounds.left_(64);
-			zone.decorator.top_(zone.decorator.top);
-		} {
-			this.makeButtons
-		};
-		this.makeDrags;
-
-		this.player_(kp);
-
-	}
-	makeWindow { |name, zonebounds|
-			var win = Window("keys" + name, zonebounds).front;
-			win.view.background_(Color(0.5, 0.5, 0.5, 0.0));
-			win.view.decorator = FlowLayout(win.view.bounds.moveTo(0,0));
-			^win;
-	}
-
-	front { w.front }
-
-	updateAll {
-		this.updateButtons;
-		if (player.notNil) {
-			this.updateDrags;
-			w.refresh;
-		}
-	}
-	updateButtons {
-		var keys = KeyPlayer.all.keys.asArray.sort;
-
-		var myIndex = -1;
-		if (player.notNil) { myIndex = keys.indexOf(player.key); };
-
-			// if buttons == nil, nothing
-		buttons.do {�|b, i|
-			var col = if (i == myIndex) { Color.white } { Color.grey(0.8) };
-			var key = keys[i];
-			var keyExists = keys[i].notNil;
-			b.states_([[key ? "", Color.black, col]]).enabled_(keyExists);
-		};
-
-		listview.notNil.if {
-			listview.items_(keys).value_(myIndex);
-		};
-	}
-	updateDrags { |which = 0|
-		var downKeys = player.actions.keys;
-		var upKeys = player.upActions.keys;
-
-			// do it for "A", "a";
-
-		drags.keysValuesDo { |uni, drag|
-			var val = 0;
-			if (downKeys.includes(uni)) { val = val + 1 };
-			if (upKeys.includes(uni)) { val = val + 2 };
-			drag.background_(colors[val])
-		}
-	}
-	makeButtons {
-		var keys = KeyPlayer.all.keys.asArray.sort;
-		buttons = 10.collect { |i|
-			Button(zone, Rect(0, 0, 36, 16)).states_([[ keys[i] ? "-" ]])
-				.action_({ |b|
-					var nuKP = KeyPlayer.all[b.states[0][0]];
-					if (nuKP.notNil) { this.player_(nuKP); };
-					this.updateAll;
-				})
-		};
-	//	buttons[keys.indexOf(player.key)].focus;
-	}
-
-	makeListView {
-		listview = ListView(zone, Rect(2,2,60,25));
-		listview.bounds_(Rect(2,2,60,130));
-
-	}
-
-	player_ { |nuplayer|
-		if (nuplayer.isNil) { ^this };
-
-		player = nuplayer;
-		w.view.keyDownAction_(player.makeKeyDownAction);
-		w.view.keyUpAction_(player.makeKeyUpAction);
-	}
-
-	makeDrags {
-
-		font = Font("Courier-Bold", 14);
-		drags = ();
-
-				// make the rows of the keyboard
-		keyboard.do {|row, i|
-			row.do {|key| this.makeKey(key) };
-			if (i==0) { this.makeKey(127.asAscii, "del", 38 @ 24) };
-			if (i==2) { this.makeKey($\r, "retrn", 46 @ 24) };
-			zone.decorator.nextLine;
-			zone.decorator.shift(lineOffsets[i]);
-		};
-
-//		zone.decorator.shift(lineOffsets.last.neg);
-//				// make the last row
-//		[\norm, \shift, \ctrl, \alt].do { |lab, i|
-//			Button(zone, Rect(0,0,36,18))
-//				.states_([[lab]])
-//				.action_{ ("not used yet:" + lab).postln };
-//		};
-
-		this.makeKey($ , "space", 150 @ 24);
-		this.makeKey(3.asAscii, "enter", 48 @ 24);
-
-				// this is maybe unnecessary?
-		skipjack = SkipJack({ 8.do { |i| this.updateAll; } }, 1, { zone.isClosed }, "KPgui");
-	}
-
-	runUpdate { skipjack.start }
-	stopUpdate { skipjack.stop }
-
-	makeKey { |char, keyname, bounds|
-		var v;
-		keyname = keyname ? char.asString;
-		bounds = bounds ? (24 @ 24);
-
-		v = DragBoth(zone, bounds);
-		v.font = font;
-		v.string = keyname;
-		v.align = \center;
-		v.setBoth = false;
-//		v.acceptDrag = {
-//			View.currentDrag.isKindOf(Function)
-//		};
-		drags.put(char.toLower.asUnicode, v);
-	//	v.action = { this.put(char.toLower, v.object, true) };
-	}
-}
