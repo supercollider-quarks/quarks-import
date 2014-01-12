@@ -1,42 +1,59 @@
-    // the random keyboard:
+
+code::
+// simple random keyboard player
 (
 s.boot;
 s.latency = nil;    // make sure we respond quickly
-thisThread.randSeed = 2008;
+thisThread.randSeed = 2014;
 k = KeyPlayer(\rand);
 "qwertzuiopasdfghjklyxcvbnm".do { |char|
-    var note = (midinote: rrand(36, 96), dur: rrand(0.1, 1.0));
+    var note = (midinote: rrand(36, 96), dur: rrand(0.1));
    k.putDown(char, { |char| char; note.play });
 };
+
+     // make k.rec a KeyLoop:
 k.makeLoop;
-g = KeyPlayerGui2(k);
-h = TimeLoopGui(k.rec);
+g = KeyPlayerGui(k);
 )
 
-h.setNumLists(99);
+// second player shows up as well;
+KeyPlayer(\xs);
 
-// put in some alt-commands for the KeyLoop:
-k.putMeta($r.asUnicode, { k.rec.toggleRec });
-k.putMeta($p.asUnicode, { k.rec.togglePlay });
-k.putMeta($l.asUnicode, { k.rec.loop = k.rec.loop.not });
-k.putMeta($f.asUnicode, { "k.rec.fork".postln; });
+// the keys that have associated actions are shown colored in KeyPlayerGui.
 
-k.putMeta($g.asUnicode, {
-	TimeLoopGui(k.rec).moveTo(*g.parent.bounds.rightTop.asArray);
-});
-)
-k.rec.loop;
+// Meta control is available from alt-key shortcuts :
+
+alt-r toggles RECORDING
+alt-p toggles KeyLoop PLAYBACK
+alt-l toggles LOOPED on/off
+alt-f FORKS a (non-looped) task - playOnce
+
+alt-g GUI opens for the KeyLoop
+alt-t TOP focus goes to top control that sets current KeyPlayer
+
+// not done yet
+alt-1..9,0 could go to one of top ten KeyPlayers on buttons.
+
+g.focusToPlayerName(\xs);
+
+k.rec.list.print
 k.rec.startRec;
 k.rec.stopRec;
 
-KeyPlayer(\rand).rec.listInfo;
-KeyPlayer(\rand).rec.printLists;
+k.rec.loop = true;
+k.rec.play;
+k.rec.tempo = 1;
+k.rec.range = 0.25;
+k.rec.lpStart = 0.25;
+k.rec.lpStart = 0.5;
 
-KeyPlayer(\rand).rec.play;
+k.rec.jitter = 0.2;
+k.rec.quantizeTo(1/6);
+k.rec.quantizeTo(1/4);
 
+k.rec.listInfo;
+k.rec.printLists;
 
-CtLoopGui(CtLoop('a'), 10, bounds: 200@200);
+k.rec.play;
 
-
-k.rec.dump;
-
+KeyLoop

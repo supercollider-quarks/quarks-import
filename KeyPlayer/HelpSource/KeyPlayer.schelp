@@ -10,6 +10,34 @@ KeyPlayer allows using the computer keyboard keys for
 executing functions when given keys are pressed or released
 (keyDown and keyUp).
 
+code::
+(
+k = KeyPlayer(\rd);
+"qwertzuiopasdfghjklyxcvbnm".do { |char|
+    var note = (midinote: rrand(36, 96), dur: rrand(0.1, 1.0));
+    k.put(char, { |char| char.postln; note.postln.play });
+};
+)
+	// make a big gui for it - see KeyPlayerGui.help
+g = KeyPlayerGui(k);
+
+
+	// or have KeyPlayer respond to a single button: 
+g.close;
+(
+w = Window("any window", Rect(0,500, 200, 50)).front;
+b = Button(w, Rect(10, 10, 180, 30)).states_([["I am KeyPlayer('rand')"]]);
+b.keyDownAction_({ |view, char, mod, uni| 
+	KeyPlayer(\rd).keyAction(char, mod, uni, which: \down);
+});
+b.keyUpAction_({ |view, char, mod, uni|
+	KeyPlayer(\rd).keyAction(char, mod, uni, which: \up);
+});
+)
+
+::
+
+
 How to link to this file, in quarks/KeyPlayer? link::../KeyPlayerExample.scd::
 
 CLASSMETHODS::
