@@ -110,16 +110,17 @@ EventLoopGui : JITGui {
 				["once", skin.fontColor, skin.offColor],
 				["loop", skin.fontColor, skin.onColor]
 			])
-			.action_({ |but| object.looped = but.value > 0; });
+			.action_({ |but| object.toggleLooped; });
 
 		revBut = Button(zone, Rect(0,0, lineWidth * 0.13, height))
 			.font_(font)
 			.states_([
-				["rev", skin.fontColor, skin.offColor],
-				["fwd", skin.fontColor, skin.onColor]
+				["fwd", skin.fontColor, skin.offColor],
+				["rev", skin.fontColor, skin.onColor]
 			])
 			.action_({ |but|
-				[ { object.reverse }, { object.forward } ][but.value].value;
+				object.flip;
+				but.value_(object.isReversed.binaryValue);
 			});
 	}
 
@@ -169,7 +170,8 @@ EventLoopGui : JITGui {
 			zone.visible_(true);
 			taskGui.name_(newState[\name]);
 			this.parent.name_(object.asString);
-			// taskproxygui should do that
+
+			// taskproxygui should do the name buttons
 			taskGui.nameBut.states_(
 				taskGui.nameBut.states.collect(_.put(0, object.key.asString))
 			).refresh;
@@ -177,8 +179,12 @@ EventLoopGui : JITGui {
 
 		taskGui.checkUpdate;
 
-		// dont check so we overwrite taskGui but state
+		// dont check, so we always overwrite taskGui button state
 		taskGui.envBut.value_(newState[\isRecording]).refresh;
+
+		if (newState[\looped] != prevState[\looped]) {
+			loopBut.value_(newState[\looped]).refresh;
+		};
 
 		if (newState[\isReversed] != prevState[\isReversed]) {
 			revBut.value_(newState[\isReversed]).refresh;

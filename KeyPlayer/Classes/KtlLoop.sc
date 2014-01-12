@@ -1,7 +1,7 @@
 /****
 
 // assume all events are parameter set actions,
-// provide simple facilites for that.
+// provide simple facilities for that.
 // the ones that are numerical can be rescaled and shifted
 
 /* Questions:
@@ -84,6 +84,8 @@ KtlLoop : EventLoop {
 
 KtlLoopGui : EventLoopGui {
 
+		var resetScaleBut, rescaledBut, invBut, infoBut, scalerSl, shiftSl;
+
 
 	// add sliders for scaler, shift,
 	// but rescaled, inv, rstScale;
@@ -97,7 +99,6 @@ KtlLoopGui : EventLoopGui {
 
 	addScaleItems { |lineWidth, height|
 
-		var resetScaleBut, sclBut, invBut, infoBut, scalerSl, shiftSl;
 		zone.decorator.nextLine;
 
 		resetScaleBut = Button(zone, Rect(0,0,lineWidth * 0.2,height))
@@ -107,24 +108,21 @@ KtlLoopGui : EventLoopGui {
 
 		zone.decorator.shift(5, 0);
 
-		sclBut = Button(zone, Rect(0,0, lineWidth * 0.13,height))
+		rescaledBut = Button(zone, Rect(0,0, lineWidth * 0.13,height))
 			.font_(font)
 			.states_([
-				[\rscl, skin.fontColor, skin.offColor],
-				["norm", skin.fontColor, skin.onColor]
+				["norm", skin.fontColor, skin.offColor],
+				["rscld", skin.fontColor, skin.onColor]
 			])
-			.action_({ |but| object.rescaled_(but.value > 0); });
-
+			.action_({ object.rescaled_(object.rescaled.not); 	});
 
 		invBut = Button(zone, Rect(0,0, lineWidth * 0.13,height))
 			.font_(font)
 			.states_([
-				[\inv, skin.fontColor, skin.offColor],
-				[\up, skin.fontColor, skin.onColor]
+				[\up, skin.fontColor, skin.offColor],
+				[\inv, skin.fontColor, skin.onColor]
 			])
-			.action_({ |but|
-				[ { object.invert }, { object.up } ][but.value].value;
-			});
+			.action_({ |but| object.flip });
 
 		zone.decorator.shift(10, 0);
 
@@ -144,11 +142,43 @@ KtlLoopGui : EventLoopGui {
 	getState {
 		var newState = super.getState;
 		if (object.notNil) {
+			newState.put(\rescaled, object.rescaled.binaryValue);
+			newState.put(\inverted, object.isInverse.binaryValue);
 			newState.put(\scaler, object.scaler);
-			newState.put(\inverted, object.isInverse);
 			newState.put(\shift, object.shift);
 		};
 		^newState
+	}
+
+	checkUpdate {
+		var newState = this.getState;
+
+
+		if (newState[\rescaled] != prevState[\rescaled]) {
+			// this is dodgy - this button is nil on the
+			// first update sometimes ... Heisenbug,
+			// but the notNil check seems to fix it.
+			if (rescaledBut.notNil) {
+				rescaledBut.value_(newState[\rescaled]).refresh;
+			};
+		};
+		if (newState[\inverted] != prevState[\inverted]) {
+			invBut.value_(newState[\inverted]).refresh;
+		};
+
+		if (newState[\shift] != prevState[\shift]) {
+			"shift...".postln;
+			shiftSl.value_(newState[\shift]);
+		};
+		if (newState[\scaler] != prevState[\scaler]) {
+			"scaler...".postln;
+			scalerSl.value_(newState[\scaler]);
+		};
+
+		// super.checkUpdate stores prevState
+	//	prevState = newState;
+		super.checkUpdate;
+
 	}
 }
 

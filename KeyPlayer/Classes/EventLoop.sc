@@ -24,9 +24,9 @@ EventLoop {
 		var res = this.at(key);
 		if(res.isNil) {
 			res = super.newCopyArgs(key, func).init.prAdd(key);
+			if(func.notNil) { func = func }
 		} {
-			// not sure we really want that ...
-			if(func.notNil) { res.func = func }
+			// do we want to change func like that?
 		}
 		^res
 	}
