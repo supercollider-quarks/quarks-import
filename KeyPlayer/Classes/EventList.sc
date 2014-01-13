@@ -5,7 +5,7 @@
      to store the events in semantically rich form.
 TimeLoop
 * reserved keys - overwrite at your own risk:
-   delta: is used for storing delta-time between events,
+   relDur: is used for storing delta-time between events,
    dur: is used to calculate actual logical duration,
         e.g. when soft-quantizing an EventList to a time grid.
 
@@ -68,44 +68,44 @@ EventList : List {
 	}
 
 	start { |absTime = 0|
-		this.add((absTime: absTime, type: \start, delta: 0));
+		this.add((absTime: absTime, type: \start, relDur: 0));
 	}
 
 	addEvent { |ev|
 		if (array.size == 0) { this.start(ev[\absTime]) };
 		super.add(ev);
-		this.setDeltaInPrev(ev, this.lastIndex);
+		this.setRelDurInPrev(ev, this.lastIndex);
 	}
 
-	calcDeltas {
+	calcRelDurs {
 		this.doAdjacentPairs { |prev, next|
-			var newDelta = next[\absTime] - prev[\absTime];
-			prev.put(\delta, newDelta);
-			prev.put(\dur, newDelta);
+			var newRelDur = next[\absTime] - prev[\absTime];
+			prev.put(\relDur, newRelDur);
+			prev.put(\dur, newRelDur);
 		};
-		this.last.put(\delta, 0).put(\dur, 0);
+		this.last.put(\relDur, 0).put(\dur, 0);
 	}
 
 	finish { |absTime|
-		this.addEvent((absTime: absTime, type: \end, delta: 0));
+		this.addEvent((absTime: absTime, type: \end, relDur: 0));
 		totalDur = absTime - this.first[\absTime];
 		playingDur = totalDur;
-		this.setDursToDelta;
+		this.setPlayDursToRelDur;
 	}
 
-	setDeltaInPrev { |newEvent, newIndex|
+	setRelDurInPrev { |newEvent, newIndex|
 		var prevEvent;
 		newIndex = newIndex ?? { array.indexOf(newEvent) };
 		prevEvent = array[newIndex - 1];
 
 		if (prevEvent.notNil) {
-			prevEvent[\delta] = newEvent[\absTime] - prevEvent[\absTime];
+			prevEvent[\relDur] = newEvent[\absTime] - prevEvent[\absTime];
 		};
 	}
 
-	setDurs { |func| this.do { |ev| ev.put(\dur, func.value(ev)) } }
+	setPlayDurs { |func| this.do { |ev| ev.put(\playDur, func.value(ev)) } }
 
-	setDursToDelta { this.setDurs({ |ev| ev[\delta] }); }
+	setPlayDursToRelDur { this.setPlayDurs({ |ev| ev[\relDur] }); }
 
 	quantizeDurs { |quant = 0.25, fullDur|
 		var durScaler = 1;
@@ -122,6 +122,6 @@ EventList : List {
 		// leaves end event untouched.
 	}
 	restoreDurs {
-		this.setDursToDelta;
+		this.setDursToRelDur;
 	}
 }
