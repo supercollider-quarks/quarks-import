@@ -9,6 +9,7 @@ EventLoop {
 	var <key, <func;
 	var <list, <task, <isRecording = false;
 	var recStartTime, then;
+	var <>keysToRecord;
 
 	var <verbosity = 1;
 
@@ -23,10 +24,10 @@ EventLoop {
 	*new { arg key, func;
 		var res = this.at(key);
 		if(res.isNil) {
-			res = super.newCopyArgs(key, func).init.prAdd(key);
-			if(func.notNil) { func = func }
+			res = super.newCopyArgs(key).init(func).prAdd(key);
 		} {
-			// do we want to change func like that?
+			// do we want to use the interface
+			// EventLoop(\x, {}) to change the playback func?
 		}
 		^res
 	}
@@ -43,15 +44,15 @@ EventLoop {
 
 	printOn { |stream| ^this.storeOn(stream) }
 
-	init {
-		func = func ?? { this.defaultFunc };
+	init { |argFunc|
+		func = argFunc ?? { this.defaultFunc };
 		lists = EventList[];
 
 		this.initTask;
 		this.prepRec;
 	}
 
-	defaultFunc { ^{ |ev| ev.postln } }
+	defaultFunc { ^{ |ev| ev.postln.copy.play; } }
 
 	// check that it is an EventList?
 	list_ { |inList|
@@ -86,7 +87,7 @@ EventLoop {
 	initTask {
 
 		task = TaskProxy({ |envir|
-			var event, absTime, delta;
+			var event, absTime, relDur;
 			var index = 0, indexOffset = 0, indexPlusOff;
 			var maxIndex, minIndex, indexRange, indexInRange = true;
 
@@ -129,7 +130,7 @@ EventLoop {
 						"i: % - ev: %".format(indexPlusOff, event).postln;
 					};
 
-					(event[\dur] / envir[\tempo]).wait;
+					(event[\playDur] / envir[\tempo]).wait;
 
 					index = (index + envir[\step]);
 					calcRange.value;
@@ -168,23 +169,37 @@ EventLoop {
 		isRecording = true;
 		this.prepRec;
 		task.stop;
-		if (verbosity > 0) { "  %.startRec;\n".postf(this) };
+		if (verbosity > 0) {
+			"  %.startRec; // recording list[%].\n".postf(this, list.size);
+		};
 		if (instant) { list.start(this.getAbsTime); };
 	}
 
 	recordEvent { |event|
+		var recEvent;
 		if (isRecording) {
-			event.putAll(this.getTimes);
-			list.addEvent(event);
-			if (verbosity > 1) { (this.asString + "rec: ").post; event.postcs; };
+			// autostart at 0
+			if (list.size == 0) { list.start(this.getAbsTime); };
+			recEvent = this.getTimes.putAll(event);
+			list.addEvent(recEvent);
+			if (verbosity > 1) {
+				("//" + this.asString + "rec: ").post; recEvent;
+			};
 		}
 	}
 
 	stopRec {
+		if (isRecording.not) { ^this };
+
 		isRecording = false;
 		list.finish(this.getAbsTime);
 		this.addList;
-		if (verbosity > 0) { "  %.stopRec;\n".postf(this) };
+		recStartTime = nil;
+
+		if (verbosity > 0) {
+			"// % stopRec; // recorded list[%] with % events.\n".postf(
+				this, lists.lastIndex, lists.last.size)
+		};
 	}
 
 	toggleRec { |instant=false|
@@ -198,16 +213,16 @@ EventLoop {
 	}
 
 	getTimes {
-		var absTime, delta;
+		var absTime, relDur;
 		var now = thisThread.seconds;
 		if (then.isNil) {
 			then = now;
 			recStartTime = now;
 		};
-		delta = now - then;
+		relDur = now - then;
 		absTime = now - recStartTime;
 		then = now;
-		^(absTime: absTime, delta: delta);
+		^(absTime: absTime, relDur: relDur);
 	}
 
 	prepRec {
@@ -217,11 +232,16 @@ EventLoop {
 		this.resetLoop;
 	}
 
+	next { |inval|
+		this.recordEvent(inval.postln);
+		^this.isRecording.binaryValue
+	}
+
 	// taskproxy for playback interface
 
 	play {
+		this.stopRec;
 		if (verbosity > 0) { "  %.play;\n".postf(this) };
-		isRecording = false;
 		task.stop.play;
 	}
 

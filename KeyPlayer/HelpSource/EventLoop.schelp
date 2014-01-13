@@ -22,6 +22,29 @@ list::
 
 code::
 
+// Simplest example: use EventLoop to record a Pbind
+
+e = EventLoop(\e);
+e.startRec;
+
+(
+Pbind(
+	\note, Pbrown(0, 12, 1, 40),
+	\dur, 0.125,
+	\rec, e
+).play
+)
+
+e.stopRec;
+e.listInfo;
+e.play;
+
+e.list.print;
+
+
+
+	// more detail:
+
 	// make a EventLoop with a name and a func 
 	// the func expects numbers that work as degrees
 e = EventLoop(\u, { |ev| (degree: ev[\deg], dur: 0.1).play; });
@@ -30,7 +53,7 @@ e = EventLoop(\u, { |ev| (degree: ev[\deg], dur: 0.1).play; });
 	// which have an absTime entry, and arbitrary other info.
 	
 	// for example: add a list of ascending notes
-(	// (in actual use, the lists will be recorded)
+(	// (in typical use, the lists will be recorded in real time)
 fork { 
 	e.startRec;		// adds a start event
 	e.recordEvent((deg: 0).postln); 1.wait;

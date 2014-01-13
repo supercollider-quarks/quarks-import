@@ -60,7 +60,7 @@ EventLoopGui : JITGui {
 	}
 
 	makeTaskGui { |lineWidth, height|
-		taskGui = TaskProxyGui(nil, 4, zone, lineWidth@height, makeSkip: false);
+		taskGui = TdefGui(nil, 4, zone, lineWidth@height, makeSkip: false);
 		taskGui.envirGui.specs.putAll(defaultSpecs);
 		taskGui.envirGui.showNewNames_(false);
 
