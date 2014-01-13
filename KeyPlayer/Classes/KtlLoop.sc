@@ -12,11 +12,16 @@
 
 KtlLoop : EventLoop {
 
+	classvar <allKtls;
+
 	var <>paramsToRecord, <currState;
 	var <>object, <>ktlMap;
 
 	var <>scaler=1, <>shift=0.0,
 	<>rescaled=false, <nonRescalableCtls, inverter=1;
+
+	*all { ^allKtls }
+	*initClass { allKtls = () }
 
 	isInverse { ^inverter == -1 }
 	invert { inverter = -1 }
@@ -29,6 +34,7 @@ KtlLoop : EventLoop {
 
 	init {
 		super.init;
+
 		paramsToRecord = [];
 		currState = ();
 		ktlMap = ();

@@ -12,7 +12,14 @@ TimeLoop
 * recording a List is terminated by .finish(absTime),
   which puts an end event at the end of the list.
 
-EventLoop
+e = EventLoop(\x);
+e.startRec;
+e.recordEvent((absTime: 2));
+
+
+(meta: (absTime: x, relDur: y), lx: 0.24, ly: 0.56);
+protected keyNames!
+
 *
 
 a = EventList[];
@@ -117,10 +124,11 @@ EventList : List {
 		this.doAdjacentPairs({ |ev1, ev2|
 			var absNow = (ev2[\absTime] * durScaler).round(quant);
 			var absPrev = (ev1[\absTime] * durScaler).round(quant);
-			ev1.put(\dur, (absNow - absPrev));
+			ev1.put(\playDur, (absNow - absPrev));
 		});
 		// leaves end event untouched.
 	}
+
 	restoreDurs {
 		this.setDursToRelDur;
 	}
