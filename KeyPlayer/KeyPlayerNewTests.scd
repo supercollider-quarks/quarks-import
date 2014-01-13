@@ -7,7 +7,7 @@ s.latency = nil;    // make sure we respond quickly
 thisThread.randSeed = 2014;
 k = KeyPlayer(\rand);
 "qwertzuiopasdfghjklyxcvbnm".do { |char|
-    var note = (midinote: rrand(36, 96), dur: rrand(0.1));
+    var note = (midinote: rrand(36, 96), dur: rrand(0.1, 0.3));
    k.putDown(char, { |char| char; note.play });
 };
 

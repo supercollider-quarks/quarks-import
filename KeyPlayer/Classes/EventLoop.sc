@@ -19,15 +19,17 @@ EventLoop {
 
 	*all { ^allEls }
 
-	*at { |key| ^allEls[key] }
+	*at { |key| ^this.all[key] }
 
 	*new { arg key, func;
 		var res = this.at(key);
 		if(res.isNil) {
-			res = super.newCopyArgs(key).init(func).prAdd(key);
+			func.postcs;
+			res = super.newCopyArgs(key, func).init.prAdd(key);
 		} {
 			// do we want to use the interface
 			// EventLoop(\x, {}) to change the playback func?
+			if (func.notNil) { res.func_(func) };
 		}
 		^res
 	}
@@ -45,11 +47,16 @@ EventLoop {
 	printOn { |stream| ^this.storeOn(stream) }
 
 	init { |argFunc|
-		func = argFunc ?? { this.defaultFunc };
+		func = func ?? { "defaultFunc!".postln; this.defaultFunc };
 		lists = EventList[];
 
 		this.initTask;
 		this.prepRec;
+	}
+
+	func_ { |inFunc|
+		func = inFunc;
+		task.set(\func, func);
 	}
 
 	defaultFunc { ^{ |ev| ev.postln.copy.play; } }
@@ -180,7 +187,15 @@ EventLoop {
 		if (isRecording) {
 			// autostart at 0
 			if (list.size == 0) { list.start(this.getAbsTime); };
-			recEvent = this.getTimes.putAll(event);
+			recEvent = this.getTimes;
+			event.keysValuesDo { |key, val|
+				if (key === \absTime) {
+					warn("" + thisMethod ++ ": can't use 'absTime' as key in event: %!"
+						.format(event));
+				} {
+					recEvent.put(key, val);
+				};
+			};
 			list.addEvent(recEvent);
 			if (verbosity > 1) {
 				("//" + this.asString + "rec: ").post; recEvent;
