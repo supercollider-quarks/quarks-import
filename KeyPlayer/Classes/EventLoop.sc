@@ -109,7 +109,10 @@ EventLoop {
 				indexInRange = (index >= minIndex) and: { index <= maxIndex };
 			};
 
-			if (envir.verbosity > 0) { (envir[\postname] + ": task plays.").postln; };
+			if (envir.verbosity > 0) {
+				(envir[\postname] + "plays list of % events and % secs.")
+				.format(list.size, list.totalDur.round(0.01)).postln;
+			};
 
 			calcRange.value;
 			index = if (envir[\step] > 0, minIndex, maxIndex);

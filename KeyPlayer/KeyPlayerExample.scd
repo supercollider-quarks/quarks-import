@@ -1,8 +1,15 @@
 /*********
-	a.device.device.elements.do(_.dump)
 
-	To DO:
-	* fast/slow, more/less rand not working.
+KeyPlayer example with 9 random synth percussion presets:
+
+Type 1 - 9 to select a preset of sounds;
+type Q, W, E, etc to play sounds
+
+type alt-r to toggle/record a loop
+type alt-p to play it
+
+click on lgui button to open a KeyLoopGui
+
 *********/
 
 s.boot;
@@ -50,14 +57,11 @@ q = q ? ();	// a dict for keeping things
 q.fmod = KeyPlayer(\fmod);
 q.fmod.makeLoop;
 
-	// recording commands
-q.fmod.put($,, { q.fmod.rec.startRec });
-q.fmod.put($., { q.fmod.rec.stopRec.stop });
-q.fmod.put($/, { q.fmod.rec.play });	// US keyboard, German: $-
-
-  	// space for fixed events for all keys, times 9 presets
+  	// space for fixed events for all keys,
+    // times 9 presets
 q.fmodEvents = ();
-	// global keyplayer variables
+
+	// global variables that keyplayer will look up
 q.fmods = ();
 q.fmods.rand = 0.1;
 q.fmods.amp = 0.1;
@@ -98,12 +102,10 @@ q.makeFmods = { |q, seed = 2008, time=1, range=0|
 	})
 };
 
-
-q.fmodWin = q.fmod.gui.w;
+q.fmodWin = q.fmod.gui.parent;
 q.fmodWin.bounds_(q.fmodWin.bounds  + (0@100));
 	// slider that write into the envir:
 EZSlider(q.fmodWin, 400@20, \vol, \amp, { |ez| q.fmods.amp = ez.value }, q.fmods.amp, false, 50, 50 );
 EZSlider(q.fmodWin, 400@20, \rand, \amp, { |ez| q.fmods.rand = ez.value }, q.fmods.rand, false, 50, 50 );
-EZSlider(q.fmodWin, 400@20, \lspeed, [0.1, 10, \exp, 0.0, 1], { |ez| q.fmod.rec.speed = ez.value }, q.fmod.rec.speed, false, 50, 50 );
 );
 

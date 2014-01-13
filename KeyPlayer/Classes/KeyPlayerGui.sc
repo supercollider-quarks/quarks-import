@@ -17,6 +17,7 @@ g.object.putUp($x, {"x up!".postln }, both: true);
 
 g.object.putUp($y, {"y up only!".postln }, both: true);
 
+KeyPlayerGui.keyboard.join.size
 options:
     attach little KeyLoopGui on the side?
     future: make whole gui with Pen for elegant rescaling?
@@ -35,6 +36,7 @@ KeyPlayerGui : JITGui {
 
 	var <buttons, <drags, <font, <listView;
 	var <>activeColor;
+	var <dragZone;
 
 	*initClass {
 
@@ -71,11 +73,15 @@ KeyPlayerGui : JITGui {
 	setDefaults { |options|
 		var minWidth, minHeight;
 		if (options.includes(\useList)) {
-			minWidth = 480;
-			minHeight = 170;
+			minWidth = 480; minHeight = 170;
 		} {
-			minWidth = 420; minHeight = 150;
-			minHeight = minHeight + (numItems * skin.buttonHeight + skin.headHeight);
+			// if (options.includes(\butLeft)) {
+			// 	//	minWidth = 540; minHeight = 170;
+			// } {
+				minWidth = 420; minHeight = 150;
+				minHeight = minHeight +
+				(numItems * skin.buttonHeight + skin.headHeight);
+		// };
 		};
 
 		if (parent.isNil) {
@@ -115,11 +121,15 @@ KeyPlayerGui : JITGui {
 
 	object_ { |obj|
 		if(this.accepts(obj).not) { ^this };
+
+		if (object.notNil) { object.deactivate; };
+
 		object = obj;
 		if (obj.notNil) {
 			parent.asView.keyDownAction_(object.makeKeyDownAction);
 			parent.asView.keyUpAction_(object.makeKeyUpAction);
 			this.addAltFuncs;
+			object.activate;
 		};
 	}
 
@@ -217,11 +227,22 @@ KeyPlayerGui : JITGui {
 			zone.decorator.nextLine;
 			zone.decorator.bounds = zone.bounds.left_(64);
 			zone.decorator.top_(zone.bounds.top);
+			dragZone = CompositeView(zone, zone.bounds);
 		} {
-			this.makeButtons;
+			if (options.includes(\butLeft)) {
+				this.makeButtonsLeft;
+				zone.decorator.bounds = zone.bounds.left_(150);
+				zone.decorator.top_(zone.bounds.top);
+				dragZone = CompositeView(zone,
+					zone.bounds.resizeBy(-10, 0));
+			} {
+				this.makeButtons;
+				dragZone = CompositeView(zone, zone.bounds);
+			};
 			// this.miniLoopCtl;
 			// zone.decorator.nextLine;
 		};
+
 		this.makeDrags;
 	}
 
@@ -236,6 +257,7 @@ KeyPlayerGui : JITGui {
 
 	makeButtons {
 		var keys = KeyPlayer.all.keys.asArray.sort;
+
 		var navButL, navButR;
 
 	//	navButL = Button(zone, Rect(0, 0, 14, 14)).states_([[ "<" ]]);
@@ -257,6 +279,31 @@ KeyPlayerGui : JITGui {
 	//	navButR = Button(zone, Rect(0, 0, 14, 14)).states_([[ ">" ]]);
 	}
 
+	makeButtonsLeft {
+		var keys = KeyPlayer.all.keys.asArray.sort;
+		var butZone = CompositeView(zone, Rect(2,2, 110,160));
+		var navButL, navButR;
+
+	//	navButL = Button(zone, Rect(0, 0, 14, 14)).states_([[ "<" ]]);
+
+	//	zone.decorator.shift(20, 0);
+
+		butZone.addFlowLayout;
+		buttons = 16.collect { |i|
+			Button(butZone, Rect(0, 0, 48, 16)).states_([[ keys[i] ? "-" ]])
+				.action_({ |b|
+					var nuKP = KeyPlayer.all[b.states[0][0]];
+					if (nuKP.notNil) { this.object_(nuKP); };
+					this.checkUpdate;
+				})
+		};
+
+		Button(butZone, Rect(0, 0, 50, 18)).states_([[ "lgui" ]])
+		.action_({ if (object.notNil) { this.openLoopGui; } });
+
+	//	navButR = Button(zone, Rect(0, 0, 14, 14)).states_([[ ">" ]]);
+	}
+
 	// miniLoopCtl {
 	// 	Button(zone, Rect(0, 0, 18, 18)).states_([[\P], [\_], ['|']]);
 	// 	Button(zone, Rect(0, 0, 18, 18)).states_([[\R], [\_]]);
@@ -267,6 +314,8 @@ KeyPlayerGui : JITGui {
 
 	makeDrags {
 
+		dragZone.addFlowLayout;
+
 		font = Font("Courier-Bold", 14);
 		drags = ();
 
@@ -275,8 +324,8 @@ KeyPlayerGui : JITGui {
 			row.do {|key| this.makeKey(key) };
 			if (i==0) { this.makeKey(127.asAscii, "del", 38 @ 24) };
 			if (i==2) { this.makeKey($\r, "retrn", 46 @ 24) };
-			zone.decorator.nextLine;
-			zone.decorator.shift(lineOffsets[i]);
+			dragZone.decorator.nextLine;
+			dragZone.decorator.shift(lineOffsets[i]);
 		};
 
 		this.makeKey($ , "space", 150 @ 24);
@@ -289,8 +338,8 @@ KeyPlayerGui : JITGui {
 		keyname = keyname ? char.asString;
 		bounds = bounds ? (24 @ 24);
 
-		v = DragBoth(zone, bounds);
-		v.font = font;
+		v = DragBoth(dragZone, bounds);
+		// v.font = font;
 		v.string = keyname;
 		v.align = \center;
 		v.setBoth = false;
