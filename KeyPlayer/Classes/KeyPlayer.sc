@@ -1,7 +1,6 @@
 /*
 
 - KeyPlayer should be able to save/write and load as code
-- can KeyPlayer be ut into a single button?
 
 
 */
@@ -12,6 +11,7 @@ KeyPlayer {
 	var <key, <actions, <upActions, <bothActions, <pressed;
 	var <altActions;
 	var <>rec;
+	var <>activateFunc, <>deActivateFunc;
 
 	*initClass {
 		all = ();
@@ -65,7 +65,19 @@ KeyPlayer {
 		this.putAlt($f.asUnicode, { this.rec.playOnce; });
 	}
 
+	activate {
+		"% got activated.\n".postf(this);
+		activateFunc.value(this);
+	}
+
+	deactivate {
+		"% got deactivated.\n".postf(this);
+		deActivateFunc.value(this);
+	}
+
+
 	storeArgs { ^[key] }
+	printOn { |stream| ^this.storeOn(stream) }
 
 	*gui { if (gui.isNil or: { gui.parent.isClosed }){ gui = KeyPlayerGui() }; ^gui.front; }
 

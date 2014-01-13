@@ -130,6 +130,6 @@ EventList : List {
 	}
 
 	restoreDurs {
-		this.setDursToRelDur;
+		this.setPlayDursToRelDur;
 	}
 }
