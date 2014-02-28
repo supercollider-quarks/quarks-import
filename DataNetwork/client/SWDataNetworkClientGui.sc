@@ -6,29 +6,29 @@ SWDataSlotClientGui : SWDataSlotGui {
 	addSubButton{
 		sub = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Sub", Color.blue ], ["Uns", Color.red ] ] ).action_( {
-				|but| parent.subSlot( slot.id, but.value ); 
+				|but| parent.subSlot( slot.id, but.value );
 			}).font_( font );
 	}
 
 	addGetButton{
 		get = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Get", Color.blue ] ] ).action_( {
-				|but| parent.getSlot( slot.id ); 
+				|but| parent.getSlot( slot.id );
 			}).font_( font );
 	}
 
 	parent_{ |p|
 		parent = p;
 		super.parent_( p );
-		sub.mouseOverAction = { parent.setInfo( "[Sub]scribe or [uns]ubscribe to this slot." ) };	
-		get.mouseOverAction = { parent.setInfo( "Get the value of this slot." ) };	
+		sub.mouseOverAction = { parent.setInfo( "[Sub]scribe or [uns]ubscribe to this slot." ) };
+		get.mouseOverAction = { parent.setInfo( "Get the value of this slot." ) };
 	}
 
 }
 
 SWDataNodeClientGui : SWDataNodeGui {
-	classvar <>xsize = 310;
-	classvar <>xsizeBig = 263;
+	classvar <>xsize = 330;
+	classvar <>xsizeBig = 283;
 
 	classvar <slottype;
 
@@ -46,7 +46,7 @@ SWDataNodeClientGui : SWDataNodeGui {
 
 		get = GUI.button.new( cw, Rect( 0, 0, 25, 16 )).states_(
 			[ [ "Get", Color.blue ] ] ).action_( {
-				|but| parent.getNode( node.id ); 
+				|but| parent.getNode( node.id );
 			}).font_( font );
 	}
 
@@ -60,7 +60,7 @@ SWDataNodeClientGui : SWDataNodeGui {
 			if ( bigNode.notNil ){ bigNode.setSetter( onoff ); };
 			sub.enabled = onoff.not;
 			get.enabled = onoff.not;
-			slots.do{ |it| 
+			slots.do{ |it|
 				it.sub.enabled = onoff.not;
 				it.get.enabled = onoff.not;
 			};
@@ -68,16 +68,16 @@ SWDataNodeClientGui : SWDataNodeGui {
 	}
 
 	setSub{ |onoff|
-		defer{ 
+		defer{
 			sub.value = onoff;
 			if ( bigNode.notNil ){ bigNode.setSub( onoff ); };
 			// subscribed to node, no need to subscribe to slot;
 			get.enabled = onoff.booleanValue.not;
-			slots.do{ |it| 
+			slots.do{ |it|
 				it.sub.enabled = onoff.booleanValue.not;
 				it.get.enabled = onoff.booleanValue.not;
 			};
-		};		
+		};
 	}
 
 	setSlotSub{ |id,onoff|
@@ -93,8 +93,8 @@ SWDataNodeClientGui : SWDataNodeGui {
 	parent_{ |p|
 		parent = p;
 		super.parent_(p);
-		sub.mouseOverAction = { parent.setInfo( "[Sub]scribe or [uns]ubscribe to this node." ) };	
-		get.mouseOverAction = { parent.setInfo( "Get the values of this node." ) };	
+		sub.mouseOverAction = { parent.setInfo( "[Sub]scribe or [uns]ubscribe to this node." ) };
+		get.mouseOverAction = { parent.setInfo( "Get the values of this node." ) };
 	}
 
 	bigNode_{ |bn|
@@ -143,32 +143,32 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query expected", Color.blue ] ] ).action_( {
-				|but| network.queryExpected; 
+				|but| network.queryExpected;
 			}).font_( font );
 
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query nodes", Color.blue ] ] ).action_( {
-				|but| network.queryNodes; 
+				|but| network.queryNodes;
 			}).font_( font );
 
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query slots", Color.blue ] ] ).action_( {
-				|but| network.querySlots; 
+				|but| network.querySlots;
 			}).font_( font );
 
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query clients", Color.blue ] ] ).action_( {
-				|but| network.queryClients; 
+				|but| network.queryClients;
 			}).font_( font );
 
 		GUI.button.new( w, Rect( 0, 0, bs + 15, 16 )).states_(
 			[ [ "Query subscriptions", Color.blue ] ] ).action_( {
-				|but| network.querySubscriptions; 
+				|but| network.querySubscriptions;
 			}).font_( font );
 
 		GUI.button.new( w, Rect( 0, 0, bs, 16 )).states_(
 			[ [ "Query setters", Color.blue ] ] ).action_( {
-				|but| network.querySetters; 
+				|but| network.querySetters;
 			}).font_( font );
 
 
@@ -196,7 +196,7 @@ SWDataNetworkClientGui : SWDataNetworkGui{
 			network.subscribeNode( nodeid );
 		}{
 			network.unsubscribeNode( nodeid );
-		}		
+		}
 	}
 
 	setSetter{ |nodeid|
