@@ -116,10 +116,10 @@ Airports {
 		^this.data.collect(function);
 	}
 	*select {|function|
-		^this.select(function);
+		^this.data.select(function);
 	}
 	*at{|idx|
-		^this.at(idx)
+		^this.data.at(idx)
 	}
 	*inCountry {|country = \GERMANY|
 		country = country.asArray;
