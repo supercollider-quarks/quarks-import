@@ -1,7 +1,8 @@
 /*
 
 - KeyPlayer should be able to save/write and load as code
-
+- well, if one makes lots of functions programmatically, 
+they will be open functions...
 
 */
 
@@ -57,12 +58,12 @@ KeyPlayer {
 	}
 
 	makeDefaultMetaActions {
-		// put in some alt-commands for the KeyLoop:
-		this.putAlt($r.asUnicode, { this.rec.toggleRec });
-		this.putAlt($p.asUnicode, { this.rec.togglePlay });
-		this.putAlt($l.asUnicode, { this.rec.toggleLooped });
-
-		this.putAlt($f.asUnicode, { this.rec.playOnce; });
+			// put in some alt-commands for the KeyLoop: 
+			// must be keycodes, alt-unicode does not work.
+		this.putAlt(31, { this.rec.toggleRec });     	// alt-o = 31 keycode
+		this.putAlt(35, { this.rec.togglePlay });    	// alt-p = 35
+		this.putAlt(37, { this.rec.toggleLooped });  	// alt-l = 37
+		this.putAlt(34, { this.rec.playOnce; });     	// alt-i = 34
 	}
 
 	activate {
@@ -172,9 +173,8 @@ KeyPlayer {
 	}
 
 	doMetaAction { |char, modifiers, unicode, keycode, which|
-
 		if (which == \down) {
-			altActions[unicode].value(char, modifiers, unicode, keycode);
+			altActions[keycode].value(char, modifiers, unicode, keycode);
 		};
 	}
 

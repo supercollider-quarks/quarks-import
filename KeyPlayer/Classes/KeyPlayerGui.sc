@@ -34,7 +34,7 @@ KeyPlayerGui : JITGui {
 	classvar <>keyboardNoShift;
 	classvar <>keyboardShift;
 
-	var <buttons, <drags, <font, <listView;
+	var <buttons, <drags, <font, <listView, <lpGuiBut;
 	var <>activeColor;
 	var <dragZone;
 
@@ -189,6 +189,8 @@ KeyPlayerGui : JITGui {
 			var keyExists = keys[i].notNil;
 			b.states_([[key ? "", Color.black, col]]).enabled_(keyExists);
 		};
+		
+		lpGuiBut.enabled_(object.notNil and: { object.rec.notNil });
 
 		listView !? { listView.items_(keys).value_(myIndex); };
 	}
@@ -268,13 +270,15 @@ KeyPlayerGui : JITGui {
 			Button(zone, Rect(0, 0, 34, 16)).states_([[ keys[i] ? "-" ]])
 				.action_({ |b|
 					var nuKP = KeyPlayer.all[b.states[0][0]];
-					if (nuKP.notNil) { this.object_(nuKP); };
+					if (nuKP.notNil) { this.object_(nuKP); 
+					};
 					this.checkUpdate;
+					b.focus(false);
 				})
 		};
 
-		Button(zone, Rect(0, 0, 34, 18)).states_([[ "lgui" ]])
-		.action_({ if (object.notNil) { this.openLoopGui; } });
+		lpGuiBut = Button(zone, Rect(0, 0, 34, 18)).states_([[ "lpGui" ]])
+		.action_({ this.openLoopGui; });
 
 	//	navButR = Button(zone, Rect(0, 0, 14, 14)).states_([[ ">" ]]);
 	}
@@ -374,8 +378,12 @@ KeyPlayerGui : JITGui {
 	}
 
 	openLoopGui {
-		var loopgui = EventLoopGui(object.rec);
-		var coords;
+		var loopgui, coords; 
+		if (object.isNil or: { object.rec.isNil }) { 
+			"no object or no loop, so no loopgui.".postln;
+			^this
+		};
+		loopgui = EventLoopGui(object.rec);
 		if (parent.isClosed.not) {
 			coords = parent.bounds.rightTop;
 			loopgui.moveTo(coords.x, coords.y);

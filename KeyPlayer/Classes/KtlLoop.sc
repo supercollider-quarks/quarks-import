@@ -48,9 +48,9 @@ KtlLoop : EventLoop {
 	}
 
 	rescaleEvent { |event|
-		paramsToRecord.removeAll(nonRescalableCtls).do { |par|
-			var val = event[par];
-			if (val.notNil) {
+		event.keysValuesDo { |par, val|
+			if (nonRescalableCtls.indexOf(par).isNil) {
+				// replace with rescaled value
 				val = this.rescaleVal(val);
 				event.put(par, val);
 			};
@@ -139,10 +139,12 @@ KtlLoopGui : EventLoopGui {
 		scalerSl = EZSlider(zone, lineWidth@height, \scale, [0.0, 4, \amp],
 			{ |sl| object.scaler = sl.value }, 1, labelWidth: 40)
 		.font_(font);
+		scalerSl.view.resize_(2);
 
 		shiftSl = EZSlider(zone, lineWidth@height, \shift, [-0.5, 0.5],
 			{ |sl| object.shift = sl.value }, 0, labelWidth: 40)
 		.font_(font);
+		shiftSl.view.resize_(2);
 	}
 
 	getState {
@@ -173,11 +175,9 @@ KtlLoopGui : EventLoopGui {
 		};
 
 		if (newState[\shift] != prevState[\shift]) {
-			"shift...".postln;
 			shiftSl.value_(newState[\shift]);
 		};
 		if (newState[\scaler] != prevState[\scaler]) {
-			"scaler...".postln;
 			scalerSl.value_(newState[\scaler]);
 		};
 

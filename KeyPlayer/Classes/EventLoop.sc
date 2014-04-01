@@ -24,7 +24,6 @@ EventLoop {
 	*new { arg key, func;
 		var res = this.at(key);
 		if(res.isNil) {
-			func.postcs;
 			res = super.newCopyArgs(key, func).init.prAdd(key);
 		} {
 			// do we want to use the interface
@@ -249,7 +248,7 @@ EventLoop {
 		then = recStartTime = nil;
 		this.resetLoop;
 	}
-
+	// support simple pattern recording
 	next { |inval|
 		this.recordEvent(inval.postln);
 		^this.isRecording.binaryValue
