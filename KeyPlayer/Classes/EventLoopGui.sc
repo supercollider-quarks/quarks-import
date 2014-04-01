@@ -23,7 +23,7 @@ EventLoopGui : JITGui {
 
 	setDefaults { |options|
 		defPos = 10@260;
-		minSize = 260 @ (skin.buttonHeight * 6 + 10);
+		minSize = 270 @ (skin.buttonHeight * 6 + 10);
 		if (parent.notNil) { skin = skin.copy.put(\margin, 0@0) };
 	//	"% - minSize: %\n".postf(this.class, minSize);
 	}
@@ -52,6 +52,8 @@ EventLoopGui : JITGui {
 		if (obj == object) {
 			if (object.notNil) {
 				taskGui.object_(object.task);
+				taskGui.name_(object.key);
+				this.name_(object.key);
 			} {
 				taskGui.object_(nil);
 			};
@@ -169,7 +171,7 @@ EventLoopGui : JITGui {
 		if (newState[\name] != prevState[\name]) {
 			zone.visible_(true);
 			taskGui.name_(newState[\name]);
-			this.parent.name_(object.asString);
+		//	this.parent.name_(object.asString);
 
 			// taskproxygui should do the name buttons
 			taskGui.nameBut.states_(
