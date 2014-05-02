@@ -49,7 +49,6 @@ TabbedView2{
 		var w, col;
 		context = GUI.current; // The context is set globally, in case you change gui kits and
 		pen     = context.pen;
-
 		/*** Set the Parent View or make a Window, and add a container for the tabs ***/
 		w=parent;
 		w.isNil.if{ window = w = Window("***",bounds).front;
@@ -104,11 +103,12 @@ TabbedView2{
 		tab.stringFocusedColor=stringFocusedColors[ index%stringFocusedColors.size ];
 		tab.unfocusedColor=unfocusedColors[ index%unfocusedColors.size ];
 
-		tab.tabWidth = tabWidth; // this also refreshes the view
+		tab.tabWidth = tabWidth;
 		if(tabViews.size==1){ // you want to do this to initially set the history, etc.
 			activeTab=tab;	// in other cases, it's up to the user what to focus.
 			tab.focus;
-		}
+		};
+		{0.1.wait;this.refresh}.fork(AppClock);
 		^tab;
 
 	}
@@ -310,9 +310,9 @@ TabbedView2{
 			closable.if{closepadding = clickbox};
 			useDetachIcon.if{detachpadding = clickbox};
 			// calculate space for icons
-			if(useDetachIcon ||closable ){padding = closepadding + detachpadding + (0.5*(closepadding + detachpadding))};
+			if(useDetachIcon ||closable ){padding = (closepadding + detachpadding)};
 			if ( tab.tabWidth.asSymbol == \auto )
-				{tab.tbwdth = this.stringBounds(tab.label.asString,font).width + labelPadding+padding;}
+				{tab.tbwdth = (this.stringBounds(tab.label.asString,font).width + labelPadding+padding);}
 				{tab.tbwdth=tab.tabWidth};
 
 		};
