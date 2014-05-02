@@ -3,9 +3,9 @@
 	\path: 		"TabbedView2_QT",
 	\summary:	"Important QT Additions for the TabbedView2 Quark",
 	\author: 		"Jost Muxfeldt",
-	\version:		1.01,  // must be a float
+	\version:		1.04,  // must be a float
 	\helpdoc: 		"TabbedViewView.schelp",
 	isCompatible:	{ 'QtGUI'.asClass.notNil },
 	\url:           "http://www.glyph.de"
-	
+
 )
