@@ -7,7 +7,6 @@
 TabbedViewView :  QView{
 	var <>onBeginClose;
 
-
   remove {
 	onBeginClose.value(this);
 	^super.remove;
