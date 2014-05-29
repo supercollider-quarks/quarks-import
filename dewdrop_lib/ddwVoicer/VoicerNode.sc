@@ -54,11 +54,9 @@ SynthVoicerNode {
 		ar.notNil.if({
 			out = Array.new;
 			ar.pairsDo({ |name, value|
-				(#[\freq, \freqlag, \gate, \t_gate, \out, \outbus].includes(name.asSymbol).not and:
-						{ this.testArgClass(value) })
-					.if({
+				if(#[\freq, \freqlag, \gate, \t_gate, \out, \outbus].includes(name.asSymbol).not) {
 					out = out ++ [name.asSymbol, value];
-				});
+				};
 			});
 		}, {
 			out = Array(initArgDict.size * 2);
@@ -76,7 +74,7 @@ SynthVoicerNode {
 	initArgAt { |name| ^initArgDict[name.asSymbol] }
 
 		// this test is split out of the above in case future subclasses need a different test
-	testArgClass { |argValue| ^argValue.asTestUGenInput.isValidSynthArg }
+	// testArgClass { |argValue| ^argValue.asTestUGenInput.isValidSynthArg }
 
 	triggerMsg { arg freq, gate = 1, args;
 		var bundle, args2;
