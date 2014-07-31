@@ -200,7 +200,7 @@ EventLoop {
 			};
 			list.addEvent(recEvent);
 			if (verbosity > 1) {
-				("//" + this.asString + "rec: ").post; recEvent;
+				("//" + this.asString + "rec: ").post; recEvent.postln;
 			};
 		}
 	}
@@ -250,7 +250,7 @@ EventLoop {
 	}
 	// support simple pattern recording
 	next { |inval|
-		this.recordEvent(inval.postln);
+		this.recordEvent(inval);
 		^this.isRecording.binaryValue
 	}
 
