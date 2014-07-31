@@ -15,9 +15,7 @@ EXAMPLES::
 code::
 // The API key should be set before any request
 
-//Freesound2.api_key="<your_api_key_here>";
-
-Freesound2.api_key="048ca11bd6d343de9377d232ac67ee83";
+Freesound2.api_key="<your_api_key_here>";
 
 
 s = Server.internal.boot
