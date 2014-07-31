@@ -1,5 +1,8 @@
 /****
 
+/// make an example with a synth, and simple set message,
+/// spec/scaling by hand !
+
 // assume all events are parameter set actions,
 // provide simple facilities for that.
 // the ones that are numerical can be rescaled and shifted
