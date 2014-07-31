@@ -107,12 +107,17 @@ GamePad {
 	*putProxy { |pos, proxy, map| 
 		// only works if currentEnvironment is a proxyspace. 
 		// may be made more general later.
-		var ctLoop = CtLoop(pos, map).rescaled_(true)
-			.dontRescale([\midL, \midR, \lHat, \rHat]); 
+		var ctLoop;
 		
 		if (proxy.isKindOf(Symbol)) { 
 			proxy = this.findProxy(proxy);
 		};
+		
+		[proxy, map].postcs;
+		
+		ctLoop = CtLoop(pos, map).rescaled_(true)
+			.dontRescale([\midL, \midR, \lHat, \rHat]); 
+		
 		
 		space.put(pos, (
 			name: name, 
