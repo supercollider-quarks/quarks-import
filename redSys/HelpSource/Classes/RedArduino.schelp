@@ -9,7 +9,7 @@ This class can be used for uploading sketches to an Arduino from SuperCollider v
 NUMBEREDLIST::
 ## Download the bootloader AudioBoot_V2_0 from http://www.hobby-roboter.de/forum/viewtopic.php?f=4&t=127
 ## Burn it to a ATmega168 chip using STK500, USBtinyISP or similar avr programmer.
-## code::avrdude -v -p m168 -b 115200 -P /dev/tty.PL2303-000013FA -c stk500v2 -U flash:w:/Users/Stirling/Desktop/AudioBoot_V2_0/Atmega_Source/chAudioBoot_ATMEGA168_IN_PD1_LED_PB5.hex -U lfuse:w:0xE2:m -U hfuse:w:0xDF:m::
+## code::avrdude -v -p m168 -b 115200 -P /dev/tty.PL2303-000013FA -c stk500v2 -U flash:w:/Users/Stirling/Desktop/AudioBoot_V2_0/Atmega_Source/chAudioBoot_ATMEGA168_IN_PD1_LED_PB5.hex -U lfuse:w:0xE2:m -U hfuse:w:0xDF:m -U efuse:w:0xFA:m::
 ## Build the barebone arduino circuit from http://www.hobby-roboter.de/forum/viewtopic.php?f=4&t=128&p=531
 ::
 
