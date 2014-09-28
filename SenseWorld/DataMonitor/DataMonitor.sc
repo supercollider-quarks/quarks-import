@@ -7,11 +7,11 @@ SWDataMonitor {
 	var <>plotFunction;
 	var <>skip;
 
-	var <>data;
-	var <>watcher;
-	var <>counter;
+	var <data;
+	var <watcher;
+	var counter;
 
-	*new{ |updater,length,plotter,nc=1,dt=0.1,skip=1|		
+	*new{ |updater,length,plotter,nc=1,dt=0.1,skip=1|
 		^super.newCopyArgs( dt, length, nc, updater, plotter, skip ).init;
 	}
 
@@ -31,12 +31,12 @@ SWDataMonitor {
 			};
 		}, dt, autostart: false );
 	}
-	
+
 	reset{
 		counter = 0;
 		data = Array.fill( length, 0 );
 	}
-	
+
 	start{
 		watcher.start;
 	}
@@ -56,7 +56,7 @@ SWPlotterMonitor{
 	var <>plotter;
 	var <>monitor;
 
-	*new{ |updater,length,nc=1,dt=0.1,skip=1|		
+	*new{ |updater,length,nc=1,dt=0.1,skip=1|
 		^super.new.init( updater,length,nc,dt,skip );
 	}
 
