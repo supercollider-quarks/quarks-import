@@ -84,7 +84,12 @@ Verbosity {
 		switch( target,
 			\post, { string.postln },
 			\doc, { this.createDoc; doc.string_( string ); doc.front; },
-			\win, { this.createDoc; doc.view.children.first.string_( string ); doc.front; }
+			\win, {
+				this.createDoc;
+				string = string ++ "\n" ++ doc.view.children.first.string;
+				doc.view.children.first.string_( string );
+				doc.front;
+			}
 		);
 	}
 
