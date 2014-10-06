@@ -1,9 +1,11 @@
-SignalCharacterics {
+SignalCharacteristics {
 
     var <>maxsize;
 
     var <data, <times, <lastTime;
     var <resdata, <stepdata, <timeresdata;
+
+	var first = true;
 
     *new{ |maxsize|
         ^super.new.maxsize_( maxsize ).init;
@@ -33,12 +35,20 @@ SignalCharacterics {
 
     addValue{ |newval|
         var thistime = Process.elapsedTime;
+		if ( first ){
+			lastTime = thistime;
+			first = false;
+		};
         times = times.add( thistime - lastTime );
         lastTime = thistime;
         if ( times.size > ( maxsize-1 ) ){ times = times.drop(1) };
         data = data.add( newval );
         if ( data.size > maxsize ){ data = data.drop(1); };
     }
+
+	empty{
+		^( data.size < 5 );
+	}
 
     totalTime{
         ^times.sum;
@@ -73,19 +83,42 @@ SignalCharacteristicsGui {
 
     var <updater;
 
+	var wasEmpty;
+
     *new{ |signal|
         ^super.new.signalc_( signal ).init;
     }
 
     init{
-
-        signalc.calcResolution;
-
         window = Window.new( "data characteristics", Rect( 0,0, 900, 300 ), scroll: false );
         window.addFlowLayout( 0@0, 0@0 );
 
         subwin = CompositeView.new( window, Rect( 0,0,300, 300 ) );
         subwin.addFlowLayout( 2@2, 2@2 );
+
+		if ( signalc.empty.not ){
+			this.fillWindow;
+		}{
+			wasEmpty = true;
+		};
+
+		window.front;
+
+        updater = SkipJack.new( {
+			if ( wasEmpty and: signalc.empty.not ){
+				this.fillWindow;
+			};
+			if ( wasEmpty.not ){
+				signalc.calcResolution;
+				this.updateVals;
+			};
+		}, 0.2, { window.isClosed } );
+	}
+
+	fillWindow{
+
+        signalc.calcResolution;
+
 
         dataLabel = StaticText.new( subwin, Rect( 0,0, 294, 20 ) ).string_( "Data" ).align_( \center ).background_( Color.green );
         medianNumber = EZNumber.new( subwin, Rect( 0,0, 145, 20 ), "median", initVal: signalc.median ).round_( 0.0001 ).numberView.decimals_( 4 );
@@ -151,9 +184,8 @@ SignalCharacteristicsGui {
         sampleHistoPlot.domainSpecs_( [ signalc.times.minItem, signalc.times.maxItem].asSpec );
         sampleHistoPlot.refresh;
 
-        window.front;
+		wasEmpty = false;
 
-        updater = SkipJack.new( { signalc.calcResolution; this.updateVals }, 0.2, { window.isClosed } );
     }
 
     updateVals{
