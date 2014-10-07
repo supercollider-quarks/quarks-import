@@ -1,6 +1,7 @@
 TITLE:: SignalCharacteristics
 summary:: Calculates properties of a timebased signal
-categories:: SenseWorld, Control
+categories:: Control
+related:: Classes/SignalCharacteristicsGui
 
 DESCRIPTION::
 SignalCharacteristics analyses data properties and allows you to display these in a gui.
