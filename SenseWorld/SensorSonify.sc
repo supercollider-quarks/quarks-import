@@ -39,7 +39,6 @@ SensorSonificator{
 }
 
 SensorSonificatorSynth{
-	classvar <defaultArgs;
 	classvar <synthDescLib;
 	var <synth;
 	var <group;
@@ -64,7 +63,7 @@ SensorSonificatorSynth{
 				EnvGen.kr( Env.perc, trig, levelScale: amp, timeScale: dur )*
 				SinOsc.ar( min(freq + (fmmod*time),20000) )
 			);
-		}).memStore( \SensorSonification );
+		}).add( \SensorSonification );
 
 		// Sonify the value as frequency. As the rate of change is faster, the amplitude goes up (silent when no change, fade out is longer than fade in).
 		SynthDef( \valueSonify, { |inbus=0,outbus=0,bfreq=300,freqr=100,amp=0.001,slmul=0.1,lagt=0.3,lagdt=1,rq=0.1|
@@ -75,7 +74,7 @@ SensorSonificatorSynth{
 			sig = Mix.new( SinOsc.ar( freq*[1,1.25,1.5,2], 0, 1/(1..4) ) );
 			sig = BPF.ar( sig, bfreq, rq );
 			Out.ar( outbus, sig*slamp.lag2(lagt,lagdt) * AmpCompA.kr( freq ) );
-		}).memStore( \SensorSonification );
+		}).add( \SensorSonification );
 
 		SynthDef( \inrangeSonify, { |inbus=0, outbus=0, amp=0.5, freq=200, dur=0.3, lo=0.7,hi=1|
 			var trig,time;
@@ -84,7 +83,7 @@ SensorSonificatorSynth{
 				EnvGen.kr( Env.adsr( releaseTime: dur ), trig, levelScale: amp )*
 				SinOsc.ar( min(freq,20000) ) * trig;
 			);
-		}).memStore( \SensorSonification );
+		}).add( \SensorSonification );
 	}
 
 
