@@ -15,7 +15,7 @@ METHOD:: kr
 Calculates the skewness of a control rate signal.
 
 ARGUMENT:: input
-The signal to calculate the standard deviation of.
+The signal to calculate the skewness of.
 
 ARGUMENT:: length
 The length in samples of the window.
