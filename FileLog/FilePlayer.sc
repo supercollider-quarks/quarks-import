@@ -13,9 +13,11 @@ FilePlayer : FileReader {
 	var <lineMap;
 	var <>headerSize = 0;
 
+	var <curid = 0;
+
 	*new { | pathOrFile, skipEmptyLines=false, skipBlanks=false,  delimiter |
 		var stream;
-		if (pathOrFile.isKindOf(File) ) { stream = pathOrFile }  { stream =  File(pathOrFile, "r") }; 
+		if (pathOrFile.isKindOf(File) ) { stream = pathOrFile }  { stream =  File(pathOrFile, "r") };
 		if (stream.isOpen.not) { warn("FileReader: file" + pathOrFile + "not found.") ^nil };
 		^super.newCopyArgs(stream, skipEmptyLines, skipBlanks,  delimiter ? this.delim).myInit;
 	}
@@ -56,12 +58,12 @@ FilePlayer : FileReader {
 		var ind, lmap;
 		var pos = lineMap.at( line );
 		if ( pos.notNil,
-			{ 
+			{
 				stream.pos = pos;
 				currentLine = line;
 				^true
 			},
-			{ 
+			{
 				ind = lineMap.slotFor( line );
 				// ind is now the index into the indices for the highest line number before the one we know.
 				lmap = lineMap.indices.at( ind );
@@ -100,14 +102,14 @@ FilePlayer : FileReader {
 	}
 }
 
-TabFilePlayer : FilePlayer { 
+TabFilePlayer : FilePlayer {
 	classvar <delim = $\t;
 }
 
-CSVFilePlayer : FilePlayer { 
+CSVFilePlayer : FilePlayer {
 	classvar <delim = $,;
 }
 
-SemiColonFilePlayer : FilePlayer { 
+SemiColonFilePlayer : FilePlayer {
 	classvar <delim = $;;
 }
