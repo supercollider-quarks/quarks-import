@@ -82,8 +82,8 @@ TuningOffset : EqualTemperament {
 	}
 
 	init { |stepsPerOctave = 12, calibratefreq = 440, calibratenote = 69, tunings = 0|
-		this.tunings_(tunings)
-			.stepsPerOctave_(stepsPerOctave)
+		this.stepsPerOctave_(stepsPerOctave)
+			.tunings_(tunings)
 			.calibrate(calibratefreq, calibratenote)
 	}
 
