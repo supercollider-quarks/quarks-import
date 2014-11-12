@@ -12,6 +12,8 @@ VoicerGCDummy {
 	*midiControl_ {}
 
 	*displayNameSet {}
+
+	*spec { ^\unipolar.asSpec }
 }
 
 // AbstractFunction? Yeah... I'd like this to respond to math messages
